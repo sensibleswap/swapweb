@@ -1,23 +1,21 @@
-
+import BigNumber from 'bignumber.js';
 
 const FEE_FACTOR = 10000;
 const MIN_TOKEN1_FEE = 600;
 
 // 增加流动性时使用token1计算token2以及lp token的增加数量
-export const countLpAddAmount = function(token1AddAmount, swapToken1Amount, swapToken2Amount, swapLpTokenAmount) {
-  token1AddAmount = BigInt(token1AddAmount)
-  swapToken1Amount = BigInt(swapToken1Amount)
-  swapToken2Amount = BigInt(swapToken2Amount)
-  swapLpTokenAmount = BigInt(swapLpTokenAmount)
-  let lpMinted = BigInt(0)
-  let token2AddAmount = BigInt(0)
-  if (swapLpTokenAmount > BigInt(0)) {
-    lpMinted = token1AddAmount * swapLpTokenAmount / swapToken1Amount
-    token2AddAmount = token1AddAmount * swapToken2Amount / swapToken1Amount + BigInt(1)
+export const countLpAddAmount = function(token1AddAmount, pairData) {
+  const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+  let lpMinted = BigNumber(0);
+  let token2AddAmount = BigNumber(0);
+  if (swapLpAmount > 0) {
+    lpMinted = BigNumber(token1AddAmount).multipliedBy(swapLpAmount).div(swapToken1Amount).toNumber();
+    token2AddAmount = BigNumber(token1AddAmount).multipliedBy(swapToken2Amount).div(swapToken1Amount).plus(1).toNumber()
   } else {
     lpMinted = token1AddAmount
+    token2AddAmount = token2AddAmount.toNumber()
   }
-  return [lpMinted, token2AddAmount]
+  return {lpMinted, token2AddAmount}
 }
 
 // 增加流动性时使用token2计算token1以及lp token的增加数量
@@ -48,31 +46,32 @@ export const countLpRemoveAmount = function(lpTokenRemoveAmount, swapToken1Amoun
   return [token1RemoveAmount, token2RemoveAmount]
 }
 
-// 交换token1到token2时可获取的token2数量
-export const swapToken1ToToken2 = function(token1AddAmount, swapToken1Amount, swapToken2Amount, swapFeeRate, projFeeRate) {
-  token1AddAmount = BigInt(token1AddAmount);
-  swapToken1Amount = BigInt(swapToken1Amount);
-  swapToken2Amount = BigInt(swapToken2Amount);
-  const token1AddAmountWithFee = token1AddAmount * BigInt(FEE_FACTOR - swapFeeRate);
-  const token2RemoveAmount = token1AddAmountWithFee * swapToken2Amount / (swapToken1Amount * BigInt(FEE_FACTOR) + token1AddAmountWithFee);
 
-  let projFee = token1AddAmount * BigInt(projFeeRate) / BigInt(FEE_FACTOR);
-  if (projFee < MIN_TOKEN1_FEE) {
-    projFee = 0;
+// 交换token1到token2时可获取的token2数量
+export const swapToken1ToToken2 = function(token1AddAmount, pairData) {
+    const {swapToken1Amount, swapToken2Amount, swapFeeRate, projFeeRate} = pairData;
+    
+    const token1AddAmountWithFee = BigNumber(token1AddAmount).multipliedBy(FEE_FACTOR - swapFeeRate);
+    const token2RemoveAmount = token1AddAmountWithFee.multipliedBy(swapToken2Amount).div(BigNumber(swapToken1Amount).multipliedBy(FEE_FACTOR).plus(token1AddAmountWithFee)).toNumber();
+  
+    let projFee = BigNumber(token1AddAmount).multipliedBy(projFeeRate).div(FEE_FACTOR).toNumber();
+    console.log(projFee);
+    if (projFee < MIN_TOKEN1_FEE) {
+      projFee = 0;
+    }
+    return {token2RemoveAmount, projFee};
   }
-  return [token2RemoveAmount, projFee];
-}
 
 // 交换token2到token1时可获取的token2数量
-export const swapToken2ToToken1 = function(token2AddAmount, swapToken1Amount, swapToken2Amount, swapFeeRate, projFeeRate) {
-  token2AddAmount = BigInt(token2AddAmount);
-  swapToken1Amount = BigInt(swapToken1Amount);
-  swapToken2Amount = BigInt(swapToken2Amount);
-  const token2AddAmountWithFee = BigInt(token2AddAmount) * BigInt(FEE_FACTOR - swapFeeRate);
-  const token1RemoveAmount = token2AddAmountWithFee * swapToken1Amount / (swapToken2Amount * BigInt(FEE_FACTOR) + token2AddAmountWithFee);
-  let projFee = token2AddAmount * swapToken1Amount * BigInt(projFeeRate) / (swapToken2Amount * BigInt(FEE_FACTOR) + token2AddAmountWithFee);
+export const swapToken2ToToken1 = function(token2AddAmount, pairData) {
+    const {swapToken1Amount, swapToken2Amount, swapFeeRate, projFeeRate} = pairData;
+  
+  const token2AddAmountWithFee = BigNumber(token2AddAmount).multipliedBy(FEE_FACTOR - swapFeeRate);
+  const token1RemoveAmount = token2AddAmountWithFee.multipliedBy(swapToken1Amount).div(BigNumber(swapToken1Amount).multipliedBy(FEE_FACTOR).plus(token2AddAmountWithFee)).toNumber();
+
+  let projFee = BigNumber(token2AddAmount).multipliedBy(swapToken1Amount).multipliedBy(projFeeRate).div(BigNumber(swapToken2Amount).multipliedBy(FEE_FACTOR).plus(token2AddAmountWithFee)).toNumber();
   if (projFee < MIN_TOKEN1_FEE) {
     projFee = 0;
   }
-  return [token1RemoveAmount, projFee];
+  return {token1RemoveAmount, projFee};
 }

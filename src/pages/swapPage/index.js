@@ -49,7 +49,7 @@ export default class SwapPage extends Component {
 
     renderContent() {
         const {loading, token1, token2, pairData} = this.props
-        if (loading) return <Loading />
+        if (loading || !token1.symbol) return <Loading />
         const symbol1 = token1.symbol.toUpperCase();
         const symbol2 = token2.symbol.toUpperCase();
        

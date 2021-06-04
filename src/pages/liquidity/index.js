@@ -48,7 +48,8 @@ export default class Liquidity extends Component {
             currentStep: 1,
             origin_amount: 0,
             aim_amount: 0,
-            payVisible: false
+            payVisible: false,
+            lp: 0
         }
         this.formRef = React.createRef();
     }
@@ -75,39 +76,45 @@ export default class Liquidity extends Component {
 
     changeOriginAmount = (value) => {
 
-        const { pairData } = this.props;
+        const { swapToken1Amount, swapToken2Amount, swapLpAmount } = this.props.pairData;
 
-        this.setState({
-            origin_amount: value,
-        });
-        const origin_amount = pairData.swapToken1Amount;
-        const aim_amount = pairData.swapToken2Amount;
-        const user_aim_amount = formatAmount(BigNumber(value).multipliedBy(aim_amount).div(origin_amount).toNumber());
+        let user_aim_amount = 0;
+        let lpMinted = 0;
+        if (swapLpAmount > 0) {
+
+            user_aim_amount = formatAmount(BigNumber(value).multipliedBy(swapToken2Amount).div(swapToken1Amount).plus(1)); //?为何不一致
+
+            lpMinted = BigNumber(value).multipliedBy(swapLpAmount).div(swapToken1Amount);
+        }
 
         this.formRef.current.setFieldsValue({
             aim_amount: user_aim_amount,
         });
         this.setState({
+            origin_amount: value,
             aim_amount: user_aim_amount,
+            lp: lpMinted
         });
     }
 
     changeAimAmount = (value) => {
 
-        const { pairData } = this.props;
+        const { swapToken1Amount, swapToken2Amount, swapLpAmount } = this.props.pairData;
 
-        this.setState({
-            aim_amount: value,
-        });
-        const origin_amount = pairData.swapToken1Amount;
-        const aim_amount = pairData.swapToken2Amount;
-        const user_origin_amount = formatAmount(BigNumber(value).multipliedBy(origin_amount).div(aim_amount).toNumber());
-
+        let user_origin_amount = 0;
+        let lpMinted = 0;
+        if (swapLpAmount > 0) {
+            user_origin_amount = formatAmount(BigNumber(value).multipliedBy(swapToken1Amount).div(swapToken2Amount).toNumber());
+            // lpMinted = token1AddAmount * swapLpTokenAmount / swapToken1Amount; //也是swapToken1Amount？
+            lpMinted = BigNumber(user_origin_amount).multipliedBy(swapLpAmount).div(swapToken1Amount)
+        }
         this.formRef.current.setFieldsValue({
             origin_amount: user_origin_amount,
         });
         this.setState({
-            origin_amount: user_origin_amount
+            aim_amount: value,
+            origin_amount: user_origin_amount,
+            lp: lpMinted
         });
 
 
@@ -135,7 +142,7 @@ export default class Liquidity extends Component {
         const { token1, token2, pairData } = this.props;
         const { origin_amount = 0, aim_amount = 0 } = this.state;
         let total_origin_amount = origin_amount, total_aim_amount = aim_amount;
-       
+
         total_origin_amount = formatAmount(BigNumber(origin_amount).plus(pairData.swapToken1Amount)).toString();
         total_aim_amount = formatAmount(BigNumber(aim_amount).plus(pairData.swapToken2Amount)).toString();
         const share = origin_amount > 0 ? formatAmount(BigNumber(origin_amount).div(total_origin_amount).multipliedBy(100), 2).toString() : 0
@@ -222,7 +229,7 @@ export default class Liquidity extends Component {
         if (!isLogin) {
             // 未登录
             return <Button className={styles.btn_wait} onClick={this.login}>{_('login')}</Button>
-        } 
+        }
         // else if (!origin_token_id || !aim_token_id) {
         //     //未选择Token
         //     return <Button className={styles.btn_wait}>{_('select_a_token_pair')}</Button>

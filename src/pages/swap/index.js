@@ -16,6 +16,7 @@ import BigNumber from 'bignumber.js';
 import { slippage_data, feeRate } from 'common/config';
 // import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
+import {swapToken1ToToken2} from 'common/swap';
 
 const { storage_name, defaultIndex, datas } = slippage_data;
 
@@ -119,6 +120,7 @@ export default class Swap extends Component {
     changeOriginAmount = (value) => {
 
         if (value > 0) {
+            console.log(swapToken1ToToken2(value, this.props.pairData));
             const fee = BigNumber(value).multipliedBy(feeRate).toFixed(2).toString();
             this.setState({
                 origin_amount: value,
@@ -235,6 +237,7 @@ export default class Swap extends Component {
             })
         }
     }
+    
 
     calc = (origin_amount = 0, aim_amount = 0) => {
         //TODO: aim_amount不能大于池里token的数量，但交互要怎么展示
