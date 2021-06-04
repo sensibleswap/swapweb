@@ -297,11 +297,9 @@ export default class Swap extends Component {
         const origin_token = dirForward ? token1 : token2;
         const aim_token = dirForward ? token2 : token1;
         const { slip, fee } = this.state;
-        let price = 0;
-        let amount1 = dirForward ? pairData.swapToken1Amount : pairData.swapToken2Amount;
-        let amount2 = dirForward ? pairData.swapToken2Amount : pairData.swapToken1Amount;
+        const symbol1 = origin_token.symbol.toUpperCase();
+        const symbol2 = aim_token.symbol.toUpperCase();
 
-        price = BigNumber(amount1).dividedBy(amount2).toFixed(4).toString();
         const tol = datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];
         const beyond = parseFloat(slip) > parseFloat(tol);
 
@@ -309,7 +307,7 @@ export default class Swap extends Component {
             <Form onSubmit={this.handleSubmit} ref={this.formRef}>
                 <div className={styles.title}>
                     <h3>{_('you_pay')}</h3>
-                    <div className={styles.balance} onClick={this.setOriginBalance}>{_('your_balance')}: <span>{origin_token.value || 0} {origin_token.symbol}</span></div>
+                    <div className={styles.balance} onClick={this.setOriginBalance}>{_('your_balance')}: <span>{origin_token.value || 0} {symbol1}</span></div>
                 </div>
                 {this.renderOriginToken()}
 
@@ -327,7 +325,7 @@ export default class Swap extends Component {
 
                 <div className={styles.key_value}>
                     <div className={styles.key}>{_('price')}</div>
-                    <div className={styles.value}>1 {origin_token.symbol} = {price} {aim_token.symbol}</div>
+                    <div className={styles.value}>1 {symbol1} = {pairData.swapFeeRate} {symbol2}</div>
                 </div>
                 <div className={styles.key_value}>
                     <div className={styles.key}>{_('slippage_tolerance')}</div>
@@ -340,7 +338,7 @@ export default class Swap extends Component {
                 </div>
                 <div className={styles.key_value}>
                     <div className={styles.key}>{_('fee')}</div>
-                    <div className={styles.value}>{fee} {origin_token.symbol}</div>
+                    <div className={styles.value}>{fee} {symbol1}</div>
                 </div>
             </Form>
         </div>

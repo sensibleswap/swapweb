@@ -48,18 +48,19 @@ export default class SwapPage extends Component {
 
 
     renderContent() {
-        const {loading, token1, token2, currentPair, pairData} = this.props
+        const {loading, token1, token2, pairData} = this.props
         if (loading) return <Loading />
-        const price = BigNumber(pairData.swapToken1Amount).div(pairData.swapToken2Amount).toFixed(4).toString();
+        const symbol1 = token1.symbol.toUpperCase();
+        const symbol2 = token2.symbol.toUpperCase();
        
         return <div className={styles.content}>
             <div className={styles.main_title}>
-                <h2><span className={styles.strong}>{token1.symbol}</span>/{token2.symbol}</h2>
-                <div className={styles.subtitle}><span className={styles.strong}>{price}</span> {token2.symbol} {_('per')} {token1.symbol} </div>
+                <h2><span className={styles.strong}>{symbol1}</span>/{symbol2}</h2>
+                <div className={styles.subtitle}><span className={styles.strong}>{pairData.swapFeeRate}</span> {symbol2} {_('per')} {token1.symbol} </div>
             </div>
             <Chart />
 
-            <h3 className={styles.title}>{token1.symbol}/{token2.symbol} {_('transactions')}</h3>
+            <h3 className={styles.title}>{symbol1}/{symbol2} {_('transactions')}</h3>
             <Transactions />
         </div>;
     }
