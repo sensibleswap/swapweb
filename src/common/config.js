@@ -32,4 +32,5 @@ export const slippage_data = {
     defaultIndex: 2
 }
 
-export const feeRate = 0.0035;
+export const feeRate = 0.0025;
+export const FEE_FACTOR = 10000;

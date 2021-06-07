@@ -81,9 +81,7 @@ export default class Liquidity extends Component {
         let user_aim_amount = 0;
         let lpMinted = 0;
         if (swapLpAmount > 0) {
-
-            user_aim_amount = formatAmount(BigNumber(value).multipliedBy(swapToken2Amount).div(swapToken1Amount).plus(1)); //?为何不一致
-
+            user_aim_amount = formatAmount(BigNumber(value).multipliedBy(swapToken2Amount).div(swapToken1Amount)); 
             lpMinted = BigNumber(value).multipliedBy(swapLpAmount).div(swapToken1Amount);
         }
 

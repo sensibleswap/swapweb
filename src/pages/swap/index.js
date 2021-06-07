@@ -13,10 +13,9 @@ import { connect } from 'umi';
 import Volt from 'lib/volt';
 import Loading from 'components/loading';
 import BigNumber from 'bignumber.js';
-import { slippage_data, feeRate } from 'common/config';
+import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 // import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
-import {swapToken1ToToken2} from 'common/swap';
 
 const { storage_name, defaultIndex, datas } = slippage_data;
 
@@ -85,29 +84,31 @@ export default class Swap extends Component {
         let {dirForward} = this.state;
         this.setState({
             dirForward: !dirForward
+        }, ()=>{
+            const { current } = this.formRef;
+            const { origin_amount, aim_amount } = current.getFieldsValue(['origin_amount', 'aim_amount']);
+            const { lastMod } = this.state;
+            if (lastMod === 'origin') {
+                current.setFieldsValue({
+                    aim_amount: origin_amount
+                });
+                this.calcAmount(0, origin_amount);
+                this.setState({
+                    lastMod: 'aim',
+                    aim_amount: origin_amount
+                })
+            } else if (lastMod === 'aim') {
+                current.setFieldsValue({
+                    origin_amount: aim_amount,
+                });
+                this.calcAmount(aim_amount, 0)
+                this.setState({
+                    lastMod: 'origin',
+                    origin_amount: aim_amount,
+                })
+            }
         })
-        const { current } = this.formRef;
-        const { origin_amount, aim_amount } = current.getFieldsValue(['origin_amount', 'aim_amount']);
-        const { lastMod } = this.state;
-        if (lastMod === 'origin') {
-            current.setFieldsValue({
-                aim_amount: origin_amount
-            });
-            this.calc(0, origin_amount);
-            this.setState({
-                lastMod: 'aim',
-                aim_amount: origin_amount
-            })
-        } else if (lastMod === 'aim') {
-            current.setFieldsValue({
-                origin_amount: aim_amount,
-            });
-            this.calc(aim_amount, 0)
-            this.setState({
-                lastMod: 'origin',
-                origin_amount: aim_amount,
-            })
-        }
+        
     }
 
     showUI = (name) => {
@@ -120,14 +121,14 @@ export default class Swap extends Component {
     changeOriginAmount = (value) => {
 
         if (value > 0) {
-            console.log(swapToken1ToToken2(value, this.props.pairData));
             const fee = BigNumber(value).multipliedBy(feeRate).toFixed(2).toString();
             this.setState({
                 origin_amount: value,
                 fee,
                 lastMod: 'origin'
             });
-            this.calc(value - fee);
+            // this.calc(value - fee);
+            this.calcAmount(value, 0);
         } else {
             this.formRef.current.setFieldsValue({
                 aim_amount: 0,
@@ -147,7 +148,7 @@ export default class Swap extends Component {
                 aim_amount: value,
                 lastMod: 'aim',
             });
-            this.calc(0, value)
+            this.calcAmount(0, value)
         } else {
             this.formRef.current.setFieldsValue({
                 origin_amount: 0,
@@ -223,7 +224,7 @@ export default class Swap extends Component {
         this.setState({
             origin_amount
         })
-        this.calc(origin_amount, 0)
+        this.calcAmount(origin_amount, 0)
         if (origin_amount > 0) {
 
             this.setState({
@@ -237,62 +238,122 @@ export default class Swap extends Component {
             })
         }
     }
-    
+    calcAmount = (originAddAmount = 0, aimAddAmount = 0) => {
 
-    calc = (origin_amount = 0, aim_amount = 0) => {
-        //TODO: aim_amount不能大于池里token的数量，但交互要怎么展示
-        //TODO: origin_amount不能比手续费小
         const { pairData} = this.props;
         const {dirForward} = this.state;
-        let amount1 = dirForward ? pairData.swapToken1Amount : pairData.swapToken2Amount;
-        let amount2 = dirForward ? pairData.swapToken2Amount : pairData.swapToken1Amount;
-        const total = BigNumber(amount1).multipliedBy(amount2);
-        const p = BigNumber(amount2).dividedBy(amount1);
-        let newAmount1 = amount1, newAmount2 = amount2;
-        if (origin_amount > 0) {
-            newAmount1 = BigNumber(amount1).plus(origin_amount);
-            newAmount2 = total.dividedBy(newAmount1);
-        } else if (aim_amount > 0) {
-            newAmount2 = BigNumber(amount2).minus(aim_amount);
-            newAmount1 = total.dividedBy(newAmount2);
+        const {swapToken1Amount, swapToken2Amount, swapFeeRate} = pairData;
+        let amount1 = dirForward ? swapToken1Amount : swapToken2Amount;
+        let amount2 = dirForward ? swapToken2Amount : swapToken1Amount;
+        let newAmount1, newAmount2;
+        if(originAddAmount > 0) {
+            const addAmountWithFee = BigNumber(originAddAmount).multipliedBy(FEE_FACTOR - swapFeeRate);
+            newAmount1 = BigNumber(amount1).multipliedBy(FEE_FACTOR).plus(addAmountWithFee);
+            let removeAmount = addAmountWithFee.multipliedBy(amount2).div(newAmount1).toNumber();
+            removeAmount = formatAmount(removeAmount);
+            newAmount2 = BigNumber(amount2).minus(removeAmount);
+
+            this.formRef.current.setFieldsValue({
+                aim_amount: removeAmount
+            })
+            this.setState({
+                aim_amount: removeAmount
+            });
+        } else if(aimAddAmount > 0) {
+
+            newAmount2 = BigNumber(amount2).minus(aimAddAmount);
+            const addAmountWithFee = BigNumber(aimAddAmount).multipliedBy(amount1).multipliedBy(FEE_FACTOR).div(newAmount2);
+
+            const addAmount = addAmountWithFee.div(FEE_FACTOR - swapFeeRate);
+            newAmount1 = addAmount.plus(amount1);
+            const addAmountN = formatAmount(addAmount);
+
+            this.formRef.current.setFieldsValue({
+                origin_amount: addAmountN
+            });
+            this.setState({
+                origin_amount: addAmountN,
+                fee: addAmount.multipliedBy(feeRate).toFixed(2).toString()
+            });
+        } else {
+            //两个值都没有大于0
+            this.formRef.current.setFieldsValue({
+                origin_amount: originAddAmount,
+                aim_amount: aimAddAmount
+            });
+            this.setState({
+                origin_amount: originAddAmount,
+                aim_amount: aimAddAmount
+            })
         }
+        
+
+        const p = BigNumber(amount2).dividedBy(amount1);
         const p1 = BigNumber(newAmount2).dividedBy(newAmount1);
         const slip = (p1.minus(p)).dividedBy(p);
 
         this.setState({
             slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
         });
-        if (origin_amount > 0) {
-            const v_aim = formatAmount(BigNumber(amount2).minus(newAmount2))
-            this.formRef.current.setFieldsValue({
-                aim_amount: v_aim
-            })
-            this.setState({
-                aim_amount: v_aim
-            })
-        } else if (aim_amount > 0) {
-            let v_origin = BigNumber(newAmount1).minus(amount1).dividedBy(1 - feeRate);
-            this.formRef.current.setFieldsValue({
-                origin_amount: formatAmount(v_origin)
-            });
-            this.setState({
-                fee: formatAmount(v_origin.multipliedBy(feeRate), 2),
-                origin_amount: formatAmount(v_origin)
-            })
-        } else {
-            //两个值都没有大于0
-            this.formRef.current.setFieldsValue({
-                origin_amount,
-                aim_amount
-            });
-            this.setState({
-                origin_amount,
-                aim_amount
-            })
-
-        }
-
     }
+
+
+    // calc = (origin_amount = 0, aim_amount = 0) => {
+    //     //TODO: aim_amount不能大于池里token的数量，但交互要怎么展示
+    //     //TODO: origin_amount不能比手续费小
+    //     const { pairData} = this.props;
+    //     const {dirForward} = this.state;
+    //     let amount1 = dirForward ? pairData.swapToken1Amount : pairData.swapToken2Amount;
+    //     let amount2 = dirForward ? pairData.swapToken2Amount : pairData.swapToken1Amount;
+    //     const total = BigNumber(amount1).multipliedBy(amount2);
+    //     const p = BigNumber(amount2).dividedBy(amount1);
+    //     let newAmount1 = amount1, newAmount2 = amount2;
+    //     if (origin_amount > 0) { //输入token1计算token2
+    //         newAmount1 = BigNumber(amount1).plus(origin_amount);
+    //         newAmount2 = total.dividedBy(newAmount1);
+
+    //         const v_aim = formatAmount(BigNumber(amount2).minus(newAmount2))
+    //         this.formRef.current.setFieldsValue({
+    //             aim_amount: v_aim
+    //         })
+    //         this.setState({
+    //             aim_amount: v_aim
+    //         })
+    //     } else if (aim_amount > 0) { //输入token2计算token1
+    //         newAmount2 = BigNumber(amount2).minus(aim_amount);
+    //         newAmount1 = total.dividedBy(newAmount2);
+    //         let v_origin = BigNumber(newAmount1).minus(amount1).dividedBy(1 - feeRate);
+    //         this.formRef.current.setFieldsValue({
+    //             origin_amount: formatAmount(v_origin)
+    //         });
+    //         this.setState({
+    //             fee: formatAmount(v_origin.multipliedBy(feeRate), 2),
+    //             origin_amount: formatAmount(v_origin)
+    //         })
+    //     }
+    //     const p1 = BigNumber(newAmount2).dividedBy(newAmount1);
+    //     const slip = (p1.minus(p)).dividedBy(p);
+
+    //     this.setState({
+    //         slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
+    //     });
+    //     // if (origin_amount > 0) {
+    //     // } else if (aim_amount > 0) {
+            
+    //     // } else {
+    //     //     //两个值都没有大于0
+    //     //     this.formRef.current.setFieldsValue({
+    //     //         origin_amount,
+    //     //         aim_amount
+    //     //     });
+    //     //     this.setState({
+    //     //         origin_amount,
+    //     //         aim_amount
+    //     //     })
+
+    //     // }
+
+    // }
 
     renderForm = () => {
         const { token1, token2, pairData } = this.props;
