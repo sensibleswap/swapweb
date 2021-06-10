@@ -64,6 +64,28 @@ export default {
       });
       return data
 
+    },
+
+    * reqSwap({payload}, {call, put}) {
+      const address = '1e1PZ9rVo98v1k34PAVU7UzqPo5VWbYWY'
+      const res = yield pairApi.reqSwap.call(pairApi, {
+        ...payload,
+        address,
+      });
+      console.log(res)
+      return res;
+    },
+
+    * swap({payload}, {call, put}) {
+      const res = yield pairApi.swap.call(pairApi, payload);
+      console.log(res);
+      return res;
+    },
+
+    * addLiq({payload}, {call, put}) {
+      const res = yield pairApi.addLiq.call(pairApi, payload);
+      console.log(res);
+      return res;
     }
 
   },

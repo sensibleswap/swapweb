@@ -70,12 +70,12 @@ const data = [
     },
 ];
 
-@connect(({ service, user, loading }) => {
+@connect(({ user, loading }) => {
     const { effects } = loading;
     return {
-        ...service,
+        // ...service,
         ...user,
-        loading: effects['service/queryTx'] || false
+        // loading: effects['service/queryTx'] || false
     }
 })
 export default class Transactions extends Component {

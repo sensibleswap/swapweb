@@ -1,4 +1,4 @@
-import WebSocketApi from '../service/ws';
+// import WebSocketApi from '../service/ws';
 
 let ws;
 let request;
@@ -13,9 +13,9 @@ export default {
 
     subscriptions: {
         setup({ dispatch, history }) { // eslint-disable-line
-            ws = new WebSocketApi();
-            ws.init();
-            request = ws.request.bind(ws);
+            // ws = new WebSocketApi();
+            // ws.init();
+            // request = ws.request.bind(ws);
             // ws.addEventListener('open', function (event) {
             //     ws.send('Hello Server!');
             // });

@@ -4,14 +4,13 @@ import { jc } from 'common/utils';
 import TokenLogo from 'components/tokenicon';
 import styles from './index.less';
 import _ from 'i18n';
-import { Steps, Button, Form, InputNumber, Spin, Modal } from 'antd';
+import { Steps, Button, Form, InputNumber, Spin, message } from 'antd';
 import { QuestionCircleOutlined, DownOutlined, PlusOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import SelectToken from '../selectToken';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
 import { formatAmount } from 'common/utils';
 // import EventBus from 'common/eventBus';
-import Pay from 'components/pay';
 import Volt from '../../lib/volt';
 
 const { Step } = Steps;
@@ -48,7 +47,6 @@ export default class Liquidity extends Component {
             currentStep: 1,
             origin_amount: 0,
             aim_amount: 0,
-            payVisible: false,
             lp: 0
         }
         this.formRef = React.createRef();
@@ -81,7 +79,7 @@ export default class Liquidity extends Component {
         let user_aim_amount = 0;
         let lpMinted = 0;
         if (swapLpAmount > 0) {
-            user_aim_amount = formatAmount(BigNumber(value).multipliedBy(swapToken2Amount).div(swapToken1Amount)); 
+            user_aim_amount = formatAmount(BigNumber(value).multipliedBy(swapToken2Amount).div(swapToken1Amount), 8);
             lpMinted = BigNumber(value).multipliedBy(swapLpAmount).div(swapToken1Amount);
         }
 
@@ -102,7 +100,7 @@ export default class Liquidity extends Component {
         let user_origin_amount = 0;
         let lpMinted = 0;
         if (swapLpAmount > 0) {
-            user_origin_amount = formatAmount(BigNumber(value).multipliedBy(swapToken1Amount).div(swapToken2Amount).toNumber());
+            user_origin_amount = formatAmount(BigNumber(value).multipliedBy(swapToken1Amount).div(swapToken2Amount), 8);
             // lpMinted = token1AddAmount * swapLpTokenAmount / swapToken1Amount; //也是swapToken1Amount？
             lpMinted = BigNumber(user_origin_amount).multipliedBy(swapLpAmount).div(swapToken1Amount)
         }
@@ -141,8 +139,8 @@ export default class Liquidity extends Component {
         const { origin_amount = 0, aim_amount = 0 } = this.state;
         let total_origin_amount = origin_amount, total_aim_amount = aim_amount;
 
-        total_origin_amount = formatAmount(BigNumber(origin_amount).plus(pairData.swapToken1Amount)).toString();
-        total_aim_amount = formatAmount(BigNumber(aim_amount).plus(pairData.swapToken2Amount)).toString();
+        total_origin_amount = formatAmount(BigNumber(origin_amount).plus(BigNumber(pairData.swapToken1Amount).div(1e8)), 8).toString();
+        total_aim_amount = formatAmount(BigNumber(aim_amount).plus(BigNumber(pairData.swapToken2Amount).div(1e8)), 8).toString();
         const share = origin_amount > 0 ? formatAmount(BigNumber(origin_amount).div(total_origin_amount).multipliedBy(100), 2).toString() : 0
         return <div className={styles.my_pair_info}>
             <div className={styles.info_title_swap}>
@@ -179,7 +177,7 @@ export default class Liquidity extends Component {
                         <div className={styles.coin}>
                             <TokenLogo name={token1.symbol} />
                             <div className={styles.name}>{token1.symbol}</div>
-                            <DownOutlined onClick={() => this.showUI('selectToken_origin')} />
+                            <DownOutlined onClick={() => this.showUI('selectToken')} />
                         </div>
                         <FormItem
                             name={'origin_amount'}>
@@ -202,7 +200,7 @@ export default class Liquidity extends Component {
                         <div className={styles.coin}>
                             <div style={{ width: 40 }}>{token2.symbol && <TokenLogo name={token2.symbol} />}</div>
                             <div className={styles.name}>{token2.symbol || _('select')}</div>
-                            <DownOutlined onClick={() => this.showUI('selectToken_aim')} />
+                            <DownOutlined onClick={() => this.showUI('selectToken')} />
                         </div>
                         <FormItem
                             name={'aim_amount'}>
@@ -224,24 +222,27 @@ export default class Liquidity extends Component {
     renderButton = () => {
         const { isLogin, token1, token2 } = this.props;
         const { origin_amount, aim_amount } = this.state;
-        if (!isLogin) {
-            // 未登录
-            return <Button className={styles.btn_wait} onClick={this.login}>{_('login')}</Button>
-        }
+        // if (!isLogin) {
+        //     // 未登录
+        //     return <Button className={styles.btn_wait} onClick={this.login}>{_('login')}</Button>
+        // }
         // else if (!origin_token_id || !aim_token_id) {
         //     //未选择Token
         //     return <Button className={styles.btn_wait}>{_('select_a_token_pair')}</Button>
         // } 
-        else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
+        // else 
+        if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
             // 未输入数量
             return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
-        } else if (parseFloat(origin_amount) > parseFloat(token1.value || 0)) {
-            // 余额不足
-            return <Button className={styles.btn_wait}>{_('lac_token_balance', token1.symbol)}</Button>
-        } else if (parseFloat(aim_amount) > parseFloat(token2.value || 0)) {
-            // 余额不足
-            return <Button className={styles.btn_wait}>{_('lac_token_balance', token2.symbol)}</Button>
-        } else {
+        }
+        // else if (parseFloat(origin_amount) > parseFloat(token1.value || 0)) {
+        //     // 余额不足
+        //     return <Button className={styles.btn_wait}>{_('lac_token_balance', token1.symbol)}</Button>
+        // } else if (parseFloat(aim_amount) > parseFloat(token2.value || 0)) {
+        //     // 余额不足
+        //     return <Button className={styles.btn_wait}>{_('lac_token_balance', token2.symbol)}</Button>
+        // } 
+        else {
             return <>
                 {this.renderInfo()}
                 <Button className={styles.btn} type='primary' onClick={this.handleSubmit}>{_('supply_liq')}</Button>
@@ -249,10 +250,52 @@ export default class Liquidity extends Component {
         }
     }
 
-    handleSubmit = () => {
-        this.setState({
-            payVisible: true
-        })
+    handleSubmit = async () => {
+        const { origin_amount, aim_amount } = this.state;
+        const { dispatch, currentPair } = this.props;
+        console.log(origin_amount, aim_amount);
+
+
+        // let res = await dispatch({
+        //     type: 'pair/reqSwap',
+        //     payload: {
+        //         symbol: currentPair,
+        //         op: 1
+        //     }
+        // });
+        let res = {
+            bsvToAddress: "1CX7iRxnDDtF2NpHdwSL8GXvCsMKAZtFSg",
+            op: 1,
+            projFeeRate: 5,
+            requestIndex: "10",
+            swapFeeRate: 25,
+            swapLpAmount: "600000",
+            swapToken1Amount: "525022",
+            swapToken2Amount: "687029",
+            tokenToAddress: "15h2jKafZmifkqB9cnwofBb2pu9GniqVRy",
+            txFee: 93978
+        }
+
+        if (res.code) {
+            return message.error(res.msg)
+        }
+        const res1 = await dispatch({
+            type: 'pair/addLiq',
+            payload: {
+                symbol: currentPair,
+                requestIndex: res.data.requestIndex,
+                token1TxID: 'a136c3eb1f1b1999e58b61bc84ef08fcdb2132729f1f3564b099a5786e49e714',
+                token1OutputIndex: 1,
+                token2TxID: '',
+                token2OutputIndex: 1,
+                token1AddAmount: BigNumber(origin_amount).multipliedBy(1e8).toNumber()
+            }
+        });
+
+        if (res1.code) {
+            return message.error(res1.msg);
+        }
+        message.success('success')
     }
 
     renderResult() {
@@ -322,13 +365,6 @@ export default class Liquidity extends Component {
         }
     }
 
-
-    closePayPop = () => {
-        this.setState({
-            payVisible: false
-        })
-    }
-
     payCallback = (value) => {
         if (value) {
 
@@ -343,39 +379,11 @@ export default class Liquidity extends Component {
     }
 
     render() {
-        const { page, payVisible, origin_amount, aim_amount } = this.state;
-        const { accountName, token1, token2 } = this.props;
+        const { page } = this.state;
         return <div style={{ position: 'relative' }}>
             {this.renderSwap()}
-            {(page === 'selectToken_origin' || page === 'selectToken_aim') && <div className={styles.selectToken_wrap}><SelectToken close={(id) => this.selectedToken(id, page)} /></div>}
-            {payVisible && <Modal
-                title=""
-                visible={payVisible}
-                footer={null}
-                className={styles.pay_dialog}
-                width="475px"
-                maskClosable={true}
-                closeable={false}
-                onCancel={this.closePayPop}>
-                <Pay payCallback={this.payCallback} data={{
-                    accountName,
-                    toAddress: '1ATnFVHXuzpvoyECjuZ1QPLbtkAkKvoSJn',
-                    tokens: [
-                        {
-                            amount: origin_amount,
-                            symbol: token1.symbol,
-                            name: token1.name,
-                            icon: token1.icon
-                        },
-                        {
-                            amount: aim_amount,
-                            symbol: token2.symbol,
-                            name: token2.name,
-                            icon: token2.icon
-                        },
-                    ]
-                }} />
-            </Modal>}
+            {(page === 'selectToken') && <div className={styles.selectToken_wrap}><SelectToken close={(id) => this.selectedToken(id, page)} /></div>}
+
         </div>
     }
 }

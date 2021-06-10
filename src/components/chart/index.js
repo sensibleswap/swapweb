@@ -53,12 +53,10 @@ option = {
 };
 
 
-@connect(({ service, user, loading }) => {
+@connect(({ user, loading }) => {
     const { effects } = loading;
     return {
-        ...service,
         ...user,
-        loading: effects['service/queryTx'] || false
     }
 })
 export default class Chart extends Component {

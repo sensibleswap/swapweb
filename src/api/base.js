@@ -9,7 +9,7 @@ export default class API {
         this._requestQueue = {};
     }
 
-    _request(api, params = {}, url = '', method = 'GET', catchError) {
+    _request(api, params = {}, method = 'GET', url = '', catchError) {
         // const data = {
         //     params: JSON.stringify(params)
         // };

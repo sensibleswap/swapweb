@@ -20,7 +20,7 @@ export default defineConfig({
     api: '@/api'
   },
   proxy: {
-      context: ['/allpairs', '/swapinfo'],
+      context: ['/allpairs', '/swapinfo', '/reqswapargs', '/token1totoken2', '/token2totoken1', '/addliq', '/removeliq'],
       target: 'http://47.244.2.233:18333',
   },
   copy: [
