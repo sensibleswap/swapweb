@@ -9,7 +9,8 @@ export default {
     currentPair: '',
     pairData: {},
     token1: {},
-    token2: {}
+    token2: {},
+    LP: 100000
   },
 
   subscriptions: {
@@ -62,6 +63,7 @@ export default {
           currentPair
         }
       });
+      console.log(data)
       return data
 
     },

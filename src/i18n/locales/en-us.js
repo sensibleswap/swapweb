@@ -171,7 +171,7 @@ const texts = {
     lac_balance: 'Insufficient Balance',
     lac_token_balance: 'Insufficient %s Balance',
     no_pair: 'No such pair',
-    not_enough: 'Not Enough',
+    not_enough: 'Insufficient %s liquidity',
 
     create_pair_tips: 'Understanding Impermanent Loss',
     create_pair_desc: 'Before becoming a Liquidity Provider, please understand the risks involved with Impermanent Loss. You can learn more about it  here.',

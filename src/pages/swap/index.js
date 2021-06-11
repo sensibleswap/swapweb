@@ -240,18 +240,21 @@ export default class Swap extends Component {
     }
     calcAmount = (originAddAmount = 0, aimAddAmount = 0) => {
 
-        const { pairData } = this.props;
+        const { pairData, token1, token2 } = this.props;
         const { dirForward } = this.state;
         const { swapToken1Amount, swapToken2Amount, swapFeeRate } = pairData;
         let amount1 = dirForward ? swapToken1Amount : swapToken2Amount;
         let amount2 = dirForward ? swapToken2Amount : swapToken1Amount;
+        let _originAddAmount = BigNumber(originAddAmount).multipliedBy(Math.pow(10, token1.decimal || 8));
+        let _aimAddAmount = BigNumber(aimAddAmount).multipliedBy(Math.pow(10, token2.decimal || 8));
         let newAmount1, newAmount2;
         if (originAddAmount > 0) {
-            const addAmountWithFee = BigNumber(originAddAmount).multipliedBy(FEE_FACTOR - swapFeeRate);
-            newAmount1 = BigNumber(amount1).multipliedBy(FEE_FACTOR).plus(addAmountWithFee);
-            let removeAmount = addAmountWithFee.multipliedBy(amount2).div(newAmount1).toNumber();
-            // removeAmount = formatAmount(removeAmount);
+            const addAmountWithFee = _originAddAmount.multipliedBy(FEE_FACTOR - swapFeeRate);
+            newAmount1 = BigNumber(amount1).plus(_originAddAmount);
+            let removeAmount = addAmountWithFee.multipliedBy(amount2).div(BigNumber(amount1).multipliedBy(FEE_FACTOR).plus(addAmountWithFee));
             newAmount2 = BigNumber(amount2).minus(removeAmount);
+
+            removeAmount = formatAmount(removeAmount.div(Math.pow(10, token2.decimal || 8)), 8);
 
             this.formRef.current.setFieldsValue({
                 aim_amount: removeAmount
@@ -261,19 +264,25 @@ export default class Swap extends Component {
             });
         } else if (aimAddAmount > 0) {
 
-            newAmount2 = BigNumber(amount2).minus(aimAddAmount);
-            const addAmountWithFee = BigNumber(aimAddAmount).multipliedBy(amount1).multipliedBy(FEE_FACTOR).div(newAmount2);
+            newAmount2 = BigNumber(amount2).minus(_aimAddAmount);
+            const addAmountWithFee = _aimAddAmount.multipliedBy(amount1).multipliedBy(FEE_FACTOR).div(newAmount2);
 
-            const addAmount = addAmountWithFee.div(FEE_FACTOR - swapFeeRate);
+            let addAmount = addAmountWithFee.div(FEE_FACTOR - swapFeeRate);
+            addAmount = addAmount.div(Math.pow(10, token1.decimal || 8));
             newAmount1 = addAmount.plus(amount1);
-            const addAmountN = formatAmount(addAmount);
+            let addAmountN = formatAmount(addAmount, 8);
+            if(!addAmount.isGreaterThan(0)) {
+                addAmountN = 0;
+                newAmount1 = amount1;
+                newAmount2 = BigNumber(amount2);
+            }
 
             this.formRef.current.setFieldsValue({
-                origin_amount: addAmount
+                origin_amount: addAmountN
             });
             this.setState({
-                origin_amount: addAmount,
-                fee: addAmount.multipliedBy(feeRate).toFixed(2).toString()
+                origin_amount: addAmountN,
+                fee: addAmount > 0 ? addAmount.multipliedBy(feeRate).toFixed(2).toString() : 0
             });
         } else {
             //两个值都没有大于0
@@ -289,9 +298,16 @@ export default class Swap extends Component {
 
 
         const p = BigNumber(amount2).dividedBy(amount1);
-        const p1 = BigNumber(newAmount2).dividedBy(newAmount1);
+        const p1 = newAmount2.dividedBy(newAmount1);
         const slip = (p1.minus(p)).dividedBy(p);
 
+        // console.log('amount1:',amount1,
+        // 'amount2:', amount2,
+        // 'p:', p.toNumber(),
+        // 'newAmount1:', newAmount1.toNumber(),
+        // 'newAmount2:', newAmount2.toNumber(),
+        // 'p1:', p1.toNumber(),
+        // 'slip:', slip.toNumber());
         this.setState({
             slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
         });
@@ -427,7 +443,7 @@ export default class Swap extends Component {
         if (!pairData) {
             // 不存在的交易对
             return <Button className={styles.btn_wait}>{_('no_pair')}</Button>
-        } else if (!lastMod) {
+        } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
             // 未输入数量
             return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>
         }
@@ -435,9 +451,9 @@ export default class Swap extends Component {
         //     // 余额不足
         //     return <Button className={styles.btn_wait}>{_('lac_balance')}</Button>
         // } 
-        else if (parseFloat(aim_amount) > pairData.swapToken1Amount) {
+        else if (BigNumber(aim_amount).multipliedBy(Math.pow(10, token2.decimal || 8)).isGreaterThan(pairData.swapToken2Amount)) {
             // 池中币不足
-            return <Button className={styles.btn_wait}>{_('not_enough')}</Button>
+            return <Button className={styles.btn_wait}>{_('not_enough', token2.symbol)}</Button>
         } else if (beyond) {
             // 超出容忍度
             return <Button className={styles.btn_warn} onClick={this.submit}>{_('swap_anyway')}</Button>
@@ -477,6 +493,9 @@ export default class Swap extends Component {
         //     }
         // }
         let res = {
+            code: 0,
+            msg: "",
+            data: {
             bsvToAddress: "1Bw2qjVAPcxTWbzT1r4N37qosJLZEC32eN",
             op: 4,
             projFeeRate: 5,
@@ -487,6 +506,7 @@ export default class Swap extends Component {
             swapToken2Amount: "687029",
             tokenToAddress: "19PLTv5WtJwZCJnRN3jhgzGL6u95eytQ1f",
             txFee: 63737
+            }
         }
 
         if (res.code) {
@@ -497,7 +517,6 @@ export default class Swap extends Component {
             ...payload,
             requestIndex: res.data.requestIndex,
         }
-        console.log(BigNumber(origin_amount).multipliedBy(1e8).toNumber())
         if (dirForward) {
             payload = {
                 ...payload,
@@ -510,8 +529,8 @@ export default class Swap extends Component {
                 ...payload,
                 minerFeeTxID: 'd6c4fb357e663adbdf62225c4cab4ca13a4fcdf2eae1e6a03b72024932ba953d',
                 minerFeeTxOutputIndex: 1,
-                token2TxID: '',
-                token2OutputIndex: 0,
+                token2TxID: 'f02c0138dcaae8a9327886e694e0c5fe2fc30f7395cda1d4091b6920b4151881',
+                token2OutputIndex: 1,
             }
         }
 
@@ -521,7 +540,7 @@ export default class Swap extends Component {
         });
         console.log(res1);
         if (res1.code) {
-            return message.error(res.msg);
+            return message.error(res1.msg);
         }
         message.success('success')
 
@@ -616,14 +635,18 @@ export default class Swap extends Component {
 
     selectedToken = (currentPair) => {
         if (currentPair && currentPair !== this.props.currentPair) {
-            if (this.state.page === 'selectToken') {
+            // if (this.state.page === 'selectToken') {
                 this.props.dispatch({
                     type: 'pair/getPairData',
                     payload: {
                         currentPair
                     }
                 })
-            }
+            // }
+            this.setState({
+                origin_amount: 0,
+                aim_amount: 0
+            })
         }
         this.showUI('form');
     }
