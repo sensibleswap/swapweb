@@ -1,28 +1,22 @@
-
 import bsv from 'lib/webWallet';
 import { formatSat } from 'common/utils';
 
 export default {
-
   namespace: 'user',
 
   state: {
     isLogin: false,
     accountInfo: {},
     userBalance: {},
-    userAddress: ''
+    userAddress: '',
   },
 
-  subscriptions: {
-
-
-  },
+  subscriptions: {},
 
   effects: {
-    * loadingUserData({ payload }, { call, put }) {
-
+    *loadingUserData({ payload }, { call, put }) {
       // yield bsv.requestAccount().then();
-      console.log(bsv.getAccount, bsv.getAccount())
+      // console.log(bsv.getAccount, bsv.getAccount())
       const accountInfo = yield bsv.getAccount();
       if (!accountInfo) return false;
 
@@ -30,12 +24,12 @@ export default {
       const userAddress = yield bsv.getAddress();
       const tokenBalance = yield bsv.getSensibleFtBalance();
       const userBalance = {
-        BSV: formatSat(bsvBalance.balance)
-      }
-      tokenBalance.forEach(item => {
+        BSV: formatSat(bsvBalance.balance),
+      };
+      tokenBalance.forEach((item) => {
         userBalance[item.codehash] = formatSat(item.balance, item.tokenDecimal);
-      })
-      console.log(accountInfo, userBalance, userAddress)
+      });
+      console.log(accountInfo, userBalance, userAddress);
 
       yield put({
         type: 'save',
@@ -43,69 +37,63 @@ export default {
           accountInfo,
           userBalance,
           userAddress,
-          isLogin: true
-
+          isLogin: true,
         },
       });
-
     },
-    * connectWebWallet({ payload }, { call, put }) {
+    *connectWebWallet({ payload }, { call, put }) {
       const res = yield bsv.requestAccount().then();
-      console.log(res)
+      console.log(res);
     },
 
-    * transferBsv({ payload }, { call, put }) {
+    *transferBsv({ payload }, { call, put }) {
       const { address, amount } = payload;
 
       console.log(payload);
       try {
         const res = yield bsv.transferBsv({
-          receivers: [{
-            address,
-            amount
-          }]
+          receivers: [
+            {
+              address,
+              amount,
+            },
+          ],
         });
         console.log(res);
         return res;
       } catch (error) {
         console.log(error);
-        return {msg: error}
+        return { msg: error };
       }
-      
     },
 
-    * transferFtTres({ payload }, { call, put }) {
+    *transferFtTres({ payload }, { call, put }) {
       const { address, amount, codehash, genesis } = payload;
 
       console.log(payload);
       try {
-        const res = yield bsv.transferSensibleFt(
-          {
-            receivers: [{
+        const res = yield bsv.transferSensibleFt({
+          receivers: [
+            {
               address,
-              amount
-            }],
-            codehash,
-            genesis
-          });
+              amount,
+            },
+          ],
+          codehash,
+          genesis,
+        });
         console.log(res);
         return res;
       } catch (error) {
         console.log(error);
-        return {msg: error}
+        return { msg: error };
       }
-      
-    }
-
-
+    },
   },
 
   reducers: {
     save(state, action) {
       return { ...state, ...action.payload };
     },
-
-
   },
-
 };
