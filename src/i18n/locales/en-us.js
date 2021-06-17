@@ -68,6 +68,7 @@ const texts = {
 
     pair_liq_pool: 'Pair Liquidity Pool',
     add_liq: 'Add liquidity',
+    remove_liq: 'Remove liquidity',
     create_pair: 'Create a pair',
     select_pair: 'Select pair',
     promote: 'Promote',
@@ -196,7 +197,9 @@ const texts = {
     year_ago: ' year ago',
     years_ago: ' years ago',
     start_swapping: 'Start Swapping',
-    start_pooling: 'Start Pooling'
+    start_pooling: 'Start Pooling',
+    account: 'Account',
+    withdraw: 'Withdraw'
 
 }
 module.exports = texts;

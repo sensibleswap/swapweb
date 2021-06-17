@@ -13,7 +13,7 @@ export default function Pair(props) {
         const {swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
         const rate = LP/swapLpAmount;
         const token1 = formatAmount(formatSat(swapToken1Amount, curPair.token1.decimal || 8));
-        const token2 = formatAmount(formatSat(swapToken2Amount, curPair.token2.decimal || 8));
+        const token2 = formatAmount(formatSat(swapToken2Amount, curPair.token2.decimal));
         const _rate = (rate*100).toFixed(2);
        
     return <div className={styles.container}>

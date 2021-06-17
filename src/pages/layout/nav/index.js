@@ -9,16 +9,18 @@ import { withRouter, Link } from 'umi';
 const menu = [
     {
         key: 'swap',
-        label: _('swap')
+        label: _('swap'),
+        path: 'swap'
     },
     {
         key: 'pool',
         label: _('pool'),
+        path: 'pool/add'
     },
-    {
-        key: 'explore',
-        label: _('explore')
-    },
+    // {
+    //     key: 'explore',
+    //     label: _('explore')
+    // },
 ]
 @withRouter
 export default class Head extends Component {
@@ -27,7 +29,7 @@ export default class Head extends Component {
         const hash = window.location.hash.substr(2);
         let currentMenu = '';
         menu.forEach(item => {
-            if (item.key === hash) {
+            if (hash.indexOf(item.key) > -1) {
                 currentMenu = item.key
             }
         })
@@ -52,7 +54,7 @@ export default class Head extends Component {
                     if (item.key === currentMenu) {
                         cls = jc(styles.menu_item, styles.menu_item_selected, styles[`menu_item_${item.key}`]);
                     }
-                    return <span className={cls} onClick={() => this.gotoPage(item.key)} key={item.key}>{item.label}</span>
+                    return <span className={cls} onClick={() => this.gotoPage(item.path)} key={item.key}>{item.label}</span>
                 })}
             </div>
         </div>;

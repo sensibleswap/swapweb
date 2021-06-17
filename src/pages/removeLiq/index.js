@@ -8,11 +8,12 @@ import Pair from 'components/pair';
 import Loading from 'components/loading';
 import TokenLogo from 'components/tokenicon';
 import { CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { formatSat, formatAmount } from 'common/utils';
+import { formatSat, formatAmount, jc } from 'common/utils';
+import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 
-import Header from '../layout/header';
+// import Header from '../layout/header';
 import { Link, withRouter } from 'umi';
 import BigNumber from 'bignumber.js';
 
@@ -63,25 +64,9 @@ export default class RemovePage extends Component {
         this.fetch()
     }
 
-    // async fetch() {
-
-    //     const { dispatch, } = this.props;
-    //     await dispatch({
-    //         type: 'pair/getAllPairs',
-    //     });
-
-    //     let { currentPair } = this.props;
-    //     await dispatch({
-    //         type: 'pair/getPairData',
-    //         payload: {
-    //             currentPair
-    //         }
-    //     })
-    // }
-
     async fetch() {
 
-        const { dispatch} = this.props;
+        const { dispatch } = this.props;
         const allPairs = await dispatch({
             type: 'pair/getAllPairs',
         });
@@ -97,15 +82,15 @@ export default class RemovePage extends Component {
         });
         console.log(pairData);
 
-        const {swapToken1Amount, swapToken2Amount} = pairData;
-        const {token1,token2} = allPairs[currentPair];
+        const { swapToken1Amount, swapToken2Amount } = pairData;
+        const { token1, token2 } = allPairs[currentPair];
         const symbol1 = token1.symbol.toUpperCase();
         const symbol2 = token2.symbol.toUpperCase();
         const price = BigNumber(swapToken2Amount).div(swapToken1Amount).toNumber();
         this.setState({
             symbol1,
             symbol2,
-            price
+            price: formatAmount(price)
         })
     }
 
@@ -142,21 +127,21 @@ export default class RemovePage extends Component {
 
         const { value } = this.state;
         const { currentPair, pairData, LP, allPairs } = this.props;
-        const {swapToken1Amount, swapToken2Amount, swapLpAmount} = pairData;
-        const removeLP = LP*value/100;
-        const rate = removeLP/swapLpAmount;
-        const {token1,token2} = allPairs[currentPair];
-        const removeToken1 = formatSat(swapToken1Amount*rate, token1.decimal || 8);
-        const removeToken2 = formatSat(swapToken2Amount*rate, token2.decimal || 8);
-        return {removeToken1, removeToken2, removeLP}
+        const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+        const removeLP = LP * value / 100;
+        const rate = removeLP / swapLpAmount;
+        const { token1, token2 } = allPairs[currentPair];
+        const removeToken1 = formatSat(swapToken1Amount * rate, token1.decimal || 8);
+        const removeToken2 = formatSat(swapToken2Amount * rate, token2.decimal);
+        return { removeToken1: formatAmount(removeToken1, 8), removeToken2: formatAmount(removeToken2, 8), removeLP }
     }
 
     renderForm() {
         const { currentPair, loading } = this.props;
         if (loading || !currentPair) return <Loading />;
         const { value, price, symbol1, symbol2 } = this.state;
-        const {removeToken1, removeToken2, removeLP} = this.calc();
-        return <div className={styles.bd}>
+        const { removeToken1, removeToken2, removeLP } = this.calc();
+        return <div className={styles.content}>
 
             <div className={styles.title}>
                 <h3>{_('remove_liq')}</h3>
@@ -231,15 +216,11 @@ export default class RemovePage extends Component {
                 <div className={styles.info_label}>{symbol2}</div>
                 <div className={styles.info_value}>{removeToken2}</div>
             </div>
-            <div className={styles.info_item}>
-                <div className={styles.info_label}>{_('earned')}</div>
-                <div className={styles.info_value}>0.1BSV + 1.55 VUSD</div>
-            </div>
         </div>
     }
 
     renderResult() {
-        return <div className={styles.bd}>
+        return <div className={styles.content}>
 
             <div className={styles.finish_logo}><CheckCircleOutlined style={{ fontSize: 80, color: '#2BB696' }} /></div>
             <div className={styles.finish_title}>{_('liq_removed')}</div>
@@ -265,26 +246,24 @@ export default class RemovePage extends Component {
 
     render() {
         const { page } = this.state;
-        return (<section className={styles.container}>
-            <section className={styles.left}>
-                <div className={styles.left_inner}>
-                    <Header />
-                    {this.renderContent()}
-                </div>
-            </section>
-            <section className={styles.right}>
-                <div className={styles.sidebar}>
-                    <div className={styles.box}>
-                        <div className={styles.hd}>
-                            <div className={styles.hd_item} onClick={() => {
-                                this.props.history.push('pool')
-                            }}>Add</div>
-                            <div className={styles.hd_item_cur}>Remove</div>
-                        </div>
-                        {page === 'form' ? this.renderForm() : this.renderResult()}
+        return <Pool>
+            <div className={styles.container} style={{ display: page === 'form' ? 'block' : 'none' }}>
+                <div className={styles.head}>
+                    <div className={styles.menu}>
+                        <span className={styles.menu_item} key='add_liq' onClick={() => {
+                            this.props.history.push('/pool/add')
+                        }}>{_('add_liq')}</span>
+                        <span className={jc(styles.menu_item, styles.menu_item_selected)} key='remove_liq'>{_('remove_liq')}</span>
+
+                    </div>
+                    <div className={styles.help}>
+                        <QuestionCircleOutlined />
                     </div>
                 </div>
-            </section>
-        </section>)
+                {page === 'form' ? this.renderForm() : this.renderResult()}
+
+            </div>
+
+        </Pool>
     }
 }

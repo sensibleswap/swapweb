@@ -70,11 +70,10 @@ const data = [
     },
 ];
 
-@connect(({ user, loading }) => {
+@connect(({ loading }) => {
     const { effects } = loading;
     return {
         // ...service,
-        ...user,
         // loading: effects['service/queryTx'] || false
     }
 })

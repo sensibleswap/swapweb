@@ -197,3 +197,13 @@ export const formatAmount = (value, n = 4) => {
   }
   return value;
 }
+
+
+
+export function strAbbreviation(str, arr = [7, 5]) {
+  if (!str) return;
+  if (str.length < arr[0] + arr[1]) return str;
+  const pre = str.substr(0, arr[0]);
+  const aft = str.substr(-arr[1], arr[1]);
+  return pre + '……' + aft;
+}

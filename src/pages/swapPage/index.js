@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import Chart from 'components/chart';
+// import Chart from 'components/chart';
 import Transactions from 'components/transactions';
 import Loading from 'components/loading';
 import styles from './index.less';
@@ -13,7 +13,7 @@ import Swap from '../swap';
 import PairStat from '../pairStat';
 // import PairIntro from '../pairIntro';
 import { connect } from 'umi';
-import BigNumber from 'bignumber.js';
+// import BigNumber from 'bignumber.js';
 import { jc } from 'common/utils';
 
 
@@ -29,7 +29,7 @@ export default class SwapPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            app_pannel: false
+            app_pannel: true
         }
     }
 
@@ -56,12 +56,10 @@ export default class SwapPage extends Component {
         return <div className={styles.content}>
             <div className={styles.main_title}>
                 <h2><span className={styles.strong}>{symbol1}</span>/{symbol2}</h2>
-                <div className={styles.subtitle}><span className={styles.strong}>{pairData.swapFeeRate}</span> {symbol2} {_('per')} {token1.symbol} </div>
             </div>
-            <Chart />
 
-            <h3 className={styles.title}>{symbol1}/{symbol2} {_('transactions')}</h3>
-            <Transactions />
+            <h3 className={styles.title}>{_('pair_stat')}</h3>
+            <PairStat pairData={{...pairData, token1, token2}} />
         </div>;
     }
 
@@ -71,8 +69,8 @@ export default class SwapPage extends Component {
             <section className={app_pannel ? jc(styles.left, styles.app_hide) : styles.left}>
                 <div className={styles.left_inner}>
                     <Header />
-                    {this.renderContent()}
-                    <Button type="primary" className={styles.app_start_btn} onClick={this.showPannel}>{_('start_swapping')}</Button>
+                    {/*this.renderContent()
+                    <Button type="primary" className={styles.app_start_btn} onClick={this.showPannel}>{_('start_swapping')}</Button>*/}
                 </div>
             </section>
             <section className={styles.right}>

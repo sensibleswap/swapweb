@@ -9,7 +9,7 @@
   width: calc(~"50% - 480px + 525px");
   min-width: 525px;
   min-height: 100vh;
-  background-color: #fff;
+  // background-color: #fff;
   display: flex;
   flex-direction: row-reverse;
   padding-bottom: 40px;
@@ -30,8 +30,10 @@
 
 .sidebar {
   width: 375px;
-  margin-left: 60px;
+  // margin-left: 60px;
   padding-top: 110px;
+  position: absolute;
+  left: -188px;
 }
 
 .content {
@@ -109,12 +111,13 @@ p.desc {
     width: 100%;
     min-width: auto;
     min-height: auto;
+    padding-bottom: 0;
   }
 
   .left_inner {
     width: 100%;
     margin-right: 0px;
-    padding-bottom: 100px;
+    // padding-bottom: 100px;
   }
 
   .right {
@@ -126,6 +129,8 @@ p.desc {
     width: 100%;
     margin-left: 0px;
     padding-top: 0;
+    position: static;
+
   }
 
   .app_start_btn {
@@ -133,7 +138,8 @@ p.desc {
   }
 
   .app_title {
-    display: block;
+    // display: block;
+    display: none;
     font-size: 16px;
     font-weight: 700;
     text-align: center;
@@ -147,6 +153,6 @@ p.desc {
   }
 
   .app_hide {
-    display: none;
+    // display: none;
   }
 }

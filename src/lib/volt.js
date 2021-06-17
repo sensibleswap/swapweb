@@ -1,6 +1,6 @@
-import VoltClient from 'voltsdk';
+// import VoltClient from 'voltsdk';
 
-const appId = "8bae44b15817711c";
+// const appId = "8bae44b15817711c";
 
-const Volt = new VoltClient({appId, loginType: 'normal'});
-export default Volt;
+// const Volt = new VoltClient({appId, loginType: 'normal'});
+// export default Volt;

@@ -28,7 +28,7 @@ if (!langMatch) {
 // 生成语言选择的下拉菜单
 let currentLangLabel;
 langs.forEach(item => {
-  if (item.name === currentLang) {
+  if (item.name !== currentLang) {
     currentLangLabel = item.label;
   }
 });

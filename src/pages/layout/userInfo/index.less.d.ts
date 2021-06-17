@@ -11,10 +11,12 @@ interface CssExports {
   'btn': string;
   'btns': string;
   'cancel': string;
+  'chooseLogin_dialog': string;
   'connect': string;
   'connect_app': string;
   'dia_title': string;
   'dialog': string;
+  'dot': string;
   'ft': string;
   'hd': string;
   'line': string;

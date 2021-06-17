@@ -99,8 +99,8 @@ export default class SelectToken extends Component {
                     />
                 </div>
                 <div className={styles.token_list}>
-                    {showList && showList.map((item) => (
-                        <div className={styles.item} key={item} onClick={()=>this.select(item.name)}>
+                    {showList && showList.map((item, index) => (
+                        <div className={styles.item} key={item+index} onClick={()=>this.select(item.name)}>
                             <div className={styles.icon}><TokenLogo name={item.token1.symbol} size={25} /><TokenLogo name={item.token2.symbol} size={25} style={{marginLeft: '-8px'}} /></div>
                             <div className={styles.title}>
                                 <div className={styles.name}>{item.name.toUpperCase()}</div>

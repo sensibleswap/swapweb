@@ -2,18 +2,24 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import { withRouter } from 'umi';
 import Chart from 'components/chart';
 import Loading from 'components/loading';
 import styles from './index.less';
 import _ from 'i18n';
 
 import Header from '../layout/header';
-import Liquidity from '../liquidity';
+// import AddLiq from '../addLiq';
+// import RemoveLiq from '../removeLiq';
 // import PairStat from '../pairStat';
 // import PairIntro from '../pairIntro';
 import { connect } from 'umi';
 import { jc } from 'common/utils';
 
+
+
+
+@withRouter
 @connect(({ pair, loading }) => {
     const { effects } = loading;
     return {
@@ -25,7 +31,7 @@ export default class Pool extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            app_pannel: false
+            app_pannel: true,
         }
     }
 
@@ -40,6 +46,7 @@ export default class Pool extends Component {
             app_pannel: false
         })
     }
+
 
     renderContent() {
 
@@ -56,12 +63,13 @@ export default class Pool extends Component {
 
     render() {
         const { app_pannel } = this.state;
+
         return (<section className={styles.container}>
             <section className={app_pannel ? jc(styles.left, styles.app_hide) : styles.left}>
                 <div className={styles.left_inner}>
                     <Header />
-                    {this.renderContent()}
-                    <Button type="primary" className={styles.app_start_btn} onClick={this.showPannel}>{_('start_pooling')}</Button>
+                    {/*this.renderContent()
+                    <Button type="primary" className={styles.app_start_btn} onClick={this.showPannel}>{_('start_pooling')}</Button>*/}
                 </div>
             </section>
             <section className={styles.right}>
@@ -70,7 +78,10 @@ export default class Pool extends Component {
                         {_('pool')}
                         <div className={styles.close} onClick={this.hidePannel}><CloseOutlined /></div>
                     </div>
-                    <Liquidity />
+
+                    {this.props.children}
+
+
                 </div>
             </section>
         </section>)

@@ -3,24 +3,27 @@ import React, { Component } from 'react';
 import styles from './index.less';
 import _ from 'i18n';
 import { Button, Popover, Modal, Select } from 'antd';
-import { UpOutlined, SwapOutlined, UserOutlined, DownOutlined, CheckOutlined, LoadingOutlined, CloseOutlined } from '@ant-design/icons';
-import CustomIcon from 'components/icon';
+import { UpOutlined, SwapOutlined, UserOutlined, DownOutlined, CheckOutlined, LoadingOutlined, CloseOutlined, DollarOutlined } from '@ant-design/icons';
+// import CustomIcon from 'components/icon';
+import Clipboard from 'components/clipboard';
 import { withRouter, connect } from 'umi';
-import Login from '../login';
+// import Login from '../login';
 import Lang from '../lang';
-import Volt from 'lib/volt';
-// import EventBus from 'common/eventBus';
+// import Volt from 'lib/volt';
+// import bsv from 'lib/webWallet';
+import EventBus from 'common/eventBus';
+import { strAbbreviation } from 'common/utils';
 
 
 
-let _loginTimer;
-const { Option } = Select;
+// let _loginTimer;
+// const { Option } = Select;
 @withRouter
 @connect(({ user, loading }) => {
     const effects = loading.effects;
     return {
         ...user,
-        connecting: effects['user/getWalletById'] || effects['user/switchWallet'],
+        connecting: effects['user/loadingUserData'] || effects['user/connectWebWallet'],
     }
 
 })
@@ -31,23 +34,26 @@ export default class UserInfo extends Component {
             pop_visible: false,
             dialog_visible: false,
             login_visible: false,
+            chooseLogin_visible: false,
             select_account_index: '',
             wallet_list: [],
+            isLogin: false
         }
     }
 
     componentDidMount() {
-        // setTimeout(()=>{
-        //     this.init();
-        // }, 1000)
-        // EventBus.on('login', this.login)
+        EventBus.on('login', this.chooseLoginWallet)
+        this.props.dispatch({
+            type: 'user/loadingUserData'
+        })
 
     }
 
+
     init = async () => {
 
-        const res = await Volt.isOnline();
-        debugger
+        // const res = await Volt.isOnline();
+        // debugger
         //   if (res) {
         //     const res = await Volt.getWalletById();
         //     // console.log(res);
@@ -104,22 +110,44 @@ export default class UserInfo extends Component {
     handleVisibleChange = visible => {
         this.setState({ pop_visible: visible });
     };
-    login = async () => {
-        const res = await Volt.login();
-        if (res) {
-            const res = await Volt.getWalletDetail();
-            // console.log(res);
-            if (res.code !== 200) return;
-            const wallet = res.data;
-            await this.props.dispatch({
-                type: 'user/saveWalletData',
-                payload: {
-                    isLogin: true,
-                    accountName: wallet.paymail || wallet.name,
-                    wallet: wallet,
-                },
-            });
-        }
+    // login = async () => {
+    //     const res = await Volt.login();
+    //     if (res) {
+    //         const res = await Volt.getWalletDetail();
+    //         // console.log(res);
+    //         if (res.code !== 200) return;
+    //         const wallet = res.data;
+    //         await this.props.dispatch({
+    //             type: 'user/saveWalletData',
+    //             payload: {
+    //                 isLogin: true,
+    //                 accountName: wallet.paymail || wallet.name,
+    //                 wallet: wallet,
+    //             },
+    //         });
+    //     }
+    // }
+
+    connectWebWallet = async () => {
+        this.closeChooseDialog()
+        await this.props.dispatch({
+            type: 'user/connectWebWallet'
+        })
+        this.props.dispatch({
+            type: 'user/loadingUserData'
+        })
+    }
+
+    chooseLoginWallet = () => {
+        this.setState({
+            chooseLogin_visible: true,
+            pop_visible: false
+        })
+    }
+    closeChooseDialog = () => {
+        this.setState({
+            chooseLogin_visible: false
+        })
     }
 
     // 打开登录对话框
@@ -167,20 +195,20 @@ export default class UserInfo extends Component {
     //     clearInterval(_loginTimer);
     // }
 
-    disConnect = async () => {
-        const res = await Volt.logout();
-        console.log(res)
-        if (res) {
-            this.setState({
-                login_visible: false,
-                pop_visible: false
-            })
-            this.props.dispatch({
-                type: 'user/logout',
-            })
-        }
+    // disConnect = async () => {
+    //     const res = await Volt.logout();
+    //     console.log(res)
+    //     if (res) {
+    //         this.setState({
+    //             login_visible: false,
+    //             pop_visible: false
+    //         })
+    //         this.props.dispatch({
+    //             type: 'user/logout',
+    //         })
+    //     }
 
-    }
+    // }
 
     confirmSwitchWallet = () => {
 
@@ -207,7 +235,7 @@ export default class UserInfo extends Component {
     }
 
     renderPop() {
-        const { accountName } = this.props;
+        const { userAddress } = this.props;
         return <div className={styles.user_pop}>
             <div className={styles.app_title}>
                 <Lang />
@@ -216,15 +244,14 @@ export default class UserInfo extends Component {
             </div>
             <div className={styles.hd}>
                 <div className={styles.left}>
-                    <div>{_('connected_account')}</div>
-                    <div className={styles.account_name}><CustomIcon type='iconVolt_logo' style={{ fontSize: 14 }} /> {accountName}</div>
+                    <div className={styles.account_name}><Clipboard text={userAddress} label={strAbbreviation(userAddress)} /></div>
                 </div>
                 <div className={styles.account_icon} onClick={this.closePop}>
                     <UpOutlined />
                 </div>
             </div>
             <div className={styles.bd}>
-                <div className={styles.line} onClick={this.showDialog}>
+                <div className={styles.line} onClick={this.chooseLoginWallet}>
                     <SwapOutlined style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }} />
                     <span className={styles.name}>{_('switch_wallet')}</span>
                 </div>
@@ -232,22 +259,28 @@ export default class UserInfo extends Component {
                     this.props.history.push('my');
                     this.closePop()
                 }}>
+                    <DollarOutlined style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }} />
+                    <span className={styles.name}>{_('withdraw')}</span>
+            </div>
+                {/*<div className={styles.line} onClick={() => {
+                    this.props.history.push('my');
+                    this.closePop()
+                }}>
                     <UserOutlined style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }} />
                     <span className={styles.name}>{_('go_to_infopage')}</span>
-                </div>
+            </div>*/}
             </div>
             <div className={styles.ft}>
-                <Button className={styles.btn} style={{ width: '100%' }} onClick={this.disConnect}>{_('disconnect_account')}</Button>
+                <Button className={styles.btn} style={{ width: '100%' }}>{_('disconnect_account')}</Button>
             </div>
         </div>
     }
 
     render() {
-        const { pop_visible, dialog_visible, login_visible, wallet_list, select_account_index, walletList_loading } = this.state;
-        const { isLogin, accountName, connecting } = this.props;
-        return isLogin ?
-            <>
-                <Popover
+        const { pop_visible, chooseLogin_visible } = this.state;
+        const { userAddress, connecting, isLogin } = this.props;
+        return <>{isLogin ?
+            <Popover
                     content={this.renderPop()}
                     trigger="click"
                     visible={pop_visible}
@@ -255,50 +288,29 @@ export default class UserInfo extends Component {
                     placement='bottomRight'
                 >
                     <div className={styles.account_trigger}>
-                        <CustomIcon type='iconVolt_logo' style={{ fontSize: 14, marginRight: 5 }} />{accountName}
-                        <div className={styles.account_icon}>
-                            <DownOutlined />
-                        </div>
+                        {strAbbreviation(userAddress)} <span className={styles.dot}></span>
                     </div>
                 </Popover>
-                <Modal
-                    title=""
-                    visible={dialog_visible}
-                    footer={null}
-                    className={styles.dialog}
-                    width='435px'
-                    closable={false}
-                    onCancel={this.closeDialog}
-                >
-                    <div className={styles.account}>
-                        <div className={styles.dia_title}>{_('select_wallet_title')}</div>
-                        <div className={styles.acc_list_box}>
-                            <CustomIcon type='iconlogo-bitcoin' style={{ fontSize: 40, marginRight: 13 }} />
-                            {walletList_loading ? <LoadingOutlined /> : <Select className={styles.acc_list} style={{ width: 297 }} onChange={this.switchAccountName} defaultValue={select_account_index}>
-                                {wallet_list.map((item, index) => (<Option value={index} key={item.id}>{item.name}</Option>))}
-                            </Select>}
-                        </div>
-                    </div>
-                    <div className={styles.persission_title}>{_('permission_request')}</div>
-                    <div className={styles.website}>{window.location.origin}</div>
-                    <ul className={styles.tips}>
-                        <li><CheckOutlined /> {_('permis_tips_1')}</li>
-                        <li><CheckOutlined /> {_('permis_tips_2')}</li>
-                        <li><CheckOutlined /> {_('permis_tips_3')}</li>
-                        <li><CheckOutlined /> {_('permis_tips_4')}</li>
-                    </ul>
-                    <div className={styles.btns}>
-                        <Button className={styles.btn} type='primary' onClick={this.confirmSwitchWallet} disabled={walletList_loading}>{_('agree_switch')}</Button>
-                        <div className={styles.cancel} onClick={this.closeDialog}>{_('cancel')}</div>
-                    </div>
-                </Modal>
-            </>
             : <>
 
-                {connecting ? <div className={styles.connect}><LoadingOutlined /></div> : <div className={styles.connect} onClick={this.login}>{_('connect_wallet')}</div>}
+                {connecting ? <div className={styles.connect}><LoadingOutlined /></div> : <div className={styles.connect} onClick={this.chooseLoginWallet}>{_('connect_wallet')}</div>}
 
-                {connecting ? <div className={styles.connect_app}><LoadingOutlined /></div> : <div className={styles.connect_app} onClick={this.login}><UserOutlined /></div>}
+                {connecting ? <div className={styles.connect_app}><LoadingOutlined /></div> : <div className={styles.connect_app} onClick={this.chooseLoginWallet}><UserOutlined /></div>}
 
+            </>}
+            
+            {chooseLogin_visible && <Modal
+                title="connect to a wallet"
+                visible={chooseLogin_visible}
+                footer={null}
+                className={styles.chooseLogin_dialog}
+                width='400px'
+                onCancel={this.closeChooseDialog}
+            >
+                <ul>
+                    <li onClick={this.connectWebWallet}>Web Wallet</li>
+                </ul>
+            </Modal>}
             </>;
     }
 }

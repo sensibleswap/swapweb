@@ -22,7 +22,7 @@ export default {
 
     * getAllPairs({ payload }, { call, put }) {
       const res = yield pairApi.queryAllPairs.call(pairApi);
-      console.log(res)
+      // console.log(res)
       const { data } = res;
 
       if (res.code !== 0) {
@@ -50,7 +50,7 @@ export default {
     * getPairData({ payload }, { call, put }) {
       let { currentPair } = payload;
       const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
-      console.log(res);
+      // console.log(res);
       const { code, msg, data } = res;
       if (code !== 0) {
         console.log(msg);
@@ -63,17 +63,13 @@ export default {
           currentPair
         }
       });
-      console.log(data)
+      // console.log(data)
       return data
 
     },
 
     * reqSwap({payload}, {call, put}) {
-      const address = '1e1PZ9rVo98v1k34PAVU7UzqPo5VWbYWY'
-      const res = yield pairApi.reqSwap.call(pairApi, {
-        ...payload,
-        address,
-      });
+      const res = yield pairApi.reqSwap.call(pairApi, payload);
       console.log(res)
       return res;
     },
