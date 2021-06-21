@@ -259,10 +259,13 @@ export default class Liquidity extends Component {
               </div>
             </div>
             <div className={styles.box}>
-              <div className={styles.coin}>
+              <div
+                className={styles.coin}
+                onClick={() => this.showUI('selectToken')}
+              >
                 <TokenLogo name={symbol1} />
                 <div className={styles.name}>{symbol1}</div>
-                <DownOutlined onClick={() => this.showUI('selectToken')} />
+                <DownOutlined />
               </div>
               <FormItem name={'origin_amount'}>
                 <InputNumber
@@ -289,12 +292,15 @@ export default class Liquidity extends Component {
             </div>
 
             <div className={styles.box}>
-              <div className={styles.coin}>
+              <div
+                className={styles.coin}
+                onClick={() => this.showUI('selectToken')}
+              >
                 <div style={{ width: 40 }}>
                   <TokenLogo name={symbol2} />
                 </div>
                 <div className={styles.name}>{symbol2 || _('select')}</div>
-                <DownOutlined onClick={() => this.showUI('selectToken')} />
+                <DownOutlined />
               </div>
               <FormItem name={'aim_amount'}>
                 <InputNumber
@@ -319,9 +325,10 @@ export default class Liquidity extends Component {
   renderButton = () => {
     const { isLogin, token1, token2, userBalance } = this.props;
     const { origin_amount, aim_amount } = this.state;
+    let btn;
     if (!isLogin) {
       // 未登录
-      return (
+      btn = (
         <Button className={styles.btn_wait} onClick={this.login}>
           {_('login')}
         </Button>
@@ -333,37 +340,41 @@ export default class Liquidity extends Component {
     // }
     else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
       // 未输入数量
-      return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+      btn = <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
     } else if (parseFloat(origin_amount) > parseFloat(userBalance.BSV || 0)) {
       // 余额不足
-      return (
+      btn = (
         <Button className={styles.btn_wait}>
-          {_('lac_token_balance', token1.symbol)}
+          {_('lac_token_balance', token1.symbol.toUpperCase())}
         </Button>
       );
     } else if (
       parseFloat(aim_amount) > parseFloat(userBalance[token2.codeHash] || 0)
     ) {
       // 余额不足
-      return (
+      btn = (
         <Button className={styles.btn_wait}>
-          {_('lac_token_balance', token2.symbol)}
+          {_('lac_token_balance', token2.symbol.toUpperCase())}
         </Button>
       );
     } else {
-      return (
-        <div>
-          {this.renderInfo()}
-          <Button
-            className={styles.btn}
-            type="primary"
-            onClick={this.handleSubmit}
-          >
-            {_('supply_liq')}
-          </Button>
-        </div>
+      btn = (
+        <Button
+          className={styles.btn}
+          type="primary"
+          onClick={this.handleSubmit}
+        >
+          {_('supply_liq')}
+        </Button>
       );
     }
+
+    return (
+      <div>
+        {this.renderInfo()}
+        {btn}
+      </div>
+    );
   };
 
   handleSubmit = async () => {
@@ -387,7 +398,7 @@ export default class Liquidity extends Component {
 
     const _aim_amount = BigNumber(aim_amount)
       .multipliedBy(Math.pow(10, token2.decimal))
-      .toNumber();
+      .toFixed(0);
     const token_tx_res = await dispatch({
       type: 'user/transferFtTres',
       payload: {
@@ -409,7 +420,7 @@ export default class Liquidity extends Component {
       type: 'user/transferBsv',
       payload: {
         address: bsvToAddress,
-        amount: _origin_amount.plus(txFee).toNumber(),
+        amount: _origin_amount.plus(txFee).toFixed(0),
       },
     });
     // console.log(bsv_tx_res);
@@ -427,7 +438,7 @@ export default class Liquidity extends Component {
         token1OutputIndex: 0,
         token2TxID: token_tx_res.txid,
         token2OutputIndex: 0,
-        token1AddAmount: _origin_amount.toNumber(),
+        token1AddAmount: _origin_amount.toFixed(0),
       },
     });
 
@@ -435,10 +446,24 @@ export default class Liquidity extends Component {
       return message.error(addliq_res.msg);
     }
     message.success('success');
+    this.updateData();
     this.setState({
       formFinish: true,
     });
   };
+
+  updateData() {
+    const { dispatch, currentPair } = this.props;
+    dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        currentPair,
+      },
+    });
+    dispatch({
+      type: 'user/loadingUserData',
+    });
+  }
 
   renderResult() {
     const { token1, token2, history } = this.props;
@@ -485,7 +510,7 @@ export default class Liquidity extends Component {
               className={jc(styles.menu_item, styles.menu_item_selected)}
               key="add_liq"
             >
-              {_('add_liq')}
+              {_('add_liq_short')}
             </span>
             <span
               className={styles.menu_item}
@@ -494,7 +519,7 @@ export default class Liquidity extends Component {
                 this.props.history.push('remove');
               }}
             >
-              {_('remove_liq')}
+              {_('remove_liq_short')}
             </span>
           </div>
           <div className={styles.help}>

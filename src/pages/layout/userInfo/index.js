@@ -2,13 +2,13 @@
 import React, { Component } from 'react';
 import styles from './index.less';
 import _ from 'i18n';
-import { Button, Popover, Modal, Select } from 'antd';
+import { Button, Popover, Modal } from 'antd';
 import {
   UpOutlined,
   SwapOutlined,
   UserOutlined,
-  DownOutlined,
-  CheckOutlined,
+  //   DownOutlined,
+  //   CheckOutlined,
   LoadingOutlined,
   CloseOutlined,
   DollarOutlined,
@@ -271,7 +271,7 @@ export default class UserInfo extends Component {
           <div
             className={styles.line}
             onClick={() => {
-              this.props.history.push('/my');
+              this.props.history.push('/webwallet');
               this.closePop();
             }}
           >

@@ -15,7 +15,7 @@ import Loading from 'components/loading';
 import BigNumber from 'bignumber.js';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 import EventBus from 'common/eventBus';
-import { formatAmount } from 'common/utils';
+import { formatAmount, formatSat } from 'common/utils';
 import debug from 'debug';
 const log = debug('swap');
 // import bsv from 'lib/webWallet';
@@ -60,6 +60,7 @@ export default class Swap extends Component {
       aim_amount: 0,
       slip: 0,
       fee: 0,
+      txFee: 0,
       lastMod: '',
       dirForward: true, //交易对方向，true正向 false反向
       // bsvToToken: true,
@@ -182,10 +183,10 @@ export default class Swap extends Component {
     const symbol1 = origin_token.symbol.toUpperCase();
     return (
       <div className={styles.box}>
-        <div className={styles.coin}>
+        <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <TokenLogo name={symbol1} />
           <div className={styles.name}>{symbol1}</div>
-          <DownOutlined onClick={() => this.showUI('selectToken')} />
+          <DownOutlined />
         </div>
         <FormItem name="origin_amount">
           <InputNumber
@@ -207,12 +208,12 @@ export default class Swap extends Component {
     const symbol2 = aim_token.symbol.toUpperCase();
     return (
       <div className={styles.box}>
-        <div className={styles.coin}>
+        <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <div style={{ width: 40 }}>
             {symbol2 && <TokenLogo name={symbol2} />}
           </div>
           <div className={styles.name}>{symbol2 || _('select')}</div>
-          <DownOutlined onClick={() => this.showUI('selectToken')} />
+          <DownOutlined />
         </div>
         <FormItem name="aim_amount">
           <InputNumber
@@ -347,6 +348,10 @@ export default class Swap extends Component {
     const { slip, fee } = this.state;
     const symbol1 = origin_token.symbol.toUpperCase();
     const symbol2 = aim_token.symbol.toUpperCase();
+    const price = dirForward
+      ? formatAmount(swapToken2Amount / swapToken1Amount)
+      : formatAmount(swapToken1Amount / swapToken2Amount);
+    log(price);
 
     const tol =
       datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];
@@ -386,8 +391,7 @@ export default class Swap extends Component {
             <div className={styles.key_value}>
               <div className={styles.key}>{_('price')}</div>
               <div className={styles.value}>
-                1 {symbol1} ={' '}
-                {formatAmount(swapToken2Amount / swapToken1Amount)} {symbol2}
+                1 {symbol1} = {price} {symbol2}
               </div>
             </div>
             <div className={styles.key_value}>
@@ -505,7 +509,7 @@ export default class Swap extends Component {
         type: 'user/transferBsv',
         payload: {
           address: bsvToAddress,
-          amount: amount.plus(txFee).toNumber(),
+          amount: amount.plus(txFee).toFixed(0),
         },
       });
       //   console.log(ts_res);
@@ -517,12 +521,12 @@ export default class Swap extends Component {
         ...payload,
         token1TxID: ts_res.txid,
         token1OutputIndex: 0,
-        token1AddAmount: amount.toNumber(),
+        token1AddAmount: amount.toFixed(0),
       };
     } else {
       const amount = BigNumber(origin_amount)
         .multipliedBy(Math.pow(10, token2.decimal))
-        .toNumber();
+        .toFixed(0);
       const bsv_tx_res = await dispatch({
         type: 'user/transferFtTres',
         payload: {
@@ -567,6 +571,7 @@ export default class Swap extends Component {
     this.setState({
       formFinish: true,
       txid: swap_res.data,
+      txFee: txFee,
     });
   };
 
@@ -586,7 +591,7 @@ export default class Swap extends Component {
       showDetail,
       origin_amount,
       aim_amount,
-      fee,
+      txFee,
       dirForward,
       txid,
     } = this.state;
@@ -625,9 +630,7 @@ export default class Swap extends Component {
             </div>
             <div className={styles.detail_item}>
               <div className={styles.item_label}>{_('swap_fee')}</div>
-              <div className={styles.item_value}>
-                {fee} {symbol1}
-              </div>
+              <div className={styles.item_value}>{formatSat(txFee)} BSV</div>
             </div>
             <div className={styles.detail_item}>
               <div className={styles.item_label}>{_('onchain_tx')}</div>

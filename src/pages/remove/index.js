@@ -92,9 +92,7 @@ export default class RemovePage extends Component {
       const { token1, token2 } = allPairs[currentPair];
       const symbol1 = token1.symbol.toUpperCase();
       const symbol2 = token2.symbol.toUpperCase();
-      const price = BigNumber(swapToken2Amount)
-        .div(swapToken1Amount)
-        .toNumber();
+      const price = BigNumber(swapToken2Amount).div(swapToken1Amount);
       this.setState({
         symbol1,
         symbol2,
@@ -102,6 +100,19 @@ export default class RemovePage extends Component {
       });
     }
     // console.log(pairData);
+  }
+
+  updateData() {
+    const { dispatch, currentPair } = this.props;
+    dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        currentPair,
+      },
+    });
+    dispatch({
+      type: 'user/loadingUserData',
+    });
   }
 
   renderContent() {
@@ -282,13 +293,13 @@ export default class RemovePage extends Component {
       return message.error(res.msg);
     }
 
-    const { tokenToAddress, requestIndex } = res.data;
+    const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
     const _value = BigNumber(value)
       .multipliedBy(LP)
       .div(100)
       .multipliedBy(Math.pow(10, token2.decimal))
-      .toNumber();
+      .toFixed(0);
     const token_tx_res = await dispatch({
       type: 'user/transferFtTres',
       payload: {
@@ -305,6 +316,19 @@ export default class RemovePage extends Component {
       return message.error(token_tx_res.msg);
     }
 
+    const bsv_tx_res = await dispatch({
+      type: 'user/transferBsv',
+      payload: {
+        address: bsvToAddress,
+        amount: txFee,
+      },
+    });
+    // console.log(bsv_tx_res);
+
+    if (bsv_tx_res.msg) {
+      return message.error(bsv_tx_res.msg);
+    }
+
     const removeliq_res = await dispatch({
       type: 'pair/removeLiq',
       payload: {
@@ -312,6 +336,8 @@ export default class RemovePage extends Component {
         requestIndex: requestIndex,
         lpTokenTxID: token_tx_res.txid,
         lpTokenOutputIndex: 0,
+        minerFeeTxID: bsv_tx_res.txid,
+        minerFeeTxOutputIndex: 0,
       },
     });
 
@@ -319,6 +345,7 @@ export default class RemovePage extends Component {
       return message.error(removeliq_res.msg);
     }
     message.success('success');
+    this.updateData();
     this.setState({
       formFinish: true,
     });
@@ -433,13 +460,13 @@ export default class RemovePage extends Component {
                   this.props.history.push('/pool/add');
                 }}
               >
-                {_('add_liq')}
+                {_('add_liq_short')}
               </span>
               <span
                 className={jc(styles.menu_item, styles.menu_item_selected)}
                 key="remove_liq"
               >
-                {_('remove_liq')}
+                {_('remove_liq_short')}
               </span>
             </div>
             <div className={styles.help}>

@@ -10,14 +10,13 @@ export default function Pair(props) {
   const { pairData, curPair, userBalance } = props;
   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
   const { lptoken, token1, token2 } = curPair;
-  const LP = userBalance
-    ? formatAmount(formatSat(userBalance[lptoken.codeHash], lptoken.decimal))
-    : 0;
+  const LP = userBalance[lptoken.codeHash] || 0;
   const rate = LP / swapLpAmount;
   const _token1 = formatAmount(
     formatSat(swapToken1Amount, token1.decimal || 8),
+    8,
   );
-  const _token2 = formatAmount(formatSat(swapToken2Amount, token2.decimal));
+  const _token2 = formatAmount(formatSat(swapToken2Amount, token2.decimal), 8);
   const _rate = (rate * 100).toFixed(2);
 
   return (

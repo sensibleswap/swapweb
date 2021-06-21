@@ -19,9 +19,10 @@ import { connect } from 'umi';
 import { jc } from 'common/utils';
 
 @withRouter
-@connect(({ pair, loading }) => {
+@connect(({ user, pair, loading }) => {
   const { effects } = loading;
   return {
+    ...user,
     ...pair,
     loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
   };
@@ -30,7 +31,7 @@ export default class Pool extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      app_pannel: true,
+      app_pannel: false,
     };
   }
 

@@ -3,6 +3,8 @@
 import bytes from 'bytes';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
+import debug from 'debug';
+const log = debug('utils');
 const location = window.location;
 
 // 格式化日期
@@ -198,7 +200,7 @@ export const formatAmount = (value, n = 4) => {
   if (value.toString().indexOf('e') > -1 || (arr[1] && arr[1].length > n)) {
     return BigNumber(value).toFixed(n);
   }
-  if (typeof value === 'object') return value.toNumber();
+  if (typeof value === 'object') return value.toFixed(n);
   return value;
 };
 

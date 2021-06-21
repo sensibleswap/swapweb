@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-// import { Button } from 'antd';
+import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 // import Chart from 'components/chart';
 // import Transactions from 'components/transactions';
@@ -27,7 +27,7 @@ export default class SwapPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      app_pannel: true,
+      app_pannel: false,
     };
   }
 
@@ -66,7 +66,7 @@ export default class SwapPage extends Component {
   render() {
     const { app_pannel } = this.state;
     return (
-      <section className={jc(styles.container, styles.container_center)}>
+      <section className={styles.container}>
         <section
           className={
             app_pannel ? jc(styles.left, styles.app_hide) : styles.left
@@ -74,8 +74,14 @@ export default class SwapPage extends Component {
         >
           <div className={styles.left_inner}>
             <Header />
-            {/*this.renderContent()
-                    <Button type="primary" className={styles.app_start_btn} onClick={this.showPannel}>{_('start_swapping')}</Button>*/}
+            {this.renderContent()}
+            <Button
+              type="primary"
+              className={styles.app_start_btn}
+              onClick={this.showPannel}
+            >
+              {_('start_swapping')}
+            </Button>
           </div>
         </section>
         <section className={styles.right}>

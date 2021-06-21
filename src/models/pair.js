@@ -106,9 +106,10 @@ export default {
       let { allPairs, currentPair, mode } = action.payload;
       if (!allPairs) allPairs = state.allPairs;
       if (!currentPair) {
-        return { ...state, ...action.payload };
+        log('no currentPair');
+        return { ...state, allPairs, currentPair };
       }
-      if (mode === 'init' && state.currentPair) {
+      if (mode === 'init' && state.currentPair && allPairs[state.currentPair]) {
         currentPair = state.currentPair;
       }
 
