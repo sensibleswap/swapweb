@@ -3,6 +3,7 @@ export default [
   { path: '/swap', component: '@/pages/swapPage' },
   { path: '/pool/add', component: '@/pages/addLiq' },
   { path: '/pool/remove', component: '@/pages/remove' },
+  { path: '/webwallet', component: '@/pages/webwallet' },
   // { path: '/explore', component: '@/pages/explore'},
   // { path: '/my', component: '@/pages/my'},
   // { path: '/manage', component: '@/pages/manage'},

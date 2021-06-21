@@ -1,4 +1,6 @@
 import pairApi from '../api/pair';
+import debug from 'debug';
+const log = debug('pair');
 
 export default {
   namespace: 'pair',
@@ -21,7 +23,7 @@ export default {
   effects: {
     *getAllPairs({ payload }, { call, put }) {
       const res = yield pairApi.queryAllPairs.call(pairApi);
-      // console.log(res)
+      log('allPairs:', res);
       const { data } = res;
 
       if (res.code !== 0) {
@@ -41,6 +43,7 @@ export default {
         payload: {
           allPairs: data,
           currentPair,
+          mode: 'init',
         },
       });
       return data;
@@ -49,44 +52,48 @@ export default {
     *getPairData({ payload }, { call, put }) {
       let { currentPair } = payload;
       const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
-      // console.log(res);
+      log('pairData:', currentPair, res);
       const { code, msg, data } = res;
       if (code !== 0) {
         console.log(msg);
         return res;
       }
-      yield put({
-        type: 'savePair',
-        payload: {
-          pairData: data,
-          currentPair,
-        },
-      });
+      if (currentPair) {
+        yield put({
+          type: 'savePair',
+          payload: {
+            pairData: data,
+            currentPair,
+            mode: 'force',
+          },
+        });
+      }
+
       // console.log(data)
       return data;
     },
 
     *reqSwap({ payload }, { call, put }) {
       const res = yield pairApi.reqSwap.call(pairApi, payload);
-      console.log(res);
+      log('reqSwap:', res);
       return res;
     },
 
     *swap({ payload }, { call, put }) {
       const res = yield pairApi.swap.call(pairApi, payload);
-      console.log(res);
+      log('swap:', payload, res);
       return res;
     },
 
     *addLiq({ payload }, { call, put }) {
       const res = yield pairApi.addLiq.call(pairApi, payload);
-      console.log(res);
+      log('addLiq:', payload, res);
       return res;
     },
 
     *removeLiq({ payload }, { call, put }) {
       const res = yield pairApi.removeLiq.call(pairApi, payload);
-      console.log(res);
+      log('removeLiq:', payload, res);
       return res;
     },
   },
@@ -96,16 +103,24 @@ export default {
       return { ...state, ...action.payload };
     },
     savePair(state, action) {
-      let { allPairs, currentPair } = action.payload;
+      let { allPairs, currentPair, mode } = action.payload;
       if (!allPairs) allPairs = state.allPairs;
+      if (!currentPair) {
+        return { ...state, ...action.payload };
+      }
+      if (mode === 'init' && state.currentPair) {
+        currentPair = state.currentPair;
+      }
 
-      const { token1, token2 } = allPairs[currentPair];
+      const { token1, token2, lptoken } = allPairs[currentPair];
 
       return {
         ...state,
         ...action.payload,
+        currentPair,
         token1,
         token2,
+        lptoken,
       };
     },
   },

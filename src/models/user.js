@@ -1,5 +1,8 @@
 import bsv from 'lib/webWallet';
 import { formatSat } from 'common/utils';
+import debug from 'debug';
+const log = debug('user');
+const { localStorage } = window;
 
 export default {
   namespace: 'user',
@@ -17,8 +20,15 @@ export default {
     *loadingUserData({ payload }, { call, put }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
-      const accountInfo = yield bsv.getAccount();
+      let accountInfo;
+      try {
+        accountInfo = yield bsv.getAccount();
+      } catch (error) {
+        console.log(error);
+        return { msg: error };
+      }
       if (!accountInfo) return false;
+      localStorage.setItem('TSwapNetwork', accountInfo.network);
 
       const bsvBalance = yield bsv.getBsvBalance();
       const userAddress = yield bsv.getAddress();
@@ -29,7 +39,7 @@ export default {
       tokenBalance.forEach((item) => {
         userBalance[item.codehash] = formatSat(item.balance, item.tokenDecimal);
       });
-      console.log(accountInfo, userBalance, userAddress);
+      log('userData:', accountInfo, userBalance, userAddress);
 
       yield put({
         type: 'save',
@@ -40,16 +50,40 @@ export default {
           isLogin: true,
         },
       });
+      return {};
+    },
+    *disconnectWebWallet({ payload }, { call, put }) {
+      // console.log(bsv.exitAccount)
+      try {
+        yield bsv.exitAccount();
+      } catch (error) {
+        console.log(error);
+        return { msg: error };
+      }
+
+      yield put({
+        type: 'save',
+        payload: {
+          accountInfo: {},
+          userBalance: {},
+          userAddress: '',
+          isLogin: false,
+        },
+      });
     },
     *connectWebWallet({ payload }, { call, put }) {
-      const res = yield bsv.requestAccount().then();
-      console.log(res);
+      try {
+        const res = yield bsv.requestAccount().then();
+        // console.log(res);
+      } catch (error) {
+        return { msg: error };
+      }
     },
 
     *transferBsv({ payload }, { call, put }) {
       const { address, amount } = payload;
 
-      console.log(payload);
+      log('transferBsv:', payload);
       try {
         const res = yield bsv.transferBsv({
           receivers: [
@@ -59,7 +93,7 @@ export default {
             },
           ],
         });
-        console.log(res);
+        log(res);
         return res;
       } catch (error) {
         console.log(error);
@@ -68,9 +102,17 @@ export default {
     },
 
     *transferFtTres({ payload }, { call, put }) {
-      const { address, amount, codehash, genesis } = payload;
-
-      console.log(payload);
+      const { address, amount, codehash, genesishash } = payload;
+      log('transferFtTres:', {
+        receivers: [
+          {
+            address,
+            amount,
+          },
+        ],
+        codehash,
+        genesis: genesishash,
+      });
       try {
         const res = yield bsv.transferSensibleFt({
           receivers: [
@@ -80,9 +122,9 @@ export default {
             },
           ],
           codehash,
-          genesis,
+          genesis: genesishash,
         });
-        console.log(res);
+        log(res);
         return res;
       } catch (error) {
         console.log(error);

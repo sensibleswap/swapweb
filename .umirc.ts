@@ -21,7 +21,7 @@ export default defineConfig({
   },
   // proxy: {
   //     context: ['/allpairs', '/swapinfo', '/reqswapargs', '/token1totoken2', '/token2totoken1', '/addliq', '/removeliq'],
-  //     target: 'http://47.244.2.233:18333',
+  //     target: 'https://api.tswap.io',
   // },
   copy: [
     {

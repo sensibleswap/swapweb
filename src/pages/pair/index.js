@@ -1,70 +1,49 @@
-'use strict';
-import React, { Component } from 'react';
-import { Button } from 'antd';
+import React from 'react';
+// import CustomIcon from 'components/icon';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import Chart from 'components/chart';
-import CustomIcon from 'components/icon';
-import Pair from 'components/pair';
+import { formatSat, formatAmount } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
+import BigNumber from 'bignumber.js';
 
-import Header from '../layout/header';
-import Activity from 'components/activity';
-import { Link, withRouter } from 'umi';
+export default function Pair(props) {
+  const { pairData, curPair, userBalance } = props;
+  const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+  const { lptoken, token1, token2 } = curPair;
+  const LP = userBalance[lptoken.codeHash];
+  const rate = formatAmount(formatSat(LP / swapLpAmount, lptoken.decimal));
+  const _token1 = formatAmount(
+    formatSat(swapToken1Amount, token1.decimal || 8),
+  );
+  const _token2 = formatAmount(formatSat(swapToken2Amount, token2.decimal));
+  const _rate = (rate * 100).toFixed(2);
 
-@withRouter
-export default class PairPage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    }
-
-    renderContent() {
-
-        return <div className={styles.content}>
-            <div className={styles.main_title}>
-                <div className={styles.subtitle}>{_('your_liq')}</div>
-                <h2>
-                    <div className={styles.icon}>
-                        <CustomIcon type='iconlogo-bitcoin' />
-                        <CustomIcon type='iconlogo-vusd' />
-                    </div>
-                    <div className={styles.name}>BSV/vUSD</div>
-                </h2>
-            </div>
-            <Chart />
-            <Pair />
-            <div className={styles.btns}>
-                <Button type='primary' className={styles.btn} onClick={() => {
-                    this.props.history.push('pool')
-                }}>{_('add')}</Button>
-                <Button type='primary' className={styles.btn} onClick={() => {
-                    this.props.history.push('remove')
-                }}>{_('remove')}</Button>
-            </div>
-
-
-        </div>;
-    }
-
-    render() {
-        return (<section className={styles.container}>
-            <section className={styles.left}>
-                <div className={styles.left_inner}>
-                    <Header />
-                    {this.renderContent()}
-                </div>
-            </section>
-            <section className={styles.right}>
-                <div className={styles.sidebar}>
-                    <h3 className={styles.title}>{_('your_active')}</h3>
-                    <div className={styles.box}>
-                        <Activity />
-                    </div>
-                </div>
-            </section>
-        </section>)
-    }
+  return (
+    <div className={styles.container}>
+      <div className={styles.item}>
+        <div className={styles.title} style={{ display: 'flex' }}>
+          <div className={styles.name}>{_('pool_share')}</div>
+          <div className={styles.help}>
+            <QuestionCircleOutlined />
+          </div>
+        </div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>LP {_('tokens')}</div>
+          <div className={styles.info_value}>{LP}</div>
+        </div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>{_('pooled')} BSV</div>
+          <div className={styles.info_value}>{_token1}</div>
+        </div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>{_('pooled')} vUSD</div>
+          <div className={styles.info_value}>{_token2}</div>
+        </div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>{_('your_share')}</div>
+          <div className={styles.info_value}>{_rate}%</div>
+        </div>
+      </div>
+    </div>
+  );
 }

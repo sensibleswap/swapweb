@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Slider, Button, Spin, message } from 'antd';
+import { Slider, Button, Spin, message, Tooltip } from 'antd';
 // import Chart from 'components/chart';
 import CustomIcon from 'components/icon';
 import Pair from 'components/pair';
@@ -76,32 +76,44 @@ export default class RemovePage extends Component {
     const allPairs = await dispatch({
       type: 'pair/getAllPairs',
     });
-    console.log(allPairs);
+    // console.log(allPairs);
 
     let { currentPair } = this.props;
-    console.log(currentPair);
-    const pairData = await dispatch({
-      type: 'pair/getPairData',
-      payload: {
-        currentPair,
-      },
-    });
-    console.log(pairData);
+    // console.log(currentPair);
 
-    const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { token1, token2 } = allPairs[currentPair];
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-    const price = BigNumber(swapToken2Amount).div(swapToken1Amount).toNumber();
-    this.setState({
-      symbol1,
-      symbol2,
-      price: formatAmount(price),
-    });
+    if (currentPair) {
+      const pairData = await dispatch({
+        type: 'pair/getPairData',
+        payload: {
+          currentPair,
+        },
+      });
+      const { swapToken1Amount, swapToken2Amount } = pairData;
+      const { token1, token2 } = allPairs[currentPair];
+      const symbol1 = token1.symbol.toUpperCase();
+      const symbol2 = token2.symbol.toUpperCase();
+      const price = BigNumber(swapToken2Amount)
+        .div(swapToken1Amount)
+        .toNumber();
+      this.setState({
+        symbol1,
+        symbol2,
+        price: formatAmount(price),
+      });
+    }
+    // console.log(pairData);
   }
 
   renderContent() {
-    const { currentPair, pairData, loading, LP, allPairs } = this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      userBalance,
+      lptoken,
+      allPairs,
+    } = this.props;
+    const LP = userBalance[lptoken.codeHash];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
     return (
@@ -132,21 +144,40 @@ export default class RemovePage extends Component {
     this.setState({ value });
   };
   calc = () => {
-    const { value } = this.state;
-    const { currentPair, pairData, LP, allPairs } = this.props;
+    const {
+      currentPair,
+      pairData,
+      lptoken,
+      allPairs,
+      userBalance,
+      loading,
+    } = this.props;
+    let LP = userBalance[lptoken.codeHash];
+    if (loading || !LP) {
+      return {
+        removeToken1: 0,
+        removeToken2: 0,
+        removeLP: 0,
+      };
+    }
+    LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    const removeLP = (LP * value) / 100;
-    const rate = removeLP / swapLpAmount;
+    const { value } = this.state;
+    const removeLP = LP.multipliedBy(value).div(100);
+    const rate = removeLP.div(swapLpAmount);
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
-      swapToken1Amount * rate,
+      BigNumber(swapToken1Amount).multipliedBy(rate),
       token1.decimal || 8,
     );
-    const removeToken2 = formatSat(swapToken2Amount * rate, token2.decimal);
+    const removeToken2 = formatSat(
+      BigNumber(swapToken2Amount).multipliedBy(rate),
+      token2.decimal,
+    );
     return {
       removeToken1: formatAmount(removeToken1, 8),
       removeToken2: formatAmount(removeToken2, 8),
-      removeLP,
+      removeLP: formatSat(removeLP, lptoken.decimal),
     };
   };
 
@@ -228,7 +259,15 @@ export default class RemovePage extends Component {
 
   handleSubmit = async () => {
     const { value } = this.state;
-    const { dispatch, currentPair, userAddress, token2, LP } = this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token2,
+      userBalance,
+      lptoken,
+    } = this.props;
+    const LP = userBalance[lptoken.codeHash];
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -256,11 +295,11 @@ export default class RemovePage extends Component {
         address: tokenToAddress,
         amount: _value,
         codehash: token2.codeHash,
-        genesishash: token2.genesisHash,
+        genesishash: token2.tokenID,
       },
     });
 
-    console.log(token_tx_res);
+    // console.log(token_tx_res);
 
     if (token_tx_res.msg) {
       return message.error(token_tx_res.msg);
@@ -272,7 +311,7 @@ export default class RemovePage extends Component {
         symbol: currentPair,
         requestIndex: requestIndex,
         lpTokenTxID: token_tx_res.txid,
-        lpTokenOutputIndex: 1,
+        lpTokenOutputIndex: 0,
       },
     });
 
@@ -335,7 +374,8 @@ export default class RemovePage extends Component {
   }
 
   renderResult() {
-    const { LP } = this.props;
+    const { userBalance, lptoken } = this.props;
+    const LP = userBalance[lptoken.codeHash];
     const { symbol1, symbol2 } = this.state;
     const { removeLP } = this.calc();
     return (
@@ -403,7 +443,9 @@ export default class RemovePage extends Component {
               </span>
             </div>
             <div className={styles.help}>
-              <QuestionCircleOutlined />
+              <Tooltip title={_('swap_question')} placement="bottom">
+                <QuestionCircleOutlined />
+              </Tooltip>
             </div>
           </div>
           {formFinish ? this.renderResult() : this.renderForm()}

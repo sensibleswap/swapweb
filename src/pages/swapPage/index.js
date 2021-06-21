@@ -66,7 +66,7 @@ export default class SwapPage extends Component {
   render() {
     const { app_pannel } = this.state;
     return (
-      <section className={styles.container}>
+      <section className={jc(styles.container, styles.container_center)}>
         <section
           className={
             app_pannel ? jc(styles.left, styles.app_hide) : styles.left

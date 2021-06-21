@@ -16,6 +16,8 @@ import BigNumber from 'bignumber.js';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
+import debug from 'debug';
+const log = debug('swap');
 // import bsv from 'lib/webWallet';
 
 const { storage_name, defaultIndex, datas } = slippage_data;
@@ -66,23 +68,27 @@ export default class Swap extends Component {
   }
 
   componentDidMount() {
+    EventBus.on('reloadPair', this.fetch);
     this.fetch();
   }
 
-  async fetch() {
+  fetch = async () => {
     const { dispatch } = this.props;
     await dispatch({
       type: 'pair/getAllPairs',
     });
 
     let { currentPair } = this.props;
-    await dispatch({
-      type: 'pair/getPairData',
-      payload: {
-        currentPair,
-      },
-    });
-  }
+    log('currentPair:', currentPair);
+    if (currentPair) {
+      await dispatch({
+        type: 'pair/getPairData',
+        payload: {
+          currentPair,
+        },
+      });
+    }
+  };
 
   switch = async () => {
     let { dirForward } = this.state;
@@ -128,7 +134,7 @@ export default class Swap extends Component {
 
   changeOriginAmount = (value) => {
     if (value > 0) {
-      const fee = BigNumber(value).multipliedBy(feeRate).toFixed(2).toString();
+      const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), 8);
       this.setState({
         origin_amount: value,
         fee,
@@ -173,11 +179,12 @@ export default class Swap extends Component {
     const { token1, token2 } = this.props;
     const { dirForward } = this.state;
     const origin_token = dirForward ? token1 : token2;
+    const symbol1 = origin_token.symbol.toUpperCase();
     return (
       <div className={styles.box}>
         <div className={styles.coin}>
-          <TokenLogo name={origin_token.symbol} />
-          <div className={styles.name}>{origin_token.symbol.toUpperCase()}</div>
+          <TokenLogo name={symbol1} />
+          <div className={styles.name}>{symbol1}</div>
           <DownOutlined onClick={() => this.showUI('selectToken')} />
         </div>
         <FormItem name="origin_amount">
@@ -197,13 +204,14 @@ export default class Swap extends Component {
     const { token1, token2, pairData } = this.props;
     const { dirForward } = this.state;
     const aim_token = dirForward ? token2 : token1;
+    const symbol2 = aim_token.symbol.toUpperCase();
     return (
       <div className={styles.box}>
         <div className={styles.coin}>
           <div style={{ width: 40 }}>
-            {aim_token.symbol && <TokenLogo name={aim_token.symbol} />}
+            {symbol2 && <TokenLogo name={symbol2} />}
           </div>
-          <div className={styles.name}>{aim_token.symbol || _('select')}</div>
+          <div className={styles.name}>{symbol2 || _('select')}</div>
           <DownOutlined onClick={() => this.showUI('selectToken')} />
         </div>
         <FormItem name="aim_amount">
@@ -237,10 +245,7 @@ export default class Swap extends Component {
       this.setState({
         // origin_amount,
         lastMod: 'origin',
-        fee: BigNumber(origin_amount)
-          .multipliedBy(feeRate)
-          .toFixed(2)
-          .toString(),
+        fee: formatAmount(BigNumber(origin_amount).multipliedBy(feeRate), 8),
       });
     } else {
       this.setState({
@@ -335,6 +340,7 @@ export default class Swap extends Component {
 
   renderForm = () => {
     const { token1, token2, pairData, userBalance, submiting } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
@@ -380,7 +386,8 @@ export default class Swap extends Component {
             <div className={styles.key_value}>
               <div className={styles.key}>{_('price')}</div>
               <div className={styles.value}>
-                1 {symbol1} = {pairData.swapFeeRate} {symbol2}
+                1 {symbol1} ={' '}
+                {formatAmount(swapToken2Amount / swapToken1Amount)} {symbol2}
               </div>
             </div>
             <div className={styles.key_value}>
@@ -449,7 +456,7 @@ export default class Swap extends Component {
       // 池中币不足
       return (
         <Button className={styles.btn_wait}>
-          {_('not_enough', token2.symbol)}
+          {_('not_enough', token2.symbol.toUpperCase())}
         </Button>
       );
     } else if (beyond) {
@@ -501,7 +508,7 @@ export default class Swap extends Component {
           amount: amount.plus(txFee).toNumber(),
         },
       });
-      console.log(ts_res);
+      //   console.log(ts_res);
 
       if (ts_res.msg) {
         return message.error(ts_res.msg);
@@ -509,7 +516,7 @@ export default class Swap extends Component {
       payload = {
         ...payload,
         token1TxID: ts_res.txid,
-        token1OutputIndex: 1,
+        token1OutputIndex: 0,
         token1AddAmount: amount.toNumber(),
       };
     } else {
@@ -522,7 +529,7 @@ export default class Swap extends Component {
           address: tokenToAddress,
           amount: amount,
           codehash: token2.codeHash,
-          genesishash: token2.genesisHash,
+          genesishash: token2.tokenID,
         },
       });
       if (bsv_tx_res.msg) {
@@ -541,9 +548,9 @@ export default class Swap extends Component {
       payload = {
         ...payload,
         minerFeeTxID: token_tx_res.txid,
-        minerFeeTxOutputIndex: 1,
+        minerFeeTxOutputIndex: 0,
         token2TxID: bsv_tx_res.txid,
-        token2OutputIndex: 1,
+        token2OutputIndex: 0,
       };
     }
 
@@ -551,7 +558,7 @@ export default class Swap extends Component {
       type: 'pair/swap',
       payload,
     });
-    console.log(payload, swap_res);
+    // console.log(payload, swap_res);
 
     if (swap_res.code) {
       return message.error(swap_res.msg);
@@ -705,7 +712,8 @@ export default class Swap extends Component {
 
   render() {
     const { currentPair, loading } = this.props;
-    if (loading || !currentPair) return <Loading />;
+    if (loading) return <Loading />;
+    if (!currentPair) return 'No pair';
     const { page } = this.state;
     return (
       <div style={{ position: 'relative' }}>

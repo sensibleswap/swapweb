@@ -1,10 +1,12 @@
 'use strict';
 import React, { Component } from 'react';
-// import { Button } from 'antd';
+import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { withRouter } from 'umi';
 // import Chart from 'components/chart';
+import Pair from 'components/pair';
 import Loading from 'components/loading';
+import TokenLogo from 'components/tokenicon';
 import styles from './index.less';
 import _ from 'i18n';
 
@@ -44,18 +46,46 @@ export default class Pool extends Component {
     });
   };
 
-  // renderContent() {
+  renderContent() {
+    const {
+      currentPair,
+      pairData,
+      loading,
+      allPairs,
+      userBalance,
+    } = this.props;
+    if (loading || !currentPair) return <Loading />;
 
-  //     const { loading, token1, token2 } = this.props;
-  //     if (loading) return <Loading />
-  //     return <div className={styles.content}>
-  //         <div className={styles.main_title}>
-  //             <h2><span className={styles.strong}>{token1.symbol}</span>/{token2.symbol}</h2>
-  //             <div className={styles.subtitle}>{_('pair_lip_pool')}</div>
-  //         </div>
-  //         <Chart />
-  //     </div>;
-  // }
+    const { token1, token2 } = allPairs[currentPair];
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
+    return (
+      <div className={styles.content}>
+        <div className={styles.main_title}>
+          <h2>
+            <div className={styles.icon}>
+              <TokenLogo name={symbol1} size={40} />
+              <TokenLogo
+                name={symbol2}
+                size={40}
+                style={{ marginLeft: '-12px' }}
+              />
+            </div>
+            <div className={styles.name}>
+              {symbol1}/{symbol2}
+            </div>
+          </h2>
+          {/*<div className={styles.subtitle}>{_('your_liq')}</div>
+    <div className={styles.fiat}>$</div>*/}
+        </div>
+        <Pair
+          pairData={pairData}
+          curPair={allPairs[currentPair]}
+          userBalance={userBalance}
+        />
+      </div>
+    );
+  }
 
   render() {
     const { app_pannel } = this.state;
@@ -69,8 +99,14 @@ export default class Pool extends Component {
         >
           <div className={styles.left_inner}>
             <Header />
-            {/*this.renderContent()
-                    <Button type="primary" className={styles.app_start_btn} onClick={this.showPannel}>{_('start_pooling')}</Button>*/}
+            {this.renderContent()}
+            <Button
+              type="primary"
+              className={styles.app_start_btn}
+              onClick={this.showPannel}
+            >
+              {_('start_pooling')}
+            </Button>
           </div>
         </section>
         <section className={styles.right}>
