@@ -1,17 +1,17 @@
 import React from 'react';
 // import CustomIcon from 'components/icon';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+// import { QuestionCircleOutlined } from '@ant-design/icons';
 import { formatSat, formatAmount } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
-import BigNumber from 'bignumber.js';
+// import BigNumber from 'bignumber.js';
 
 export default function Pair(props) {
   const { pairData, curPair, userBalance } = props;
   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
   const { lptoken, token1, token2 } = curPair;
   const LP = userBalance[lptoken.codeHash] || 0;
-  const rate = LP / swapLpAmount;
+  const rate = LP / formatSat(swapLpAmount);
   const _token1 = formatAmount(
     formatSat(swapToken1Amount, token1.decimal || 8),
     8,
@@ -30,11 +30,15 @@ export default function Pair(props) {
           <div className={styles.info_value}>{LP}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>{_('pooled')} BSV</div>
+          <div className={styles.info_label}>
+            {_('pooled')} {token1.symbol.toUpperCase()}
+          </div>
           <div className={styles.info_value}>{_token1}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>{_('pooled')} vUSD</div>
+          <div className={styles.info_label}>
+            {_('pooled')} {token2.symbol.toUpperCase()}
+          </div>
           <div className={styles.info_value}>{_token2}</div>
         </div>
         <div className={styles.info_item}>

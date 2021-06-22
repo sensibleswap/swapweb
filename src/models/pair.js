@@ -2,6 +2,12 @@ import pairApi from '../api/pair';
 import debug from 'debug';
 const log = debug('pair');
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 export default {
   namespace: 'pair',
 
@@ -15,9 +21,7 @@ export default {
   },
 
   subscriptions: {
-    async setup({ dispatch, history }) {
-      // eslint-disable-line
-    },
+    async setup({ dispatch, history }) {},
   },
 
   effects: {

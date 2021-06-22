@@ -274,7 +274,7 @@ export default class RemovePage extends Component {
       dispatch,
       currentPair,
       userAddress,
-      token2,
+      // token2,
       userBalance,
       lptoken,
     } = this.props;
@@ -295,27 +295,6 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    const _value = BigNumber(value)
-      .multipliedBy(LP)
-      .div(100)
-      .multipliedBy(Math.pow(10, token2.decimal))
-      .toFixed(0);
-    const token_tx_res = await dispatch({
-      type: 'user/transferFtTres',
-      payload: {
-        address: tokenToAddress,
-        amount: _value,
-        codehash: token2.codeHash,
-        genesishash: token2.tokenID,
-      },
-    });
-
-    // console.log(token_tx_res);
-
-    if (token_tx_res.msg) {
-      return message.error(token_tx_res.msg);
-    }
-
     const bsv_tx_res = await dispatch({
       type: 'user/transferBsv',
       payload: {
@@ -323,10 +302,28 @@ export default class RemovePage extends Component {
         amount: txFee,
       },
     });
-    // console.log(bsv_tx_res);
 
     if (bsv_tx_res.msg) {
       return message.error(bsv_tx_res.msg);
+    }
+
+    const _value = BigNumber(value)
+      .multipliedBy(LP)
+      .div(100)
+      .multipliedBy(Math.pow(10, lptoken.decimal))
+      .toFixed(0);
+    const token_tx_res = await dispatch({
+      type: 'user/transferFtTres',
+      payload: {
+        address: tokenToAddress,
+        amount: _value,
+        codehash: lptoken.codeHash,
+        genesishash: lptoken.tokenID,
+      },
+    });
+
+    if (token_tx_res.msg) {
+      message.error(token_tx_res.msg);
     }
 
     const removeliq_res = await dispatch({
@@ -408,7 +405,10 @@ export default class RemovePage extends Component {
     return (
       <div className={styles.content}>
         <div className={styles.finish_logo}>
-          <CheckCircleOutlined style={{ fontSize: 80, color: '#2BB696' }} />
+          <CustomIcon
+            type="iconicon-success"
+            style={{ fontSize: 80, color: '#2BB696' }}
+          />
         </div>
         <div className={styles.finish_title}>{_('liq_removed')}</div>
         <div className={styles.small_title}>{_('your_pos')}</div>
@@ -423,7 +423,7 @@ export default class RemovePage extends Component {
               {symbol1}/{symbol2}
             </div>
           </div>
-          <div className={styles.pair_right}>{LP - removeLP}</div>
+          <div className={styles.pair_right}>{removeLP}</div>
         </div>
 
         {this.renderInfo()}

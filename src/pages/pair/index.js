@@ -32,11 +32,15 @@ export default function Pair(props) {
           <div className={styles.info_value}>{LP}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>{_('pooled')} BSV</div>
+          <div className={styles.info_label}>
+            {_('pooled')} {token1.symbol.toUpperCase()}
+          </div>
           <div className={styles.info_value}>{_token1}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>{_('pooled')} vUSD</div>
+          <div className={styles.info_label}>
+            {_('pooled')} {token2.symbol.toUpperCase()}
+          </div>
           <div className={styles.info_value}>{_token2}</div>
         </div>
         <div className={styles.info_item}>

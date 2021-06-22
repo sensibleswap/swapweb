@@ -7,8 +7,9 @@ import {
   QuestionCircleOutlined,
   DownOutlined,
   PlusOutlined,
-  CheckCircleOutlined,
+  // CheckCircleOutlined,
 } from '@ant-design/icons';
+import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import { formatAmount, formatSat, jc } from 'common/utils';
@@ -41,6 +42,7 @@ export default class Liquidity extends Component {
 
     this.state = {
       page: 'form',
+      lastMod: '',
       formFinish: false,
       showDetail: false,
       origin_amount: 0,
@@ -97,6 +99,7 @@ export default class Liquidity extends Component {
       origin_amount: value,
       aim_amount: user_aim_amount,
       lp: lpMinted,
+      lastMod: 'origin',
     });
   };
 
@@ -127,6 +130,7 @@ export default class Liquidity extends Component {
       aim_amount: value,
       origin_amount: user_origin_amount,
       lp: lpMinted,
+      lastMod: 'aim',
     });
   };
 
@@ -145,6 +149,9 @@ export default class Liquidity extends Component {
       lp = BigNumber(origin_amount)
         .multipliedBy(swapLpAmount)
         .div(swapToken1Amount);
+    } else {
+      aim_amount = 0;
+      lp = 0;
     }
     this.formRef.current.setFieldsValue({
       origin_amount,
@@ -154,6 +161,7 @@ export default class Liquidity extends Component {
       origin_amount,
       aim_amount,
       lp,
+      lastMod: 'origin',
     });
   };
 
@@ -172,6 +180,9 @@ export default class Liquidity extends Component {
       lp = BigNumber(origin_amount)
         .multipliedBy(swapLpAmount)
         .div(swapToken1Amount);
+    } else {
+      origin_amount = 0;
+      lp = 0;
     }
     this.formRef.current.setFieldsValue({
       origin_amount,
@@ -181,6 +192,7 @@ export default class Liquidity extends Component {
       origin_amount,
       aim_amount,
       lp,
+      lastMod: 'aim',
     });
   };
 
@@ -341,6 +353,9 @@ export default class Liquidity extends Component {
     else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
       // 未输入数量
       btn = <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+    } else if (parseFloat(origin_amount) <= formatSat(1000)) {
+      // 数额太小
+      btn = <Button className={styles.btn_wait}>{_('lower_amount')}</Button>;
     } else if (parseFloat(origin_amount) > parseFloat(userBalance.BSV || 0)) {
       // 余额不足
       btn = (
@@ -378,8 +393,7 @@ export default class Liquidity extends Component {
   };
 
   handleSubmit = async () => {
-    const { origin_amount, aim_amount } = this.state;
-    const { dispatch, currentPair, userAddress, token2 } = this.props;
+    const { dispatch, currentPair, userAddress, token1, token2 } = this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -394,11 +408,45 @@ export default class Liquidity extends Component {
       return message.error(res.msg);
     }
 
-    const { bsvToAddress, tokenToAddress, requestIndex, txFee } = res.data;
+    const {
+      bsvToAddress,
+      tokenToAddress,
+      requestIndex,
+      txFee,
+      swapToken1Amount,
+      swapToken2Amount,
+    } = res.data;
 
-    const _aim_amount = BigNumber(aim_amount)
-      .multipliedBy(Math.pow(10, token2.decimal))
-      .toFixed(0);
+    let { origin_amount, aim_amount, lastMod } = this.state;
+    let _origin_amount, _aim_amount;
+    if (lastMod === 'origin') {
+      _origin_amount = BigNumber(origin_amount).multipliedBy(1e8);
+      _aim_amount = _origin_amount
+        .multipliedBy(swapToken2Amount)
+        .div(swapToken1Amount)
+        .toFixed(0);
+
+      this.formRef.current.setFieldsValue({
+        aim_amount: formatAmount(formatSat(_aim_amount, token2.decimal), 8),
+      });
+    } else if (lastMod === 'aim') {
+      _aim_amount = BigNumber(aim_amount)
+        .multipliedBy(Math.pow(10, token2.decimal))
+        .toFixed(0);
+      _origin_amount = BigNumber(_aim_amount)
+        .multipliedBy(Math.pow(10, token2.decimal))
+        .multipliedBy(swapToken1Amount)
+        .div(swapToken2Amount);
+
+      this.formRef.current.setFieldsValue({
+        origin_amount: formatAmount(formatSat(_origin_amount), 8),
+      });
+    }
+    // const _aim_amount = BigNumber(origin_amount)
+    //   .multipliedBy(Math.pow(10, token1.decimal || 8))
+    //   .multipliedBy(swapToken2Amount)
+    //   .div(swapToken1Amount).toFixed(0);
+
     const token_tx_res = await dispatch({
       type: 'user/transferFtTres',
       payload: {
@@ -415,7 +463,6 @@ export default class Liquidity extends Component {
       return message.error(token_tx_res.msg);
     }
 
-    const _origin_amount = BigNumber(origin_amount).multipliedBy(1e8);
     const bsv_tx_res = await dispatch({
       type: 'user/transferBsv',
       payload: {
@@ -472,16 +519,19 @@ export default class Liquidity extends Component {
     return (
       <div className={styles.content}>
         <div className={styles.finish_logo}>
-          <CheckCircleOutlined style={{ fontSize: 80, color: '#2BB696' }} />
+          <CustomIcon
+            type="iconicon-success"
+            style={{ fontSize: 80, color: '#2BB696' }}
+          />
         </div>
         <div className={styles.finish_title}>
           {symbol1}/{symbol2}
         </div>
-        <div className={styles.finish_desc}>{_('pair_created')}</div>
+        <div className={styles.finish_desc}>{_('add_success')}</div>
 
-        <div className={styles.view_detail}>
+        {/*<div className={styles.view_detail}>
           {_('share_pair', `${symbol1}/${symbol2}`)}
-        </div>
+    </div>*/}
         {this.renderInfo()}
         <Button
           className={styles.done_btn}
@@ -548,19 +598,11 @@ export default class Liquidity extends Component {
       this.setState({
         origin_amount: 0,
         aim_amount: 0,
+        lastMod: '',
       });
 
       this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
     }
-  };
-
-  payCallback = (value) => {
-    if (value) {
-      this.setState({
-        formFinish: true,
-      });
-    }
-    this.closePayPop();
   };
 
   render() {

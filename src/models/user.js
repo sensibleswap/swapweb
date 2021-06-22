@@ -97,7 +97,7 @@ export default {
         return res;
       } catch (error) {
         console.log(error);
-        return { msg: error };
+        return { msg: error, txid: '' };
       }
     },
 
@@ -128,7 +128,7 @@ export default {
         return res;
       } catch (error) {
         console.log(error);
-        return { msg: error };
+        return { msg: error, txid: '' };
       }
     },
   },

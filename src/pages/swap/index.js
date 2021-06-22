@@ -276,8 +276,9 @@ export default class Swap extends Component {
       let removeAmount = addAmountWithFee
         .multipliedBy(amount2)
         .div(
-          BigNumber(amount1).multipliedBy(FEE_FACTOR).plus(addAmountWithFee),
+          BigNumber(amount1).plus(_originAddAmount).multipliedBy(FEE_FACTOR),
         );
+      // console.log(addAmountWithFee.multipliedBy(amount2).div(BigNumber(amount1).multipliedBy(FEE_FACTOR).plus(addAmountWithFee)).toString())
       newAmount2 = BigNumber(amount2).minus(removeAmount);
 
       removeAmount = formatAmount(
@@ -298,7 +299,15 @@ export default class Swap extends Component {
         .multipliedBy(FEE_FACTOR)
         .div(newAmount2);
 
-      let addAmount = addAmountWithFee.div(FEE_FACTOR - swapFeeRate);
+      // console.log(addAmountWithFee.div(FEE_FACTOR - swapFeeRate).toString());
+      let addAmount = _aimAddAmount
+        .multipliedBy(FEE_FACTOR)
+        .multipliedBy(amount1)
+        .div(
+          BigNumber(FEE_FACTOR - swapFeeRate)
+            .multipliedBy(amount2)
+            .minus(_aimAddAmount.multipliedBy(FEE_FACTOR)),
+        );
       addAmount = addAmount.div(Math.pow(10, token1.decimal || 8));
       newAmount1 = addAmount.plus(amount1);
       let addAmountN = formatAmount(addAmount, 8);
@@ -351,7 +360,6 @@ export default class Swap extends Component {
     const price = dirForward
       ? formatAmount(swapToken2Amount / swapToken1Amount)
       : formatAmount(swapToken1Amount / swapToken2Amount);
-    log(price);
 
     const tol =
       datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];

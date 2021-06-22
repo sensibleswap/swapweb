@@ -135,7 +135,7 @@ const texts = {
   remove: 'Remove',
   max: 'Max',
   liq_removed: 'Liquidity removed',
-  your_pos: 'Your position',
+  your_pos: 'Your removed position',
   your_re_liq: 'Your redeemed liquidity',
   earned: 'Earned',
 
@@ -178,6 +178,7 @@ const texts = {
   lac_token_balance: 'Insufficient %s Balance',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
+  lower_amount: 'Insufficient Amount',
 
   create_pair_tips: 'Understanding Impermanent Loss',
   create_pair_desc:
@@ -222,5 +223,6 @@ const texts = {
   swap_question:
     'You have to add both BSV and pair token into the pool according to current BSV/Token share',
   withdraw_success: 'Withdraw success!',
+  add_success: 'Success',
 };
 module.exports = texts;

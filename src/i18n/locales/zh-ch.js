@@ -134,7 +134,7 @@ const texts = {
   remove: '移除',
   max: '最大',
   liq_removed: '移除的流动性',
-  your_pos: '你的仓位',
+  your_pos: '你移除的仓位',
   your_re_liq: '你赎回的流动性',
   earned: 'Earned',
 
@@ -175,6 +175,7 @@ const texts = {
   lac_token_balance: '%s 余额不足',
   no_pair: '没有该交易对',
   not_enough: '超出了%s资金池存量',
+  lower_amount: '金额不足',
 
   create_pair_tips: 'Understanding Impermanent Loss',
   create_pair_desc:
@@ -220,5 +221,6 @@ const texts = {
   back_to_swap: '返回到交易页面',
   swap_question: '你需要等额提供BSV/Token交易对里的两种资产到资金池',
   withdraw_success: '提币成功!',
+  add_success: '增加成功',
 };
 module.exports = texts;
