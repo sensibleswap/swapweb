@@ -2,11 +2,12 @@
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
-import { Button, Form, InputNumber, Spin, message, Tooltip } from 'antd';
+import { Button, Form, InputNumber, Spin, message, Tooltip, Modal } from 'antd';
 import {
   QuestionCircleOutlined,
   DownOutlined,
   PlusOutlined,
+  ExclamationCircleOutlined,
   // CheckCircleOutlined,
 } from '@ant-design/icons';
 import CustomIcon from 'components/icon';
@@ -18,6 +19,7 @@ import SelectToken from '../selectToken';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
+import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 // import Volt from '../../lib/volt';
 
 const FormItem = Form.Item;
@@ -77,21 +79,23 @@ export default class Liquidity extends Component {
   };
 
   changeOriginAmount = (value) => {
-    const { pairData, token1 } = this.props;
+    const { pairData, token1, token2 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
 
-    let user_aim_amount = 0;
-    let lpMinted = 0;
-    if (swapLpAmount > 0) {
-      user_aim_amount = BigNumber(value)
-        .multipliedBy(Math.pow(10, token1.decimal || 8))
-        .multipliedBy(swapToken2Amount)
-        .div(swapToken1Amount);
-      lpMinted = BigNumber(value)
-        .multipliedBy(swapLpAmount)
-        .div(swapToken1Amount);
-    }
-    user_aim_amount = formatAmount(formatSat(user_aim_amount), 8);
+    // let user_aim_amount = 0;
+    // let lpMinted = 0;
+    const origin_amount = BigNumber(value)
+      .multipliedBy(Math.pow(10, token1.decimal))
+      .toString();
+    const [lpMinted, token2AddAmount] = countLpAddAmount(
+      origin_amount,
+      swapToken1Amount,
+      swapToken2Amount,
+      swapLpAmount,
+    );
+    // console.log(lpMinted, token2AddAmount);
+
+    const user_aim_amount = formatSat(token2AddAmount, token2.decimal);
     this.formRef.current.setFieldsValue({
       aim_amount: user_aim_amount,
     });
@@ -104,25 +108,20 @@ export default class Liquidity extends Component {
   };
 
   changeAimAmount = (value) => {
-    const { pairData, token2 } = this.props;
+    const { pairData, token2, token1 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
 
-    let user_origin_amount = 0;
-    let lpMinted = 0;
-    if (swapLpAmount > 0) {
-      user_origin_amount = BigNumber(value)
-        .multipliedBy(Math.pow(10, token2.decimal))
-        .multipliedBy(swapToken1Amount)
-        .div(swapToken2Amount);
-      // lpMinted = token1AddAmount * swapLpTokenAmount / swapToken1Amount; //也是swapToken1Amount？
-      lpMinted = user_origin_amount
-        .multipliedBy(swapLpAmount)
-        .div(swapToken1Amount);
-    }
-    user_origin_amount = formatAmount(
-      formatSat(user_origin_amount, token2.decimal),
-      8,
+    const aim_amount = BigNumber(value)
+      .multipliedBy(Math.pow(10, token2.decimal))
+      .toString();
+    const [lpMinted, token1AddAmount] = countLpAddAmountWithToken2(
+      aim_amount,
+      swapToken1Amount,
+      swapToken2Amount,
+      swapLpAmount,
     );
+    const user_origin_amount = formatSat(token1AddAmount, token1.decimal);
+
     this.formRef.current.setFieldsValue({
       origin_amount: user_origin_amount,
     });
@@ -135,24 +134,21 @@ export default class Liquidity extends Component {
   };
 
   setOriginBalance = () => {
-    const { userBalance, pairData } = this.props;
+    const { userBalance, pairData, token1, token2 } = this.props;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
     const origin_amount = userBalance.BSV || 0;
-    let aim_amount, lp;
-    if (swapLpAmount > 0) {
-      aim_amount = formatAmount(
-        BigNumber(origin_amount)
-          .multipliedBy(swapToken2Amount)
-          .div(swapToken1Amount),
-        8,
-      );
-      lp = BigNumber(origin_amount)
-        .multipliedBy(swapLpAmount)
-        .div(swapToken1Amount);
-    } else {
-      aim_amount = 0;
-      lp = 0;
-    }
+
+    const token1AddAmount = BigNumber(origin_amount)
+      .multipliedBy(Math.pow(10, token1.decimal))
+      .toString();
+    const [lpMinted, token2AddAmount] = countLpAddAmount(
+      token1AddAmount,
+      swapToken1Amount,
+      swapToken2Amount,
+      swapLpAmount,
+    );
+    const aim_amount = formatSat(token2AddAmount, token2.decimal);
+
     this.formRef.current.setFieldsValue({
       origin_amount,
       aim_amount,
@@ -160,30 +156,27 @@ export default class Liquidity extends Component {
     this.setState({
       origin_amount,
       aim_amount,
-      lp,
+      lp: lpMinted,
       lastMod: 'origin',
     });
   };
 
   setAimBalance = () => {
-    const { userBalance, token2, pairData } = this.props;
+    const { userBalance, token1, token2, pairData } = this.props;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
     const aim_amount = userBalance[token2.codeHash] || 0;
-    let origin_amount, lp;
-    if (swapLpAmount > 0) {
-      origin_amount = formatAmount(
-        BigNumber(aim_amount)
-          .multipliedBy(swapToken1Amount)
-          .div(swapToken2Amount),
-        8,
-      );
-      lp = BigNumber(origin_amount)
-        .multipliedBy(swapLpAmount)
-        .div(swapToken1Amount);
-    } else {
-      origin_amount = 0;
-      lp = 0;
-    }
+
+    const token2AddAmount = BigNumber(aim_amount)
+      .multipliedBy(Math.pow(10, token2.decimal))
+      .toString();
+    const [lpMinted, token1AddAmount] = countLpAddAmountWithToken2(
+      token2AddAmount,
+      swapToken1Amount,
+      swapToken2Amount,
+      swapLpAmount,
+    );
+    const origin_amount = formatSat(token1AddAmount, token1.decimal);
+
     this.formRef.current.setFieldsValue({
       origin_amount,
       aim_amount,
@@ -191,7 +184,7 @@ export default class Liquidity extends Component {
     this.setState({
       origin_amount,
       aim_amount,
-      lp,
+      lp: lpMinted,
       lastMod: 'aim',
     });
   };
@@ -260,7 +253,7 @@ export default class Liquidity extends Component {
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
-          <Form onSubmit={this.handleSubmit} ref={this.formRef}>
+          <Form onSubmit={this.preHandleSubmit} ref={this.formRef}>
             <div className={styles.title}>
               <h3>{_('input')}</h3>
               <div className={styles.balance} onClick={this.setOriginBalance}>
@@ -377,7 +370,7 @@ export default class Liquidity extends Component {
         <Button
           className={styles.btn}
           type="primary"
-          onClick={this.handleSubmit}
+          onClick={this.preHandleSubmit}
         >
           {_('supply_liq')}
         </Button>
@@ -392,7 +385,42 @@ export default class Liquidity extends Component {
     );
   };
 
-  handleSubmit = async () => {
+  showModal = ({
+    origin_amount,
+    aim_amount,
+    new_aim_amount,
+    new_origin_amount,
+  }) => {
+    const { token1, token2 } = this.props;
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
+    Modal.confirm({
+      title: _('liq_price_change_title'),
+      icon: <ExclamationCircleOutlined />,
+      onOk: this.handleOk,
+      content: _('liq_price_change_contnet')
+        .replace('%1', `${origin_amount}${symbol1}/${aim_amount}${symbol2}`)
+        .replace(
+          '%2',
+          `${new_origin_amount}${symbol1}/${new_aim_amount}${symbol2}`,
+        ),
+      okText: _('continue_add_liq'),
+      cancelText: _('cancel'),
+    });
+  };
+  handleOk = () => {
+    this.setState({
+      modalVisible: false,
+    });
+    this.handleSubmit();
+  };
+  handleCancel = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  preHandleSubmit = async () => {
     const { dispatch, currentPair, userAddress, token1, token2 } = this.props;
 
     let res = await dispatch({
@@ -404,54 +432,111 @@ export default class Liquidity extends Component {
       },
     });
 
-    if (res.code) {
-      return message.error(res.msg);
+    const { code, data, msg } = res;
+    if (code) {
+      return message.error(msg);
     }
 
-    const {
-      bsvToAddress,
-      tokenToAddress,
-      requestIndex,
-      txFee,
-      swapToken1Amount,
-      swapToken2Amount,
-    } = res.data;
+    this.setState({
+      reqSwapData: data,
+    });
+    const { swapToken1Amount, swapToken2Amount, swapLpAmount } = data;
 
     let { origin_amount, aim_amount, lastMod } = this.state;
     let _origin_amount, _aim_amount;
     if (lastMod === 'origin') {
-      _origin_amount = BigNumber(origin_amount).multipliedBy(1e8);
-      _aim_amount = _origin_amount
-        .multipliedBy(swapToken2Amount)
-        .div(swapToken1Amount)
-        .toFixed(0);
+      const token1AddAmount = BigNumber(origin_amount)
+        .multipliedBy(Math.pow(10, token1.decimal))
+        .toString();
+      const [lpMinted, token2AddAmount] = countLpAddAmount(
+        token1AddAmount,
+        swapToken1Amount,
+        swapToken2Amount,
+        swapLpAmount,
+      );
+      const new_aim_amount = formatSat(token2AddAmount, token2.decimal);
 
-      this.formRef.current.setFieldsValue({
-        aim_amount: formatAmount(formatSat(_aim_amount, token2.decimal), 8),
-      });
+      // _origin_amount = BigNumber(origin_amount).multipliedBy(1e8);
+
+      // _aim_amount = _origin_amount
+      //   .multipliedBy(swapToken2Amount)
+      //   .div(swapToken1Amount)
+      //   .toFixed(0);
+
+      // const new_aim_amount = formatAmount(formatSat(_aim_amount, token2.decimal), 8);
+      _origin_amount = token1AddAmount;
+      _aim_amount = token2AddAmount;
+      if (new_aim_amount !== aim_amount) {
+        this.setState({
+          _origin_amount,
+          _aim_amount,
+        });
+        return this.showModal({
+          origin_amount,
+          aim_amount,
+          new_origin_amount: origin_amount,
+          new_aim_amount,
+        });
+      }
+      // this.formRef.current.setFieldsValue({
+      //   aim_amount: formatAmount(formatSat(_aim_amount, token2.decimal), 8),
+      // });
     } else if (lastMod === 'aim') {
-      _aim_amount = BigNumber(aim_amount)
+      const token2AddAmount = BigNumber(aim_amount)
         .multipliedBy(Math.pow(10, token2.decimal))
-        .toFixed(0);
-      _origin_amount = BigNumber(_aim_amount)
-        .multipliedBy(Math.pow(10, token2.decimal))
-        .multipliedBy(swapToken1Amount)
-        .div(swapToken2Amount);
+        .toString();
+      const [lpMinted, token1AddAmount] = countLpAddAmountWithToken2(
+        token2AddAmount,
+        swapToken1Amount,
+        swapToken2Amount,
+        swapLpAmount,
+      );
+      const new_origin_amount = formatSat(token1AddAmount, token1.decimal);
 
-      this.formRef.current.setFieldsValue({
-        origin_amount: formatAmount(formatSat(_origin_amount), 8),
-      });
+      // _aim_amount = BigNumber(aim_amount)
+      //   .multipliedBy(Math.pow(10, token2.decimal))
+      //   .toFixed(0);
+      // _origin_amount = BigNumber(_aim_amount)
+      //   .multipliedBy(swapToken1Amount)
+      //   .div(swapToken2Amount);
+      // const new_origin_amount = formatAmount(formatSat(_origin_amount), 8);
+      _origin_amount = token1AddAmount;
+      _aim_amount = token2AddAmount;
+      if (new_origin_amount !== origin_amount) {
+        this.setState({
+          _origin_amount,
+          _aim_amount,
+        });
+        return this.showModal({
+          origin_amount,
+          aim_amount,
+          new_origin_amount,
+          new_aim_amount: aim_amount,
+        });
+      }
+      // this.formRef.current.setFieldsValue({
+      //   origin_amount: formatAmount(formatSat(_origin_amount), 8),
+      // });
     }
+
+    this.handleSubmit(data, _origin_amount, _aim_amount);
     // const _aim_amount = BigNumber(origin_amount)
     //   .multipliedBy(Math.pow(10, token1.decimal || 8))
     //   .multipliedBy(swapToken2Amount)
     //   .div(swapToken1Amount).toFixed(0);
-
+  };
+  handleSubmit = async (data, _origin_amount, _aim_amount) => {
+    if (!_origin_amount) _origin_amount = this.state._origin_amount;
+    if (!_aim_amount) _aim_amount = this.state._aim_amount;
+    const { token2, currentPair, dispatch } = this.props;
+    const { reqSwapData } = this.state;
+    const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
+      reqSwapData || data;
     const token_tx_res = await dispatch({
       type: 'user/transferFtTres',
       payload: {
         address: tokenToAddress,
-        amount: _aim_amount,
+        amount: _aim_amount.toString(),
         codehash: token2.codeHash,
         genesishash: token2.tokenID,
       },
@@ -467,7 +552,7 @@ export default class Liquidity extends Component {
       type: 'user/transferBsv',
       payload: {
         address: bsvToAddress,
-        amount: _origin_amount.plus(txFee).toFixed(0),
+        amount: (_origin_amount + BigInt(txFee)).toString(),
       },
     });
     // console.log(bsv_tx_res);
@@ -485,7 +570,7 @@ export default class Liquidity extends Component {
         token1OutputIndex: 0,
         token2TxID: token_tx_res.txid,
         token2OutputIndex: 0,
-        token1AddAmount: _origin_amount.toFixed(0),
+        token1AddAmount: _origin_amount.toString(),
       },
     });
 

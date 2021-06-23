@@ -24,7 +24,7 @@ import { jc } from 'common/utils';
   return {
     ...user,
     ...pair,
-    loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
+    loading: effects['pair/getAllPairs'],
   };
 })
 export default class Pool extends Component {

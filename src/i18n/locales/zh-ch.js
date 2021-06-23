@@ -222,5 +222,12 @@ const texts = {
   swap_question: '你需要等额提供BSV/Token交易对里的两种资产到资金池',
   withdraw_success: '提币成功!',
   add_success: '增加成功',
+  swap_price_change_title: '资金池变化导致价格变化提示',
+  swap_price_change_content: '你正在用%1交换%2，在过去30秒内价格发生了%3的变化',
+  liq_price_change_title: '资金池资金比例变动提示',
+  liq_price_change_contnet:
+    '有交易发生，导致资金池资金比例发生变动，额度有变化，从%1变为%2',
+  continue_add_liq: '继续提供',
+  continue_remove_liq: '继续移除',
 };
 module.exports = texts;

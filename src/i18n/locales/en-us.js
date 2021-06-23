@@ -224,5 +224,13 @@ const texts = {
     'You have to add both BSV and pair token into the pool according to current BSV/Token share',
   withdraw_success: 'Withdraw success!',
   add_success: 'Success',
+  swap_price_change_title: 'Price change alert',
+  swap_price_change_content:
+    'You are swapping %1 for %2, price of tokenA changed %3 in last 30 seconds',
+  liq_price_change_title: 'Pool ratio change alert',
+  liq_price_change_contnet:
+    'There is transaction happened, your withdrawable fund change from %1 to %2',
+  continue_add_liq: 'Continue',
+  continue_remove_liq: 'Continue',
 };
 module.exports = texts;

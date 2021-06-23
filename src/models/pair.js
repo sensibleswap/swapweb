@@ -2,12 +2,6 @@ import pairApi from '../api/pair';
 import debug from 'debug';
 const log = debug('pair');
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
 export default {
   namespace: 'pair',
 
@@ -56,10 +50,32 @@ export default {
     *getPairData({ payload }, { call, put }) {
       let { currentPair } = payload;
       const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
-      log('pairData:', currentPair, res);
+      log('init-pairData:', currentPair, res);
       const { code, msg, data } = res;
       if (code !== 0) {
         console.log(msg);
+        return res;
+      }
+      if (currentPair) {
+        yield put({
+          type: 'savePair',
+          payload: {
+            pairData: data,
+            currentPair,
+            mode: 'force',
+          },
+        });
+      }
+
+      // console.log(data)
+      return data;
+    },
+
+    *updatePairData({ payload }, { call, put }) {
+      let { currentPair } = payload;
+      const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
+      const { code, msg, data } = res;
+      if (code !== 0) {
         return res;
       }
       if (currentPair) {

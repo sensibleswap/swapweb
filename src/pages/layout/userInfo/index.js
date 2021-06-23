@@ -23,12 +23,19 @@ import Lang from '../lang';
 import EventBus from 'common/eventBus';
 import { strAbbreviation } from 'common/utils';
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 // let _loginTimer;
 // const { Option } = Select;
 @withRouter
-@connect(({ user, loading }) => {
+@connect(({ pair, user, loading }) => {
   const effects = loading.effects;
   return {
+    ...pair,
     ...user,
     connecting:
       effects['user/loadingUserData'] || effects['user/connectWebWallet'],
@@ -49,6 +56,7 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
+    this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
     const res = this.props.dispatch({
       type: 'user/loadingUserData',
@@ -57,6 +65,23 @@ export default class UserInfo extends Component {
       return message.error(res.msg);
     }
   }
+
+  fetchPairData = async () => {
+    const { currentPair, dispatch } = this.props;
+
+    setTimeout(async () => {
+      do {
+        await sleep(30 * 1e3);
+        if (!currentPair) return;
+        await dispatch({
+          type: 'pair/updatePairData',
+          payload: {
+            currentPair,
+          },
+        });
+      } while (true);
+    });
+  };
 
   init = async () => {
     // const res = await Volt.isOnline();
