@@ -405,7 +405,7 @@ export default class Swap extends Component {
 
             <div className={styles.title}>
               <h3>{_('you_receive')} </h3>
-              <div className={styles.balance}>
+              <div className={styles.balance} style={{ cursor: 'default' }}>
                 {_('your_balance')}:{' '}
                 <span>
                   {userBalance[aim_token.codeHash || 'BSV'] || 0} {symbol2}
@@ -532,6 +532,7 @@ export default class Swap extends Component {
       const slip = BigNumber(newAimAddAmount)
         .minus(old_aim_amount)
         .div(old_aim_amount);
+
       if (newAimAddAmount !== old_aim_amount) {
         return this.showModal(
           origin_amount,
