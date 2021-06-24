@@ -1,27 +1,21 @@
 'use strict';
 import React, { Component } from 'react';
-import styles from './index.less';
-import _ from 'i18n';
+import { withRouter, connect } from 'umi';
 import { Button, Popover, Modal } from 'antd';
 import {
   UpOutlined,
   SwapOutlined,
   UserOutlined,
-  //   DownOutlined,
-  //   CheckOutlined,
   LoadingOutlined,
   CloseOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
-// import CustomIcon from 'components/icon';
-import Clipboard from 'components/clipboard';
-import { withRouter, connect } from 'umi';
-// import Login from '../login';
-import Lang from '../lang';
-// import Volt from 'lib/volt';
-// import bsv from 'lib/webWallet';
 import EventBus from 'common/eventBus';
 import { strAbbreviation } from 'common/utils';
+import Clipboard from 'components/clipboard';
+import Lang from '../lang';
+import styles from './index.less';
+import _ from 'i18n';
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -29,8 +23,6 @@ function sleep(ms) {
   });
 }
 
-// let _loginTimer;
-// const { Option } = Select;
 @withRouter
 @connect(({ pair, user, loading }) => {
   const effects = loading.effects;
@@ -184,8 +176,13 @@ export default class UserInfo extends Component {
   chooseLoginWallet = () => {
     this.setState({
       chooseLogin_visible: true,
-      pop_visible: false,
+      // pop_visible: false,
     });
+    if (this.state.pop_visible) {
+      this.setState({
+        pop_visible: false,
+      });
+    }
   };
   closeChooseDialog = () => {
     this.setState({

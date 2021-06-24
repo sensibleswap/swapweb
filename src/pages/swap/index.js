@@ -1,28 +1,22 @@
 'use strict';
 import React, { Component } from 'react';
-import { jc } from 'common/utils';
+import { connect } from 'umi';
+import debug from 'debug';
+import BigNumber from 'bignumber.js';
+import { Button, Form, InputNumber, message, Spin, Modal } from 'antd';
+import { DownOutlined, SettingOutlined } from '@ant-design/icons';
+import EventBus from 'common/eventBus';
+import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
+import { formatAmount, formatSat, jc } from 'common/utils';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
-import styles from './index.less';
-import _ from 'i18n';
-import { Button, Form, InputNumber, message, Spin, Modal } from 'antd';
-import {
-  DownOutlined,
-  SettingOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
+import Loading from 'components/loading';
 import SelectToken from '../selectToken';
 import Setting from '../setting';
-import { connect } from 'umi';
-// import Volt from 'lib/volt';
-import Loading from 'components/loading';
-import BigNumber from 'bignumber.js';
-import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
-import EventBus from 'common/eventBus';
-import { formatAmount, formatSat } from 'common/utils';
-import debug from 'debug';
+import styles from './index.less';
+import _ from 'i18n';
+
 const log = debug('swap');
-// import bsv from 'lib/webWallet';
 
 const { storage_name, defaultIndex, datas } = slippage_data;
 
@@ -387,7 +381,10 @@ export default class Swap extends Component {
           <Form onSubmit={this.handleSubmit} ref={this.formRef}>
             <div className={styles.title}>
               <h3>{_('you_pay')}</h3>
-              <div className={styles.balance} onClick={this.setOriginBalance}>
+              <div
+                className={jc(styles.balance, styles.can_click)}
+                onClick={this.setOriginBalance}
+              >
                 {_('your_balance')}:{' '}
                 <span>
                   {userBalance[origin_token.codeHash || 'BSV'] || 0} {symbol1}
@@ -591,6 +588,17 @@ export default class Swap extends Component {
       const amount = BigNumber(origin_amount)
         .multipliedBy(Math.pow(10, token2.decimal))
         .toFixed(0);
+
+      const token_tx_res = await dispatch({
+        type: 'user/transferBsv',
+        payload: {
+          address: bsvToAddress,
+          amount: txFee,
+        },
+      });
+      if (token_tx_res.msg) {
+        return message.error(token_tx_res.msg);
+      }
       const bsv_tx_res = await dispatch({
         type: 'user/transferFtTres',
         payload: {
@@ -602,16 +610,6 @@ export default class Swap extends Component {
       });
       if (bsv_tx_res.msg) {
         return message.error(bsv_tx_res.msg);
-      }
-      const token_tx_res = await dispatch({
-        type: 'user/transferBsv',
-        payload: {
-          address: bsvToAddress,
-          amount: txFee,
-        },
-      });
-      if (token_tx_res.msg) {
-        return message.error(token_tx_res.msg);
       }
       payload = {
         ...payload,

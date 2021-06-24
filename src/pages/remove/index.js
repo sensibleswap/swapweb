@@ -2,14 +2,13 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { Slider, Button, Spin, message, Tooltip } from 'antd';
-// import Chart from 'components/chart';
-import CustomIcon from 'components/icon';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import EventBus from 'common/eventBus';
+import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
+import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import TokenLogo from 'components/tokenicon';
-import { CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { formatSat, formatAmount, jc } from 'common/utils';
-import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';

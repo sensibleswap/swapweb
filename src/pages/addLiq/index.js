@@ -7,20 +7,17 @@ import {
   QuestionCircleOutlined,
   DownOutlined,
   PlusOutlined,
-  ExclamationCircleOutlined,
-  // CheckCircleOutlined,
 } from '@ant-design/icons';
+import EventBus from 'common/eventBus';
+import { formatAmount, formatSat, jc } from 'common/utils';
+import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
-import { formatAmount, formatSat, jc } from 'common/utils';
-import EventBus from 'common/eventBus';
 import SelectToken from '../selectToken';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
-// import Volt from '../../lib/volt';
 
 const FormItem = Form.Item;
 @withRouter
@@ -532,6 +529,20 @@ export default class Liquidity extends Component {
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
+
+    const bsv_tx_res = await dispatch({
+      type: 'user/transferBsv',
+      payload: {
+        address: bsvToAddress,
+        amount: (_origin_amount + BigInt(txFee)).toString(),
+      },
+    });
+    // console.log(bsv_tx_res);
+
+    if (bsv_tx_res.msg) {
+      return message.error(bsv_tx_res.msg);
+    }
+
     const token_tx_res = await dispatch({
       type: 'user/transferFtTres',
       payload: {
@@ -546,19 +557,6 @@ export default class Liquidity extends Component {
 
     if (token_tx_res.msg) {
       return message.error(token_tx_res.msg);
-    }
-
-    const bsv_tx_res = await dispatch({
-      type: 'user/transferBsv',
-      payload: {
-        address: bsvToAddress,
-        amount: (_origin_amount + BigInt(txFee)).toString(),
-      },
-    });
-    // console.log(bsv_tx_res);
-
-    if (bsv_tx_res.msg) {
-      return message.error(bsv_tx_res.msg);
     }
 
     const addliq_res = await dispatch({

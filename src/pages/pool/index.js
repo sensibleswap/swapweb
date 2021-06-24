@@ -1,22 +1,15 @@
 'use strict';
 import React, { Component } from 'react';
+import { withRouter, connect } from 'umi';
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { withRouter } from 'umi';
-// import Chart from 'components/chart';
+import { jc } from 'common/utils';
 import Pair from 'components/pair';
 import Loading from 'components/loading';
 import TokenLogo from 'components/tokenicon';
+import Header from '../layout/header';
 import styles from './index.less';
 import _ from 'i18n';
-
-import Header from '../layout/header';
-// import AddLiq from '../addLiq';
-// import RemoveLiq from '../removeLiq';
-// import PairStat from '../pairStat';
-// import PairIntro from '../pairIntro';
-import { connect } from 'umi';
-import { jc } from 'common/utils';
 
 @withRouter
 @connect(({ user, pair, loading }) => {

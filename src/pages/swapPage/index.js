@@ -1,20 +1,15 @@
 'use strict';
 import React, { Component } from 'react';
+import { connect } from 'umi';
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-// import Chart from 'components/chart';
-// import Transactions from 'components/transactions';
+import { jc } from 'common/utils';
 import Loading from 'components/loading';
-import styles from './index.less';
-import _ from 'i18n';
-
 import Header from '../layout/header';
 import Swap from '../swap';
 import PairStat from '../pairStat';
-// import PairIntro from '../pairIntro';
-import { connect } from 'umi';
-// import BigNumber from 'bignumber.js';
-import { jc } from 'common/utils';
+import styles from './index.less';
+import _ from 'i18n';
 
 @connect(({ pair, loading }) => {
   const { effects } = loading;
