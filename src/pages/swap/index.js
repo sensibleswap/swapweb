@@ -404,10 +404,13 @@ export default class Swap extends Component {
             </div>
 
             <div className={styles.title}>
-              <h3>
-                {_('you_receive')}{' '}
-                <span className={styles.normal}>({_('estimated')})</span>
-              </h3>
+              <h3>{_('you_receive')} </h3>
+              <div className={styles.balance}>
+                {_('your_balance')}:{' '}
+                <span>
+                  {userBalance[aim_token.codeHash || 'BSV'] || 0} {symbol2}
+                </span>
+              </div>
             </div>
 
             {this.renderAimToken()}
@@ -792,14 +795,16 @@ export default class Swap extends Component {
     const aim_token = dirForward ? token2 : token1;
     Modal.confirm({
       title: _('swap_price_change_title'),
-      icon: <ExclamationCircleOutlined />,
       onOk: this.handleOk,
+      icon: '',
       content: _('swap_price_change_content')
         .replace('%1', `${origin} ${origin_token.symbol.toUpperCase()}`)
         .replace('%2', `${aim} ${aim_token.symbol.toUpperCase()}`)
         .replace('%3', slip),
       okText: _('swap'),
       cancelText: _('cancel'),
+      wrapClassName: 'confirm_dialog',
+      width: 400,
     });
   };
   handleOk = () => {

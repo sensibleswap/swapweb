@@ -396,7 +396,7 @@ export default class Liquidity extends Component {
     const symbol2 = token2.symbol.toUpperCase();
     Modal.confirm({
       title: _('liq_price_change_title'),
-      icon: <ExclamationCircleOutlined />,
+      icon: '',
       onOk: this.handleOk,
       content: _('liq_price_change_contnet')
         .replace('%1', `${origin_amount}${symbol1}/${aim_amount}${symbol2}`)

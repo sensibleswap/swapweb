@@ -323,7 +323,7 @@ export default class RemovePage extends Component {
     });
 
     if (token_tx_res.msg) {
-      message.error(token_tx_res.msg);
+      return message.error(token_tx_res.msg);
     }
 
     const removeliq_res = await dispatch({
@@ -342,7 +342,7 @@ export default class RemovePage extends Component {
       return message.error(removeliq_res.msg);
     }
     message.success('success');
-    this.updateData();
+    // this.updateData();
     this.setState({
       formFinish: true,
     });

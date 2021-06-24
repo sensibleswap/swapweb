@@ -37,6 +37,7 @@
   .left {
     background-color: transparent;
   }
+
   .right {
     position: relative;
   }
@@ -63,9 +64,11 @@
     margin-bottom: 5px;
     display: flex;
   }
+
   .name {
     margin-left: 15px;
   }
+
   .subtitle {
     font-size: 14px;
   }
@@ -112,6 +115,30 @@ p.desc {
   display: none;
   height: 50px;
   line-height: 50px;
+}
+
+:global {
+  .ant-modal-confirm {
+    .ant-modal-content {
+      border-radius: 8px;
+    }
+
+    .ant-modal-confirm-body .ant-modal-confirm-content {
+      margin-top: 30px;
+    }
+
+    .ant-modal-confirm-btns {
+      margin-top: 40px;
+      .ant-btn {
+        width: 156px;
+        height: 40px;
+        border-radius: 8px;
+      }
+      .ant-btn + .ant-btn {
+        margin-left: 20px;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 767.99px) {
