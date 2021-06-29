@@ -11,13 +11,15 @@ export default function Pair(props) {
   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
   const { lptoken, token1, token2 } = curPair;
   const LP = userBalance[lptoken.codeHash] || 0;
-  const rate = LP / formatSat(swapLpAmount);
+  const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
   const _token1 = formatAmount(
     formatSat(swapToken1Amount, token1.decimal || 8),
     8,
   );
   const _token2 = formatAmount(formatSat(swapToken2Amount, token2.decimal), 8);
   const _rate = (rate * 100).toFixed(2);
+  const symbol1 = token1.symbol.toUpperCase();
+  const symbol2 = token2.symbol.toUpperCase();
 
   return (
     <div className={styles.container}>
@@ -26,20 +28,30 @@ export default function Pair(props) {
           <div className={styles.name}>{_('pool_share')}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>LP {_('tokens')}</div>
-          <div className={styles.info_value}>{LP}</div>
-        </div>
-        <div className={styles.info_item}>
           <div className={styles.info_label}>
-            {_('pooled')} {token1.symbol.toUpperCase()}
+            {_('pooled')} {symbol1}
           </div>
           <div className={styles.info_value}>{_token1}</div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>
-            {_('pooled')} {token2.symbol.toUpperCase()}
+            {_('pooled')} {symbol2}
           </div>
           <div className={styles.info_value}>{_token2}</div>
+        </div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>
+            {_('your_lp', `${symbol1}/${symbol2}`)}
+          </div>
+          <div className={styles.info_value}>{LP}</div>
+        </div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>
+            {_('total_lp', `${symbol1}/${symbol2}`)}
+          </div>
+          <div className={styles.info_value}>
+            {formatSat(swapLpAmount, lptoken.decimal)}
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{_('your_share')}</div>

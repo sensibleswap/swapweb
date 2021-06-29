@@ -229,8 +229,13 @@ const texts = {
     'You are swapping %1 for %2, price of tokenA changed %3 in last 30 seconds',
   liq_price_change_title: 'Pool ratio change alert',
   liq_price_change_contnet:
-    'There is transaction happened, your withdrawable fund change from %1 to %2',
+    'There is transaction happened, your input amount changed from %1 to %2',
+  liq_remove_price_change_content:
+    'Transaction happened within last few seconds, your withdrawable fund changed from %1 to %2',
   continue_add_liq: 'Continue',
   continue_remove_liq: 'Continue',
+  your_lp: 'Your LP(%s)  balance',
+  total_lp: 'Total LP(%s) supply',
+  txs_fail: 'Some Transaction failed',
 };
 module.exports = texts;

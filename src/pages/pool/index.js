@@ -66,7 +66,7 @@ export default class Pool extends Component {
               />
             </div>
             <div className={styles.name}>
-              {symbol1}/{symbol2}
+              LP({symbol1}/{symbol2})
             </div>
           </h2>
           {/*<div className={styles.subtitle}>{_('your_liq')}</div>

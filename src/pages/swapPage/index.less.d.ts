@@ -10,6 +10,7 @@ interface CssExports {
   container_center: string;
   content: string;
   desc: string;
+  icon: string;
   left: string;
   left_inner: string;
   link: string;

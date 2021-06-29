@@ -227,7 +227,12 @@ const texts = {
   liq_price_change_title: '资金池资金比例变动提示',
   liq_price_change_contnet:
     '有交易发生，导致资金池资金比例发生变动，额度有变化，从%1变为%2',
+  liq_remove_price_change_content:
+    '有交易发生，导致资金池资金比例发生变动，你可以移除的最大金额有变化，从%1变为%2',
   continue_add_liq: '继续提供',
   continue_remove_liq: '继续移除',
+  your_lp: '你的LP(%s)数量',
+  total_lp: 'LP(%s)总量',
+  txs_fail: '部分交易失败',
 };
 module.exports = texts;

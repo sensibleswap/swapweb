@@ -131,6 +131,20 @@ export default {
         return { msg: error, txid: '' };
       }
     },
+
+    *transferAll({ payload }, { call, put }) {
+      const { datas } = payload;
+      // console.log(...datas)
+      try {
+        const res = yield bsv.transferAll(datas);
+        // console.log(res)
+        log(res);
+        return res;
+      } catch (error) {
+        console.log(error);
+        return { msg: error };
+      }
+    },
   },
 
   reducers: {

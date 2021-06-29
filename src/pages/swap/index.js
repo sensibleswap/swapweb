@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
 import BigNumber from 'bignumber.js';
-import { Button, Form, InputNumber, message, Spin, Modal } from 'antd';
+import { Button, Form, Input, InputNumber, message, Spin, Modal } from 'antd';
 import { DownOutlined, SettingOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
@@ -44,6 +44,7 @@ const menu = [
       effects['pair/swap'] ||
       effects['user/transferBsv'] ||
       effects['user/transferFtTres'] ||
+      effects['user/transferAll'] ||
       false,
   };
 })
@@ -132,7 +133,8 @@ export default class Swap extends Component {
     });
   };
 
-  changeOriginAmount = (value) => {
+  changeOriginAmount = (e) => {
+    const value = e.target.value;
     if (value > 0) {
       const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), 8);
       this.setState({
@@ -155,7 +157,8 @@ export default class Swap extends Component {
     }
   };
 
-  changeAimAmount = (value) => {
+  changeAimAmount = (e) => {
+    const value = e.target.value;
     if (value > 0) {
       this.setState({
         aim_amount: value,
@@ -188,12 +191,14 @@ export default class Swap extends Component {
           <DownOutlined />
         </div>
         <FormItem name="origin_amount">
-          <InputNumber
+          <Input
             className={styles.input}
             onChange={this.changeOriginAmount}
-            onPressEnter={this.changeOriginAmount}
-            formatter={(value) => parseFloat(value || 0)}
-            min="0"
+            // onPressEnter={this.changeOriginAmount}
+            // formatter={(value) => parseFloat(value || 0)}
+            // min="0"
+            // step={1/Math.pow(10, origin_token.decimal)}
+            // stringMode
           />
         </FormItem>
       </div>
@@ -215,13 +220,13 @@ export default class Swap extends Component {
           <DownOutlined />
         </div>
         <FormItem name="aim_amount">
-          <InputNumber
+          <Input
             className={styles.input}
             onChange={this.changeAimAmount}
-            onPressEnter={this.changeAimAmount}
-            formatter={(value) => parseFloat(value || 0)}
+            // onPressEnter={this.changeAimAmount}
+            // formatter={(value) => parseFloat(value || 0)}
             min="0"
-            max={Math.floor(pairData ? pairData.swapToken1Amount : 0)}
+            // max={Math.floor(pairData ? pairData.swapToken1Amount : 0)}
           />
         </FormItem>
       </div>
@@ -566,12 +571,12 @@ export default class Swap extends Component {
       op: dirForward ? 3 : 4,
     };
     if (dirForward) {
-      const amount = BigNumber(origin_amount).multipliedBy(1e8);
+      const amount = BigNumber(origin_amount).multipliedBy(1e8).toString();
       const ts_res = await dispatch({
         type: 'user/transferBsv',
         payload: {
           address: bsvToAddress,
-          amount: amount.plus(txFee).toFixed(0),
+          amount: (BigInt(amount) + BigInt(txFee)).toString(),
         },
       });
 
@@ -582,40 +587,73 @@ export default class Swap extends Component {
         ...payload,
         token1TxID: ts_res.txid,
         token1OutputIndex: 0,
-        token1AddAmount: amount.toFixed(0),
+        token1AddAmount: amount,
       };
     } else {
       const amount = BigNumber(origin_amount)
         .multipliedBy(Math.pow(10, token2.decimal))
-        .toFixed(0);
+        .toString();
 
-      const token_tx_res = await dispatch({
-        type: 'user/transferBsv',
+      // const token_tx_res = await dispatch({
+      //   type: 'user/transferBsv',
+      //   payload: {
+      //     address: bsvToAddress,
+      //     amount: txFee,
+      //   },
+      // });
+      // if (token_tx_res.msg) {
+      //   return message.error(token_tx_res.msg);
+      // }
+      // const bsv_tx_res = await dispatch({
+      //   type: 'user/transferFtTres',
+      //   payload: {
+      //     address: tokenToAddress,
+      //     amount: amount,
+      //     codehash: token2.codeHash,
+      //     genesishash: token2.tokenID,
+      //   },
+      // });
+      // if (bsv_tx_res.msg) {
+      //   return message.error(bsv_tx_res.msg);
+      // }
+      const tx_res = await dispatch({
+        type: 'user/transferAll',
         payload: {
-          address: bsvToAddress,
-          amount: txFee,
+          datas: [
+            {
+              receivers: [
+                {
+                  address: bsvToAddress,
+                  amount: txFee,
+                },
+              ],
+            },
+            {
+              receivers: [
+                {
+                  address: tokenToAddress,
+                  amount,
+                },
+              ],
+              codehash: token2.codeHash,
+              genesis: token2.tokenID,
+            },
+          ],
         },
       });
-      if (token_tx_res.msg) {
-        return message.error(token_tx_res.msg);
+      // console.log(tx_res)
+      if (tx_res.msg) {
+        return message.error(tx_res.msg);
       }
-      const bsv_tx_res = await dispatch({
-        type: 'user/transferFtTres',
-        payload: {
-          address: tokenToAddress,
-          amount: amount,
-          codehash: token2.codeHash,
-          genesishash: token2.tokenID,
-        },
-      });
-      if (bsv_tx_res.msg) {
-        return message.error(bsv_tx_res.msg);
+      if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+        return message.error(_('txs_fail'));
       }
+      // console.log(tx_res); debugger;
       payload = {
         ...payload,
-        minerFeeTxID: token_tx_res.txid,
+        minerFeeTxID: tx_res[0].txid,
         minerFeeTxOutputIndex: 0,
-        token2TxID: bsv_tx_res.txid,
+        token2TxID: tx_res[1].txid,
         token2OutputIndex: 0,
       };
     }

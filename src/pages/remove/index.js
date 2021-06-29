@@ -232,7 +232,7 @@ export default class RemovePage extends Component {
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconswitch" style={{ fontSize: 20 }} />
+              <CustomIcon type="iconArrow2" style={{ fontSize: 20 }} />
             </div>
             <div className={styles.line}></div>
           </div>
@@ -241,13 +241,23 @@ export default class RemovePage extends Component {
             <div className={styles.v_item}>
               <div className={styles.value}>{removeToken1}</div>
               <div className={styles.label}>
-                <TokenLogo name={symbol1} size={30} /> {symbol1}
+                <TokenLogo
+                  name={symbol1}
+                  size={30}
+                  style={{ margigRight: 10 }}
+                />{' '}
+                {symbol1}
               </div>
             </div>
             <div className={styles.v_item}>
               <div className={styles.value}>{removeToken2}</div>
               <div className={styles.label}>
-                <TokenLogo name={symbol2} size={25} /> {symbol2}
+                <TokenLogo
+                  name={symbol2}
+                  size={30}
+                  style={{ margigRight: 10 }}
+                />{' '}
+                {symbol2}
               </div>
             </div>
           </div>
@@ -294,35 +304,68 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    const bsv_tx_res = await dispatch({
-      type: 'user/transferBsv',
-      payload: {
-        address: bsvToAddress,
-        amount: txFee,
-      },
-    });
+    // const bsv_tx_res = await dispatch({
+    //   type: 'user/transferBsv',
+    //   payload: {
+    //     address: bsvToAddress,
+    //     amount: txFee,
+    //   },
+    // });
 
-    if (bsv_tx_res.msg) {
-      return message.error(bsv_tx_res.msg);
-    }
+    // if (bsv_tx_res.msg) {
+    //   return message.error(bsv_tx_res.msg);
+    // }
+
+    // const token_tx_res = await dispatch({
+    //   type: 'user/transferFtTres',
+    //   payload: {
+    //     address: tokenToAddress,
+    //     amount: _value,
+    //     codehash: lptoken.codeHash,
+    //     genesishash: lptoken.tokenID,
+    //   },
+    // });
+
+    // if (token_tx_res.msg) {
+    //   return message.error(token_tx_res.msg);
+    // }
 
     const _value = BigNumber(value)
       .multipliedBy(LP)
       .div(100)
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
-    const token_tx_res = await dispatch({
-      type: 'user/transferFtTres',
+    const tx_res = await dispatch({
+      type: 'user/transferAll',
       payload: {
-        address: tokenToAddress,
-        amount: _value,
-        codehash: lptoken.codeHash,
-        genesishash: lptoken.tokenID,
+        datas: [
+          {
+            receivers: [
+              {
+                address: bsvToAddress,
+                amount: txFee,
+              },
+            ],
+          },
+          {
+            receivers: [
+              {
+                address: tokenToAddress,
+                amount: _value,
+              },
+            ],
+            codehash: lptoken.codeHash,
+            genesis: lptoken.tokenID,
+          },
+        ],
       },
     });
+    if (tx_res.msg) {
+      return message.error(tx_res.msg);
+    }
 
-    if (token_tx_res.msg) {
-      return message.error(token_tx_res.msg);
+    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+      return message.error(_('txs_fail'));
     }
 
     const removeliq_res = await dispatch({
@@ -330,10 +373,10 @@ export default class RemovePage extends Component {
       payload: {
         symbol: currentPair,
         requestIndex: requestIndex,
-        lpTokenTxID: token_tx_res.txid,
-        lpTokenOutputIndex: 0,
-        minerFeeTxID: bsv_tx_res.txid,
+        minerFeeTxID: tx_res[0].txid,
         minerFeeTxOutputIndex: 0,
+        lpTokenTxID: tx_res[1].txid,
+        lpTokenOutputIndex: 0,
       },
     });
 
@@ -459,7 +502,7 @@ export default class RemovePage extends Component {
                   this.props.history.push('/pool/add');
                 }}
               >
-                {_('add_liq_short')}
+                {_('add_liq')}
               </span>
               <span
                 className={jc(styles.menu_item, styles.menu_item_selected)}
@@ -468,11 +511,7 @@ export default class RemovePage extends Component {
                 {_('remove_liq_short')}
               </span>
             </div>
-            <div className={styles.help}>
-              <Tooltip title={_('swap_question')} placement="bottom">
-                <QuestionCircleOutlined />
-              </Tooltip>
-            </div>
+            <div className={styles.help}></div>
           </div>
           {formFinish ? this.renderResult() : this.renderForm()}
         </div>

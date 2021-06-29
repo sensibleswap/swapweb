@@ -32,6 +32,7 @@ const FormItem = Form.Item;
       effects['pair/addLiq'] ||
       effects['user/transferBsv'] ||
       effects['user/transferFtTres'] ||
+      effects['user/transferAll'] ||
       false,
   };
 })
@@ -396,10 +397,10 @@ export default class Liquidity extends Component {
       icon: '',
       onOk: this.handleOk,
       content: _('liq_price_change_contnet')
-        .replace('%1', `${origin_amount}${symbol1}/${aim_amount}${symbol2}`)
+        .replace('%1', `${origin_amount}${symbol1} + ${aim_amount}${symbol2}`)
         .replace(
           '%2',
-          `${new_origin_amount}${symbol1}/${new_aim_amount}${symbol2}`,
+          `${new_origin_amount}${symbol1} + ${new_aim_amount}${symbol2}`,
         ),
       okText: _('continue_add_liq'),
       cancelText: _('cancel'),
@@ -530,33 +531,65 @@ export default class Liquidity extends Component {
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
 
-    const bsv_tx_res = await dispatch({
-      type: 'user/transferBsv',
+    // const bsv_tx_res = await dispatch({
+    //   type: 'user/transferBsv',
+    //   payload: {
+    //     address: bsvToAddress,
+    //     amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+    //   },
+    // });
+    // // console.log(bsv_tx_res);
+
+    // if (bsv_tx_res.msg) {
+    //   return message.error(bsv_tx_res.msg);
+    // }
+
+    // const token_tx_res = await dispatch({
+    //   type: 'user/transferFtTres',
+    //   payload: {
+    //     address: tokenToAddress,
+    //     amount: _aim_amount.toString(),
+    //     codehash: token2.codeHash,
+    //     genesishash: token2.tokenID,
+    //   },
+    // });
+
+    // // console.log(token_tx_res);
+
+    // if (token_tx_res.msg) {
+    //   return message.error(token_tx_res.msg);
+    // }
+
+    const tx_res = await dispatch({
+      type: 'user/transferAll',
       payload: {
-        address: bsvToAddress,
-        amount: (_origin_amount + BigInt(txFee)).toString(),
+        datas: [
+          {
+            receivers: [
+              {
+                address: bsvToAddress,
+                amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+              },
+            ],
+          },
+          {
+            receivers: [
+              {
+                address: tokenToAddress,
+                amount: _aim_amount.toString(),
+              },
+            ],
+            codehash: token2.codeHash,
+            genesis: token2.tokenID,
+          },
+        ],
       },
     });
-    // console.log(bsv_tx_res);
-
-    if (bsv_tx_res.msg) {
-      return message.error(bsv_tx_res.msg);
+    if (tx_res.msg) {
+      return message.error(tx_res.msg);
     }
-
-    const token_tx_res = await dispatch({
-      type: 'user/transferFtTres',
-      payload: {
-        address: tokenToAddress,
-        amount: _aim_amount.toString(),
-        codehash: token2.codeHash,
-        genesishash: token2.tokenID,
-      },
-    });
-
-    // console.log(token_tx_res);
-
-    if (token_tx_res.msg) {
-      return message.error(token_tx_res.msg);
+    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+      return message.error(_('txs_fail'));
     }
 
     const addliq_res = await dispatch({
@@ -564,9 +597,9 @@ export default class Liquidity extends Component {
       payload: {
         symbol: currentPair,
         requestIndex: requestIndex,
-        token1TxID: bsv_tx_res.txid,
+        token1TxID: tx_res[0].txid,
         token1OutputIndex: 0,
-        token2TxID: token_tx_res.txid,
+        token2TxID: tx_res[1].txid,
         token2OutputIndex: 0,
         token1AddAmount: _origin_amount.toString(),
       },
@@ -643,7 +676,7 @@ export default class Liquidity extends Component {
               className={jc(styles.menu_item, styles.menu_item_selected)}
               key="add_liq"
             >
-              {_('add_liq_short')}
+              {_('add_liq')}
             </span>
             <span
               className={styles.menu_item}
