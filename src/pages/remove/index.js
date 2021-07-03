@@ -123,7 +123,7 @@ export default class RemovePage extends Component {
       lptoken,
       allPairs,
     } = this.props;
-    const LP = userBalance[lptoken.codeHash];
+    const LP = userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
     return (
@@ -157,12 +157,12 @@ export default class RemovePage extends Component {
     const {
       currentPair,
       pairData,
-      lptoken,
+      lptoken = {},
       allPairs,
       userBalance,
       loading,
     } = this.props;
-    let LP = userBalance[lptoken.codeHash];
+    let LP = userBalance[lptoken.tokenID];
     if (loading || !LP) {
       return {
         removeToken1: 0,
@@ -238,26 +238,34 @@ export default class RemovePage extends Component {
           </div>
 
           <div className={styles.values}>
-            <div className={styles.v_item}>
-              <div className={styles.value}>{removeToken1}</div>
-              <div className={styles.label}>
-                <TokenLogo
-                  name={symbol1}
-                  size={30}
-                  style={{ margigRight: 10 }}
-                />{' '}
-                {symbol1}
+            <div className={styles.values_left}>
+              <div className={styles.v_item}>
+                <div className={styles.value}>{removeToken1}</div>
+              </div>
+              <div className={styles.v_item}>
+                <div className={styles.value}>{removeToken2}</div>
               </div>
             </div>
-            <div className={styles.v_item}>
-              <div className={styles.value}>{removeToken2}</div>
-              <div className={styles.label}>
-                <TokenLogo
-                  name={symbol2}
-                  size={30}
-                  style={{ margigRight: 10 }}
-                />{' '}
-                {symbol2}
+            <div className={styles.values_right}>
+              <div className={styles.v_item}>
+                <div className={styles.label}>
+                  <TokenLogo
+                    name={symbol1}
+                    size={30}
+                    style={{ margigRight: 10 }}
+                  />{' '}
+                  {symbol1}
+                </div>
+              </div>
+              <div className={styles.v_item}>
+                <div className={styles.label}>
+                  <TokenLogo
+                    name={symbol2}
+                    size={30}
+                    style={{ margigRight: 10 }}
+                  />{' '}
+                  {symbol2}
+                </div>
               </div>
             </div>
           </div>
@@ -287,7 +295,7 @@ export default class RemovePage extends Component {
       userBalance,
       lptoken,
     } = this.props;
-    const LP = userBalance[lptoken.codeHash];
+    const LP = userBalance[lptoken.tokenID];
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -441,7 +449,7 @@ export default class RemovePage extends Component {
 
   renderResult() {
     const { userBalance, lptoken } = this.props;
-    const LP = userBalance[lptoken.codeHash];
+    // const LP = userBalance[lptoken.tokenID];
     const { symbol1, symbol2 } = this.state;
     const { removeLP } = this.calc();
     return (

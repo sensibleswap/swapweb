@@ -37,9 +37,43 @@ export default {
         BSV: formatSat(bsvBalance.balance),
       };
       tokenBalance.forEach((item) => {
-        userBalance[item.codehash] = formatSat(item.balance, item.tokenDecimal);
+        userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
       });
-      log('userData:', accountInfo, userBalance, userAddress);
+      log('userData:', accountInfo, tokenBalance, userBalance, userAddress);
+
+      yield put({
+        type: 'save',
+        payload: {
+          accountInfo,
+          userBalance,
+          userAddress,
+          isLogin: true,
+        },
+      });
+      return {};
+    },
+    *updateUserData({ payload }, { call, put }) {
+      // yield bsv.requestAccount().then();
+      // console.log(bsv.getAccount, bsv.getAccount())
+      let accountInfo;
+      try {
+        accountInfo = yield bsv.getAccount();
+      } catch (error) {
+        console.log(error);
+        return { msg: error };
+      }
+      if (!accountInfo) return false;
+      localStorage.setItem('TSwapNetwork', accountInfo.network);
+
+      const bsvBalance = yield bsv.getBsvBalance();
+      const userAddress = yield bsv.getAddress();
+      const tokenBalance = yield bsv.getSensibleFtBalance();
+      const userBalance = {
+        BSV: formatSat(bsvBalance.balance),
+      };
+      tokenBalance.forEach((item) => {
+        userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
+      });
 
       yield put({
         type: 'save',

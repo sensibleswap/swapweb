@@ -17,7 +17,7 @@ import _ from 'i18n';
   return {
     ...user,
     ...pair,
-    loading: effects['pair/getAllPairs'],
+    loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
   };
 })
 export default class Pool extends Component {

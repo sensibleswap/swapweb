@@ -71,6 +71,9 @@ export default class UserInfo extends Component {
             currentPair,
           },
         });
+        await dispatch({
+          type: 'user/updateUserData',
+        });
       } while (true);
     });
   };

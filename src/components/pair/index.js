@@ -9,8 +9,8 @@ import _ from 'i18n';
 export default function Pair(props) {
   const { pairData, curPair, userBalance } = props;
   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-  const { lptoken, token1, token2 } = curPair;
-  const LP = userBalance[lptoken.codeHash] || 0;
+  const { lptoken = {}, token1, token2 } = curPair;
+  const LP = userBalance[lptoken.tokenID] || 0;
   const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
   const _token1 = formatAmount(
     formatSat(swapToken1Amount, token1.decimal || 8),

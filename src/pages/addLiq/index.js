@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
-import { Button, Form, InputNumber, Spin, message, Tooltip, Modal } from 'antd';
+import { Button, Form, Input, Spin, message, Tooltip, Modal } from 'antd';
 import {
   QuestionCircleOutlined,
   DownOutlined,
@@ -76,13 +76,14 @@ export default class Liquidity extends Component {
     }
   };
 
-  changeOriginAmount = (value) => {
+  changeOriginAmount = (e) => {
+    const value = e.target.value;
     const { pairData, token1, token2 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
 
     // let user_aim_amount = 0;
     // let lpMinted = 0;
-    const origin_amount = BigNumber(value)
+    const origin_amount = BigNumber(value || 0)
       .multipliedBy(Math.pow(10, token1.decimal))
       .toString();
     const [lpMinted, token2AddAmount] = countLpAddAmount(
@@ -98,18 +99,19 @@ export default class Liquidity extends Component {
       aim_amount: user_aim_amount,
     });
     this.setState({
-      origin_amount: value,
+      origin_amount: value || 0,
       aim_amount: user_aim_amount,
       lp: lpMinted,
       lastMod: 'origin',
     });
   };
 
-  changeAimAmount = (value) => {
+  changeAimAmount = (e) => {
+    const value = e.target.value;
     const { pairData, token2, token1 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
 
-    const aim_amount = BigNumber(value)
+    const aim_amount = BigNumber(value || 0)
       .multipliedBy(Math.pow(10, token2.decimal))
       .toString();
     const [lpMinted, token1AddAmount] = countLpAddAmountWithToken2(
@@ -124,7 +126,7 @@ export default class Liquidity extends Component {
       origin_amount: user_origin_amount,
     });
     this.setState({
-      aim_amount: value,
+      aim_amount: value || 0,
       origin_amount: user_origin_amount,
       lp: lpMinted,
       lastMod: 'aim',
@@ -162,7 +164,7 @@ export default class Liquidity extends Component {
   setAimBalance = () => {
     const { userBalance, token1, token2, pairData } = this.props;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
-    const aim_amount = userBalance[token2.codeHash] || 0;
+    const aim_amount = userBalance[token2.tokenID] || 0;
 
     const token2AddAmount = BigNumber(aim_amount)
       .multipliedBy(Math.pow(10, token2.decimal))
@@ -271,11 +273,11 @@ export default class Liquidity extends Component {
                 <DownOutlined />
               </div>
               <FormItem name={'origin_amount'}>
-                <InputNumber
+                <Input
                   className={styles.input}
                   onChange={this.changeOriginAmount}
                   min="0"
-                  formatter={(value) => parseFloat(value || 0)}
+                  // formatter={(value) => parseFloat(value || 0)}
                 />
               </FormItem>
             </div>
@@ -289,7 +291,7 @@ export default class Liquidity extends Component {
               <div className={styles.balance} onClick={this.setAimBalance}>
                 {_('balance')}:{' '}
                 <span>
-                  {userBalance[token2.codeHash] || 0} {symbol2 || ''}
+                  {userBalance[token2.tokenID] || 0} {symbol2 || ''}
                 </span>
               </div>
             </div>
@@ -306,11 +308,11 @@ export default class Liquidity extends Component {
                 <DownOutlined />
               </div>
               <FormItem name={'aim_amount'}>
-                <InputNumber
+                <Input
                   className={styles.input}
                   onChange={this.changeAimAmount}
                   min="0"
-                  formatter={(value) => parseFloat(value || 0)}
+                  // formatter={(value) => parseFloat(value || 0)}
                 />
               </FormItem>
             </div>
@@ -355,7 +357,7 @@ export default class Liquidity extends Component {
         </Button>
       );
     } else if (
-      parseFloat(aim_amount) > parseFloat(userBalance[token2.codeHash] || 0)
+      parseFloat(aim_amount) > parseFloat(userBalance[token2.tokenID] || 0)
     ) {
       // 余额不足
       btn = (

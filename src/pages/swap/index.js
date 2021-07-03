@@ -238,7 +238,7 @@ export default class Swap extends Component {
 
     const origin_amount = this.state.dirForward
       ? userBalance.BSV || 0
-      : userBalance[token2.codeHash] || 0;
+      : userBalance[token2.tokenID] || 0;
     this.formRef.current.setFieldsValue({
       origin_amount,
     });
@@ -392,7 +392,7 @@ export default class Swap extends Component {
               >
                 {_('your_balance')}:{' '}
                 <span>
-                  {userBalance[origin_token.codeHash || 'BSV'] || 0} {symbol1}
+                  {userBalance[origin_token.tokenID || 'BSV'] || 0} {symbol1}
                 </span>
               </div>
             </div>
@@ -410,7 +410,7 @@ export default class Swap extends Component {
               <div className={styles.balance} style={{ cursor: 'default' }}>
                 {_('your_balance')}:{' '}
                 <span>
-                  {userBalance[aim_token.codeHash || 'BSV'] || 0} {symbol2}
+                  {userBalance[aim_token.tokenID || 'BSV'] || 0} {symbol2}
                 </span>
               </div>
             </div>
@@ -458,7 +458,7 @@ export default class Swap extends Component {
     const { slip, lastMod, origin_amount, aim_amount, dirForward } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
-    const balance = userBalance[origin_token.codeHash || 'BSV'];
+    const balance = userBalance[origin_token.tokenID || 'BSV'];
 
     const tol =
       datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];
