@@ -561,7 +561,7 @@ export default class Swap extends Component {
 
   submit = async (data) => {
     const { dirForward, origin_amount, reqSwapData } = this.state;
-    const { dispatch, currentPair, token2 } = this.props;
+    const { dispatch, currentPair, token2, rabinApis } = this.props;
 
     const { bsvToAddress, tokenToAddress, txFee, requestIndex } =
       reqSwapData || data;
@@ -637,6 +637,7 @@ export default class Swap extends Component {
               ],
               codehash: token2.codeHash,
               genesis: token2.tokenID,
+              rabinApis,
             },
           ],
         },

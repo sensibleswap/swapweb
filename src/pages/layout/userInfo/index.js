@@ -278,7 +278,7 @@ export default class UserInfo extends Component {
             <div className={styles.account_name}>
               <Clipboard
                 text={userAddress}
-                label={strAbbreviation(userAddress)}
+                label={strAbbreviation(userAddress, [5, 4])}
               />
             </div>
           </div>
@@ -340,7 +340,7 @@ export default class UserInfo extends Component {
             placement="bottomRight"
           >
             <div className={styles.account_trigger}>
-              {strAbbreviation(userAddress)}{' '}
+              {strAbbreviation(userAddress, [5, 4])}{' '}
               <span className={styles.dot}></span>
             </div>
           </Popover>

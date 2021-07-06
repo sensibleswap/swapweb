@@ -294,6 +294,7 @@ export default class RemovePage extends Component {
       // token2,
       userBalance,
       lptoken,
+      rabinApis,
     } = this.props;
     const LP = userBalance[lptoken.tokenID];
 
@@ -364,6 +365,7 @@ export default class RemovePage extends Component {
             ],
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
+            rabinApis,
           },
         ],
       },

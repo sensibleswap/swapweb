@@ -133,7 +133,7 @@ export default {
         currentPair = state.currentPair;
       }
 
-      const { token1, token2, lptoken } = allPairs[currentPair];
+      const { token1, token2, lptoken, rabinApis } = allPairs[currentPair];
 
       return {
         ...state,
@@ -142,6 +142,7 @@ export default {
         token1,
         token2,
         lptoken,
+        rabinApis,
       };
     },
   },
