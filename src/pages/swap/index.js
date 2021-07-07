@@ -8,6 +8,12 @@ import { DownOutlined, SettingOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
+import {
+  swapToken1ToToken2ByToken2,
+  swapToken1ToToken2,
+  swapToken2ToToken1,
+  swapToken2ToToken1ByToken1,
+} from 'common/swap';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
@@ -275,15 +281,14 @@ export default class Swap extends Component {
       newAmount2 = BigNumber(amount2);
     let newOriginAddAmount, newAimAddAmount;
     if (originAddAmount > 0) {
-      const addAmountWithFee = _originAddAmount.multipliedBy(
-        FEE_FACTOR - swapFeeRate,
-      );
-      newAmount1 = BigNumber(amount1).plus(_originAddAmount);
-      let removeAmount = addAmountWithFee
-        .multipliedBy(amount2)
-        .div(
-          BigNumber(amount1).plus(_originAddAmount).multipliedBy(FEE_FACTOR),
-        );
+      _originAddAmount = BigInt(_originAddAmount.toString());
+      const addAmountWithFee =
+        _originAddAmount * BigInt(FEE_FACTOR - swapFeeRate);
+      newAmount1 = BigInt(amount1) + _originAddAmount;
+      let removeAmount =
+        (addAmountWithFee * BigInt(amount2)) /
+        ((BigInt(amount1) + _originAddAmount) * BigInt(FEE_FACTOR));
+      removeAmount = BigNumber(removeAmount);
       newAmount2 = BigNumber(amount2).minus(removeAmount);
 
       removeAmount = formatAmount(
@@ -301,20 +306,13 @@ export default class Swap extends Component {
       newAimAddAmount = removeAmount;
     } else if (aimAddAmount > 0) {
       newAmount2 = BigNumber(amount2).minus(_aimAddAmount);
-      const addAmountWithFee = _aimAddAmount
-        .multipliedBy(amount1)
-        .multipliedBy(FEE_FACTOR)
-        .div(newAmount2);
+      _aimAddAmount = BigInt(_aimAddAmount.toString());
+      let addAmount =
+        (_aimAddAmount * BigInt(FEE_FACTOR) * BigInt(amount1)) /
+        (BigInt(FEE_FACTOR - swapFeeRate) * BigInt(amount2) -
+          _aimAddAmount * BigInt(FEE_FACTOR));
 
-      // console.log(addAmountWithFee.div(FEE_FACTOR - swapFeeRate).toString());
-      let addAmount = _aimAddAmount
-        .multipliedBy(FEE_FACTOR)
-        .multipliedBy(amount1)
-        .div(
-          BigNumber(FEE_FACTOR - swapFeeRate)
-            .multipliedBy(amount2)
-            .minus(_aimAddAmount.multipliedBy(FEE_FACTOR)),
-        );
+      addAmount = BigNumber(addAmount);
       addAmount = addAmount.div(Math.pow(10, token1.decimal || 8));
       newAmount1 = addAmount.plus(amount1);
       let addAmountN = formatAmount(addAmount, 8);
@@ -481,7 +479,11 @@ export default class Swap extends Component {
       return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
     } else if (parseFloat(origin_amount) > parseFloat(balance || 0)) {
       // 余额不足
-      return <Button className={styles.btn_wait}>{_('lac_balance')}</Button>;
+      return (
+        <Button className={styles.btn_wait}>
+          {_('lac_token_balance', origin_token.symbol.toUpperCase())}
+        </Button>
+      );
     } else if (
       BigNumber(aim_amount)
         .multipliedBy(Math.pow(10, aim_token.decimal))

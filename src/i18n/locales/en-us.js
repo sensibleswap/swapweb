@@ -179,7 +179,7 @@ const texts = {
   lac_token_balance: 'Insufficient %s Balance',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
-  lower_amount: 'Insufficient Amount',
+  lower_amount: 'Minimum %s Sat input required',
 
   create_pair_tips: 'Understanding Impermanent Loss',
   create_pair_desc:

@@ -348,7 +348,9 @@ export default class Liquidity extends Component {
       btn = <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
     } else if (parseFloat(origin_amount) <= formatSat(1000)) {
       // 数额太小
-      btn = <Button className={styles.btn_wait}>{_('lower_amount')}</Button>;
+      btn = (
+        <Button className={styles.btn_wait}>{_('lower_amount', 1000)}</Button>
+      );
     } else if (parseFloat(origin_amount) > parseFloat(userBalance.BSV || 0)) {
       // 余额不足
       btn = (

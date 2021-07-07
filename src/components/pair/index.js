@@ -17,7 +17,7 @@ export default function Pair(props) {
     8,
   );
   const _token2 = formatAmount(formatSat(swapToken2Amount, token2.decimal), 8);
-  const _rate = (rate * 100).toFixed(2);
+  const _rate = (rate * 100).toFixed(4);
   const symbol1 = token1.symbol.toUpperCase();
   const symbol2 = token2.symbol.toUpperCase();
 

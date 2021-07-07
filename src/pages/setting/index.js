@@ -27,6 +27,7 @@ export default class Setting extends Component {
   componentDidMount() {
     let i = localStorage.getItem(slippage_tolerance_index);
     let v = localStorage.getItem(slippage_tolerance_value);
+
     if (typeof i === 'undefined' || i === null) {
       localStorage.setItem(slippage_tolerance_index, defaultIndex);
       localStorage.setItem(slippage_tolerance_value, datas[defaultIndex]);
@@ -36,7 +37,7 @@ export default class Setting extends Component {
       });
       if (i > 1) {
         this.setState({
-          currentValue: v,
+          currentValue: v || datas[2],
         });
       }
     }

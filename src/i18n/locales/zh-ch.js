@@ -176,7 +176,7 @@ const texts = {
   lac_token_balance: '%s 余额不足',
   no_pair: '没有该交易对',
   not_enough: '超出了%s资金池存量',
-  lower_amount: '金额不足',
+  lower_amount: '最小输入%s聪',
 
   create_pair_tips: 'Understanding Impermanent Loss',
   create_pair_desc:
