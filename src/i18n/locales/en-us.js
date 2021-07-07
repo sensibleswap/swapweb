@@ -49,7 +49,8 @@ const texts = {
 
   tx_settings: 'Transaction settings',
   reset: 'Reset',
-  tolerance_desc: 'Your TX will cancel if price changes more than this',
+  tolerance_desc:
+    'You will be notified in the Swap UI if the price impact of a trade is bigger than slippage tolerance',
 
   select_token: 'Select a token',
 

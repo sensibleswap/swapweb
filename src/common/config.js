@@ -7,30 +7,33 @@ const { search } = location;
 
 export const query = qs.parse(search);
 
-
 export function agentVersion() {
-    var userAgentInfo = window.navigator.userAgent;
-    var Agents = ["Android", "iPhone",
-                "SymbianOS", "Windows Phone",
-                "iPad", "iPod"];
-    var flag = true;
-    for (var v = 0; v < Agents.length; v++) {
-        if (userAgentInfo.indexOf(Agents[v]) > 0) {
-            flag = false;
-            return Agents[v];
-            // break;
-        }
-        
+  var userAgentInfo = window.navigator.userAgent;
+  var Agents = [
+    'Android',
+    'iPhone',
+    'SymbianOS',
+    'Windows Phone',
+    'iPad',
+    'iPod',
+  ];
+  var flag = true;
+  for (var v = 0; v < Agents.length; v++) {
+    if (userAgentInfo.indexOf(Agents[v]) > 0) {
+      flag = false;
+      return Agents[v];
+      // break;
     }
-    return 'PC';
+  }
+  return 'PC';
 }
-
 
 export const slippage_data = {
-    storage_name: 'VoltTokenSwapSlipTol',
-    datas: ['0.1%', '0.5%', '1%', '5%'],
-    defaultIndex: 2
-}
+  slippage_tolerance_index: 'VoltTokenSwapSlipTol',
+  slippage_tolerance_value: 'VoltTokenSwapSlipTolValue',
+  datas: ['0.1', '0.5', '5.00'],
+  defaultIndex: 1,
+};
 
 export const feeRate = 0.0025;
 export const FEE_FACTOR = 10000;

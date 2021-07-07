@@ -48,7 +48,8 @@ const texts = {
 
   tx_settings: '交易设置',
   reset: '重置',
-  tolerance_desc: '价格变化超过此值后你的订单会撤销/不会成交',
+  tolerance_desc:
+    '当价格影响幅度大于滑点容忍值时, 界面会给出提示，仍可选择继续交易',
 
   select_token: '选择资产',
 

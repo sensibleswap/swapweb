@@ -18,7 +18,7 @@ import _ from 'i18n';
 
 const log = debug('swap');
 
-const { storage_name, defaultIndex, datas } = slippage_data;
+const { slippage_tolerance_value, defaultIndex, datas } = slippage_data;
 
 const FormItem = Form.Item;
 
@@ -376,8 +376,10 @@ export default class Swap extends Component {
       ? formatAmount(swapToken2Amount / swapToken1Amount, 8)
       : formatAmount(swapToken1Amount / swapToken2Amount, 8);
 
-    const tol =
-      datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];
+    let tol =
+      window.localStorage.getItem(slippage_tolerance_value) ||
+      datas[defaultIndex];
+    tol += '%';
     const beyond = parseFloat(slip) > parseFloat(tol);
 
     return (
@@ -461,7 +463,8 @@ export default class Swap extends Component {
     const balance = userBalance[origin_token.tokenID || 'BSV'];
 
     const tol =
-      datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];
+      window.localStorage.getItem(slippage_tolerance_value) ||
+      datas[defaultIndex];
     const beyond = parseFloat(slip) > parseFloat(tol);
     if (!isLogin) {
       // 未登录
