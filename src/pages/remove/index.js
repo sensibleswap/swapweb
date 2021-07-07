@@ -95,7 +95,7 @@ export default class RemovePage extends Component {
       this.setState({
         symbol1,
         symbol2,
-        price: formatAmount(price),
+        price: formatAmount(price, 8),
       });
     }
     // console.log(pairData);

@@ -373,8 +373,8 @@ export default class Swap extends Component {
     const symbol1 = origin_token.symbol.toUpperCase();
     const symbol2 = aim_token.symbol.toUpperCase();
     const price = dirForward
-      ? formatAmount(swapToken2Amount / swapToken1Amount)
-      : formatAmount(swapToken1Amount / swapToken2Amount);
+      ? formatAmount(swapToken2Amount / swapToken1Amount, 8)
+      : formatAmount(swapToken1Amount / swapToken2Amount, 8);
 
     const tol =
       datas[window.localStorage.getItem(storage_name)] || datas[defaultIndex];
