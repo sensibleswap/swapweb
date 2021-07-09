@@ -28,15 +28,11 @@ export default function Pair(props) {
           <div className={styles.name}>{_('pool_share')}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>
-            {_('pooled')} {symbol1}
-          </div>
+          <div className={styles.info_label}>{_('pooled', symbol1)}</div>
           <div className={styles.info_value}>{_token1}</div>
         </div>
         <div className={styles.info_item}>
-          <div className={styles.info_label}>
-            {_('pooled')} {symbol2}
-          </div>
+          <div className={styles.info_label}>{_('pooled', symbol2)}</div>
           <div className={styles.info_value}>{_token2}</div>
         </div>
         <div className={styles.info_item}>

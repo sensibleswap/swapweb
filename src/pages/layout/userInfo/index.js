@@ -193,6 +193,18 @@ export default class UserInfo extends Component {
     });
   };
 
+  connectExtWallet = () => {
+    window.postMessage({ type: 'MsgFromPage', msg: 'Hello, I am page.' }, '*');
+    var targetExtensionId = 'lcfbfbjeehjallkfjmmlobmmnjeeomdg'; // 插件的ID
+    chrome.runtime.sendMessage(
+      targetExtensionId,
+      { type: 'MsgFromPage', msg: 'Hello, I am page~' },
+      function (response) {
+        console.log(response);
+      },
+    );
+  };
+
   // 打开登录对话框
   // login1 = () => {
   //     this.setState({
@@ -382,6 +394,7 @@ export default class UserInfo extends Component {
           >
             <ul>
               <li onClick={this.connectWebWallet}>Web Wallet</li>
+              <li id="connect_volt_ext">Volt Chrome Ext</li>
             </ul>
           </Modal>
         )}

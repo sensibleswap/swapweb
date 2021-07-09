@@ -46,8 +46,7 @@ const datas = [
     submiting:
       effects['pair/reqSwap'] ||
       effects['pair/removeLiq'] ||
-      effects['user/transferBsv'] ||
-      effects['user/transferFtTres'] ||
+      effects['user/transferAll'] ||
       false,
   };
 })
@@ -296,6 +295,7 @@ export default class RemovePage extends Component {
       lptoken,
       rabinApis,
     } = this.props;
+    const { removeToken1, removeToken2 } = this.calc();
     const LP = userBalance[lptoken.tokenID];
 
     let res = await dispatch({
@@ -338,10 +338,8 @@ export default class RemovePage extends Component {
     // if (token_tx_res.msg) {
     //   return message.error(token_tx_res.msg);
     // }
-
-    const _value = BigNumber(value)
-      .multipliedBy(LP)
-      .div(100)
+    const removeLP = BigNumber(value).multipliedBy(LP).div(100);
+    const _value = removeLP
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
     const tx_res = await dispatch({
@@ -394,9 +392,12 @@ export default class RemovePage extends Component {
       return message.error(removeliq_res.msg);
     }
     message.success('success');
-    // this.updateData();
+    this.updateData();
     this.setState({
       formFinish: true,
+      final_lp: removeLP.toString(),
+      receive_token1: removeToken1,
+      receive_token2: removeToken2,
     });
   };
 
@@ -430,8 +431,7 @@ export default class RemovePage extends Component {
   }
 
   renderInfo() {
-    const { symbol1, symbol2 } = this.state;
-    const { removeToken1, removeToken2 } = this.calc();
+    const { symbol1, symbol2, receive_token1, receive_token2 } = this.state;
     return (
       <div className={styles.my_pair_info}>
         <div className={styles.info_title_swap}>
@@ -439,21 +439,20 @@ export default class RemovePage extends Component {
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{symbol1}</div>
-          <div className={styles.info_value}>{removeToken1}</div>
+          <div className={styles.info_value}>{receive_token1}</div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{symbol2}</div>
-          <div className={styles.info_value}>{removeToken2}</div>
+          <div className={styles.info_value}>{receive_token2}</div>
         </div>
       </div>
     );
   }
 
   renderResult() {
-    const { userBalance, lptoken } = this.props;
+    // const { userBalance, lptoken } = this.props;
     // const LP = userBalance[lptoken.tokenID];
-    const { symbol1, symbol2 } = this.state;
-    const { removeLP } = this.calc();
+    const { symbol1, symbol2, final_lp } = this.state;
     return (
       <div className={styles.content}>
         <div className={styles.finish_logo}>
@@ -475,7 +474,7 @@ export default class RemovePage extends Component {
               {symbol1}/{symbol2}
             </div>
           </div>
-          <div className={styles.pair_right}>{removeLP}</div>
+          <div className={styles.pair_right}>{final_lp}</div>
         </div>
 
         {this.renderInfo()}

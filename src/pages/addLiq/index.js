@@ -48,6 +48,7 @@ export default class Liquidity extends Component {
       origin_amount: 0,
       aim_amount: 0,
       lp: 0,
+      price_dir: true,
     };
     this.formRef = React.createRef();
   }
@@ -195,46 +196,57 @@ export default class Liquidity extends Component {
     });
   };
 
-  renderInfo() {
-    const { token1, token2, pairData } = this.props;
-    const { origin_amount = 0, aim_amount = 0 } = this.state;
-    let total_origin_amount = origin_amount,
-      total_aim_amount = aim_amount;
+  switchPriceDir = () => {
+    this.setState({
+      price_dir: !this.state.price_dir,
+    });
+  };
 
-    total_origin_amount = formatAmount(
-      BigNumber(origin_amount).plus(
-        BigNumber(pairData.swapToken1Amount).div(Math.pow(10, token1.decimal)),
-      ),
-      8,
-    ).toString();
-    total_aim_amount = formatAmount(
-      BigNumber(aim_amount).plus(
-        BigNumber(pairData.swapToken2Amount).div(Math.pow(10, token2.decimal)),
-      ),
-      8,
-    ).toString();
-    const share =
-      origin_amount > 0
-        ? formatAmount(
-            BigNumber(origin_amount).div(total_origin_amount).multipliedBy(100),
-            2,
-          ).toString()
-        : 0;
+  renderInfo(total_origin_amount, total_aim_amount, share) {
+    const { price_dir } = this.state;
+    const { token1, token2 } = this.props;
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
+    let _price = price_dir
+      ? `1 ${symbol1} = ${formatAmount(
+          total_aim_amount / total_origin_amount,
+          8,
+        )} ${symbol2}`
+      : `1 ${symbol2} = ${formatAmount(
+          total_origin_amount / total_aim_amount,
+          8,
+        )} ${symbol1}`;
     return (
       <div className={styles.my_pair_info}>
-        <div className={styles.info_title_swap}>
-          <div className={styles.info_title}>{_('pool_share')}</div>
+        <div className={styles.info_item}>
+          <div className={styles.info_label}>{_('price')}</div>
+          <div
+            className={styles.info_value}
+            onClick={this.switchPriceDir}
+            style={{ cursor: 'pointer' }}
+          >
+            {_price}{' '}
+            <CustomIcon
+              type="iconSwitch"
+              style={{
+                fontSize: 20,
+                backgroundColor: '#F6F6F9',
+                borderRadius: '50%',
+                padding: 4,
+              }}
+            />
+          </div>
         </div>
 
         <div className={styles.info_item}>
           <div className={styles.info_label}>
-            {_('pooled')} {token1.symbol.toUpperCase()}
+            {_('pooled', token1.symbol.toUpperCase())}
           </div>
           <div className={styles.info_value}>{total_origin_amount}</div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>
-            {_('pooled')} {token2.symbol.toUpperCase()}
+            {_('pooled', token2.symbol.toUpperCase())}
           </div>
           <div className={styles.info_value}>{total_aim_amount}</div>
         </div>
@@ -244,6 +256,62 @@ export default class Liquidity extends Component {
         </div>
       </div>
     );
+  }
+
+  renderFormInfo() {
+    const { token1, token2, pairData, userBalance, lptoken } = this.props;
+    const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+    const { origin_amount = 0, aim_amount = 0 } = this.state;
+
+    const LP = userBalance[lptoken.tokenID] || 0;
+    const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
+
+    let total_origin_amount = origin_amount,
+      total_aim_amount = aim_amount;
+
+    total_origin_amount = formatAmount(
+      BigNumber(origin_amount).plus(
+        BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
+      ),
+      8,
+    ).toString();
+    total_aim_amount = formatAmount(
+      BigNumber(aim_amount).plus(
+        BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
+      ),
+      8,
+    ).toString();
+    const share =
+      origin_amount > 0
+        ? formatAmount(
+            BigNumber(origin_amount)
+              .div(total_origin_amount)
+              .plus(rate)
+              .multipliedBy(100),
+            4,
+          ).toString()
+        : 0;
+    return this.renderInfo(total_origin_amount, total_aim_amount, share);
+  }
+
+  renderResultInfo() {
+    const { token1, token2, pairData, userBalance, lptoken } = this.props;
+    const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+
+    const total_origin_amount = formatAmount(
+      BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
+      8,
+    ).toString();
+    const total_aim_amount = formatAmount(
+      BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
+      8,
+    ).toString();
+
+    const LP = userBalance[lptoken.tokenID] || 0;
+    const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
+
+    const share = (rate * 100).toFixed(4);
+    return this.renderInfo(total_origin_amount, total_aim_amount, share);
   }
 
   renderForm() {
@@ -381,7 +449,7 @@ export default class Liquidity extends Component {
 
     return (
       <div>
-        {this.renderInfo()}
+        {this.renderFormInfo()}
         {btn}
       </div>
     );
@@ -614,7 +682,7 @@ export default class Liquidity extends Component {
       return message.error(addliq_res.msg);
     }
     message.success('success');
-    this.updateData();
+    await this.updateData();
     this.setState({
       formFinish: true,
     });
@@ -653,7 +721,7 @@ export default class Liquidity extends Component {
         {/*<div className={styles.view_detail}>
           {_('share_pair', `${symbol1}/${symbol2}`)}
     </div>*/}
-        {this.renderInfo()}
+        {this.renderResultInfo()}
         <Button
           className={styles.done_btn}
           onClick={() => {
