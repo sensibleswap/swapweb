@@ -21,7 +21,6 @@ const texts = {
   total_liq: 'Total liquidity',
   volume: 'Volume',
   hrs: 'hrs',
-  fees: 'Fees',
   pooled_tokens: 'Pooled tokens',
 
   name: 'Name',

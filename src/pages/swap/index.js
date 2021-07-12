@@ -417,32 +417,34 @@ export default class Swap extends Component {
 
             {this.renderAimToken()}
 
-            <div className={styles.key_value}>
-              <div className={styles.key}>{_('price')}</div>
-              <div className={styles.value}>
-                1 {symbol1} = {price} {symbol2}
+            <div className={styles.my_pair_info}>
+              <div className={styles.key_value}>
+                <div className={styles.key}>{_('price')}</div>
+                <div className={styles.value}>
+                  1 {symbol1} = {price} {symbol2}
+                </div>
               </div>
-            </div>
-            <div className={styles.key_value}>
-              <div className={styles.key}>{_('slippage_tolerance')}</div>
-              <div className={styles.value}>{tol}</div>
+              <div className={styles.key_value}>
+                <div className={styles.key}>{_('slippage_tolerance')}</div>
+                <div className={styles.value}>{tol}</div>
+              </div>
+              <div className={styles.key_value}>
+                <div className={styles.key}>{_('price_impact')}</div>
+                <div
+                  className={styles.value}
+                  style={beyond ? { color: 'red' } : {}}
+                >
+                  {slip}
+                </div>
+              </div>
+              <div className={styles.key_value}>
+                <div className={styles.key}>{_('fee')}</div>
+                <div className={styles.value}>
+                  {fee} {symbol1}
+                </div>
+              </div>
             </div>
             {this.renderButton()}
-            <div className={styles.key_value}>
-              <div className={styles.key}>{_('price_impact')}</div>
-              <div
-                className={styles.value}
-                style={beyond ? { color: 'red' } : {}}
-              >
-                {slip}
-              </div>
-            </div>
-            <div className={styles.key_value}>
-              <div className={styles.key}>{_('fee')}</div>
-              <div className={styles.value}>
-                {fee} {symbol1}
-              </div>
-            </div>
           </Form>
         </Spin>
       </div>

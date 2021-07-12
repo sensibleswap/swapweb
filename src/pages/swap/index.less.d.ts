@@ -26,6 +26,7 @@ interface CssExports {
   menu: string;
   menu_item: string;
   menu_item_selected: string;
+  my_pair_info: string;
   name: string;
   normal: string;
   selectToken_wrap: string;

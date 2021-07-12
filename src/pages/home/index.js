@@ -187,8 +187,8 @@ export default class Home extends Component {
               className={styles.btn}
               onClick={() => {
                 window.location.href = isZh
-                  ? 'https://app.gitbook.com/@tokenswap/s/tokenswap/v/zhong-wen/'
-                  : ' https://app.gitbook.com/@tokenswap/s/tokenswap/';
+                  ? 'https://tokenswap.gitbook.io/tokenswap/v/zhong-wen/'
+                  : 'https://tokenswap.gitbook.io/tokenswap/';
               }}
             >
               {_('documentation')}

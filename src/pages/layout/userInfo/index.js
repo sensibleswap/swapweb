@@ -194,15 +194,24 @@ export default class UserInfo extends Component {
   };
 
   connectExtWallet = () => {
-    window.postMessage({ type: 'MsgFromPage', msg: 'Hello, I am page.' }, '*');
-    var targetExtensionId = 'lcfbfbjeehjallkfjmmlobmmnjeeomdg'; // 插件的ID
-    chrome.runtime.sendMessage(
-      targetExtensionId,
-      { type: 'MsgFromPage', msg: 'Hello, I am page~' },
-      function (response) {
-        console.log(response);
-      },
+    const popWidth = 380;
+    const popHeight = 600;
+    const popTop = Math.round((window.innerHeight - popHeight) / 2);
+    const popLeft = Math.round((window.innerWidth - popWidth) / 2);
+    window.open(
+      'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/notification.html',
+      'voltWalletPopup',
+      `width=${popWidth}, height=${popHeight}, left=${popLeft}, top=${popTop}, resizable,scrollbars,status`,
     );
+    // window.postMessage({ type: 'MsgFromPage', msg: 'Hello, I am page.' }, '*');
+    // var targetExtensionId = 'lcfbfbjeehjallkfjmmlobmmnjeeomdg'; // 插件的ID
+    // chrome.runtime.sendMessage(
+    //   targetExtensionId,
+    //   { type: 'MsgFromPage', msg: 'Hello, I am page~' },
+    //   function (response) {
+    //     console.log(response);
+    //   },
+    // );
   };
 
   // 打开登录对话框
@@ -394,7 +403,7 @@ export default class UserInfo extends Component {
           >
             <ul>
               <li onClick={this.connectWebWallet}>Web Wallet</li>
-              <li id="connect_volt_ext">Volt Chrome Ext</li>
+              <li onClick={this.connectExtWallet}>Volt Chrome Ext</li>
             </ul>
           </Modal>
         )}

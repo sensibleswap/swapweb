@@ -20,7 +20,6 @@ const texts = {
   total_liq: '所有流动性资产',
   volume: '交易量',
   hrs: '小时',
-  fees: '手续费',
   pooled_tokens: '加入流动池的资产',
 
   name: '名称',
@@ -44,7 +43,7 @@ const texts = {
   enter_amount: '输入金额',
   minimum_received: '最少收到',
   price_impact: '价格影响幅度',
-  fee: 'Fee',
+  fee: '手续费',
 
   tx_settings: '交易设置',
   reset: '重置',

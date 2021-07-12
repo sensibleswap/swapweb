@@ -20,27 +20,6 @@ export default function PairStat(props) {
   const amount2 = formatSat(swapToken2Amount, token2.decimal);
   return (
     <div className={styles.container}>
-      {/*<div className={styles.item}>
-            <div className={styles.label}>{_('total_liq')}</div>
-            <div className={styles.value_wrap}>
-                <div className={styles.value}>${totalLiquidity.totalAmount}</div>
-                <div className={styles.percent} style={{ color: '#EB5757' }}>{totalLiquidity.changeRate}</div>
-            </div>
-        </div>
-        <div className={styles.item}>
-            <div className={styles.label}>{_('volume')}(24{_('hrs')})</div>
-            <div className={styles.value_wrap}>
-                <div className={styles.value}>${volume.amount}</div>
-                <div className={styles.percent}>{volume.changeRate}</div>
-            </div>
-        </div>
-        <div className={styles.item}>
-            <div className={styles.label}>{_('fees')}(24{_('hrs')})</div>
-            <div className={styles.value_wrap}>
-                <div className={styles.value}>${fees.amount}</div>
-                <div className={styles.percent} style={{ color: '#229278' }}>+{fees.changeRate}</div>
-            </div>
-</div>*/}
       <div className={styles.item}>
         <div className={styles.label}>{_('pooled_tokens')}</div>
 

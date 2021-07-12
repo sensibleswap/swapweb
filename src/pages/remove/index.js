@@ -198,9 +198,6 @@ export default class RemovePage extends Component {
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
-          <div className={styles.title}>
-            <h3>{_('remove_liq')}</h3>
-          </div>
           <div className={styles.data}>{value}%</div>
           <Slider value={value} onChange={this.slideData} />
 
