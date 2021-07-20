@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Loading from 'components/loading';
@@ -63,40 +63,45 @@ export default class SwapPage extends Component {
   render() {
     const { app_pannel } = this.state;
     return (
-      <section className={styles.container}>
-        <section
-          className={
-            app_pannel ? jc(styles.left, styles.app_hide) : styles.left
-          }
-        >
-          <div className={styles.left_inner}>
-            <Header />
-            {this.renderContent()}
-            <Button
-              type="primary"
-              className={styles.app_start_btn}
-              onClick={this.showPannel}
-            >
-              {_('start_swapping')}
-            </Button>
-          </div>
-        </section>
-        <section className={styles.right}>
-          <div
+      <>
+        <Alert message={_('notice720')} type="success" banner={true} />
+        <section className={styles.container}>
+          <section
             className={
-              app_pannel ? styles.sidebar : jc(styles.sidebar, styles.app_hide)
+              app_pannel ? jc(styles.left, styles.app_hide) : styles.left
             }
           >
-            <div className={styles.app_title}>
-              {_('swap')}
-              <div className={styles.close} onClick={this.hidePannel}>
-                <CloseOutlined />
-              </div>
+            <div className={styles.left_inner}>
+              <Header />
+              {this.renderContent()}
+              <Button
+                type="primary"
+                className={styles.app_start_btn}
+                onClick={this.showPannel}
+              >
+                {_('start_swapping')}
+              </Button>
             </div>
-            <Swap />
-          </div>
+          </section>
+          <section className={styles.right}>
+            <div
+              className={
+                app_pannel
+                  ? styles.sidebar
+                  : jc(styles.sidebar, styles.app_hide)
+              }
+            >
+              <div className={styles.app_title}>
+                {_('swap')}
+                <div className={styles.close} onClick={this.hidePannel}>
+                  <CloseOutlined />
+                </div>
+              </div>
+              <Swap />
+            </div>
+          </section>
         </section>
-      </section>
+      </>
     );
   }
 }

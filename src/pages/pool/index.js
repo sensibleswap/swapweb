@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Pair from 'components/pair';
@@ -80,41 +80,46 @@ export default class Pool extends Component {
     const { app_pannel } = this.state;
 
     return (
-      <section className={styles.container}>
-        <section
-          className={
-            app_pannel ? jc(styles.left, styles.app_hide) : styles.left
-          }
-        >
-          <div className={styles.left_inner}>
-            <Header />
-            {this.renderContent()}
-            <Button
-              type="primary"
-              className={styles.app_start_btn}
-              onClick={this.showPannel}
-            >
-              {_('start_pooling')}
-            </Button>
-          </div>
-        </section>
-        <section className={styles.right}>
-          <div
+      <>
+        <Alert message={_('notice720')} type="success" banner={true} />
+        <section className={styles.container}>
+          <section
             className={
-              app_pannel ? styles.sidebar : jc(styles.sidebar, styles.app_hide)
+              app_pannel ? jc(styles.left, styles.app_hide) : styles.left
             }
           >
-            <div className={styles.app_title}>
-              {_('pool')}
-              <div className={styles.close} onClick={this.hidePannel}>
-                <CloseOutlined />
-              </div>
+            <div className={styles.left_inner}>
+              <Header />
+              {this.renderContent()}
+              <Button
+                type="primary"
+                className={styles.app_start_btn}
+                onClick={this.showPannel}
+              >
+                {_('start_pooling')}
+              </Button>
             </div>
+          </section>
+          <section className={styles.right}>
+            <div
+              className={
+                app_pannel
+                  ? styles.sidebar
+                  : jc(styles.sidebar, styles.app_hide)
+              }
+            >
+              <div className={styles.app_title}>
+                {_('pool')}
+                <div className={styles.close} onClick={this.hidePannel}>
+                  <CloseOutlined />
+                </div>
+              </div>
 
-            {this.props.children}
-          </div>
+              {this.props.children}
+            </div>
+          </section>
         </section>
-      </section>
+      </>
     );
   }
 }
