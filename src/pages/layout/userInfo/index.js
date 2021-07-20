@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button, Popover, Modal } from 'antd';
+import { Button, Popover, Modal, message } from 'antd';
 import {
   UpOutlined,
   SwapOutlined,
@@ -13,6 +13,7 @@ import {
 import EventBus from 'common/eventBus';
 import { strAbbreviation } from 'common/utils';
 import Clipboard from 'components/clipboard';
+import CustomIcon from 'components/icon';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
@@ -51,19 +52,19 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
-    if (!_notice) {
-      _notice = true;
-      Modal.info({
-        title: _('notice'),
-        content: (
-          <div>
-            <p>{_('notice720')}</p>
-          </div>
-        ),
-        closable: true,
-        footer: null,
-      });
-    }
+    // if (!_notice) {
+    //   _notice = true;
+    //   Modal.info({
+    //     title: _('notice'),
+    //     content: (
+    //       <div>
+    //         <p>{_('notice720')}</p>
+    //       </div>
+    //     ),
+    //     closable: true,
+    //     footer: null,
+    //   });
+    // }
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
     const res = this.props.dispatch({
@@ -148,12 +149,16 @@ export default class UserInfo extends Component {
       });
     }
 
-    await dispatch({
+    const con_res = await dispatch({
       type: 'user/connectWebWallet',
       payload: {
         type,
       },
     });
+
+    if (con_res.msg) {
+      return message.error(con_res.msg);
+    }
     const res = await dispatch({
       type: 'user/loadingUserData',
       payload: {
@@ -161,7 +166,7 @@ export default class UserInfo extends Component {
       },
     });
     if (res.msg) {
-      return message.error(msg.error);
+      return message.error(res.msg);
     }
     EventBus.emit('reloadPair');
   };
@@ -332,8 +337,11 @@ export default class UserInfo extends Component {
             onCancel={this.closeChooseDialog}
           >
             <ul>
+              <li onClick={() => this.connectWebWallet(2)}>
+                Volt
+                <CustomIcon type="iconVolt_logo" />
+              </li>
               <li onClick={() => this.connectWebWallet(1)}>Web Wallet</li>
-              <li onClick={() => this.connectWebWallet(2)}>Volt Wallet</li>
               {process.env.NODE_ENV === 'development' && (
                 <li id="J_VoltExtConnectBtn">Chrome Ext</li>
               )}

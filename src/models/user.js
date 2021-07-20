@@ -1,14 +1,9 @@
-import webWallet from 'lib/webWallet';
-import voltWallet from 'lib/volt';
 import { formatSat } from 'common/utils';
+import bsv from 'common/walletFun';
 import debug from 'debug';
 const log = debug('user');
 const { localStorage } = window;
 
-const walletType = {
-  1: webWallet,
-  2: voltWallet,
-};
 export default {
   namespace: 'user',
 
@@ -26,22 +21,23 @@ export default {
     *loadingUserData({ payload }, { call, put }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
-      const bsv = walletType[payload.type || 1];
+      const { type } = payload;
       let accountInfo;
       try {
-        accountInfo = yield bsv.getAccount();
+        accountInfo = yield bsv.getAccountInfo(type || 1);
       } catch (error) {
         console.log(error);
         return { msg: error };
       }
-      if (!accountInfo) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network);
+      console.log(accountInfo);
+      if (!accountInfo || !accountInfo.email) return false;
+      localStorage.setItem('TSwapNetwork', accountInfo.network || 'mainnet');
 
-      const bsvBalance = yield bsv.getBsvBalance();
-      const userAddress = yield bsv.getAddress();
-      const tokenBalance = yield bsv.getSensibleFtBalance();
+      const bsvBalance = yield bsv.getBsvBalance(type);
+      const userAddress = yield bsv.getAddress(type);
+      const tokenBalance = yield bsv.getSensibleFtBalance(type);
       const userBalance = {
-        BSV: formatSat(bsvBalance.balance),
+        BSV: formatSat(bsvBalance),
       };
       tokenBalance.forEach((item) => {
         userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
@@ -55,31 +51,30 @@ export default {
           userBalance,
           userAddress,
           isLogin: true,
-          walletType: payload.type || 1,
+          walletType: type || 1,
         },
       });
       return {};
     },
-    *updateUserData({ payload }, { call, put }) {
+    *updateUserData({ payload }, { call, put, select }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
       let accountInfo;
-      const walletType = yield select((state) => state.user.walletType);
-      const bsv = walletType[walletType];
+      const type = yield select((state) => state.user.walletType);
       try {
-        accountInfo = yield bsv.getAccount();
+        accountInfo = yield bsv.getAccountInfo(type);
       } catch (error) {
         console.log(error);
         return { msg: error };
       }
-      if (!accountInfo) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network);
+      if (!accountInfo || !accountInfo.email) return false;
+      localStorage.setItem('TSwapNetwork', accountInfo.network || 'mainnet');
 
-      const bsvBalance = yield bsv.getBsvBalance();
-      const userAddress = yield bsv.getAddress();
-      const tokenBalance = yield bsv.getSensibleFtBalance();
+      const bsvBalance = yield bsv.getBsvBalance(type);
+      const userAddress = yield bsv.getAddress(type);
+      const tokenBalance = yield bsv.getSensibleFtBalance(type);
       const userBalance = {
-        BSV: formatSat(bsvBalance.balance),
+        BSV: formatSat(bsvBalance),
       };
       tokenBalance.forEach((item) => {
         userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
@@ -99,9 +94,8 @@ export default {
     *disconnectWebWallet({ payload }, { call, put }) {
       // console.log(bsv.exitAccount)
       const walletType = yield select((state) => state.user.walletType);
-      const bsv = walletType[walletType];
       try {
-        yield bsv.exitAccount();
+        yield bsv.exitAccount(type);
       } catch (error) {
         console.log(error);
         return { msg: error };
@@ -118,30 +112,23 @@ export default {
       });
     },
     *connectWebWallet({ payload }, { call, put }) {
-      const bsv = walletType[payload.type || 1];
+      const { type } = payload;
       try {
-        const res = yield bsv.requestAccount().then();
-        // console.log(res);
+        yield bsv.connectWallet(type);
+        return {};
       } catch (error) {
+        console.log(error);
         return { msg: error };
       }
     },
 
-    *transferBsv({ payload }, { call, put }) {
+    *transferBsv({ payload }, { call, put, select }) {
       const { address, amount } = payload;
-      const walletType = yield select((state) => state.user.walletType);
-      const bsv = walletType[walletType];
+      const type = yield select((state) => state.user.walletType);
 
       log('transferBsv:', payload);
       try {
-        const res = yield bsv.transferBsv({
-          receivers: [
-            {
-              address,
-              amount,
-            },
-          ],
-        });
+        const res = yield bsv.transferBsv(type, { address, amount });
         log(res);
         return res;
       } catch (error) {
@@ -150,10 +137,9 @@ export default {
       }
     },
 
-    *transferFtTres({ payload }, { call, put }) {
+    *transferFtTres({ payload }, { call, put, select }) {
       const { address, amount, codehash, genesishash } = payload;
-      const walletType = yield select((state) => state.user.walletType);
-      const bsv = walletType[walletType];
+      const type = yield select((state) => state.user.walletType);
       log('transferFtTres:', {
         receivers: [
           {
@@ -165,13 +151,9 @@ export default {
         genesis: genesishash,
       });
       try {
-        const res = yield bsv.transferSensibleFt({
-          receivers: [
-            {
-              address,
-              amount,
-            },
-          ],
+        const res = yield bsv.transferSensibleFt(type, {
+          address,
+          amount,
           codehash,
           genesis: genesishash,
         });
@@ -183,13 +165,12 @@ export default {
       }
     },
 
-    *transferAll({ payload }, { call, put }) {
+    *transferAll({ payload }, { call, put, select }) {
       const { datas } = payload;
-      const walletType = yield select((state) => state.user.walletType);
-      const bsv = walletType[walletType];
+      const type = yield select((state) => state.user.walletType);
       // console.log(...datas)
       try {
-        const res = yield bsv.transferAll(datas);
+        const res = yield bsv.transferAll(type, datas);
         // console.log(res)
         log(res);
         return res;

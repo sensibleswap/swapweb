@@ -8,4 +8,5 @@ const bsv = new Bsv({
     endpoint: '47.108.83.26:7001', // 后端接口地址, 测试时使用这个地址
   },
 });
+
 export default bsv;

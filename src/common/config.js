@@ -37,3 +37,30 @@ export const slippage_data = {
 
 export const feeRate = 0.0025;
 export const FEE_FACTOR = 10000;
+
+export const walletFunName = {
+  1: {
+    //web wallet
+    connectWallet: 'requestAccount',
+    getAccountInfo: 'getAccount',
+    getBsvBalance: 'getBsvBalance',
+    getAddress: 'getAddress',
+    getSensibleFtBalance: 'getSensibleFtBalance',
+    exitAccount: 'exitAccount',
+    transferBsv: 'transferBsv',
+    transferSensibleFt: 'transferSensibleFt',
+    transferAll: 'transferAll',
+  },
+  2: {
+    //volt wallet
+    connectWallet: 'connectAccount',
+    getAccountInfo: 'getAccountInfo',
+    getBsvBalance: 'getBsvBalance',
+    getAddress: 'getDepositAddress',
+    getSensibleFtBalance: 'getSensibleFtBalance',
+    exitAccount: 'disconnectAccount',
+    transferBsv: 'transfer',
+    transferSensibleFt: 'transfer',
+    transferAll: 'batchTransfer',
+  },
+};
