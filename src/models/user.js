@@ -25,7 +25,7 @@ export default {
     *loadingUserData({ payload }, { call, put }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
-      const bsv = walletType[payload.type || 1];
+      const bsv = walletType[1];
       let accountInfo;
       try {
         accountInfo = yield bsv.getAccount();
@@ -62,7 +62,7 @@ export default {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
       let accountInfo;
-      const bsv = walletType[payload.type || 1];
+      const bsv = walletType[1];
       try {
         accountInfo = yield bsv.getAccount();
       } catch (error) {
@@ -95,7 +95,7 @@ export default {
     },
     *disconnectWebWallet({ payload }, { call, put }) {
       // console.log(bsv.exitAccount)
-      const bsv = walletType[payload.type || 1];
+      const bsv = walletType[1];
       try {
         yield bsv.exitAccount();
       } catch (error) {
@@ -114,7 +114,7 @@ export default {
       });
     },
     *connectWebWallet({ payload }, { call, put }) {
-      const bsv = walletType[payload.type || 1];
+      const bsv = walletType[1];
       try {
         const res = yield bsv.requestAccount().then();
         // console.log(res);
@@ -125,6 +125,7 @@ export default {
 
     *transferBsv({ payload }, { call, put }) {
       const { address, amount } = payload;
+      const bsv = walletType[1];
 
       log('transferBsv:', payload);
       try {
@@ -146,6 +147,7 @@ export default {
 
     *transferFtTres({ payload }, { call, put }) {
       const { address, amount, codehash, genesishash } = payload;
+      const bsv = walletType[1];
       log('transferFtTres:', {
         receivers: [
           {
@@ -177,6 +179,7 @@ export default {
 
     *transferAll({ payload }, { call, put }) {
       const { datas } = payload;
+      const bsv = walletType[1];
       // console.log(...datas)
       try {
         const res = yield bsv.transferAll(datas);

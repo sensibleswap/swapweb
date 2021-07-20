@@ -22,7 +22,7 @@ function sleep(ms) {
     setTimeout(resolve, ms);
   });
 }
-
+let _timer = 0;
 @withRouter
 @connect(({ pair, user, loading }) => {
   const effects = loading.effects;
@@ -31,6 +31,7 @@ function sleep(ms) {
     ...user,
     connecting:
       effects['user/loadingUserData'] || effects['user/connectWebWallet'],
+    busy: effects['pair/getPairData'] || effects['pair/updatePairData'],
   };
 })
 export default class UserInfo extends Component {
@@ -45,6 +46,7 @@ export default class UserInfo extends Component {
       wallet_list: [],
       isLogin: false,
     };
+    this.polling = true;
   }
 
   componentDidMount() {
@@ -57,44 +59,28 @@ export default class UserInfo extends Component {
       return message.error(res.msg);
     }
   }
+  componentWillUnmount() {
+    this.polling = false;
+  }
 
   fetchPairData = async () => {
     const { currentPair, dispatch } = this.props;
-
-    setTimeout(async () => {
-      do {
-        await sleep(30 * 1e3);
-        if (!currentPair) return;
-        await dispatch({
-          type: 'pair/updatePairData',
-          payload: {
-            currentPair,
-          },
-        });
-        await dispatch({
-          type: 'user/updateUserData',
-        });
-      } while (true);
-    });
-  };
-
-  init = async () => {
-    // const res = await Volt.isOnline();
-    // debugger
-    //   if (res) {
-    //     const res = await Volt.getWalletById();
-    //     // console.log(res);
-    //     if (res.code !== 200) return;
-    //     const wallet = res.data;
-    //     await this.props.dispatch({
-    //       type: 'user/saveWalletData',
-    //       payload: {
-    //         isLogin: true,
-    //         accountName: wallet.paymail || wallet.name,
-    //         wallet: wallet,
-    //       },
-    //     });
-    //   }
+    const _self = this;
+    if (_timer < 1) {
+      setTimeout(async () => {
+        while (this.polling) {
+          await sleep(30 * 1e3);
+          const { dispatch, busy } = _self.props;
+          if (busy) return;
+          await dispatch({
+            type: 'pair/updatePairData',
+          });
+          await dispatch({
+            type: 'user/updateUserData',
+          });
+        }
+      });
+    }
   };
 
   closePop = () => {
@@ -136,23 +122,6 @@ export default class UserInfo extends Component {
   handleVisibleChange = (visible) => {
     this.setState({ pop_visible: visible });
   };
-  // login = async () => {
-  //     const res = await Volt.login();
-  //     if (res) {
-  //         const res = await Volt.getWalletDetail();
-  //         // console.log(res);
-  //         if (res.code !== 200) return;
-  //         const wallet = res.data;
-  //         await this.props.dispatch({
-  //             type: 'user/saveWalletData',
-  //             payload: {
-  //                 isLogin: true,
-  //                 accountName: wallet.paymail || wallet.name,
-  //                 wallet: wallet,
-  //             },
-  //         });
-  //     }
-  // }
 
   connectWebWallet = async () => {
     this.closeChooseDialog();
@@ -193,70 +162,17 @@ export default class UserInfo extends Component {
     });
   };
 
-  connectExtWallet = () => {
-    const popWidth = 380;
-    const popHeight = 600;
-    const popTop = Math.round((window.innerHeight - popHeight) / 2);
-    const popLeft = Math.round((window.innerWidth - popWidth) / 2);
-    window.open(
-      'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/notification.html',
-      'voltWalletPopup',
-      `width=${popWidth}, height=${popHeight}, left=${popLeft}, top=${popTop}, resizable,scrollbars,status`,
-    );
-    // window.postMessage({ type: 'MsgFromPage', msg: 'Hello, I am page.' }, '*');
-    // var targetExtensionId = 'lcfbfbjeehjallkfjmmlobmmnjeeomdg'; // 插件的ID
-    // chrome.runtime.sendMessage(
-    //   targetExtensionId,
-    //   { type: 'MsgFromPage', msg: 'Hello, I am page~' },
-    //   function (response) {
-    //     console.log(response);
-    //   },
-    // );
-  };
-
-  // 打开登录对话框
-  // login1 = () => {
-  //     this.setState({
-  //         login_visible: true,
-  //         pop_visible: false,
-  //         dialog_visible: false
-  //     });
-  //     const { isLogin } = this.props;
-
-  //     _loginTimer = setInterval(async () => {
-
-  //         const res = await Volt.isOnline();
-  //         console.log(res);
-
-  //         if (isLogin || !this.state.login_visible) {
-  //             clearInterval(_loginTimer);
-  //         }
-  //         // 登录成功后
-  //         if (res.data.wid) {
-
-  //             this.setState({
-  //                 login_visible: false,
-  //             })
-  //             await this.props.dispatch({
-  //                 type: 'user/getWalletById',
-  //                 payload: {
-  //                     wid: res.wid
-  //                 }
-  //             })
-
-  //             clearInterval(_loginTimer);
-  //         }
-  //         // }
-  //     }, 500);
-  // }
-
-  // closeLogin = () => {
-
-  //     this.setState({
-  //         login_visible: false,
-  //     });
-  //     clearInterval(_loginTimer);
-  // }
+  // connectExtWallet = () => {
+  //   const popWidth = 380;
+  //   const popHeight = 600;
+  //   const popTop = Math.round((window.innerHeight - popHeight) / 2);
+  //   const popLeft = Math.round((window.innerWidth - popWidth) / 2);
+  //   window.open(
+  //     'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/notification.html',
+  //     'voltWalletPopup',
+  //     `width=${popWidth}, height=${popHeight}, left=${popLeft}, top=${popTop}, resizable,scrollbars,status`,
+  //   );
+  // };
 
   disConnect = async () => {
     this.props.dispatch({
@@ -326,13 +242,6 @@ export default class UserInfo extends Component {
             />
             <span className={styles.name}>{_('withdraw')}</span>
           </div>
-          {/*<div className={styles.line} onClick={() => {
-                    this.props.history.push('my');
-                    this.closePop()
-                }}>
-                    <UserOutlined style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }} />
-                    <span className={styles.name}>{_('go_to_infopage')}</span>
-            </div>*/}
         </div>
         <div className={styles.ft}>
           <Button
@@ -402,8 +311,10 @@ export default class UserInfo extends Component {
             onCancel={this.closeChooseDialog}
           >
             <ul>
-              <li onClick={this.connectWebWallet}>Web Wallet</li>
-              <li onClick={this.connectExtWallet}>Volt Chrome Ext</li>
+              <li onClick={() => this.connectWebWallet(1)}>Web Wallet</li>
+              {process.env.NODE_ENV === 'development' && (
+                <li id="J_VoltExtConnectBtn">Chrome Ext</li>
+              )}
             </ul>
           </Modal>
         )}
