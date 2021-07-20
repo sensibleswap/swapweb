@@ -161,8 +161,7 @@ const texts = {
   lb_5: '0 withdrawal fee',
   lb_6: 'Unlimited TPS (compared with ETH)',
   lb_7: 'Free from exchange hacks because of account information leakage',
-  lb_8:
-    'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
+  lb_8: 'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
   lb_9: 'No front-running, which happens on ETH DEXs that causes loss to users',
   lb_10:
     'Instant matching between users or user-pool with low fees, instant settlement',
@@ -237,5 +236,8 @@ const texts = {
   your_lp: 'Your LP(%s)  balance',
   total_lp: 'Total LP(%s) supply',
   txs_fail: 'Some Transaction failed',
+  notice: 'Notice',
+  notice720:
+    'TokenSwap is performing an upgrade to better support future development, trading and liquidity provision is tempororily suspended, users can withdraw their liquidity from pools. We will take a snapshot of all users addresses, users who withdraw their liquidity from pools will be eligible for future airdrop of TokenSwap utility token. Please take good care of your wallet.',
 };
 module.exports = texts;

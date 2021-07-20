@@ -234,5 +234,8 @@ const texts = {
   your_lp: '你的LP(%s)数量',
   total_lp: 'LP(%s)总量',
   txs_fail: '部分交易失败',
+  notice: '通知',
+  notice720:
+    'tswap预计将在本周四2021年7月22对合约进行升级，以支持后续的功能开发，因此暂时停止swap交易，仅开放提取流动性交易，待升级完毕后重新开放。为了感谢早期用户的支持，我们已在北京时间2021年7月19日21:40，将bsv/mc和bsv/boex的流动性token持有者的信息进行了备份，对于提取流动性的用户，后续会对其地址空投tswap的token奖励。请大家保管好地址对应的私钥。',
 };
 module.exports = texts;

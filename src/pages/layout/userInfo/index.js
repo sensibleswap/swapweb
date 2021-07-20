@@ -23,6 +23,7 @@ function sleep(ms) {
   });
 }
 let _timer = 0;
+let _notice = false;
 @withRouter
 @connect(({ pair, user, loading }) => {
   const effects = loading.effects;
@@ -50,6 +51,19 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
+    if (!_notice) {
+      _notice = true;
+      Modal.info({
+        title: _('notice'),
+        content: (
+          <div>
+            <p>{_('notice720')}</p>
+          </div>
+        ),
+        closable: true,
+        footer: null,
+      });
+    }
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
     const res = this.props.dispatch({
