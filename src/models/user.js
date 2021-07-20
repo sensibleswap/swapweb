@@ -1,5 +1,5 @@
 import webWallet from 'lib/webWallet';
-// import voltWallet from 'lib/volt';
+import voltWallet from 'lib/volt';
 import { formatSat } from 'common/utils';
 import debug from 'debug';
 const log = debug('user');
@@ -7,7 +7,7 @@ const { localStorage } = window;
 
 const walletType = {
   1: webWallet,
-  // 2: voltWallet
+  2: voltWallet,
 };
 export default {
   namespace: 'user',
@@ -25,7 +25,7 @@ export default {
     *loadingUserData({ payload }, { call, put }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
-      const bsv = walletType[1];
+      const bsv = walletType[payload.type || 1];
       let accountInfo;
       try {
         accountInfo = yield bsv.getAccount();

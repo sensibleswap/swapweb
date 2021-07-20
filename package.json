@@ -22,6 +22,7 @@
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "^1.8.2",
+    "@volt-wallet/sdk": "^1.0.6",
     "bignumber.js": "^9.0.1",
     "eventemitter3": "^4.0.7",
     "js-cookie": "^2.2.1",
