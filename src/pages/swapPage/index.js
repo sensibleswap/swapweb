@@ -48,7 +48,9 @@ export default class SwapPage extends Component {
       <div className={styles.content}>
         <div className={styles.main_title}>
           <h2>
-            <span className={styles.strong}>{symbol1}</span>/{symbol2}
+            <span className={styles.strong}>
+              {symbol2}/{symbol1}
+            </span>
           </h2>
         </div>
 

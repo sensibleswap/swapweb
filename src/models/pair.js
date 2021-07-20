@@ -71,23 +71,21 @@ export default {
       return data;
     },
 
-    *updatePairData({ payload }, { call, put }) {
-      let { currentPair } = payload;
+    *updatePairData({ payload }, { call, put, select }) {
+      // let { currentPair } = payload;
+      const currentPair = yield select((state) => state.pair.currentPair);
+      if (!currentPair) return;
       const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
       const { code, msg, data } = res;
       if (code !== 0) {
         return res;
       }
-      if (currentPair) {
-        yield put({
-          type: 'savePair',
-          payload: {
-            pairData: data,
-            currentPair,
-            mode: 'force',
-          },
-        });
-      }
+      yield put({
+        type: 'save',
+        payload: {
+          pairData: data,
+        },
+      });
 
       // console.log(data)
       return data;

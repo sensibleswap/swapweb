@@ -41,13 +41,8 @@ export default class Pool extends Component {
   };
 
   renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      allPairs,
-      userBalance,
-    } = this.props;
+    const { currentPair, pairData, loading, allPairs, userBalance } =
+      this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];
@@ -66,7 +61,7 @@ export default class Pool extends Component {
               />
             </div>
             <div className={styles.name}>
-              LP({symbol1}/{symbol2})
+              LP({symbol2}/{symbol1})
             </div>
           </h2>
           {/*<div className={styles.subtitle}>{_('your_liq')}</div>

@@ -8,12 +8,6 @@ import { DownOutlined, SettingOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
-import {
-  swapToken1ToToken2ByToken2,
-  swapToken1ToToken2,
-  swapToken2ToToken1,
-  swapToken2ToToken1ByToken1,
-} from 'common/swap';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
@@ -185,7 +179,8 @@ export default class Swap extends Component {
   };
 
   renderOriginToken() {
-    const { token1, token2 } = this.props;
+    const { token1, token2, pairData } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const symbol1 = origin_token.symbol.toUpperCase();
@@ -200,11 +195,7 @@ export default class Swap extends Component {
           <Input
             className={styles.input}
             onChange={this.changeOriginAmount}
-            // onPressEnter={this.changeOriginAmount}
-            // formatter={(value) => parseFloat(value || 0)}
-            // min="0"
-            // step={1/Math.pow(10, origin_token.decimal)}
-            // stringMode
+            disabled={swapToken1Amount === '0' || swapToken2Amount === '0'}
           />
         </FormItem>
       </div>
@@ -213,6 +204,7 @@ export default class Swap extends Component {
 
   renderAimToken() {
     const { token1, token2, pairData } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward } = this.state;
     const aim_token = dirForward ? token2 : token1;
     const symbol2 = aim_token.symbol.toUpperCase();
@@ -229,10 +221,7 @@ export default class Swap extends Component {
           <Input
             className={styles.input}
             onChange={this.changeAimAmount}
-            // onPressEnter={this.changeAimAmount}
-            // formatter={(value) => parseFloat(value || 0)}
-            min="0"
-            // max={Math.floor(pairData ? pairData.swapToken1Amount : 0)}
+            disabled={swapToken1Amount === '0' || swapToken2Amount === '0'}
           />
         </FormItem>
       </div>
@@ -240,7 +229,11 @@ export default class Swap extends Component {
   }
 
   setOriginBalance = () => {
-    const { userBalance, token2 } = this.props;
+    const { userBalance, token2, pairData } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
+    if (swapToken1Amount === '0' || swapToken2Amount === '0') {
+      return;
+    }
 
     const origin_amount = this.state.dirForward
       ? userBalance.BSV || 0
@@ -271,11 +264,13 @@ export default class Swap extends Component {
     const { swapToken1Amount, swapToken2Amount, swapFeeRate } = pairData;
     let amount1 = dirForward ? swapToken1Amount : swapToken2Amount;
     let amount2 = dirForward ? swapToken2Amount : swapToken1Amount;
+    let decimal1 = dirForward ? token1.decimal : token2.decimal;
+    let decimal2 = dirForward ? token2.decimal : token1.decimal;
     let _originAddAmount = BigNumber(originAddAmount).multipliedBy(
-      Math.pow(10, token1.decimal || 8),
+      Math.pow(10, decimal1),
     );
     let _aimAddAmount = BigNumber(aimAddAmount).multipliedBy(
-      Math.pow(10, token2.decimal),
+      Math.pow(10, decimal2),
     );
     let newAmount1 = BigNumber(amount1),
       newAmount2 = BigNumber(amount2);
@@ -291,10 +286,7 @@ export default class Swap extends Component {
       removeAmount = BigNumber(removeAmount);
       newAmount2 = BigNumber(amount2).minus(removeAmount);
 
-      removeAmount = formatAmount(
-        removeAmount.div(Math.pow(10, token2.decimal)),
-        8,
-      );
+      removeAmount = formatAmount(removeAmount.div(Math.pow(10, decimal2)), 8);
 
       this.formRef.current.setFieldsValue({
         aim_amount: removeAmount,
@@ -313,7 +305,7 @@ export default class Swap extends Component {
           _aimAddAmount * BigInt(FEE_FACTOR));
 
       addAmount = BigNumber(addAmount);
-      addAmount = addAmount.div(Math.pow(10, token1.decimal || 8));
+      addAmount = addAmount.div(Math.pow(10, decimal1));
       newAmount1 = addAmount.plus(amount1);
       let addAmountN = formatAmount(addAmount, 8);
       if (!addAmount.isGreaterThan(0)) {
@@ -370,9 +362,15 @@ export default class Swap extends Component {
     const { slip, fee } = this.state;
     const symbol1 = origin_token.symbol.toUpperCase();
     const symbol2 = aim_token.symbol.toUpperCase();
+    const _swapToken1Amount = BigNumber(swapToken1Amount)
+      .div(Math.pow(10, token1.decimal))
+      .toString();
+    const _swapToken2Amount = BigNumber(swapToken2Amount)
+      .div(Math.pow(10, token2.decimal))
+      .toString();
     const price = dirForward
-      ? formatAmount(swapToken2Amount / swapToken1Amount, 8)
-      : formatAmount(swapToken1Amount / swapToken2Amount, 8);
+      ? formatAmount(_swapToken2Amount / _swapToken1Amount, 8)
+      : formatAmount(_swapToken1Amount / _swapToken2Amount, 8);
 
     let tol =
       window.localStorage.getItem(slippage_tolerance_value) ||
@@ -457,6 +455,7 @@ export default class Swap extends Component {
 
   renderButton() {
     const { isLogin, pairData, token1, token2, userBalance } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
     const { slip, lastMod, origin_amount, aim_amount, dirForward } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
@@ -473,9 +472,9 @@ export default class Swap extends Component {
           {_('login')}
         </Button>
       );
-    } else if (!pairData) {
-      // 不存在的交易对
-      return <Button className={styles.btn_wait}>{_('no_pair')}</Button>;
+    } else if (swapToken1Amount === '0' || swapToken2Amount === '0') {
+      // 交易对没有数量，不能交易
+      return <Button className={styles.btn_wait}>{_('pair_init')}</Button>;
     } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
       // 未输入数量
       return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
@@ -568,7 +567,8 @@ export default class Swap extends Component {
 
   submit = async (data) => {
     const { dirForward, origin_amount, reqSwapData } = this.state;
-    const { dispatch, currentPair, token2, rabinApis } = this.props;
+    const { dispatch, currentPair, token2, rabinApis, userBalance } =
+      this.props;
 
     const { bsvToAddress, tokenToAddress, txFee, requestIndex } =
       reqSwapData || data;
@@ -578,51 +578,39 @@ export default class Swap extends Component {
       op: dirForward ? 3 : 4,
     };
     if (dirForward) {
-      const amount = BigNumber(origin_amount).multipliedBy(1e8).toString();
+      let amount = BigNumber(origin_amount).multipliedBy(1e8).toString();
+      const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
+      let total = BigInt(amount) + BigInt(txFee);
+      const _allBalance = total > BigInt(userTotal);
+      if (_allBalance) {
+        total = userTotal;
+        amount = BigInt(userTotal) - BigInt(txFee);
+      }
       const ts_res = await dispatch({
         type: 'user/transferBsv',
         payload: {
           address: bsvToAddress,
-          amount: (BigInt(amount) + BigInt(txFee)).toString(),
+          amount: total.toString(),
         },
       });
 
       if (ts_res.msg) {
         return message.error(ts_res.msg);
       }
+      if (_allBalance) {
+        amount = BigInt(amount) - BigInt(ts_res.fee);
+      }
       payload = {
         ...payload,
         token1TxID: ts_res.txid,
         token1OutputIndex: 0,
-        token1AddAmount: amount,
+        token1AddAmount: amount.toString(),
       };
     } else {
       const amount = BigNumber(origin_amount)
         .multipliedBy(Math.pow(10, token2.decimal))
         .toString();
 
-      // const token_tx_res = await dispatch({
-      //   type: 'user/transferBsv',
-      //   payload: {
-      //     address: bsvToAddress,
-      //     amount: txFee,
-      //   },
-      // });
-      // if (token_tx_res.msg) {
-      //   return message.error(token_tx_res.msg);
-      // }
-      // const bsv_tx_res = await dispatch({
-      //   type: 'user/transferFtTres',
-      //   payload: {
-      //     address: tokenToAddress,
-      //     amount: amount,
-      //     codehash: token2.codeHash,
-      //     genesishash: token2.tokenID,
-      //   },
-      // });
-      // if (bsv_tx_res.msg) {
-      //   return message.error(bsv_tx_res.msg);
-      // }
       const tx_res = await dispatch({
         type: 'user/transferAll',
         payload: {
@@ -708,14 +696,8 @@ export default class Swap extends Component {
   };
 
   renderResult() {
-    const {
-      showDetail,
-      origin_amount,
-      aim_amount,
-      txFee,
-      dirForward,
-      txid,
-    } = this.state;
+    const { showDetail, origin_amount, aim_amount, txFee, dirForward, txid } =
+      this.state;
     const { token1, token2, userAddress } = this.props;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;

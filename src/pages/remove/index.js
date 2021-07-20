@@ -114,14 +114,8 @@ export default class RemovePage extends Component {
   }
 
   renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      userBalance,
-      lptoken,
-      allPairs,
-    } = this.props;
+    const { currentPair, pairData, loading, userBalance, lptoken, allPairs } =
+      this.props;
     const LP = userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
@@ -134,7 +128,7 @@ export default class RemovePage extends Component {
               <TokenLogo name={symbol2} size={40} />
             </div>
             <div className={styles.name}>
-              {symbol1}/{symbol2}
+              {symbol2}/{symbol1}
             </div>
           </h2>
           <div className={styles.subtitle}>{_('your_liq')}</div>
@@ -177,7 +171,7 @@ export default class RemovePage extends Component {
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
       BigNumber(swapToken1Amount).multipliedBy(rate),
-      token1.decimal || 8,
+      token1.decimal,
     );
     const removeToken2 = formatSat(
       BigNumber(swapToken2Amount).multipliedBy(rate),
@@ -220,7 +214,7 @@ export default class RemovePage extends Component {
                 <TokenLogo name={symbol2} size={25} />
               </div>
               <div className={styles.name}>
-                {symbol1}/{symbol2}
+                {symbol2}/{symbol1}
               </div>
             </div>
             <div className={styles.pair_right}>{removeLP}</div>
@@ -468,7 +462,7 @@ export default class RemovePage extends Component {
               <CustomIcon type="iconlogo-vusd" />
             </div>
             <div className={styles.name}>
-              {symbol1}/{symbol2}
+              {symbol2}/{symbol1}
             </div>
           </div>
           <div className={styles.pair_right}>{final_lp}</div>

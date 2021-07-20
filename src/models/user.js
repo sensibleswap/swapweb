@@ -1,9 +1,14 @@
-import bsv from 'lib/webWallet';
+import webWallet from 'lib/webWallet';
+// import voltWallet from 'lib/volt';
 import { formatSat } from 'common/utils';
 import debug from 'debug';
 const log = debug('user');
 const { localStorage } = window;
 
+const walletType = {
+  1: webWallet,
+  // 2: voltWallet
+};
 export default {
   namespace: 'user',
 
@@ -20,6 +25,7 @@ export default {
     *loadingUserData({ payload }, { call, put }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
+      const bsv = walletType[payload.type || 1];
       let accountInfo;
       try {
         accountInfo = yield bsv.getAccount();
@@ -56,6 +62,7 @@ export default {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
       let accountInfo;
+      const bsv = walletType[payload.type || 1];
       try {
         accountInfo = yield bsv.getAccount();
       } catch (error) {
@@ -88,6 +95,7 @@ export default {
     },
     *disconnectWebWallet({ payload }, { call, put }) {
       // console.log(bsv.exitAccount)
+      const bsv = walletType[payload.type || 1];
       try {
         yield bsv.exitAccount();
       } catch (error) {
@@ -106,6 +114,7 @@ export default {
       });
     },
     *connectWebWallet({ payload }, { call, put }) {
+      const bsv = walletType[payload.type || 1];
       try {
         const res = yield bsv.requestAccount().then();
         // console.log(res);
