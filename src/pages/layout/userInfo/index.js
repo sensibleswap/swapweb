@@ -68,6 +68,7 @@ export default class UserInfo extends Component {
     EventBus.on('login', this.chooseLoginWallet);
     const res = this.props.dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
     if (res.msg) {
       return message.error(res.msg);
@@ -137,7 +138,7 @@ export default class UserInfo extends Component {
     this.setState({ pop_visible: visible });
   };
 
-  connectWebWallet = async () => {
+  connectWebWallet = async (type) => {
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
@@ -149,9 +150,15 @@ export default class UserInfo extends Component {
 
     await dispatch({
       type: 'user/connectWebWallet',
+      payload: {
+        type,
+      },
     });
     const res = await dispatch({
       type: 'user/loadingUserData',
+      payload: {
+        type,
+      },
     });
     if (res.msg) {
       return message.error(msg.error);
@@ -326,6 +333,7 @@ export default class UserInfo extends Component {
           >
             <ul>
               <li onClick={() => this.connectWebWallet(1)}>Web Wallet</li>
+              <li onClick={() => this.connectWebWallet(2)}>Volt Wallet</li>
               {process.env.NODE_ENV === 'development' && (
                 <li id="J_VoltExtConnectBtn">Chrome Ext</li>
               )}

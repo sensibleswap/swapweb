@@ -17,6 +17,7 @@ export default {
     accountInfo: {},
     userBalance: {},
     userAddress: '',
+    walletType: 1,
   },
 
   subscriptions: {},
@@ -54,6 +55,7 @@ export default {
           userBalance,
           userAddress,
           isLogin: true,
+          walletType: payload.type || 1,
         },
       });
       return {};
@@ -62,7 +64,8 @@ export default {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
       let accountInfo;
-      const bsv = walletType[1];
+      const walletType = yield select((state) => state.user.walletType);
+      const bsv = walletType[walletType];
       try {
         accountInfo = yield bsv.getAccount();
       } catch (error) {
@@ -95,7 +98,8 @@ export default {
     },
     *disconnectWebWallet({ payload }, { call, put }) {
       // console.log(bsv.exitAccount)
-      const bsv = walletType[1];
+      const walletType = yield select((state) => state.user.walletType);
+      const bsv = walletType[walletType];
       try {
         yield bsv.exitAccount();
       } catch (error) {
@@ -114,7 +118,7 @@ export default {
       });
     },
     *connectWebWallet({ payload }, { call, put }) {
-      const bsv = walletType[1];
+      const bsv = walletType[payload.type || 1];
       try {
         const res = yield bsv.requestAccount().then();
         // console.log(res);
@@ -125,7 +129,8 @@ export default {
 
     *transferBsv({ payload }, { call, put }) {
       const { address, amount } = payload;
-      const bsv = walletType[1];
+      const walletType = yield select((state) => state.user.walletType);
+      const bsv = walletType[walletType];
 
       log('transferBsv:', payload);
       try {
@@ -147,7 +152,8 @@ export default {
 
     *transferFtTres({ payload }, { call, put }) {
       const { address, amount, codehash, genesishash } = payload;
-      const bsv = walletType[1];
+      const walletType = yield select((state) => state.user.walletType);
+      const bsv = walletType[walletType];
       log('transferFtTres:', {
         receivers: [
           {
@@ -179,7 +185,8 @@ export default {
 
     *transferAll({ payload }, { call, put }) {
       const { datas } = payload;
-      const bsv = walletType[1];
+      const walletType = yield select((state) => state.user.walletType);
+      const bsv = walletType[walletType];
       // console.log(...datas)
       try {
         const res = yield bsv.transferAll(datas);
