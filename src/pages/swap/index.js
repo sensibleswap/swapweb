@@ -528,8 +528,8 @@ export default class Swap extends Component {
     // const res = {
     //   code: 0,
     //   data: {
-    //     bsvToAddress: '1K2JbDo5xL8iPFRzZNxiYmaBA6pB3RfszR',
-    //     tokenToAddress: '1K2JbDo5xL8iPFRzZNxiYmaBA6pB3RfszR',
+    //     bsvToAddress: '13LuBShoSVKzK8dY4RiteHY6DCNvea2HNG',
+    //     tokenToAddress: '13LuBShoSVKzK8dY4RiteHY6DCNvea2HNG',
     //     txFee: 10000,
     //     requestIndex: 1,
     //     swapToken1Amount: 503307796,
