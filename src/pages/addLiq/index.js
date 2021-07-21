@@ -663,20 +663,14 @@ export default class Liquidity extends Component {
       payload: {
         datas: [
           {
-            receivers: [
-              {
-                address: bsvToAddress,
-                amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
-              },
-            ],
+            type: 'bsv',
+            address: bsvToAddress,
+            amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
           },
           {
-            receivers: [
-              {
-                address: tokenToAddress,
-                amount: _aim_amount.toString(),
-              },
-            ],
+            type: 'sensibleFt',
+            address: tokenToAddress,
+            amount: _aim_amount.toString(),
             codehash: token2.codeHash,
             genesis: token2.tokenID,
             rabinApis,

@@ -338,20 +338,14 @@ export default class RemovePage extends Component {
       payload: {
         datas: [
           {
-            receivers: [
-              {
-                address: bsvToAddress,
-                amount: txFee,
-              },
-            ],
+            type: 'bsv',
+            address: bsvToAddress,
+            amount: txFee,
           },
           {
-            receivers: [
-              {
-                address: tokenToAddress,
-                amount: _value,
-              },
-            ],
+            type: 'sensibleFt',
+            address: tokenToAddress,
+            amount: _value,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis,
