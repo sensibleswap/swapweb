@@ -91,9 +91,9 @@ export default {
       });
       return {};
     },
-    *disconnectWebWallet({ payload }, { call, put }) {
+    *disconnectWebWallet({ payload }, { call, put, select }) {
       // console.log(bsv.exitAccount)
-      const walletType = yield select((state) => state.user.walletType);
+      const type = yield select((state) => state.user.walletType);
       try {
         yield bsv.exitAccount(type);
       } catch (error) {
