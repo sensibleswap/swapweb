@@ -1,4 +1,3 @@
-import { formatSat } from 'common/utils';
 import bsv from 'common/walletFun';
 import debug from 'debug';
 const log = debug('user');
@@ -36,12 +35,11 @@ export default {
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);
       const tokenBalance = yield bsv.getSensibleFtBalance(type);
+
       const userBalance = {
-        BSV: formatSat(bsvBalance),
+        BSV: bsvBalance,
+        ...tokenBalance,
       };
-      tokenBalance.forEach((item) => {
-        userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
-      });
       log('userData:', accountInfo, tokenBalance, userBalance, userAddress);
 
       yield put({
@@ -73,12 +71,11 @@ export default {
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);
       const tokenBalance = yield bsv.getSensibleFtBalance(type);
+
       const userBalance = {
-        BSV: formatSat(bsvBalance),
+        BSV: bsvBalance,
+        ...tokenBalance,
       };
-      tokenBalance.forEach((item) => {
-        userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
-      });
 
       yield put({
         type: 'save',

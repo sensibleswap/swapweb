@@ -1,5 +1,6 @@
 import webWallet from 'lib/webWallet';
 import voltWallet from 'lib/volt';
+import { formatSat } from 'common/utils';
 
 const connectWallet = (type = 1) => {
   if (type === 1) {
@@ -20,11 +21,12 @@ const getAccountInfo = (type = 1) => {
 const getBsvBalance = async (type = 1) => {
   if (type === 1) {
     const res = await webWallet.getBsvBalance();
-    return res.balance;
+
+    return formatSat(res.balance);
   }
   if (type === 2) {
     const res = await voltWallet.getBsvBalance();
-    return res.free;
+    return formatSat(res.free);
   }
 };
 const getAddress = (type = 1) => {
@@ -35,12 +37,22 @@ const getAddress = (type = 1) => {
     return voltWallet.getDepositAddress();
   }
 };
-const getSensibleFtBalance = (type = 1) => {
+const getSensibleFtBalance = async (type = 1) => {
   if (type === 1) {
-    return webWallet.getSensibleFtBalance();
+    const res = await webWallet.getSensibleFtBalance();
+    const userBalance = {};
+    res.forEach((item) => {
+      userBalance[item.genesis] = formatSat(item.balance, item.tokenDecimal);
+    });
+    return userBalance;
   }
   if (type === 2) {
-    return voltWallet.getSensibleFtBalance();
+    const res = await voltWallet.getSensibleFtBalance();
+    const userBalance = {};
+    res.forEach((item) => {
+      userBalance[item.genesis] = formatSat(item.free, item.tokenDecimal);
+    });
+    return userBalance;
   }
 };
 const exitAccount = (type = 1) => {
@@ -99,12 +111,64 @@ const transferSensibleFt = (
     });
   }
 };
-const transferAll = (type = 1, param = {}) => {
+const transferAll = (type = 1, param = []) => {
   if (type === 1) {
-    return webWallet.transferAll(param);
+    let data = [];
+    param.forEach((item) => {
+      if (item.type === 'bsv') {
+        const { address, amount, codehash, genesis, rabinApis } = item;
+        data.push({
+          receivers: [
+            {
+              address,
+              amount,
+            },
+          ],
+        });
+      } else if (item.type === 'sensibleFt') {
+        data.push({
+          receivers: [
+            {
+              address,
+              amount,
+            },
+          ],
+          codehash,
+          genesis,
+          rabinApis,
+        });
+      }
+    });
+    return webWallet.transferAll(data);
   }
   if (type === 2) {
-    return voltWallet.batchTransfer(param);
+    let data = [];
+    param.forEach((item) => {
+      const { address, amount, codehash, genesis } = item;
+      if (item.type === 'bsv') {
+        data.push({
+          type: 'bsv',
+          data: {
+            amountExact: false,
+            receivers: [{ address, amount }],
+          },
+        });
+      } else if (item.type === 'sensibleFt') {
+        data.push({
+          type: 'sensibleFt',
+          data: {
+            codehash,
+            genesis,
+            receivers: [{ address, amount }],
+          },
+        });
+      }
+    });
+
+    return voltWallet.batchTransfer({
+      errorBreak: true,
+      list: data,
+    });
   }
 };
 export default {

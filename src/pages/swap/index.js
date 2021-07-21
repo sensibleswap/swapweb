@@ -628,20 +628,14 @@ export default class Swap extends Component {
         payload: {
           datas: [
             {
-              receivers: [
-                {
-                  address: bsvToAddress,
-                  amount: txFee,
-                },
-              ],
+              type: 'bsv',
+              address: bsvToAddress,
+              amount: txFee,
             },
             {
-              receivers: [
-                {
-                  address: tokenToAddress,
-                  amount,
-                },
-              ],
+              type: 'sensibleFt',
+              address: tokenToAddress,
+              amount,
               codehash: token2.codeHash,
               genesis: token2.tokenID,
               rabinApis,

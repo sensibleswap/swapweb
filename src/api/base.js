@@ -5,7 +5,7 @@ const { localStorage } = window;
 
 export default class API {
   constructor() {
-    this.baseUrl = 'https://api.tswap.io/';
+    this.baseUrl = 'https://api.tswap.io/v1/';
     // this.baseUrl = '/';
 
     this._requestQueue = {};
@@ -19,7 +19,7 @@ export default class API {
     if (localStorage.getItem('TSwapNetwork') === 'testnet') {
       this.baseUrl = 'https://api.tswap.io/test/';
     } else {
-      this.baseUrl = 'https://api.tswap.io/';
+      this.baseUrl = 'https://api.tswap.io/v1/';
     }
     if (url) this.baseUrl = url;
 
