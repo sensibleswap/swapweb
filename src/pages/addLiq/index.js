@@ -27,6 +27,7 @@ const FormItem = Form.Item;
     ...user,
     ...pair,
     loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
+    spinning: effects['pair/getPairData'] || effects['user/loadingUserData'],
     submiting:
       effects['pair/reqSwap'] ||
       effects['pair/addLiq'] ||
@@ -723,7 +724,7 @@ export default class Liquidity extends Component {
   }
 
   renderResult() {
-    const { token1, token2, history } = this.props;
+    const { token1, token2, history, spinning } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
@@ -739,7 +740,7 @@ export default class Liquidity extends Component {
         </div>
         <div className={styles.finish_desc}>{_('add_success')}</div>
 
-        {this.renderResultInfo()}
+        <Spin spinning={spinning}>{this.renderResultInfo()}</Spin>
         <Button
           className={styles.done_btn}
           onClick={() => {

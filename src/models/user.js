@@ -1,4 +1,5 @@
 import bsv from 'common/walletFun';
+import { DEFAULT_NET } from 'common/config';
 import debug from 'debug';
 const log = debug('user');
 const { localStorage } = window;
@@ -33,7 +34,7 @@ export default {
       }
       console.log(accountInfo);
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network || 'mainnet');
+      localStorage.setItem('TSwapNetwork', accountInfo.network || DEFAULT_NET);
 
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);
@@ -69,7 +70,7 @@ export default {
         return { msg: error };
       }
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network || 'testnet');
+      localStorage.setItem('TSwapNetwork', accountInfo.network || DEFAULT_NET);
 
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);

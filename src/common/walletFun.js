@@ -1,13 +1,14 @@
 import webWallet from 'lib/webWallet';
 import voltWallet from 'lib/volt';
 import { formatSat } from 'common/utils';
+import { DEFAULT_NET } from 'common/config';
 
 const connectWallet = (type = 1) => {
   if (type === 1) {
     return webWallet.requestAccount();
   }
   if (type === 2) {
-    return voltWallet.connectAccount({ network: 'mainnet' });
+    return voltWallet.connectAccount({ network: DEFAULT_NET });
   }
 };
 const getAccountInfo = (type = 1) => {

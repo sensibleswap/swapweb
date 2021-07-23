@@ -286,7 +286,10 @@ export default class Swap extends Component {
       removeAmount = BigNumber(removeAmount);
       newAmount2 = BigNumber(amount2).minus(removeAmount);
 
-      removeAmount = formatAmount(removeAmount.div(Math.pow(10, decimal2)), 8);
+      removeAmount = formatAmount(
+        removeAmount.div(Math.pow(10, decimal2)),
+        decimal2,
+      );
 
       this.formRef.current.setFieldsValue({
         aim_amount: removeAmount,
@@ -307,7 +310,7 @@ export default class Swap extends Component {
       addAmount = BigNumber(addAmount);
       addAmount = addAmount.div(Math.pow(10, decimal1));
       newAmount1 = addAmount.plus(amount1);
-      let addAmountN = formatAmount(addAmount, 8);
+      let addAmountN = formatAmount(addAmount, decimal1);
       if (!addAmount.isGreaterThan(0)) {
         addAmountN = 0;
         newAmount1 = amount1;
