@@ -94,7 +94,7 @@ export default class RemovePage extends Component {
       this.setState({
         symbol1,
         symbol2,
-        price: formatAmount(price, 8),
+        price: formatAmount(price, token2.decimal),
       });
     }
     // console.log(pairData);
@@ -179,8 +179,8 @@ export default class RemovePage extends Component {
       token2.decimal,
     );
     return {
-      removeToken1: formatAmount(removeToken1, 8),
-      removeToken2: formatAmount(removeToken2, 8),
+      removeToken1: formatAmount(removeToken1, token1.decimal),
+      removeToken2: formatAmount(removeToken2, token2.decimal),
       removeLP: formatSat(removeLP, lptoken.decimal),
     };
   };

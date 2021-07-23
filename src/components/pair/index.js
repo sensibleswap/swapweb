@@ -12,8 +12,14 @@ export default function Pair(props) {
   const { lptoken = {}, token1, token2 } = curPair;
   const LP = userBalance[lptoken.tokenID] || 0;
   const rate = LP / formatSat(swapLpAmount, lptoken.decimal) || 0;
-  const _token1 = formatAmount(formatSat(swapToken1Amount, token1.decimal), 8);
-  const _token2 = formatAmount(formatSat(swapToken2Amount, token2.decimal), 8);
+  const _token1 = formatAmount(
+    formatSat(swapToken1Amount, token1.decimal),
+    token1.decimal,
+  );
+  const _token2 = formatAmount(
+    formatSat(swapToken2Amount, token2.decimal),
+    token2.decimal,
+  );
   const _rate = (rate * 100).toFixed(4);
   const symbol1 = token1.symbol.toUpperCase();
   const symbol2 = token2.symbol.toUpperCase();

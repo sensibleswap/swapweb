@@ -135,8 +135,11 @@ export default class Swap extends Component {
 
   changeOriginAmount = (e) => {
     const value = e.target.value;
+    const { token1, token2 } = this.props;
+    const { dirForward } = this.state;
+    const decimal = dirForward ? token1.decimal : token2.decimal;
     if (value > 0) {
-      const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), 8);
+      const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
       this.setState({
         origin_amount: value,
         fee,
@@ -229,8 +232,10 @@ export default class Swap extends Component {
   }
 
   setOriginBalance = () => {
-    const { userBalance, token2, pairData } = this.props;
+    const { userBalance, token1, token2, pairData } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
+    const { dirForward } = this.state;
+    const decimal = dirForward ? token1.decimal : token2.decimal;
     if (swapToken1Amount === '0' || swapToken2Amount === '0') {
       return;
     }
@@ -249,7 +254,10 @@ export default class Swap extends Component {
       this.setState({
         // origin_amount,
         lastMod: 'origin',
-        fee: formatAmount(BigNumber(origin_amount).multipliedBy(feeRate), 8),
+        fee: formatAmount(
+          BigNumber(origin_amount).multipliedBy(feeRate),
+          decimal,
+        ),
       });
     } else {
       this.setState({
@@ -324,7 +332,7 @@ export default class Swap extends Component {
         origin_amount: addAmountN,
         fee:
           addAmount > 0
-            ? addAmount.multipliedBy(feeRate).toFixed(2).toString()
+            ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
             : 0,
       });
       newOriginAddAmount = addAmountN;
