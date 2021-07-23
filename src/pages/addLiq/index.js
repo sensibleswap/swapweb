@@ -248,11 +248,11 @@ export default class Liquidity extends Component {
     let _price = price_dir
       ? `1 ${symbol1} = ${formatAmount(
           total_aim_amount / total_origin_amount,
-          8,
+          token2.decimal,
         )} ${symbol2}`
       : `1 ${symbol2} = ${formatAmount(
           total_origin_amount / total_aim_amount,
-          8,
+          token1.decimal,
         )} ${symbol1}`;
     return (
       <div className={styles.my_pair_info}>

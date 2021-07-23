@@ -369,8 +369,8 @@ export default class Swap extends Component {
       .div(Math.pow(10, token2.decimal))
       .toString();
     const price = dirForward
-      ? formatAmount(_swapToken2Amount / _swapToken1Amount, 8)
-      : formatAmount(_swapToken1Amount / _swapToken2Amount, 8);
+      ? formatAmount(_swapToken2Amount / _swapToken1Amount, token2.decimal)
+      : formatAmount(_swapToken1Amount / _swapToken2Amount, token1.decimal);
 
     let tol =
       window.localStorage.getItem(slippage_tolerance_value) ||
