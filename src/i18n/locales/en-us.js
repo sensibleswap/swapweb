@@ -239,5 +239,6 @@ const texts = {
   notice: 'Notice',
   notice720:
     'TokenSwap is performing an upgrade to better support future development, trading and liquidity provision is tempororily suspended, users can withdraw their liquidity from pools. We will take a snapshot of all users addresses, users who withdraw their liquidity from pools will be eligible for future airdrop of TokenSwap utility token. Please take good care of your wallet.',
+  cant_remove: 'You have no liquidity to remove',
 };
 module.exports = texts;

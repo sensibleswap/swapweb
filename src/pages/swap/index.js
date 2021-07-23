@@ -525,18 +525,6 @@ export default class Swap extends Component {
         op: dirForward ? 3 : 4,
       },
     });
-    // const res = {
-    //   code: 0,
-    //   data: {
-    //     bsvToAddress: '13LuBShoSVKzK8dY4RiteHY6DCNvea2HNG',
-    //     tokenToAddress: '13LuBShoSVKzK8dY4RiteHY6DCNvea2HNG',
-    //     txFee: 10000,
-    //     requestIndex: 1,
-    //     swapToken1Amount: 503307796,
-    //     swapToken2Amount: 27210447497088,
-    //     swapFeeRate: 25
-    //   }
-    // }
     const { code, data, msg } = res;
     if (code) {
       return message.error(msg);
@@ -687,6 +675,7 @@ export default class Swap extends Component {
     });
     dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
   }
 

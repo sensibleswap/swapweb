@@ -110,6 +110,7 @@ export default class RemovePage extends Component {
     });
     dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
   }
 
@@ -391,7 +392,8 @@ export default class RemovePage extends Component {
   }
 
   renderButton() {
-    const { isLogin, pairData } = this.props;
+    const { isLogin, pairData, userBalance, lptoken } = this.props;
+    const LP = userBalance[lptoken.tokenID];
     if (!isLogin) {
       // 未登录
       return (
@@ -402,6 +404,8 @@ export default class RemovePage extends Component {
     } else if (!pairData) {
       // 不存在的交易对
       return <Button className={styles.btn_wait}>{_('no_pair')}</Button>;
+    } else if (!LP || LP === '0') {
+      return <Button className={styles.btn_wait}>{_('cant_remove')}</Button>;
     } else {
       return (
         <Button

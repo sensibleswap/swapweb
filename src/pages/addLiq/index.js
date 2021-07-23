@@ -718,6 +718,7 @@ export default class Liquidity extends Component {
     });
     dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
   }
 

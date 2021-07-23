@@ -189,15 +189,7 @@ export default class UserInfo extends Component {
   };
 
   // connectExtWallet = () => {
-  //   const popWidth = 380;
-  //   const popHeight = 600;
-  //   const popTop = Math.round((window.innerHeight - popHeight) / 2);
-  //   const popLeft = Math.round((window.innerWidth - popWidth) / 2);
-  //   window.open(
-  //     'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/notification.html',
-  //     'voltWalletPopup',
-  //     `width=${popWidth}, height=${popHeight}, left=${popLeft}, top=${popTop}, resizable,scrollbars,status`,
-  //   );
+  //   console.log(window.bsv.a)
   // };
 
   disConnect = async () => {
@@ -339,11 +331,13 @@ export default class UserInfo extends Component {
             <ul>
               <li onClick={() => this.connectWebWallet(2)}>
                 Volt
-                <CustomIcon type="iconVolt_logo" />
+                <CustomIcon type="iconicon-volt-tokenswap-circle" />
               </li>
               <li onClick={() => this.connectWebWallet(1)}>Web Wallet</li>
               {process.env.NODE_ENV === 'development' && (
-                <li id="J_VoltExtConnectBtn">Chrome Ext</li>
+                <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>
+                  Chrome Ext
+                </li>
               )}
             </ul>
           </Modal>

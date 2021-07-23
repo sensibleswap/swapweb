@@ -17,20 +17,23 @@ export default {
   subscriptions: {},
 
   effects: {
-    *loadingUserData({ payload }, { call, put }) {
+    *loadingUserData({ payload }, { call, put, select }) {
       // yield bsv.requestAccount().then();
       // console.log(bsv.getAccount, bsv.getAccount())
-      const { type } = payload;
+      let { type } = payload;
+      if (!type) {
+        type = yield select((state) => state.user.walletType) || 1;
+      }
       let accountInfo;
       try {
-        accountInfo = yield bsv.getAccountInfo(type || 1);
+        accountInfo = yield bsv.getAccountInfo(type);
       } catch (error) {
         console.log(error);
         return { msg: error };
       }
       console.log(accountInfo);
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network || 'mainnet');
+      localStorage.setItem('TSwapNetwork', accountInfo.network || 'testnet');
 
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);
@@ -66,7 +69,7 @@ export default {
         return { msg: error };
       }
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network || 'mainnet');
+      localStorage.setItem('TSwapNetwork', accountInfo.network || 'testnet');
 
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);
