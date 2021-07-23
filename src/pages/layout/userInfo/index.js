@@ -156,6 +156,7 @@ export default class UserInfo extends Component {
       },
     });
 
+    console.log(con_res);
     if (con_res.msg) {
       return message.error(con_res.msg);
     }

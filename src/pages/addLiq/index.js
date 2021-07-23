@@ -312,13 +312,13 @@ export default class Liquidity extends Component {
       BigNumber(origin_amount).plus(
         BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
       ),
-      8,
+      token1.decimal,
     ).toString();
     total_aim_amount = formatAmount(
       BigNumber(aim_amount).plus(
         BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
       ),
-      8,
+      token2.decimal,
     ).toString();
     const share =
       origin_amount > 0

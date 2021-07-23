@@ -1,8 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Slider, Button, Spin, message, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Slider, Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
@@ -43,6 +42,7 @@ const datas = [
     ...user,
     ...pair,
     loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
+    spinning: effects['pair/getPairData'] || effects['user/loadingUserData'],
     submiting:
       effects['pair/reqSwap'] ||
       effects['pair/removeLiq'] ||
@@ -439,7 +439,7 @@ export default class RemovePage extends Component {
   }
 
   renderResult() {
-    // const { userBalance, lptoken } = this.props;
+    const { spinning } = this.props;
     // const LP = userBalance[lptoken.tokenID];
     const { symbol1, symbol2, final_lp } = this.state;
     return (
@@ -466,7 +466,7 @@ export default class RemovePage extends Component {
           <div className={styles.pair_right}>{final_lp}</div>
         </div>
 
-        {this.renderInfo()}
+        <Spin spinning={spinning}>{this.renderInfo()}</Spin>
         <Button
           type="primary"
           className={styles.done_btn}

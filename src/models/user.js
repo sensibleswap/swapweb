@@ -32,7 +32,6 @@ export default {
         console.log(error);
         return { msg: error };
       }
-      console.log(accountInfo);
       if (!accountInfo || !accountInfo.email) return false;
       localStorage.setItem('TSwapNetwork', accountInfo.network || DEFAULT_NET);
 
@@ -66,8 +65,8 @@ export default {
       try {
         accountInfo = yield bsv.getAccountInfo(type);
       } catch (error) {
-        console.log(error);
-        return { msg: error };
+        // console.log(error);
+        return { msg: error.message || error.toString() };
       }
       if (!accountInfo || !accountInfo.email) return false;
       localStorage.setItem('TSwapNetwork', accountInfo.network || DEFAULT_NET);
@@ -98,8 +97,8 @@ export default {
       try {
         yield bsv.exitAccount(type);
       } catch (error) {
-        console.log(error);
-        return { msg: error };
+        // console.log(error);
+        return { msg: error.message || error.toString() };
       }
 
       yield put({
@@ -118,8 +117,7 @@ export default {
         yield bsv.connectWallet(type);
         return {};
       } catch (error) {
-        console.log(error);
-        return { msg: error };
+        return { msg: error.message || error.toString() };
       }
     },
 
@@ -133,8 +131,7 @@ export default {
         log(res);
         return res;
       } catch (error) {
-        console.log(error);
-        return { msg: error, txid: '' };
+        return { msg: error.message || error.toString(), txid: '' };
       }
     },
 
@@ -161,8 +158,8 @@ export default {
         log(res);
         return res;
       } catch (error) {
-        console.log(error);
-        return { msg: error, txid: '' };
+        // console.log(error);
+        return { msg: error.message || error.toString(), txid: '' };
       }
     },
 
@@ -176,8 +173,8 @@ export default {
         log(res);
         return res;
       } catch (error) {
-        console.log(error);
-        return { msg: error };
+        // console.log(error);
+        return { msg: error.message || error.toString() };
       }
     },
   },

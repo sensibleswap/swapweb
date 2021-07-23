@@ -117,7 +117,7 @@ const transferAll = (type = 1, param = []) => {
     let data = [];
     param.forEach((item) => {
       if (item.type === 'bsv') {
-        const { address, amount, codehash, genesis, rabinApis } = item;
+        let { address, amount } = item;
         data.push({
           receivers: [
             {
@@ -127,6 +127,7 @@ const transferAll = (type = 1, param = []) => {
           ],
         });
       } else if (item.type === 'sensibleFt') {
+        let { address, amount, codehash, genesis, rabinApis } = item;
         data.push({
           receivers: [
             {
