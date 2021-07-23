@@ -33,7 +33,7 @@ export default {
       }
       console.log(accountInfo);
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem('TSwapNetwork', accountInfo.network || 'testnet');
+      localStorage.setItem('TSwapNetwork', accountInfo.network || 'mainnet');
 
       const bsvBalance = yield bsv.getBsvBalance(type);
       const userAddress = yield bsv.getAddress(type);

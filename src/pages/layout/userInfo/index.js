@@ -220,7 +220,7 @@ export default class UserInfo extends Component {
   };
 
   renderPop() {
-    const { userAddress } = this.props;
+    const { userAddress, walletType } = this.props;
     return (
       <div className={styles.user_pop}>
         <div className={styles.app_title}>
@@ -234,7 +234,9 @@ export default class UserInfo extends Component {
               <Clipboard
                 text={userAddress}
                 label={strAbbreviation(userAddress, [5, 4])}
+                style={{ marginRight: 10 }}
               />
+              {this.renderWalletIcon()}
             </div>
           </div>
           <div className={styles.account_icon} onClick={this.closePop}>
@@ -248,18 +250,20 @@ export default class UserInfo extends Component {
             />
             <span className={styles.name}>{_('switch_wallet')}</span>
           </div>
-          <div
-            className={styles.line}
-            onClick={() => {
-              this.props.history.push('/webwallet');
-              this.closePop();
-            }}
-          >
-            <DollarOutlined
-              style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }}
-            />
-            <span className={styles.name}>{_('withdraw')}</span>
-          </div>
+          {walletType === 1 && (
+            <div
+              className={styles.line}
+              onClick={() => {
+                this.props.history.push('/webwallet');
+                this.closePop();
+              }}
+            >
+              <DollarOutlined
+                style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }}
+              />
+              <span className={styles.name}>{_('withdraw')}</span>
+            </div>
+          )}
         </div>
         <div className={styles.ft}>
           <Button
@@ -272,6 +276,19 @@ export default class UserInfo extends Component {
         </div>
       </div>
     );
+  }
+  renderWalletIcon() {
+    const { walletType } = this.props;
+    if (walletType === 1) {
+      return <span className={styles.dot} style={{ marginRight: 5 }}></span>;
+    } else if (walletType === 2) {
+      return (
+        <CustomIcon
+          type="iconicon-volt-tokenswap-circle"
+          style={{ fontSize: 30 }}
+        />
+      );
+    }
   }
 
   render() {
@@ -288,8 +305,10 @@ export default class UserInfo extends Component {
             placement="bottomRight"
           >
             <div className={styles.account_trigger}>
-              {strAbbreviation(userAddress, [5, 4])}{' '}
-              <span className={styles.dot}></span>
+              <span style={{ marginRight: 10 }}>
+                {strAbbreviation(userAddress, [5, 4])}{' '}
+              </span>
+              {this.renderWalletIcon()}
             </div>
           </Popover>
         ) : (
