@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
 import BigNumber from 'bignumber.js';
-import { Button, Form, Input, InputNumber, message, Spin, Modal } from 'antd';
+import { Button, Form, Input, message, Spin, Modal } from 'antd';
 import { DownOutlined, SettingOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
@@ -135,8 +135,11 @@ export default class Swap extends Component {
 
   changeOriginAmount = (e) => {
     const value = e.target.value;
+    const { token1, token2 } = this.props;
+    const { dirForward } = this.state;
+    const decimal = dirForward ? token1.decimal : token2.decimal;
     if (value > 0) {
-      const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), 8);
+      const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
       this.setState({
         origin_amount: value,
         fee,
@@ -229,8 +232,10 @@ export default class Swap extends Component {
   }
 
   setOriginBalance = () => {
-    const { userBalance, token2, pairData } = this.props;
+    const { userBalance, token1, token2, pairData } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
+    const { dirForward } = this.state;
+    const decimal = dirForward ? token1.decimal : token2.decimal;
     if (swapToken1Amount === '0' || swapToken2Amount === '0') {
       return;
     }
@@ -249,7 +254,10 @@ export default class Swap extends Component {
       this.setState({
         // origin_amount,
         lastMod: 'origin',
-        fee: formatAmount(BigNumber(origin_amount).multipliedBy(feeRate), 8),
+        fee: formatAmount(
+          BigNumber(origin_amount).multipliedBy(feeRate),
+          decimal,
+        ),
       });
     } else {
       this.setState({
@@ -286,7 +294,10 @@ export default class Swap extends Component {
       removeAmount = BigNumber(removeAmount);
       newAmount2 = BigNumber(amount2).minus(removeAmount);
 
-      removeAmount = formatAmount(removeAmount.div(Math.pow(10, decimal2)), 8);
+      removeAmount = formatAmount(
+        removeAmount.div(Math.pow(10, decimal2)),
+        decimal2,
+      );
 
       this.formRef.current.setFieldsValue({
         aim_amount: removeAmount,
@@ -307,7 +318,7 @@ export default class Swap extends Component {
       addAmount = BigNumber(addAmount);
       addAmount = addAmount.div(Math.pow(10, decimal1));
       newAmount1 = addAmount.plus(amount1);
-      let addAmountN = formatAmount(addAmount, 8);
+      let addAmountN = formatAmount(addAmount, decimal1);
       if (!addAmount.isGreaterThan(0)) {
         addAmountN = 0;
         newAmount1 = amount1;
@@ -321,7 +332,7 @@ export default class Swap extends Component {
         origin_amount: addAmountN,
         fee:
           addAmount > 0
-            ? addAmount.multipliedBy(feeRate).toFixed(2).toString()
+            ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
             : 0,
       });
       newOriginAddAmount = addAmountN;
@@ -616,20 +627,14 @@ export default class Swap extends Component {
         payload: {
           datas: [
             {
-              receivers: [
-                {
-                  address: bsvToAddress,
-                  amount: txFee,
-                },
-              ],
+              type: 'bsv',
+              address: bsvToAddress,
+              amount: txFee,
             },
             {
-              receivers: [
-                {
-                  address: tokenToAddress,
-                  amount,
-                },
-              ],
+              type: 'sensibleFt',
+              address: tokenToAddress,
+              amount,
               codehash: token2.codeHash,
               genesis: token2.tokenID,
               rabinApis,
@@ -681,6 +686,7 @@ export default class Swap extends Component {
     });
     dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
   }
 

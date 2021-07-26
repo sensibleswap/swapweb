@@ -1,6 +1,9 @@
 import pairApi from '../api/pair';
+import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
 import debug from 'debug';
 const log = debug('pair');
+
+const { localStorage } = window;
 
 export default {
   namespace: 'pair',
@@ -28,13 +31,15 @@ export default {
         console.log(res.msg);
         return res;
       }
-      let currentPair;
-
-      Object.keys(data).forEach((item) => {
-        if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
-          currentPair = item;
-        }
-      });
+      let currentPair =
+        localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+      if (!currentPair || !data[currentPair]) {
+        Object.keys(data).forEach((item) => {
+          if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
+            currentPair = item;
+          }
+        });
+      }
 
       yield put({
         type: 'savePair',

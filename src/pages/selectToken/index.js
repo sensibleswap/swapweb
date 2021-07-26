@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Input } from 'antd';
 import { ArrowLeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { TSWAP_CURRENT_PAIR } from 'common/const';
 import TokenLogo from 'components/tokenicon';
 import { connect } from 'umi';
 import styles from './index.less';
@@ -44,6 +45,7 @@ export default class SelectToken extends Component {
   select = (id) => {
     // const { dispatch, close, type } = this.props
 
+    window.localStorage.setItem(TSWAP_CURRENT_PAIR, id);
     this.props.close(id);
   };
 
