@@ -9,4 +9,6 @@ const bsv = new Bsv({
   },
 });
 
+// bsv.enableDebug(true)
+
 export default bsv;

@@ -235,7 +235,7 @@ const texts = {
   continue_remove_liq: 'Continue',
   your_lp: 'Your LP(%s)  balance',
   total_lp: 'Total LP(%s) supply',
-  txs_fail: 'Some Transaction failed',
+  txs_fail: 'Transaction failed',
   notice: 'Notice',
   notice720:
     'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',

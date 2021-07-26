@@ -90,7 +90,9 @@ export default class RemovePage extends Component {
       const { token1, token2 } = allPairs[currentPair];
       const symbol1 = token1.symbol.toUpperCase();
       const symbol2 = token2.symbol.toUpperCase();
-      const price = BigNumber(swapToken2Amount).div(swapToken1Amount);
+      const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
+        formatSat(swapToken1Amount, token1.decimal),
+      );
       this.setState({
         symbol1,
         symbol2,
@@ -282,7 +284,7 @@ export default class RemovePage extends Component {
       dispatch,
       currentPair,
       userAddress,
-      // token2,
+      token1,
       userBalance,
       lptoken,
       rabinApis,
@@ -305,31 +307,14 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    // const bsv_tx_res = await dispatch({
-    //   type: 'user/transferBsv',
-    //   payload: {
-    //     address: bsvToAddress,
-    //     amount: txFee,
-    //   },
-    // });
+    if (
+      BigNumber(txFee + 100000)
+        .div(Math.pow(10, token1.decimal))
+        .isGreaterThan(userBalance.BSV || 0)
+    ) {
+      return message.error(_('lac_token_balance', 'BSV'));
+    }
 
-    // if (bsv_tx_res.msg) {
-    //   return message.error(bsv_tx_res.msg);
-    // }
-
-    // const token_tx_res = await dispatch({
-    //   type: 'user/transferFtTres',
-    //   payload: {
-    //     address: tokenToAddress,
-    //     amount: _value,
-    //     codehash: lptoken.codeHash,
-    //     genesishash: lptoken.tokenID,
-    //   },
-    // });
-
-    // if (token_tx_res.msg) {
-    //   return message.error(token_tx_res.msg);
-    // }
     const removeLP = BigNumber(value).multipliedBy(LP).div(100);
     const _value = removeLP
       .multipliedBy(Math.pow(10, lptoken.decimal))

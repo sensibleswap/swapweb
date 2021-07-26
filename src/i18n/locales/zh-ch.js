@@ -233,7 +233,7 @@ const texts = {
   continue_remove_liq: '继续移除',
   your_lp: '你的LP(%s)数量',
   total_lp: 'LP(%s)总量',
-  txs_fail: '部分交易失败',
+  txs_fail: '交易失败',
   notice: '通知',
   notice720:
     'tswap已经升级完毕，同时开通了新的mc/bsv交易对，如果在2021年7月22日16时前还有流动性在旧的bsv-mc流动池中没有提取的，请前往https://v1.tswap.io进行提取流动性。未提取流动性的用户根据在流动池中的比例将获得了新的mc token的空投。因此旧池˙中提取流动性出来的只有bsv，旧的mc token已停止使用。',

@@ -644,6 +644,9 @@ export default class Swap extends Component {
         },
       });
       // console.log(tx_res)
+      if (!tx_res) {
+        return message.error(_('txs_fail'));
+      }
       if (tx_res.msg) {
         return message.error(tx_res.msg);
       }

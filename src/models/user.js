@@ -29,7 +29,7 @@ export default {
       try {
         accountInfo = yield bsv.getAccountInfo(type);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         return { msg: error };
       }
       if (!accountInfo || !accountInfo.email) return false;
@@ -131,6 +131,7 @@ export default {
         log(res);
         return res;
       } catch (error) {
+        // console.log(error.toString())
         return { msg: error.message || error.toString(), txid: '' };
       }
     },
@@ -173,7 +174,6 @@ export default {
         log(res);
         return res;
       } catch (error) {
-        // console.log(error);
         return { msg: error.message || error.toString() };
       }
     },
