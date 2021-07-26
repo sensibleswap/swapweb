@@ -9,6 +9,7 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
+import { TSWAP_CURRENT_PAIR } from 'common/const';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
@@ -565,15 +566,29 @@ export default class Liquidity extends Component {
     let { origin_amount, aim_amount, lastMod } = this.state;
     let _origin_amount, _aim_amount;
 
+    // console.log(BigNumber(txFee + 100000).toString(),
+    // BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)).toString(),
+    //   BigNumber(origin_amount)
+    // .plus(
+    //   BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal))
+    // ).toString(), BigNumber(origin_amount)
+    // .plus(
+    //   BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal))
+    // )
+    // .isGreaterThan(userBalance.BSV || 0))
     if (
       BigNumber(origin_amount)
         .plus(BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)))
         .isGreaterThan(userBalance.BSV || 0)
     ) {
       //余额不足支付矿工费，在金额中扣除矿工费
-      origin_amount = BigNumber(origin_amount)
-        .minus(BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)))
-        .toString();
+      origin_amount = BigNumber(origin_amount).minus(
+        BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)),
+      );
+      if (origin_amount.toNumber() <= 0) {
+        return message.error(_('lac_token_balance', 'BSV'));
+      }
+      // origin_amount =.toString();
       lastMod = 'origin';
     }
 
@@ -794,6 +809,7 @@ export default class Liquidity extends Component {
   selectedToken = async (currentPair) => {
     this.showUI('form');
     if (currentPair && currentPair !== this.props.currentPair) {
+      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
       if (this.state.page === 'selectToken') {
         this.props.dispatch({
           type: 'pair/getPairData',

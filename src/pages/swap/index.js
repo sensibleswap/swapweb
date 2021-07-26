@@ -3,11 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
 import BigNumber from 'bignumber.js';
-import { Button, Form, Input, InputNumber, message, Spin, Modal } from 'antd';
+import { Button, Form, Input, message, Spin, Modal } from 'antd';
 import { DownOutlined, SettingOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
+import { TSWAP_CURRENT_PAIR } from 'common/const';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
@@ -807,6 +808,7 @@ export default class Swap extends Component {
   selectedToken = (currentPair) => {
     if (currentPair && currentPair !== this.props.currentPair) {
       // if (this.state.page === 'selectToken') {
+      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
       this.props.dispatch({
         type: 'pair/getPairData',
         payload: {

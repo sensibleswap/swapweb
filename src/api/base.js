@@ -1,6 +1,7 @@
 'use strict';
 import 'whatwg-fetch';
 import querystring from 'querystringify';
+import { TSWAP_NETWORK } from 'common/const';
 const { localStorage } = window;
 
 export default class API {
@@ -16,7 +17,7 @@ export default class API {
     //     params: JSON.stringify(params)
     // };
 
-    if (localStorage.getItem('TSwapNetwork') === 'testnet') {
+    if (localStorage.getItem(TSWAP_NETWORK) === 'testnet') {
       this.baseUrl = 'https://api.tswap.io/test/';
     } else {
       this.baseUrl = 'https://api.tswap.io/';

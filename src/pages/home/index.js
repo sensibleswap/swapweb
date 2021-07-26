@@ -2,14 +2,14 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import styles from './index.less';
-import _ from 'i18n';
-
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';
 import Footer from '../layout/footer';
 import CustomIcon from 'components/icon';
+import Notice from 'components/notice';
 import Cookie from 'js-cookie';
+import styles from './index.less';
+import _ from 'i18n';
 
 const _lang = Cookie.get('lang') || navigator.language;
 export default class Home extends Component {
@@ -149,59 +149,62 @@ export default class Home extends Component {
   render() {
     const isZh = _lang.toLowerCase() === 'zh-cn';
     return (
-      <section className={styles.container}>
-        <section className={styles.head}>
-          <div className={styles.head_inner}>
-            <Nav />
-            <div className={styles.head_right}>
+      <>
+        <Notice />
+        <section className={styles.container}>
+          <section className={styles.head}>
+            <div className={styles.head_inner}>
+              <Nav />
+              <div className={styles.head_right}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    this.props.history.push('swap');
+                  }}
+                >
+                  {_('use_tokenswap')}
+                </Button>
+                <Lang />
+              </div>
+            </div>
+          </section>
+          <section className={styles.main}>
+            <div className={styles.logo}>
+              <CustomIcon type="iconTS_Logo" style={{ fontSize: 70 }} />
+            </div>
+            <div className={styles.main_title}>{_('tokenswap')}</div>
+            <div className={styles.main_desc}>{_('tokenswap_desc')}</div>
+            <div className={styles.btns}>
               <Button
                 type="primary"
+                className={styles.btn}
+                style={{ marginRight: 30 }}
                 onClick={() => {
                   this.props.history.push('swap');
                 }}
               >
                 {_('use_tokenswap')}
               </Button>
-              <Lang />
+              <Button
+                className={styles.btn}
+                onClick={() => {
+                  window.location.href = isZh
+                    ? 'https://tokenswap.gitbook.io/tokenswap/v/zhong-wen/'
+                    : 'https://tokenswap.gitbook.io/tokenswap/';
+                }}
+              >
+                {_('documentation')}
+              </Button>
             </div>
-          </div>
+          </section>
+          <section className={styles.content}>
+            <div className={styles.title_web}>{_('comp_ts')}</div>
+            <div className={styles.title_h5}>{_('comp_ts_h5')}</div>
+            {this.renderList()}
+          </section>
+          <Footer />
         </section>
-        <section className={styles.main}>
-          <div className={styles.logo}>
-            <CustomIcon type="iconTS_Logo" style={{ fontSize: 70 }} />
-          </div>
-          <div className={styles.main_title}>{_('tokenswap')}</div>
-          <div className={styles.main_desc}>{_('tokenswap_desc')}</div>
-          <div className={styles.btns}>
-            <Button
-              type="primary"
-              className={styles.btn}
-              style={{ marginRight: 30 }}
-              onClick={() => {
-                this.props.history.push('swap');
-              }}
-            >
-              {_('use_tokenswap')}
-            </Button>
-            <Button
-              className={styles.btn}
-              onClick={() => {
-                window.location.href = isZh
-                  ? 'https://tokenswap.gitbook.io/tokenswap/v/zhong-wen/'
-                  : 'https://tokenswap.gitbook.io/tokenswap/';
-              }}
-            >
-              {_('documentation')}
-            </Button>
-          </div>
-        </section>
-        <section className={styles.content}>
-          <div className={styles.title_web}>{_('comp_ts')}</div>
-          <div className={styles.title_h5}>{_('comp_ts_h5')}</div>
-          {this.renderList()}
-        </section>
-        <Footer />
-      </section>
+      </>
     );
   }
 }

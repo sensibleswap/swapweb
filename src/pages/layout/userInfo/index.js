@@ -85,7 +85,7 @@ export default class UserInfo extends Component {
     if (_timer < 1) {
       setTimeout(async () => {
         while (this.polling) {
-          await sleep(30 * 1e3);
+          await sleep(20 * 1e3);
           const { dispatch, busy } = _self.props;
           if (busy) return;
           await dispatch({
@@ -156,7 +156,6 @@ export default class UserInfo extends Component {
       },
     });
 
-    console.log(con_res);
     if (con_res.msg) {
       return message.error(con_res.msg);
     }

@@ -1,7 +1,7 @@
 import webWallet from 'lib/webWallet';
 import voltWallet from 'lib/volt';
 import { formatSat } from 'common/utils';
-import { DEFAULT_NET } from 'common/config';
+import { DEFAULT_NET } from 'common/const';
 
 const connectWallet = (type = 1) => {
   if (type === 1) {
