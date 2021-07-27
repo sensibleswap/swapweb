@@ -1,5 +1,6 @@
 import bsv from 'common/walletFun';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
+import { strAbbreviation } from 'common/utils';
 import debug from 'debug';
 const log = debug('user');
 const { localStorage } = window;
@@ -34,27 +35,34 @@ export default {
       }
       if (!accountInfo || !accountInfo.email) return false;
       localStorage.setItem(TSWAP_NETWORK, accountInfo.network || DEFAULT_NET);
+      try {
+        const bsvBalance = yield bsv.getBsvBalance(type);
+        const userAddress = yield bsv.getAddress(type);
+        const tokenBalance = yield bsv.getSensibleFtBalance(type);
 
-      const bsvBalance = yield bsv.getBsvBalance(type);
-      const userAddress = yield bsv.getAddress(type);
-      const tokenBalance = yield bsv.getSensibleFtBalance(type);
+        const paymail = yield bsv.getPaymail();
+        const userBalance = {
+          BSV: bsvBalance,
+          ...tokenBalance,
+        };
+        log('userData:', accountInfo, tokenBalance, userBalance, userAddress);
 
-      const userBalance = {
-        BSV: bsvBalance,
-        ...tokenBalance,
-      };
-      log('userData:', accountInfo, tokenBalance, userBalance, userAddress);
+        yield put({
+          type: 'save',
+          payload: {
+            accountInfo,
+            userBalance,
+            userAddress: paymail || userAddress,
+            userAddressShort: paymail || strAbbreviation(userAddress, [5, 4]),
+            isLogin: true,
+            walletType: type || 1,
+          },
+        });
+      } catch (error) {
+        console.log(error.toString());
+        return { msg: error.toString() };
+      }
 
-      yield put({
-        type: 'save',
-        payload: {
-          accountInfo,
-          userBalance,
-          userAddress,
-          isLogin: true,
-          walletType: type || 1,
-        },
-      });
       return {};
     },
     *updateUserData({ payload }, { call, put, select }) {
@@ -70,25 +78,32 @@ export default {
       }
       if (!accountInfo || !accountInfo.email) return false;
       localStorage.setItem(TSWAP_NETWORK, accountInfo.network || DEFAULT_NET);
+      try {
+        const bsvBalance = yield bsv.getBsvBalance(type);
+        const userAddress = yield bsv.getAddress(type);
+        const tokenBalance = yield bsv.getSensibleFtBalance(type);
+        const paymail = yield bsv.getPaymail();
 
-      const bsvBalance = yield bsv.getBsvBalance(type);
-      const userAddress = yield bsv.getAddress(type);
-      const tokenBalance = yield bsv.getSensibleFtBalance(type);
+        const userBalance = {
+          BSV: bsvBalance,
+          ...tokenBalance,
+        };
 
-      const userBalance = {
-        BSV: bsvBalance,
-        ...tokenBalance,
-      };
+        yield put({
+          type: 'save',
+          payload: {
+            accountInfo,
+            userBalance,
+            userAddress: paymail || userAddress,
+            userAddressShort: paymail || strAbbreviation(userAddress, [5, 4]),
+            isLogin: true,
+          },
+        });
+      } catch (error) {
+        console.log(error.toString());
+        return { msg: error.toString() };
+      }
 
-      yield put({
-        type: 'save',
-        payload: {
-          accountInfo,
-          userBalance,
-          userAddress,
-          isLogin: true,
-        },
-      });
       return {};
     },
     *disconnectWebWallet({ payload }, { call, put, select }) {

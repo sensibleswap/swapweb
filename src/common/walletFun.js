@@ -19,6 +19,12 @@ const getAccountInfo = (type = 1) => {
     return voltWallet.getAccountInfo();
   }
 };
+const getPaymail = (type) => {
+  if (type === 1) {
+    return false;
+  }
+  return voltWallet.getPaymail();
+};
 const getBsvBalance = async (type = 1) => {
   if (type === 1) {
     const res = await webWallet.getBsvBalance();
@@ -176,6 +182,7 @@ const transferAll = (type = 1, param = []) => {
 export default {
   connectWallet,
   getAccountInfo,
+  getPaymail,
   getBsvBalance,
   getAddress,
   getSensibleFtBalance,

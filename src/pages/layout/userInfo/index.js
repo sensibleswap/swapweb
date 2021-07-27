@@ -11,7 +11,6 @@ import {
   DollarOutlined,
 } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
-import { strAbbreviation } from 'common/utils';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
 import Lang from '../lang';
@@ -24,7 +23,6 @@ function sleep(ms) {
   });
 }
 let _timer = 0;
-let _notice = false;
 @withRouter
 @connect(({ pair, user, loading }) => {
   const effects = loading.effects;
@@ -46,7 +44,6 @@ export default class UserInfo extends Component {
       chooseLogin_visible: false,
       select_account_index: '',
       wallet_list: [],
-      isLogin: false,
     };
     this.polling = true;
   }
@@ -80,20 +77,25 @@ export default class UserInfo extends Component {
   }
 
   fetchPairData = async () => {
-    const { currentPair, dispatch } = this.props;
     const _self = this;
     if (_timer < 1) {
       setTimeout(async () => {
         while (this.polling) {
           await sleep(20 * 1e3);
-          const { dispatch, busy } = _self.props;
+          const { dispatch, busy, isLogin } = _self.props;
           if (busy) return;
           await dispatch({
             type: 'pair/updatePairData',
           });
-          await dispatch({
-            type: 'user/updateUserData',
-          });
+
+          if (isLogin) {
+            const res = await dispatch({
+              type: 'user/updateUserData',
+            });
+            if (res.msg && res.msg.indexOf('not_login') > -1) {
+              this.disConnect();
+            }
+          }
         }
       });
     }
@@ -168,6 +170,7 @@ export default class UserInfo extends Component {
     if (res.msg) {
       return message.error(res.msg);
     }
+
     EventBus.emit('reloadPair');
   };
 
@@ -220,7 +223,7 @@ export default class UserInfo extends Component {
   };
 
   renderPop() {
-    const { userAddress, walletType } = this.props;
+    const { userAddress, userAddressShort, walletType } = this.props;
     return (
       <div className={styles.user_pop}>
         <div className={styles.app_title}>
@@ -233,7 +236,7 @@ export default class UserInfo extends Component {
             <div className={styles.account_name}>
               <Clipboard
                 text={userAddress}
-                label={strAbbreviation(userAddress, [5, 4])}
+                label={userAddressShort}
                 style={{ marginRight: 10 }}
               />
               {this.renderWalletIcon()}
@@ -293,7 +296,7 @@ export default class UserInfo extends Component {
 
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
-    const { userAddress, connecting, isLogin } = this.props;
+    const { userAddressShort, connecting, isLogin } = this.props;
     return (
       <>
         {isLogin ? (
@@ -305,9 +308,7 @@ export default class UserInfo extends Component {
             placement="bottomRight"
           >
             <div className={styles.account_trigger}>
-              <span style={{ marginRight: 10 }}>
-                {strAbbreviation(userAddress, [5, 4])}{' '}
-              </span>
+              <span style={{ marginRight: 10 }}>{userAddressShort} </span>
               {this.renderWalletIcon()}
             </div>
           </Popover>
