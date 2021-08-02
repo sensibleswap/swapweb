@@ -341,19 +341,27 @@ export default class UserInfo extends Component {
 
         {chooseLogin_visible && (
           <Modal
-            title="connect to a wallet"
+            title=""
             visible={chooseLogin_visible}
             footer={null}
             className={styles.chooseLogin_dialog}
             width="400px"
             onCancel={this.closeChooseDialog}
+            closable={false}
           >
+            <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
               <li onClick={() => this.connectWebWallet(2)}>
-                Volt
-                <CustomIcon type="iconicon-volt-tokenswap-circle" />
+                Volt {_('web_wallet')}
+                <CustomIcon
+                  type="iconicon-volt-tokenswap-circle"
+                  style={{ fontSize: 35 }}
+                />
               </li>
-              <li onClick={() => this.connectWebWallet(1)}>Web Wallet</li>
+              <li onClick={() => this.connectWebWallet(1)}>
+                TS {_('web_wallet')}
+                {_('test_only')}
+              </li>
               {process.env.NODE_ENV === 'development' && (
                 <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>
                   Chrome Ext

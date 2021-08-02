@@ -242,22 +242,14 @@ export default class RemovePage extends Component {
             <div className={styles.values_right}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo
-                    name={symbol1}
-                    size={30}
-                    style={{ margigRight: 10 }}
-                  />{' '}
-                  {symbol1}
+                  <TokenLogo name={symbol1} size={30} />
+                  <div style={{ marginLeft: 10 }}>{symbol1}</div>
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo
-                    name={symbol2}
-                    size={30}
-                    style={{ margigRight: 10 }}
-                  />{' '}
-                  {symbol2}
+                  <TokenLogo name={symbol2} size={30} />
+                  <div style={{ marginLeft: 10 }}>{symbol2}</div>
                 </div>
               </div>
             </div>

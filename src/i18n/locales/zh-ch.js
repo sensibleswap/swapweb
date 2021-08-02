@@ -175,7 +175,7 @@ const texts = {
   lac_token_balance: '%s 余额不足',
   no_pair: '没有该交易对',
   not_enough: '超出了%s流动池存量',
-  lower_amount: '最小输入%s聪',
+  lower_amount: '输入至少高于%s聪',
 
   create_pair_tips: 'Understanding Impermanent Loss',
   create_pair_desc:
@@ -211,7 +211,6 @@ const texts = {
   web_wallet: '网页钱包',
   web_wallet_tips:
     '提示：Web钱包的私钥是通过用户的用户名和密码实时计算得到，不会上传服务器，也不会保存在本地。仅供方便用户测试之用，不适合存放大量资金，建议用户妥善保管用户名+密码组合以防资金丢失，或在使用完成之后将剩余资金转移。用户名+密码组合丢失(忘记，被盗等情形)会导致资产丢失',
-  web_wallet: '网页钱包',
   deposit_title: '充值',
   withdraw_title: '提款',
   availabel: '可用余额',
@@ -239,5 +238,6 @@ const texts = {
     'tswap已经升级完毕，同时开通了新的mc/bsv交易对，如果在2021年7月22日16时前还有流动性在旧的bsv-mc流动池中没有提取的，请前往https://v1.tswap.io进行提取流动性。未提取流动性的用户根据在流动池中的比例将获得了新的mc token的空投。因此旧池˙中提取流动性出来的只有bsv，旧的mc token已停止使用。',
 
   cant_remove: '你没用可移除的流动性资产',
+  test_only: '（建议仅供测试）',
 };
 module.exports = texts;

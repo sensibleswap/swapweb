@@ -177,7 +177,7 @@ const texts = {
   lac_token_balance: 'Insufficient %s Balance',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
-  lower_amount: 'Minimum %s Sat input required',
+  lower_amount: 'Above %s Sat input required',
 
   create_pair_tips: 'Understanding Impermanent Loss',
   create_pair_desc:
@@ -240,5 +240,6 @@ const texts = {
   notice720:
     'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
   cant_remove: 'You have no liquidity to remove',
+  test_only: '(Recommended for test only)',
 };
 module.exports = texts;

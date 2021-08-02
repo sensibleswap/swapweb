@@ -20,10 +20,10 @@ const getAccountInfo = (type = 1) => {
   }
 };
 const getPaymail = (type) => {
-  if (type === 1) {
-    return false;
+  if (type === 2) {
+    return voltWallet.getPaymail();
   }
-  return voltWallet.getPaymail();
+  return false;
 };
 const getBsvBalance = async (type = 1) => {
   if (type === 1) {

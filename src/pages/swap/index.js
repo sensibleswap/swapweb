@@ -610,7 +610,7 @@ export default class Swap extends Component {
         return message.error(ts_res.msg);
       }
       if (_allBalance) {
-        amount = BigInt(amount) - BigInt(ts_res.fee);
+        amount = amount - BigInt(ts_res.fee || 0);
       }
       payload = {
         ...payload,
