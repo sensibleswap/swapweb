@@ -3,14 +3,15 @@ import voltWallet from 'lib/volt';
 import { formatSat } from 'common/utils';
 import { DEFAULT_NET } from 'common/const';
 
-const connectWallet = (type = 1) => {
+const connectWallet = (type = 1, network) => {
   if (type === 1) {
     return webWallet.requestAccount();
   }
   if (type === 2) {
-    return voltWallet.connectAccount({ network: DEFAULT_NET });
+    return voltWallet.connectAccount({ network });
   }
 };
+
 const getAccountInfo = (type = 1) => {
   if (type === 1) {
     return webWallet.getAccount();
@@ -19,12 +20,14 @@ const getAccountInfo = (type = 1) => {
     return voltWallet.getAccountInfo();
   }
 };
+
 const getPaymail = (type) => {
   if (type === 2) {
     return voltWallet.getPaymail();
   }
   return false;
 };
+
 const getBsvBalance = async (type = 1) => {
   if (type === 1) {
     const res = await webWallet.getBsvBalance();
@@ -36,6 +39,7 @@ const getBsvBalance = async (type = 1) => {
     return formatSat(res.free);
   }
 };
+
 const getAddress = (type = 1) => {
   if (type === 1) {
     return webWallet.getAddress();
@@ -44,6 +48,16 @@ const getAddress = (type = 1) => {
     return voltWallet.getDepositAddress();
   }
 };
+
+const getNetwork = (type = 1) => {
+  if (type === 1) {
+    return '';
+  }
+  if (type === 2) {
+    return voltWallet.getNetwork();
+  }
+};
+
 const getSensibleFtBalance = async (type = 1) => {
   if (type === 1) {
     const res = await webWallet.getSensibleFtBalance();
@@ -62,13 +76,9 @@ const getSensibleFtBalance = async (type = 1) => {
     return userBalance;
   }
 };
-const exitAccount = (type = 1) => {
-  if (type === 1) {
-    return webWallet.exitAccount();
-  }
-  if (type === 2) {
-    return voltWallet.disconnectAccount();
-  }
+const exitAccount = () => {
+  webWallet.exitAccount();
+  voltWallet.disconnectAccount();
 };
 const transferBsv = (type = 1, { address, amount }) => {
   if (type === 1) {
@@ -185,6 +195,7 @@ export default {
   getPaymail,
   getBsvBalance,
   getAddress,
+  getNetwork,
   getSensibleFtBalance,
   exitAccount,
   transferBsv,

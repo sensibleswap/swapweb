@@ -38,7 +38,9 @@ export default class WebWallet extends Component {
     });
     const res = await dispatch({
       type: 'user/loadingUserData',
-      payload: {},
+      payload: {
+        type: 1,
+      },
     });
     if (res.msg) {
       return message.error(msg.error);
@@ -65,7 +67,9 @@ export default class WebWallet extends Component {
     message.success(_('withdraw_success'));
     dispatch({
       type: 'user/loadingUserData',
-      payload: {},
+      payload: {
+        type: 1,
+      },
     });
   };
   setMaxAmount = () => {

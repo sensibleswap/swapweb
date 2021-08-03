@@ -34,18 +34,30 @@ export default {
         return { msg: error };
       }
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem(TSWAP_NETWORK, accountInfo.network || DEFAULT_NET);
+
       try {
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
         const tokenBalance = yield bsv.getSensibleFtBalance(type);
+        const network =
+          type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
+
+        localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
 
         const paymail = yield bsv.getPaymail();
+
         const userBalance = {
           BSV: bsvBalance,
           ...tokenBalance,
         };
-        log('userData:', accountInfo, tokenBalance, userBalance, userAddress);
+        log(
+          'userData:',
+          accountInfo,
+          network,
+          tokenBalance,
+          userBalance,
+          userAddress,
+        );
 
         yield put({
           type: 'save',
@@ -77,11 +89,14 @@ export default {
         return { msg: error.message || error.toString() };
       }
       if (!accountInfo || !accountInfo.email) return false;
-      localStorage.setItem(TSWAP_NETWORK, accountInfo.network || DEFAULT_NET);
       try {
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
         const tokenBalance = yield bsv.getSensibleFtBalance(type);
+        const network =
+          type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
+
+        localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
         const paymail = yield bsv.getPaymail();
 
         const userBalance = {
@@ -108,9 +123,8 @@ export default {
     },
     *disconnectWebWallet({ payload }, { call, put, select }) {
       // console.log(bsv.exitAccount)
-      const type = yield select((state) => state.user.walletType);
       try {
-        yield bsv.exitAccount(type);
+        yield bsv.exitAccount();
       } catch (error) {
         // console.log(error);
         return { msg: error.message || error.toString() };
@@ -127,9 +141,9 @@ export default {
       });
     },
     *connectWebWallet({ payload }, { call, put }) {
-      const { type } = payload;
+      const { type, network } = payload;
       try {
-        yield bsv.connectWallet(type);
+        yield bsv.connectWallet(type, network);
         return {};
       } catch (error) {
         return { msg: error.message || error.toString() };

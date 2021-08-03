@@ -141,7 +141,7 @@ export default class UserInfo extends Component {
     this.setState({ pop_visible: visible });
   };
 
-  connectWebWallet = async (type) => {
+  connectWebWallet = async (type, network) => {
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
@@ -155,6 +155,7 @@ export default class UserInfo extends Component {
       type: 'user/connectWebWallet',
       payload: {
         type,
+        network,
       },
     });
 
@@ -351,12 +352,16 @@ export default class UserInfo extends Component {
           >
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              <li onClick={() => this.connectWebWallet(2)}>
+              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
                 Volt {_('web_wallet')}
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
                   style={{ fontSize: 35 }}
                 />
+              </li>
+              <li onClick={() => this.connectWebWallet(2, 'testnet')}>
+                BSV Testnet
+                <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
               </li>
               <li onClick={() => this.connectWebWallet(1)}>
                 TS {_('web_wallet')}
