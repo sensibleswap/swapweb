@@ -98,6 +98,7 @@ export default {
     },
 
     *reqSwap({ payload }, { call, put }) {
+      payload.source = 'tswap.io';
       const res = yield pairApi.reqSwap.call(pairApi, payload);
       log('reqSwap:', res);
       return res;
