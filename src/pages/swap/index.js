@@ -598,6 +598,10 @@ export default class Swap extends Component {
         total = userTotal;
         amount = BigInt(userTotal) - BigInt(txFee);
       }
+
+      if (amount < 10000) {
+        return message.error(_('lac_balance'));
+      }
       const ts_res = await dispatch({
         type: 'user/transferBsv',
         payload: {
