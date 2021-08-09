@@ -1,60 +1,62 @@
 @import '../layout.less';
 
+.content {
+  margin-right: 40px;
+}
 .first {
-    background-color: #f6f6f9;
-    border-radius: 8px;
-    padding: 60px 30px;
-    font-size: 16px;
-    margin-bottom: 40px;
-    .first_title {
-        font-weight: 500;
-        margin-bottom: 20px;
-    }
+  background-color: #f6f6f9;
+  border-radius: 8px;
+  padding: 60px 30px;
+  font-size: 16px;
+  margin-bottom: 40px;
+  .first_title {
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
 }
 .box {
-    background-color: #fff;
-    width: 375px;
-    min-height: 500px;
-    border-radius: 8px;
-    -webkit-box-shadow: 0 10px 25px rgba(213, 213, 223, 0.60);
-    box-shadow: 0 10px 25px rgba(213, 213, 223, 0.60);
-  
-  }
+  background-color: #fff;
+  width: 375px;
+  min-height: 500px;
+  border-radius: 8px;
+  -webkit-box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
+  box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
+}
 
 .head {
-    height: 80px;
-    border-bottom: 1px solid #E8E8E8;
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-  }
-  
-  .menu {
-    float: left;
+  height: 80px;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.menu {
+  float: left;
+  height: 40px;
+  line-height: 40px;
+  display: flex;
+  flex: 1;
+
+  .menu_item {
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 20px;
+    color: #333;
+    border-radius: 100px;
     height: 40px;
-    line-height: 40px;
-    display: flex;
-    flex: 1;
-  
-    .menu_item {
-      display: inline-block;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 16px;
-      padding: 0 20px;
-      color: #333;
-      border-radius: 100px;
-      height: 40px;
-      margin-right: 20px;
-      text-align: center;
-    }
-  
-    .menu_item:last-child {
-      margin-right: 0;
-    }
-  
-    .menu_item_selected {
-      background-color: #2F80ED;
-      color: #fff;
-    }
+    margin-right: 20px;
+    text-align: center;
   }
+
+  .menu_item:last-child {
+    margin-right: 0;
+  }
+
+  .menu_item_selected {
+    background-color: #2f80ed;
+    color: #fff;
+  }
+}

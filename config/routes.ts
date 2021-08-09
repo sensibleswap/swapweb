@@ -4,6 +4,7 @@ export default [
   { path: '/pool/add', component: '@/pages/addLiq' },
   { path: '/pool/remove', component: '@/pages/remove' },
   { path: '/webwallet', component: '@/pages/webwallet' },
+  { path: '/farm', component: '@/pages/farm' },
   // { path: '/explore', component: '@/pages/explore'},
   // { path: '/my', component: '@/pages/my'},
   // { path: '/manage', component: '@/pages/manage'},

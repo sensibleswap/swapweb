@@ -13,6 +13,12 @@ const icons = {
   boex: {
     url: 'assets/boex.jpeg',
   },
+  tsc: {
+    type: 'iconTS',
+  },
+  usdt: {
+    type: 'iconlogo-usdt',
+  },
 };
 
 export default function TokenIcon(props) {

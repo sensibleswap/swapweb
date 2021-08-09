@@ -8,42 +8,33 @@
 }
 
 .head {
-  height: 80px;
-  border-bottom: 1px solid #e8e8e8;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  align-items: center;
+  padding: 5px 5px 0;
 }
 
 .menu {
-  float: left;
   height: 40px;
   line-height: 40px;
+  background-color: #eeeff3;
   display: flex;
   flex: 1;
+  border-radius: 8px;
 
   .menu_item {
     display: inline-block;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 16px;
     padding: 0 20px;
     color: #333;
-    border-radius: 100px;
     height: 40px;
-    margin-right: 20px;
     text-align: center;
-  }
-
-  .menu_item:last-child {
-    margin-right: 0;
+    width: 50%;
+    border-radius: 8px;
   }
 
   .menu_item_selected {
     background-color: #2f80ed;
     color: #fff;
-    cursor: default;
   }
 }
 

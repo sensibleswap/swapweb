@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Slider, Button, Spin, message } from 'antd';
+import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
@@ -56,7 +56,7 @@ export default class RemovePage extends Component {
     this.state = {
       value: 0,
       page: 'form',
-      formFinish: false,
+      formFinish: true,
       symbol1: '',
       symbol2: '',
       removeToken1: 0,
@@ -209,6 +209,9 @@ export default class RemovePage extends Component {
               </div>
             ))}
           </div>
+          <div className={styles.balance}>
+            {_('balance')}: <span>0.123456</span>
+          </div>
 
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
@@ -220,7 +223,9 @@ export default class RemovePage extends Component {
                 {symbol2}/{symbol1}
               </div>
             </div>
-            <div className={styles.pair_right}>{removeLP}</div>
+            <div className={styles.pair_right}>
+              <Input style={{ width: 130 }} className={styles.input} />
+            </div>
           </div>
 
           <div className={styles.switch_icon}>
@@ -230,38 +235,38 @@ export default class RemovePage extends Component {
             <div className={styles.line}></div>
           </div>
 
-          <div className={styles.values}>
-            <div className={styles.values_left}>
-              <div className={styles.v_item}>
-                <div className={styles.value}>{removeToken1}</div>
+          <div className={styles.title}>{_('earn')}</div>
+          <div
+            className={styles.pair_box}
+            style={{ paddingLeft: 15, paddingRight: 17 }}
+          >
+            <div className={styles.pair_left}>
+              <div className={styles.icon} style={{ marginRight: 10 }}>
+                <TokenLogo name="tsc" size={25} />
               </div>
-              <div className={styles.v_item}>
-                <div className={styles.value}>{removeToken2}</div>
+              <div className={styles.name} style={{ fontSize: 22 }}>
+                TSC
               </div>
             </div>
-            <div className={styles.values_right}>
-              <div className={styles.v_item}>
-                <div className={styles.label}>
-                  <TokenLogo name={symbol1} size={30} />
-                  <div style={{ marginLeft: 10 }}>{symbol1}</div>
-                </div>
-              </div>
-              <div className={styles.v_item}>
-                <div className={styles.label}>
-                  <TokenLogo name={symbol2} size={30} />
-                  <div style={{ marginLeft: 10 }}>{symbol2}</div>
-                </div>
-              </div>
+            <div className={styles.pair_right}>
+              3,000 % APY
+              <CustomIcon
+                type="iconi"
+                style={{
+                  backgroundColor: '#DBDBDB',
+                  borderRadius: '50%',
+                  fontSize: 15,
+                  padding: 2,
+                  width: 15,
+                  textAlign: 'center',
+                  marginLeft: 5,
+                }}
+              />
             </div>
           </div>
 
           <div className={styles.price}>
-            <div className={styles.label}>{_('price')}</div>
-            <div className={styles.value}>
-              <div>
-                1 {symbol1} = {price} {symbol2}
-              </div>
-            </div>
+            1 {symbol1} = {price} {symbol2}
           </div>
 
           {this.renderButton()}
@@ -424,26 +429,23 @@ export default class RemovePage extends Component {
         <div className={styles.finish_logo}>
           <CustomIcon
             type="iconicon-success"
-            style={{ fontSize: 80, color: '#2BB696' }}
+            style={{ fontSize: 64, color: '#2BB696' }}
           />
         </div>
-        <div className={styles.finish_title}>{_('liq_removed')}</div>
-        <div className={styles.small_title}>{_('your_pos')}</div>
+        <div className={styles.finish_title}>{_('deposit_success')}</div>
+        <div className={styles.small_title}>{_('deposited')}</div>
 
-        <div className={styles.pair_box}>
-          <div className={styles.pair_left}>
-            <div className={styles.icon}>
+        <div className={styles.pair_data}>
+          <div className={styles.pair_left}>8,000.00</div>
+          <div className={styles.pair_right}>
+            <div className={styles.icon} style={{ marginRight: 10 }}>
               <CustomIcon type="iconlogo-bitcoin" />
               <CustomIcon type="iconlogo-vusd" />
-            </div>
-            <div className={styles.name}>
-              {symbol2}/{symbol1}
-            </div>
+            </div>{' '}
+            BSV-USDT LP
           </div>
-          <div className={styles.pair_right}>{final_lp}</div>
         </div>
 
-        <Spin spinning={spinning}>{this.renderInfo()}</Spin>
         <Button
           type="primary"
           className={styles.done_btn}
@@ -461,35 +463,10 @@ export default class RemovePage extends Component {
   }
 
   render() {
-    const { page, formFinish } = this.state;
-    return (
-      <Pool>
-        <div
-          className={styles.container}
-          style={{ display: page === 'form' ? 'block' : 'none' }}
-        >
-          <div className={styles.head}>
-            <div className={styles.menu}>
-              <span
-                className={styles.menu_item}
-                key="add_liq"
-                onClick={() => {
-                  this.props.history.push('/pool/add');
-                }}
-              >
-                {_('add_liq')}
-              </span>
-              <span
-                className={jc(styles.menu_item, styles.menu_item_selected)}
-                key="remove_liq"
-              >
-                {_('remove_liq_short')}
-              </span>
-            </div>
-          </div>
-          {formFinish ? this.renderResult() : this.renderForm()}
-        </div>
-      </Pool>
-    );
+    const { formFinish } = this.state;
+    if (formFinish) {
+      return this.renderResult();
+    }
+    return this.renderForm();
   }
 }

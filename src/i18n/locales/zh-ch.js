@@ -136,7 +136,6 @@ const texts = {
   liq_removed: '移除的流动性',
   your_pos: '你移除的仓位',
   your_re_liq: '你赎回的流动性',
-  earned: 'Earned',
 
   connect_volt: '连接你的Volt钱包',
   scan_app: '用你的Volt钱包扫描解锁',
@@ -239,5 +238,20 @@ const texts = {
 
   cant_remove: '你没用可移除的流动性资产',
   test_only: '（建议仅供测试）',
+
+  farm: 'Farm',
+  lock_earn: 'Lock and earn',
+  earned: 'Earned',
+  depositors: 'Depositors',
+  crop: 'Crop',
+  harvest: 'Harvest',
+  farm_item_desc:
+    'Provide liquidity and deposit your LP %s token to earn Swap token (TokenSwap utility token)',
+  apy_info:
+    'APY =(Fee + (TSC payout)* TSC price) *365/Total deposited LP token value(USDT)',
+  deposit: 'Deposit',
+  earn: 'Earn',
+  deposit_success: 'Deposit successful',
+  deposited: 'deposited',
 };
 module.exports = texts;

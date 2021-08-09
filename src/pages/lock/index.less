@@ -10,33 +10,42 @@
 }
 
 .head {
-  padding: 5px 5px 0;
+  height: 80px;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  align-items: center;
 }
 
 .menu {
+  float: left;
   height: 40px;
   line-height: 40px;
-  background-color: #eeeff3;
   display: flex;
   flex: 1;
-  border-radius: 8px;
 
   .menu_item {
     display: inline-block;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 16px;
     padding: 0 20px;
     color: #333;
+    border-radius: 100px;
     height: 40px;
+    margin-right: 20px;
     text-align: center;
-    width: 50%;
-    border-radius: 8px;
+  }
+
+  .menu_item:last-child {
+    margin-right: 0;
   }
 
   .menu_item_selected {
     background-color: #2f80ed;
     color: #fff;
+    cursor: default;
   }
 }
 
@@ -83,11 +92,21 @@
   }
 }
 
+.balance {
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: right;
+  span {
+    color: #2f80ed;
+    font-weight: 500;
+  }
+}
+
 .pair_box {
-  margin-top: 25px;
-  border: 1px solid #eee;
-  height: 50px;
-  padding: 10px;
+  margin-top: 5px;
+  height: 60px;
+  background-color: #f6f6f9;
+  padding: 5px 10px;
   border-radius: 55px 8px 8px 55px;
   display: flex;
   justify-content: space-between;
@@ -115,18 +134,22 @@
     .name {
       margin-left: 10px;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 700;
     }
   }
 
   .pair_right {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
+    .input {
+      height: 40px;
+      border-radius: 8px;
+    }
   }
 }
 
 .switch_icon {
-  margin: 25px 0 38px 10px;
+  margin: 8px 0 23px 10px;
 
   .icon {
     width: 40px;
@@ -147,35 +170,11 @@
   }
 }
 
-.values {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-
-  .v_item {
-    font-size: 22px;
-    font-weight: 500;
-
-    .label {
-      display: flex;
-      align-items: center;
-    }
-  }
-}
-
 .price {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 20px;
-  line-height: 25px;
-
-  .label {
-    font-weight: 700;
-    display: flex;
-  }
+  text-align: right;
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .btn,
@@ -242,21 +241,23 @@
 // finish
 .finish_logo {
   text-align: center;
+  margin-top: 42px;
 }
 
 .finish_title {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
-  margin-top: 25px;
+  margin-top: 22px;
   text-align: center;
   border-bottom: 1px solid #eee;
-  padding-bottom: 35px;
+  padding-bottom: 10px;
 }
 
 .small_title {
-  margin-top: 25px;
+  margin-top: 10px;
   font-size: 16px;
   font-weight: 500;
+  text-align: center;
 }
 
 .finish_desc {
@@ -284,8 +285,24 @@
   font-size: 18px;
   font-weight: 500;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 20px;
   border-radius: 8px;
+}
+
+.pair_data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 20px;
+  .pair_left {
+    margin-right: 15px;
+  }
+  .pair_right {
+    display: flex;
+    align-items: center;
+  }
 }
 
 @media only screen and (max-width: 767.99px) {
