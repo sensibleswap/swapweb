@@ -9,7 +9,8 @@ export default defineConfig({
     type: 'none',
   },
   favicon: '/assets/ts.png',
-  title: 'TokenSwap - 基于比特币协议的链上去中心化交易所',
+  title:
+    'TokenSwap - 基于比特币协议的链上去中心化交易所 Your Onchain DEX built on original Bitcoin protocol',
   routes,
   fastRefresh: {},
   cssModulesTypescriptLoader: {},
