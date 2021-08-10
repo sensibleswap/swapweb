@@ -486,7 +486,6 @@ export default class RemovePage extends Component {
                 {_('remove_liq_short')}
               </span>
             </div>
-            <div className={styles.help}></div>
           </div>
           {formFinish ? this.renderResult() : this.renderForm()}
         </div>

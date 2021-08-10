@@ -1,9 +1,4 @@
 const texts = {
-  home_title: 'Now Hiring',
-  home_content:
-    'Scrypt developers and Node.js developers to deliver the first onchain dex based on BSV. We are here to present to the world the potential of Bitcoin protocol, to prove that Bitcoin can do anything all the other chains can do.',
-  twitter_url: 'DM on Twitter',
-  email: 'Email: hello@tokenswap.pro',
   swap: '交易',
   pool: '流动池',
   explore: '浏览',
@@ -167,9 +162,6 @@ const texts = {
 
   swap_anyway: '继续交易',
   select: '选择',
-  first_liq_er: 'You are the first liquidity provider.',
-  first_liq_er_desc:
-    'The ratio of tokens you add will set the price of this pool. Once you are happy with the rate click supply to review.',
   login: '登录',
   lac_balance: '余额不足',
   lac_token_balance: '%s 余额不足',
@@ -177,16 +169,6 @@ const texts = {
   not_enough: '超出了%s流动池存量',
   lower_amount: '输入至少高于%s聪',
 
-  create_pair_tips: 'Understanding Impermanent Loss',
-  create_pair_desc:
-    'Before becoming a Liquidity Provider, please understand the risks involved with Impermanent Loss. You can learn more about it  here.',
-  create_pair_rewards: 'Liquidity Provider Rewards',
-  create_pair_rewords_desc1: 'Liquidity Providers earn a 0.35% fee',
-  create_pair_rewords_desc2:
-    'on all trades proportional to their share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.',
-  pay_account_title: 'Payment',
-  from_your: 'From Your',
-  send_to: 'Send to',
   pay: '支付',
   just: '刚刚',
   minute_ago: ' 分钟前',
@@ -201,10 +183,9 @@ const texts = {
   months_ago: ' 月前',
   year_ago: ' 年前',
   years_ago: ' 年前',
-  start_swapping: 'Start Swapping',
-  start_pooling: 'Start Pooling',
-  wallet_connected: 'Wallet connected',
-  no_wallet_connected: 'No wallet is connected',
+  start_swapping: '开始交易',
+  start_pooling: '开始流动性',
+  wallet_connected: '钱包已连接',
   account: '账户',
   withdraw: '提币',
 
@@ -239,5 +220,6 @@ const texts = {
 
   cant_remove: '你没用可移除的流动性资产',
   test_only: '（建议仅供测试）',
+  swap_success: '交易成功',
 };
 module.exports = texts;

@@ -795,11 +795,6 @@ export default class Liquidity extends Component {
               {_('remove_liq_short')}
             </span>
           </div>
-          <div className={styles.help}>
-            <Tooltip title={_('swap_question')} placement="bottom">
-              <QuestionCircleOutlined />
-            </Tooltip>
-          </div>
         </div>
         {formFinish ? this.renderResult() : this.renderForm()}
       </div>
