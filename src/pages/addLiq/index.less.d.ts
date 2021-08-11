@@ -33,6 +33,8 @@ interface CssExports {
   my_pair_info: string;
   name: string;
   normal: string;
+  result_data1: string;
+  result_data2: string;
   selectToken_wrap: string;
   steps: string;
   switch_icon: string;

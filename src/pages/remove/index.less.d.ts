@@ -9,6 +9,7 @@ interface CssExports {
   btn_wait: string;
   btn_warn: string;
   close: string;
+  coin: string;
   container: string;
   container_center: string;
   content: string;
@@ -17,6 +18,11 @@ interface CssExports {
   datas: string;
   desc: string;
   done_btn: string;
+  f_box: string;
+  f_item: string;
+  f_label: string;
+  f_title: string;
+  f_value: string;
   finish_desc: string;
   finish_logo: string;
   finish_title: string;
@@ -27,11 +33,13 @@ interface CssExports {
   info_title: string;
   info_title_swap: string;
   info_value: string;
+  input: string;
   label: string;
   left: string;
   left_inner: string;
   line: string;
   link: string;
+  lp_balance: string;
   main_title: string;
   menu: string;
   menu_item: string;
@@ -42,7 +50,9 @@ interface CssExports {
   pair_left: string;
   pair_right: string;
   price: string;
+  remove_content: string;
   right: string;
+  s_box: string;
   sidebar: string;
   small_title: string;
   strong: string;
@@ -51,7 +61,6 @@ interface CssExports {
   title: string;
   v_item: string;
   values: string;
-  view_detail: string;
 }
 export const cssExports: CssExports;
 export default cssExports;

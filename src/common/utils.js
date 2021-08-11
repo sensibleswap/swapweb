@@ -196,8 +196,12 @@ export function sleep(ms) {
 
 export const formatAmount = (value, n = 4) => {
   if (!value) return 0;
+
   const arr = value.toString().split('.');
-  if (value.toString().indexOf('e') > -1 || (arr[1] && arr[1].length > n)) {
+  if (
+    value.toString().indexOf('e') > -1 ||
+    (arr[1] && arr[1].length > n && n !== 0)
+  ) {
     return BigNumber(value).toFixed(n);
   }
   if (typeof value === 'object') return value.toFixed(n);
