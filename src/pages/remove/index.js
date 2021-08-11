@@ -310,6 +310,7 @@ export default class RemovePage extends Component {
       currentPair,
       userAddress,
       token1,
+      token2,
       userBalance,
       lptoken,
       rabinApis,
@@ -392,8 +393,14 @@ export default class RemovePage extends Component {
     this.setState({
       formFinish: true,
       final_lp: removeLP.toString(),
-      receive_token1: removeToken1,
-      receive_token2: removeToken2,
+      receive_token1: formatSat(
+        removeliq_res.data.token1Amount,
+        token1.decimal,
+      ),
+      receive_token2: formatSat(
+        removeliq_res.data.token2Amount,
+        token2.decimal,
+      ),
     });
   };
 

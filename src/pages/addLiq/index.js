@@ -652,8 +652,8 @@ export default class Liquidity extends Component {
       _aim_amount = token2AddAmount;
       // if (new_origin_amount !== origin_amount) {
       this.setState({
-        _origin_amount,
-        _aim_amount,
+        _origin_amount: _origin_amount.toString(),
+        _aim_amount: _aim_amount.toString(),
       });
       // return this.showModal({
       //   origin_amount,
@@ -721,6 +721,7 @@ export default class Liquidity extends Component {
     await this.updateData();
     this.setState({
       formFinish: true,
+      lpAddAmount: addliq_res.data.lpAddAmount,
     });
   };
 
@@ -739,8 +740,9 @@ export default class Liquidity extends Component {
   }
 
   renderResult() {
-    const { token1, token2, history, spinning } = this.props;
-    const { _origin_amount, _aim_amount } = this.state;
+    const { token1, token2, history, allPairs, currentPair } = this.props;
+    const { _origin_amount, _aim_amount, lpAddAmount } = this.state;
+    const { lptoken = {} } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
@@ -753,15 +755,16 @@ export default class Liquidity extends Component {
         </div>
         <div className={styles.finish_title}>{_('add_success')}</div>
         <div className={styles.result_data1}>
-          {_('added')} {_origin_amount} {symbol1} + {_aim_amount} {symbol2}
+          {_('added')} {formatSat(_origin_amount, token1.decimal)} {symbol1} +{' '}
+          {formatSat(_aim_amount, token2.decimal)} {symbol2}
         </div>
         <div className={styles.result_data2}>
-          {_('received')}{' '}
+          {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
           <TokenLogo name={symbol1} size={20} style={{ marginLeft: 10 }} />
           <TokenLogo
             name={symbol2}
             size={20}
-            style={{ marginLeft: '-5px' }}
+            style={{ marginLeft: '-7px' }}
           />{' '}
           <span style={{ fontWeight: 700, marginLeft: 10 }}>
             {symbol1}/{symbol2}-LP
