@@ -246,7 +246,7 @@ export default class RemovePage extends Component {
             {_('lp_balance')}: <span>{LP}</span>
           </div>
           <div className={styles.s_box}>
-            <div className={styles.icon}>
+            <div className={styles.coin}>
               <TokenLogo name={symbol1} size={30} />
               <TokenLogo
                 name={symbol2}
