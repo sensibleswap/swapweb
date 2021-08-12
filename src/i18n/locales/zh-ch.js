@@ -221,7 +221,7 @@ const texts = {
   cant_remove: '你没用可移除的流动性资产',
   test_only: '（建议仅供测试）',
   swap_success: '交易成功',
-  lp_balance: 'Available to withdraw',
-  added: 'Added',
+  lp_balance: '可提取',
+  added: '添加',
 };
 module.exports = texts;
