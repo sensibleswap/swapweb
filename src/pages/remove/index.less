@@ -3,7 +3,6 @@
 .container {
   background-color: #fff;
   width: 375px;
-  min-height: 500px;
   border-radius: 8px;
   -webkit-box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
   box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
@@ -40,8 +39,8 @@
   }
 }
 
-.content {
-  padding: 0 20px 20px;
+.remove_content {
+  padding: 0 20px 10px;
 }
 
 .title {
@@ -55,7 +54,7 @@
 .data {
   font-size: 36px;
   font-weight: 700;
-  margin: 15px 0 20px;
+  margin: 6px 0 11px;
 }
 
 :global(.ant-slider-handle) {
@@ -126,13 +125,13 @@
 }
 
 .switch_icon {
-  margin: 25px 0 38px 10px;
+  margin: 17px 0 22px 10px;
 
   .icon {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     text-align: center;
-    line-height: 35px;
+    line-height: 20px;
     border: 4px solid #f6f6f9;
     border-radius: 55px;
     background-color: #fff;
@@ -149,18 +148,67 @@
 
 .values {
   border-bottom: 1px solid #eee;
-  padding-bottom: 20px;
   display: flex;
   justify-content: space-between;
 
   .v_item {
-    font-size: 22px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 400;
+    padding-bottom: 10px;
 
     .label {
       display: flex;
       align-items: center;
     }
+  }
+}
+
+.s_box {
+  height: 70px;
+  background-color: #f6f6f9;
+  border-radius: 55px 8px 8px 55px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 0 15px;
+
+  .coin {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .name {
+    font-size: 16px;
+    font-weight: 700;
+    width: 130px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+  :global(.ant-form-item) {
+    margin-bottom: 0;
+  }
+}
+
+.input {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  width: 110px;
+  height: 50px;
+  line-height: 50px;
+
+  :global(.ant-input-number-handler-wrap) {
+    border-radius: 0 8px 8px 0;
+  }
+}
+.lp_balance {
+  font-size: 14px;
+  text-align: right;
+  margin-top: 20px;
+  cursor: pointer;
+  span {
+    color: #2f80ed;
   }
 }
 
@@ -187,7 +235,7 @@
   line-height: 52px;
   font-weight: 500;
   font-size: 18px;
-  margin-top: 15px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -242,15 +290,15 @@
 // finish
 .finish_logo {
   text-align: center;
+  padding-top: 38px;
 }
 
 .finish_title {
   font-size: 28px;
   font-weight: 700;
-  margin-top: 25px;
+  margin-top: 8px;
   text-align: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 35px;
+  padding-bottom: 20px;
 }
 
 .small_title {
@@ -266,14 +314,53 @@
   margin-top: 20px;
 }
 
-.view_detail {
-  text-align: center;
-  color: #2f80ed;
-  line-height: 50px;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 20px;
-  cursor: pointer;
+.f_box {
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: 10px;
+
+  .f_title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .f_item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    align-items: center;
+  }
+
+  .f_label,
+  .f_value {
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
+    display: flex;
+  }
+
+  :global {
+    .iconfont {
+      font-size: 20px;
+
+      &:first-child {
+        margin-right: -5px;
+        position: relative;
+      }
+    }
+  }
+
+  .name {
+    margin-left: 10px;
+    font-size: 14px;
+  }
+
+  .f_value {
+    font-size: 16px;
+    font-weight: 500;
+  }
 }
 
 .done_btn {
@@ -284,7 +371,7 @@
   font-size: 18px;
   font-weight: 500;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 10px;
   border-radius: 8px;
 }
 

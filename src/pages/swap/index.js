@@ -13,26 +13,14 @@ import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import SelectToken from '../selectToken';
-import Setting from '../setting';
 import styles from './index.less';
 import _ from 'i18n';
 
 const log = debug('swap');
 
-const { slippage_tolerance_value, defaultIndex, datas } = slippage_data;
+const { slippage_tolerance_value, defaultSlipValue } = slippage_data;
 
 const FormItem = Form.Item;
-
-const menu = [
-  {
-    key: 'market',
-    label: _('market'),
-  },
-  // {
-  //     key: 'limit',
-  //     label: _('limit'),
-  // }
-];
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -55,7 +43,6 @@ export default class Swap extends Component {
     this.state = {
       page: 'form',
       formFinish: false,
-      showDetail: true,
       origin_amount: 0,
       aim_amount: 0,
       slip: 0,
@@ -65,6 +52,9 @@ export default class Swap extends Component {
       dirForward: true, //交易对方向，true正向 false反向
       // bsvToToken: true,
       modalVisible: false,
+      tol:
+        window.localStorage.getItem(slippage_tolerance_value) ||
+        defaultSlipValue,
     };
     this.formRef = React.createRef();
   }
@@ -368,7 +358,7 @@ export default class Swap extends Component {
   renderForm = () => {
     const { token1, token2, pairData, userBalance, submiting } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { dirForward } = this.state;
+    const { dirForward, tol } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const { slip, fee } = this.state;
@@ -384,10 +374,6 @@ export default class Swap extends Component {
       ? formatAmount(_swapToken2Amount / _swapToken1Amount, token2.decimal)
       : formatAmount(_swapToken1Amount / _swapToken2Amount, token1.decimal);
 
-    let tol =
-      window.localStorage.getItem(slippage_tolerance_value) ||
-      datas[defaultIndex];
-    tol += '%';
     const beyond = parseFloat(slip) > parseFloat(tol);
 
     return (
@@ -436,7 +422,14 @@ export default class Swap extends Component {
               </div>
               <div className={styles.key_value}>
                 <div className={styles.key}>{_('slippage_tolerance')}</div>
-                <div className={styles.value}>{tol}</div>
+                <div className={styles.value}>
+                  <Input
+                    value={tol}
+                    suffix="%"
+                    className={styles.tol}
+                    onChange={this.changeTol}
+                  />
+                </div>
               </div>
               <div className={styles.key_value}>
                 <div className={styles.key}>{_('price_impact')}</div>
@@ -461,6 +454,14 @@ export default class Swap extends Component {
     );
   };
 
+  changeTol = (e) => {
+    const value = e.target.value;
+    this.setState({
+      tol: value,
+    });
+    localStorage.setItem(slippage_tolerance_value, value);
+  };
+
   login() {
     EventBus.emit('login');
   }
@@ -468,14 +469,12 @@ export default class Swap extends Component {
   renderButton() {
     const { isLogin, pairData, token1, token2, userBalance } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { slip, lastMod, origin_amount, aim_amount, dirForward } = this.state;
+    const { slip, lastMod, origin_amount, aim_amount, dirForward, tol } =
+      this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const balance = userBalance[origin_token.tokenID || 'BSV'];
 
-    const tol =
-      window.localStorage.getItem(slippage_tolerance_value) ||
-      datas[defaultIndex];
     const beyond = parseFloat(slip) > parseFloat(tol);
     if (!isLogin) {
       // 未登录
@@ -698,20 +697,8 @@ export default class Swap extends Component {
     });
   }
 
-  viewDetail = () => {
-    this.setState({
-      showDetail: true,
-    });
-  };
-  closeDetail = () => {
-    this.setState({
-      showDetail: false,
-    });
-  };
-
   renderResult() {
-    const { showDetail, origin_amount, aim_amount, txFee, dirForward, txid } =
-      this.state;
+    const { origin_amount, aim_amount, txFee, dirForward, txid } = this.state;
     const { token1, token2, userAddress } = this.props;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
@@ -720,45 +707,38 @@ export default class Swap extends Component {
 
     return (
       <div className={styles.content}>
-        <div className={styles.finish_logo}></div>
-        <div className={styles.finish_title}>
-          {_('swapping_for').replace('%1', symbol1).replace('%2', symbol2)}
+        <div className={styles.finish_logo}>
+          <CustomIcon
+            type="iconicon-success"
+            style={{ fontSize: 64, color: '#2BB696' }}
+          />
         </div>
+        <div className={styles.finish_title}>{_('swap_success')}</div>
 
-        {showDetail ? (
-          <div className={styles.detail}>
-            <div className={styles.detail_title}>{_('tx_details')}</div>
-            <div className={styles.detail_item}>
-              <div className={styles.item_label}>{_('account')}</div>
-              <div className={styles.item_value}>{userAddress}</div>
-            </div>
-
+        <div className={styles.detail}>
+          <div className={styles.line}>
             <div className={styles.detail_item}>
               <div className={styles.item_label}>{_('paid')}</div>
               <div className={styles.item_value}>
                 {origin_amount} {symbol1}
               </div>
             </div>
-            <div className={styles.detail_item}>
+            <div className={styles.detail_item} style={{ textAlign: 'right' }}>
               <div className={styles.item_label}>{_('received')}</div>
               <div className={styles.item_value}>
                 {aim_amount} {symbol2}
               </div>
             </div>
-            <div className={styles.detail_item}>
-              <div className={styles.item_label}>{_('swap_fee')}</div>
-              <div className={styles.item_value}>{formatSat(txFee)} BSV</div>
-            </div>
-            <div className={styles.detail_item}>
-              <div className={styles.item_label}>{_('onchain_tx')}</div>
-              <div className={styles.item_value}>{txid}</div>
-            </div>
           </div>
-        ) : (
-          <div className={styles.view_detail} onClick={this.viewDetail}>
-            {_('view_tx_detail')}
+          <div className={styles.detail_item}>
+            <div className={styles.item_label}>{_('swap_fee')}</div>
+            <div className={styles.item_value}>{formatSat(txFee)} BSV</div>
           </div>
-        )}
+          <div className={styles.detail_item}>
+            <div className={styles.item_label}>{_('onchain_tx')}</div>
+            <div className={styles.item_value}>{txid}</div>
+          </div>
+        </div>
         <Button className={styles.done_btn} onClick={this.finish}>
           {_('done')}
         </Button>
@@ -781,32 +761,6 @@ export default class Swap extends Component {
 
     return (
       <div className={styles.container}>
-        <div className={styles.head}>
-          <div className={styles.menu}>
-            {menu.map((item) => {
-              let cls = jc(styles.menu_item, styles[`menu_item_${item.key}`]);
-              if (item.key === menu[0].key) {
-                cls = jc(
-                  styles.menu_item,
-                  styles.menu_item_selected,
-                  styles[`menu_item_${item.key}`],
-                );
-              }
-              return (
-                <span
-                  className={cls}
-                  onClick={() => this.gotoPage(item.key)}
-                  key={item.key}
-                >
-                  {item.label}
-                </span>
-              );
-            })}
-          </div>
-          <div className={styles.setting}>
-            <SettingOutlined onClick={() => this.showUI('setting')} />
-          </div>
-        </div>
         {formFinish ? this.renderResult() : this.renderForm()}
       </div>
     );
@@ -875,16 +829,6 @@ export default class Swap extends Component {
           <div className={styles.selectToken_wrap}>
             <SelectToken close={(id) => this.selectedToken(id, page)} />
           </div>
-        </div>
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            display: page === 'setting' ? 'block' : 'none',
-          }}
-        >
-          <Setting close={() => this.showUI('form')} />
         </div>
       </div>
     );

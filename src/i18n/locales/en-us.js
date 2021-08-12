@@ -1,10 +1,4 @@
 const texts = {
-  home_title: 'Now Hiring',
-  home_content:
-    'Scrypt developers and Node.js developers to deliver the first onchain dex based on BSV. We are here to present to the world the potential of Bitcoin protocol, to prove that Bitcoin can do anything all the other chains can do.',
-  twitter_url: 'DM on Twitter',
-  email: 'Email: hello@tokenswap.pro',
-
   swap: 'Swap',
   pool: 'Pool',
   explore: 'Explore',
@@ -169,26 +163,12 @@ const texts = {
   refresh_url: 'Click Refresh QR Code',
   swap_anyway: 'Swap Anyway',
   select: 'Select',
-  first_liq_er: 'You are the first liquidity provider.',
-  first_liq_er_desc:
-    'The ratio of tokens you add will set the price of this pool. Once you are happy with the rate click supply to review.',
   login: 'Log In',
   lac_balance: 'Insufficient Balance',
   lac_token_balance: 'Insufficient %s Balance',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
   lower_amount: 'Above %s Sat input required',
-
-  create_pair_tips: 'Understanding Impermanent Loss',
-  create_pair_desc:
-    'Before becoming a Liquidity Provider, please understand the risks involved with Impermanent Loss. You can learn more about it  here.',
-  create_pair_rewards: 'Liquidity Provider Rewards',
-  create_pair_rewords_desc1: 'Liquidity Providers earn a 0.35% fee',
-  create_pair_rewords_desc2:
-    'on all trades proportional to their share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity.',
-  pay_account_title: 'Payment',
-  from_your: 'From Your',
-  send_to: 'Send to',
   pay: 'Pay',
   just: 'Just Now',
   minute_ago: ' minute ago',
@@ -241,5 +221,6 @@ const texts = {
     'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
   cant_remove: 'You have no liquidity to remove',
   test_only: '(Recommended for test only)',
+  swap_success: 'Swap success',
 };
 module.exports = texts;

@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Slider, Button, Spin, message } from 'antd';
+import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
@@ -54,7 +54,8 @@ export default class RemovePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      removeRate: 0,
+      removeLp: 0,
       page: 'form',
       formFinish: false,
       symbol1: '',
@@ -142,12 +143,37 @@ export default class RemovePage extends Component {
     );
   }
 
-  changeData = (value) => {
-    this.setState({ value });
+  changeData = (e) => {
+    let value;
+    if (e.target) {
+      //输入框变化值
+      const { userBalance, allPairs, currentPair } = this.props;
+      const { lptoken = {} } = allPairs[currentPair];
+      const LP = userBalance[lptoken.tokenID] || 0;
+      const _removeLp = e.target.value;
+      if (_removeLp <= 0) {
+        value = 0;
+      } else if (_removeLp >= LP) {
+        value = 100;
+      } else {
+        value = BigNumber(_removeLp).div(LP).multipliedBy(100).toString();
+      }
+      return this.setState({
+        removeLP: _removeLp,
+        removeRate: value,
+      });
+    }
+    this.slideData(e);
   };
 
   slideData = (value) => {
-    this.setState({ value });
+    const { userBalance, allPairs, currentPair } = this.props;
+    const { lptoken = {} } = allPairs[currentPair];
+    const LP = userBalance[lptoken.tokenID] || 0;
+    this.setState({
+      removeRate: value,
+      removeLP: BigNumber(LP).multipliedBy(value).div(100).toString(),
+    });
   };
   calc = () => {
     const {
@@ -168,8 +194,8 @@ export default class RemovePage extends Component {
     }
     LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    const { value } = this.state;
-    const removeLP = LP.multipliedBy(value).div(100);
+    const { removeRate } = this.state;
+    const removeLP = LP.multipliedBy(removeRate).div(100);
     const rate = removeLP.div(swapLpAmount);
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
@@ -188,15 +214,18 @@ export default class RemovePage extends Component {
   };
 
   renderForm() {
-    const { currentPair, loading, submiting } = this.props;
+    const { currentPair, loading, submiting, userBalance, pairData, allPairs } =
+      this.props;
     if (loading || !currentPair) return <Loading />;
-    const { value, price, symbol1, symbol2 } = this.state;
-    const { removeToken1, removeToken2, removeLP } = this.calc();
+    const { lptoken = {} } = allPairs[currentPair];
+    const { removeRate, removeLP, symbol1, symbol2 } = this.state;
+    const LP = userBalance[lptoken.tokenID] || 0;
+    const { removeToken1, removeToken2 } = this.calc();
     return (
-      <div className={styles.content}>
+      <div className={styles.remove_content}>
         <Spin spinning={submiting}>
-          <div className={styles.data}>{value}%</div>
-          <Slider value={value} onChange={this.slideData} />
+          <div className={styles.data}>{formatAmount(removeRate, 2)}%</div>
+          <Slider value={removeRate} onChange={this.slideData} />
 
           <div className={styles.datas}>
             {datas.map((item) => (
@@ -210,22 +239,35 @@ export default class RemovePage extends Component {
             ))}
           </div>
 
-          <div className={styles.pair_box}>
-            <div className={styles.pair_left}>
-              <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={25} />
-                <TokenLogo name={symbol2} size={25} />
-              </div>
-              <div className={styles.name}>
-                {symbol2}/{symbol1}
-              </div>
+          <div
+            className={styles.lp_balance}
+            onClick={() => this.changeData(100)}
+          >
+            {_('lp_balance')}: <span>{LP}</span>
+          </div>
+          <div className={styles.s_box}>
+            <div className={styles.coin}>
+              <TokenLogo name={symbol1} size={30} />
+              <TokenLogo
+                name={symbol2}
+                size={30}
+                style={{ marginLeft: '-10px' }}
+              />
             </div>
-            <div className={styles.pair_right}>{removeLP}</div>
+            <div className={styles.name}>
+              {symbol1}/{symbol2}-LP
+            </div>
+            <Input
+              className={styles.input}
+              value={removeLP}
+              onChange={this.changeData}
+              // formatter={(value) => parseFloat(value || 0)}
+            />
           </div>
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 20 }} />
+              <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
             </div>
             <div className={styles.line}></div>
           </div>
@@ -242,24 +284,15 @@ export default class RemovePage extends Component {
             <div className={styles.values_right}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol1} size={30} />
-                  <div style={{ marginLeft: 10 }}>{symbol1}</div>
+                  <TokenLogo name={symbol1} size={20} />
+                  <div style={{ marginLeft: 5 }}>{symbol1}</div>
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol2} size={30} />
-                  <div style={{ marginLeft: 10 }}>{symbol2}</div>
+                  <TokenLogo name={symbol2} size={20} />
+                  <div style={{ marginLeft: 5 }}>{symbol2}</div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.price}>
-            <div className={styles.label}>{_('price')}</div>
-            <div className={styles.value}>
-              <div>
-                1 {symbol1} = {price} {symbol2}
               </div>
             </div>
           </div>
@@ -271,12 +304,13 @@ export default class RemovePage extends Component {
   }
 
   handleSubmit = async () => {
-    const { value } = this.state;
+    const { removeRate } = this.state;
     const {
       dispatch,
       currentPair,
       userAddress,
       token1,
+      token2,
       userBalance,
       lptoken,
       rabinApis,
@@ -307,8 +341,8 @@ export default class RemovePage extends Component {
       return message.error(_('lac_token_balance', 'BSV'));
     }
 
-    const removeLP = BigNumber(value).multipliedBy(LP).div(100);
-    const _value = removeLP
+    const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);
+    const _removeRate = removeLP
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
     const tx_res = await dispatch({
@@ -323,7 +357,7 @@ export default class RemovePage extends Component {
           {
             type: 'sensibleFt',
             address: tokenToAddress,
-            amount: _value,
+            amount: _removeRate,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis,
@@ -359,8 +393,14 @@ export default class RemovePage extends Component {
     this.setState({
       formFinish: true,
       final_lp: removeLP.toString(),
-      receive_token1: removeToken1,
-      receive_token2: removeToken2,
+      receive_token1: formatSat(
+        removeliq_res.data.token1Amount,
+        token1.decimal,
+      ),
+      receive_token2: formatSat(
+        removeliq_res.data.token2Amount,
+        token2.decimal,
+      ),
     });
   };
 
@@ -416,11 +456,11 @@ export default class RemovePage extends Component {
   }
 
   renderResult() {
-    const { spinning } = this.props;
     // const LP = userBalance[lptoken.tokenID];
-    const { symbol1, symbol2, final_lp } = this.state;
+    const { symbol1, symbol2, final_lp, receive_token1, receive_token2 } =
+      this.state;
     return (
-      <div className={styles.content}>
+      <div className={styles.remove_content}>
         <div className={styles.finish_logo}>
           <CustomIcon
             type="iconicon-success"
@@ -428,29 +468,58 @@ export default class RemovePage extends Component {
           />
         </div>
         <div className={styles.finish_title}>{_('liq_removed')}</div>
-        <div className={styles.small_title}>{_('your_pos')}</div>
 
-        <div className={styles.pair_box}>
-          <div className={styles.pair_left}>
-            <div className={styles.icon}>
-              <CustomIcon type="iconlogo-bitcoin" />
-              <CustomIcon type="iconlogo-vusd" />
+        <div className={styles.f_box}>
+          <div className={styles.f_title}>{_('your_pos')}</div>
+          <div className={styles.f_item}>
+            <div className={styles.f_label}>
+              <div className={styles.icon}>
+                <TokenLogo name={symbol1} size={20} />
+                <TokenLogo name={symbol2} size={20} />
+              </div>
+              <div className={styles.name}>
+                {symbol2}/{symbol1}
+              </div>
             </div>
-            <div className={styles.name}>
-              {symbol2}/{symbol1}
-            </div>
+            <div className={styles.f_value}>{final_lp}</div>
           </div>
-          <div className={styles.pair_right}>{final_lp}</div>
         </div>
 
-        <Spin spinning={spinning}>{this.renderInfo()}</Spin>
+        <div className={styles.switch_icon} style={{ margin: '6px 0' }}>
+          <div className={styles.icon} onClick={this.switch}>
+            <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
+          </div>
+        </div>
+
+        <div className={styles.f_box}>
+          <div className={styles.f_title}>{_('your_re_liq')}</div>
+          <div className={styles.f_item}>
+            <div className={styles.f_label}>
+              <div className={styles.icon}>
+                <TokenLogo name={symbol1} size={20} />
+              </div>
+              <div className={styles.name}>
+                {receive_token1} {symbol1}
+              </div>
+            </div>
+            <div className={styles.f_value}>
+              <div className={styles.icon}>
+                <TokenLogo name={symbol2} size={20} />
+              </div>
+              <div className={styles.name}>
+                {receive_token2} {symbol2}
+              </div>
+            </div>
+          </div>
+        </div>
         <Button
           type="primary"
           className={styles.done_btn}
           onClick={() => {
             this.setState({
               formFinish: false,
-              value: 0,
+              removeRate: 0,
+              removeLP: 0,
             });
           }}
         >

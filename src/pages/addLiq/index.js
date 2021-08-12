@@ -338,25 +338,25 @@ export default class Liquidity extends Component {
     return this.renderInfo(total_origin_amount, total_aim_amount, share);
   }
 
-  renderResultInfo() {
-    const { token1, token2, pairData, userBalance, lptoken } = this.props;
-    const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+  // renderResultInfo() {
+  //   const { token1, token2, pairData, userBalance, lptoken } = this.props;
+  //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
 
-    const total_origin_amount = formatAmount(
-      BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
-      token1.decimal,
-    ).toString();
-    const total_aim_amount = formatAmount(
-      BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
-      token2.decimal,
-    ).toString();
+  //   const total_origin_amount = formatAmount(
+  //     BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
+  //     token1.decimal,
+  //   ).toString();
+  //   const total_aim_amount = formatAmount(
+  //     BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
+  //     token2.decimal,
+  //   ).toString();
 
-    const LP = userBalance[lptoken.tokenID] || 0;
-    const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
+  //   const LP = userBalance[lptoken.tokenID] || 0;
+  //   const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
 
-    const share = (rate * 100).toFixed(4);
-    return this.renderInfo(total_origin_amount, total_aim_amount, share);
-  }
+  //   const share = (rate * 100).toFixed(4);
+  //   return this.renderInfo(total_origin_amount, total_aim_amount, share);
+  // }
 
   renderForm() {
     const { token1, token2, userBalance, submiting } = this.props;
@@ -651,10 +651,10 @@ export default class Liquidity extends Component {
       _origin_amount = token1AddAmount;
       _aim_amount = token2AddAmount;
       // if (new_origin_amount !== origin_amount) {
-      // this.setState({
-      //   _origin_amount,
-      //   _aim_amount,
-      // });
+      this.setState({
+        _origin_amount: _origin_amount.toString(),
+        _aim_amount: _aim_amount.toString(),
+      });
       // return this.showModal({
       //   origin_amount,
       //   aim_amount,
@@ -721,6 +721,7 @@ export default class Liquidity extends Component {
     await this.updateData();
     this.setState({
       formFinish: true,
+      lpAddAmount: addliq_res.data.lpAddAmount,
     });
   };
 
@@ -739,7 +740,9 @@ export default class Liquidity extends Component {
   }
 
   renderResult() {
-    const { token1, token2, history, spinning } = this.props;
+    const { token1, token2, history, allPairs, currentPair } = this.props;
+    const { _origin_amount, _aim_amount, lpAddAmount } = this.state;
+    const { lptoken = {} } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
@@ -750,12 +753,24 @@ export default class Liquidity extends Component {
             style={{ fontSize: 80, color: '#2BB696' }}
           />
         </div>
-        <div className={styles.finish_title}>
-          {symbol2}/{symbol1}
+        <div className={styles.finish_title}>{_('add_success')}</div>
+        <div className={styles.result_data1}>
+          {_('added')} {formatSat(_origin_amount, token1.decimal)} {symbol1} +{' '}
+          {formatSat(_aim_amount, token2.decimal)} {symbol2}
         </div>
-        <div className={styles.finish_desc}>{_('add_success')}</div>
-
-        <Spin spinning={spinning}>{this.renderResultInfo()}</Spin>
+        <div className={styles.result_data2}>
+          {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
+          <TokenLogo name={symbol1} size={20} style={{ marginLeft: 10 }} />
+          <TokenLogo
+            name={symbol2}
+            size={20}
+            style={{ marginLeft: '-7px' }}
+          />{' '}
+          <span style={{ fontWeight: 700, marginLeft: 10 }}>
+            {symbol1}/{symbol2}-LP
+          </span>
+        </div>
+        {/*this.renderResultInfo()*/}
         <Button
           className={styles.done_btn}
           onClick={() => {
