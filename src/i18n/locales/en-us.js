@@ -222,5 +222,7 @@ const texts = {
   cant_remove: 'You have no liquidity to remove',
   test_only: '(Recommended for test only)',
   swap_success: 'Swap success',
+  lp_balance: 'Available to withdraw',
+  added: 'Added',
 };
 module.exports = texts;
