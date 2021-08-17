@@ -3,34 +3,63 @@ import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import { Button, Tooltip } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { jc } from 'common/utils';
-import Pair from 'components/pair';
-import Loading from 'components/loading';
+import { jc, formatSat } from 'common/utils';
 import TokenLogo from 'components/tokenicon';
 import CustomIcon from 'components/icon';
-import Notice from 'components/notice';
 import Header from '../layout/header';
-import Lock from '../lock';
+import Deposit from '../deposit';
+import Withdraw from '../withdraw';
+import debug from 'debug';
 import styles from './index.less';
 import _ from 'i18n';
+const log = debug('farm');
 
+const TSC = 'TSC';
 @withRouter
-@connect(({ user, pair, loading }) => {
+@connect(({ user, farm, loading }) => {
   const { effects } = loading;
   return {
     ...user,
-    ...pair,
+    ...farm,
     loading:
-      effects['pair/getAllPairs'] || effects['pair/getPairData'] || false,
+      effects['farm/getAllPairs'] || effects['farm/getPairData'] || false,
   };
 })
-export default class Pool extends Component {
+export default class FarmC extends Component {
   constructor(props) {
     super(props);
     this.state = {
       app_pannel: false,
+      current_item: 0,
+      currentMenuIndex: 0,
     };
   }
+
+  componentDidMount() {
+    // EventBus.on('reloadPair', this.fetch);
+    this.fetch();
+  }
+
+  fetch = async () => {
+    const { dispatch, userAddress } = this.props;
+    await dispatch({
+      type: 'farm/getAllPairs',
+      payload: {
+        address: userAddress,
+      },
+    });
+
+    // let { currentPair } = this.props;
+    // log('currentPair:', currentPair);
+    // if (currentPair) {
+    //   await dispatch({
+    //     type: 'farm/getPairData',
+    //     payload: {
+    //       currentPair,
+    //     },
+    //   });
+    // }
+  };
 
   showPannel = () => {
     this.setState({
@@ -44,30 +73,38 @@ export default class Pool extends Component {
     });
   };
 
-  renderItem(data) {
-    const { symbol1, symbol2 } = data;
+  renderItem(pairName, data, index) {
+    pairName = pairName.toUpperCase();
+    const { symbol1, symbol2 } = this.props;
+    const { poolTokenAmount, rewardTokenAmount = 0, addressCount } = data;
+    const { current_item } = this.state;
     return (
-      <div className={styles.item}>
+      <div
+        className={
+          current_item === index ? jc(styles.item, styles.current) : styles.item
+        }
+        key={pairName}
+      >
         <div className={styles.item_title}>
           <div className={styles.icon}>
-            <TokenLogo name={symbol1} size={20} />
+            <TokenLogo name={symbol2} size={20} />
             <TokenLogo
-              name={symbol2}
+              name={symbol1}
               size={20}
               style={{ marginLeft: '-6px' }}
             />
           </div>
           <div className={styles.name}>
-            {symbol1}/{symbol2}
+            {symbol2}/{symbol1}
           </div>
         </div>
         <div className={styles.item_desc}>
-          {_('farm_item_desc', `${symbol1}/${symbol2}`)}
+          {_('farm_item_desc', `${pairName}`)}
         </div>
         <div className={styles.item_data}>
           <div className={styles.item_data_left}>
             <div className={styles.label}>TVL</div>
-            <div className={styles.value}>$100,000</div>
+            <div className={styles.value}>{poolTokenAmount}*lp price</div>
           </div>
           <div className={styles.item_data_right}>
             <Tooltip title={_('apy_info')}>
@@ -95,11 +132,13 @@ export default class Pool extends Component {
           <div className={styles.item_action_data}>
             <div style={{ width: 78 }}>
               <div className={styles.label}>{_('depositors')}</div>
-              <div className={styles.value}>200,000</div>
+              <div className={styles.value}>{addressCount}</div>
             </div>
             <div style={{ width: 78 }}>
               <div className={styles.label}>{_('crop')}:</div>
-              <div className={styles.value}>0 {symbol1}</div>
+              <div className={styles.value}>
+                {formatSat(rewardTokenAmount)} {TSC}
+              </div>
             </div>
           </div>
           <Button type="primary" className={styles.btn}>
@@ -111,32 +150,12 @@ export default class Pool extends Component {
   }
 
   renderContent() {
+    const { allPairs } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.items}>
-          {this.renderItem({
-            symbol1: 'TSC',
-            symbol2: 'USDT',
-          })}
-          {this.renderItem({
-            symbol1: 'BSV',
-            symbol2: 'USDT',
-          })}
-          {this.renderItem({
-            symbol1: 'TSC',
-            symbol2: 'USDT',
-          })}
-          {this.renderItem({
-            symbol1: 'BSV',
-            symbol2: 'USDT',
-          })}
-          {this.renderItem({
-            symbol1: 'TSC',
-            symbol2: 'USDT',
-          })}
-          {this.renderItem({
-            symbol1: 'BSV',
-            symbol2: 'USDT',
+          {Object.keys(allPairs).map((item, index) => {
+            return this.renderItem(item, allPairs[item], index);
           })}
         </div>
       </div>
@@ -144,9 +163,7 @@ export default class Pool extends Component {
   }
 
   render() {
-    const { app_pannel } = this.state;
-    const symbol1 = 'BSV';
-    const symbol2 = 'USDT';
+    const { app_pannel, currentMenuIndex } = this.state;
 
     return (
       <section className={styles.container}>
@@ -163,7 +180,7 @@ export default class Pool extends Component {
               className={styles.app_start_btn}
               onClick={this.showPannel}
             >
-              {_('start_pooling')}
+              {_('start_deposit')}
             </Button>
           </div>
         </section>
@@ -183,24 +200,27 @@ export default class Pool extends Component {
             <div className={styles.right_box}>
               <div className={styles.head}>
                 <div className={styles.menu}>
-                  <span
-                    className={styles.menu_item}
-                    key="deposit"
-                    onClick={() => {
-                      this.props.history.push('/pool/add');
-                    }}
-                  >
-                    {_('deposit')}
-                  </span>
-                  <span
-                    className={jc(styles.menu_item, styles.menu_item_selected)}
-                    key="withdraw"
-                  >
-                    {_('withdraw')}
-                  </span>
+                  {['deposit', 'withdraw'].map((item, index) => (
+                    <span
+                      className={
+                        index === currentMenuIndex
+                          ? jc(styles.menu_item, styles.menu_item_selected)
+                          : styles.menu_item
+                      }
+                      key={item}
+                      onClick={() => {
+                        this.setState({
+                          currentMenuIndex: index,
+                        });
+                      }}
+                    >
+                      {_(item)}
+                    </span>
+                  ))}
                 </div>
               </div>
-              <Lock />
+              {currentMenuIndex === 0 && <Deposit />}
+              {currentMenuIndex === 1 && <Withdraw />}
             </div>
           </div>
         </section>

@@ -237,5 +237,10 @@ const texts = {
   swap_success: '交易成功',
   lp_balance: '可提取',
   added: '添加',
+  deposit_earn: 'Deposit & Earn',
+  start_deposit: 'Start Deposit',
+  farm_withdraw: 'Withdraw',
+  farm_withdraw_success: 'Withdraw successful',
+  Withdrew: 'Withdrew',
 };
 module.exports = texts;

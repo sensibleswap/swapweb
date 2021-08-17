@@ -224,5 +224,20 @@ const texts = {
   swap_success: 'Swap success',
   lp_balance: 'Available to withdraw',
   added: 'Added',
+
+  farm: 'Farm',
+  lock_earn: 'Lock and earn',
+  depositors: 'Depositors',
+  crop: 'Crop',
+  harvest: 'Harvest',
+  farm_item_desc:
+    'Provide liquidity and deposit your LP %s token to earn Swap token (TokenSwap utility token)',
+  apy_info:
+    'APY =(Fee + (TSC payout)* TSC price) *365/Total deposited LP token value(USDT)',
+  deposit: 'Deposit',
+  earn: 'Earn',
+  deposit_success: 'Deposit successful',
+  deposited: 'deposited',
+  deposit_earn: 'Deposit & Earn',
 };
 module.exports = texts;
