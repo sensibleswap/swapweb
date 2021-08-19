@@ -107,11 +107,16 @@ export default {
       return res;
     },
 
-    *widthdraw({ payload }, { call, put }) {
-      debugger;
+    *withdraw({ payload }, { call, put }) {
       const res = yield farmApi.widthdraw.call(farmApi, payload);
       debugger;
-      log('widthdraw:', payload, res);
+      log('withdraw:', payload, res);
+      return res;
+    },
+
+    *withdraw2({ payload }, { call, put }) {
+      const res = yield farmApi.withdraw2.call(farmApi, payload);
+      log('withdraw2:', payload, res);
       return res;
     },
   },

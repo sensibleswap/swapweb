@@ -221,12 +221,41 @@ export default class Withdraw extends Component {
       type: 'farm/withdraw',
       payload: {
         symbol: currentPair,
-        requestIndex: requestIndex,
+        requestIndex,
         tokenRemoveAmount: _value,
       },
     });
+    debugger;
     if (withdraw_res.code) {
       return message.error(withdraw_res.msg);
+    }
+    const { txHex, scriptHex, satoshis, inputIndex } = withdraw_res.data;
+    const sign_res = await dispatch({
+      type: 'user/signTx',
+      payload: {
+        txHex,
+        scriptHex,
+        satoshis,
+        inputIndex,
+      },
+    });
+    debugger;
+    if (sign_res.msg) {
+      return message.error(sign_res);
+    }
+    const { pubKey, sig } = sign_res;
+    const withdraw2_res = await dispatch({
+      type: 'farm/withdraw2',
+      payload: {
+        symbol: currentPair,
+        requestIndex,
+        pubKey,
+        sig,
+      },
+    });
+    debugger;
+    if (withdraw2_res.code) {
+      return message.error(withdraw2_res.msg);
     }
     message.success('success');
     this.updateData();

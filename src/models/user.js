@@ -206,6 +206,17 @@ export default {
         return { msg: error.message || error.toString() };
       }
     },
+
+    *signTx({ payload }, { call, put, select }) {
+      const type = yield select((state) => state.user.walletType);
+      try {
+        const res = yield bsv.signTx(type, payload.params);
+        log(res);
+        return res;
+      } catch (error) {
+        return { msg: error.message || error.toString() };
+      }
+    },
   },
 
   reducers: {

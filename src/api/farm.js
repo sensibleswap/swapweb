@@ -37,6 +37,10 @@ class Farm extends BaseAPI {
   withdraw(params) {
     return this._request('withdraw', params, 'POST');
   }
+
+  withdraw2(params) {
+    return this._request('withdraw2', params, 'POST');
+  }
 }
 
 export default new Farm();

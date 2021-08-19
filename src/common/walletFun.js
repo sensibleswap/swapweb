@@ -189,6 +189,12 @@ const transferAll = (type = 1, param = []) => {
     });
   }
 };
+
+const signTx = (type, param) => {
+  if (type === 1) {
+    return webWallet.signTx(param);
+  }
+};
 export default {
   connectWallet,
   getAccountInfo,
@@ -201,4 +207,5 @@ export default {
   transferBsv,
   transferSensibleFt,
   transferAll,
+  signTx,
 };
