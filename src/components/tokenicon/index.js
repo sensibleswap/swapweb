@@ -13,6 +13,9 @@ const icons = {
   boex: {
     url: 'assets/boex.jpeg',
   },
+  ovts: {
+    url: 'assets/ovts.png',
+  },
 };
 
 export default function TokenIcon(props) {
