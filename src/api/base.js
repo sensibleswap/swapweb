@@ -1,5 +1,6 @@
 'use strict';
 import 'whatwg-fetch';
+import { gzip } from 'node-gzip';
 import querystring from 'querystringify';
 import { TSWAP_NETWORK } from 'common/const';
 const { localStorage } = window;
@@ -14,18 +15,25 @@ export default class API {
     this._requestQueue = {};
   }
 
-  _request(api, params = {}, method = 'GET', url = '', catchError) {
+  _request(api, params = {}, method = 'GET', gz = false) {
     // const data = {
     //     params: JSON.stringify(params)
     // };
 
-    if (url) this.baseUrl = url;
+    // if (url) this.baseUrl = url;
 
     let api_url = this.baseUrl + api;
-    return this.sendRequest(api_url, params, method, catchError);
+    return this.sendRequest(api_url, params, method, gz);
   }
 
-  sendRequest(url, data = {}, method = 'GET', catchError = true, handle) {
+  async sendRequest(
+    url,
+    data = {},
+    method = 'GET',
+    gz,
+    catchError = true,
+    handle,
+  ) {
     let key;
     let options;
     if (method.toUpperCase() === 'GET') {
@@ -44,7 +52,11 @@ export default class API {
         // credentials: 'include',
       };
     } else {
-      const body = JSON.stringify(data);
+      let body = JSON.stringify(data);
+      if (gz) {
+        body = await gzip(body);
+        console.log('gzip-body:', body);
+      }
       key = url + body;
       options = {
         method,

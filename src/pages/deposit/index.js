@@ -247,6 +247,7 @@ export default class Deposit extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: txFee,
+            noBroadcast: true,
           },
           {
             type: 'sensibleFt',
@@ -255,10 +256,12 @@ export default class Deposit extends Component {
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis: lptoken.rabinApis,
+            noBroadcast: true,
           },
         ],
       },
     });
+    debugger;
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }
@@ -267,15 +270,20 @@ export default class Deposit extends Component {
       return message.error(_('txs_fail'));
     }
 
+    debugger;
     const deposit_res = await dispatch({
       type: 'farm/deposit',
       payload: {
         symbol: currentPair,
         requestIndex: requestIndex,
-        tokenTxID: tx_res[1].txid,
+        bsvRawTx: tx_res[0].txHex,
+        bsvOutputIndex: 0,
+        tokenRawTx: tx_res[1].txHex,
         tokenOutputIndex: 0,
+        amountCheckRawTx: tx_res[1].routeCheckTxHex,
       },
     });
+    debugger;
     if (deposit_res.code) {
       return message.error(deposit_res.msg);
     }

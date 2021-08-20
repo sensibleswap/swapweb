@@ -13,17 +13,13 @@ class Farm extends BaseAPI {
 
   queryAllPairs(address) {
     if (address) {
-      return this._request('allpairs', {
-        address,
-      });
+      return this._request('allpairs', { address });
     }
     return this._request('allpairs');
   }
 
   querySwapInfo(symbol) {
-    return this._request('farminfo', {
-      symbol,
-    });
+    return this._request('farminfo', { symbol });
   }
 
   reqSwap(params) {
@@ -31,11 +27,11 @@ class Farm extends BaseAPI {
   }
 
   deposit(params) {
-    return this._request('deposit', params, 'POST');
+    return this._request('deposit', params, 'POST', true);
   }
 
   withdraw(params) {
-    return this._request('withdraw', params, 'POST');
+    return this._request('withdraw', params, 'POST', true);
   }
 
   withdraw2(params) {

@@ -80,9 +80,10 @@ const exitAccount = () => {
   webWallet.exitAccount();
   voltWallet.disconnectAccount();
 };
-const transferBsv = (type = 1, { address, amount }) => {
+const transferBsv = (type = 1, { address, amount }, noBroadcast = false) => {
   if (type === 1) {
     return webWallet.transferBsv({
+      noBroadcast,
       receivers: [
         {
           address,
@@ -133,7 +134,7 @@ const transferAll = (type = 1, param = []) => {
     let data = [];
     param.forEach((item) => {
       if (item.type === 'bsv') {
-        let { address, amount } = item;
+        let { address, amount, noBroadcast = false } = item;
         data.push({
           receivers: [
             {
@@ -141,9 +142,17 @@ const transferAll = (type = 1, param = []) => {
               amount,
             },
           ],
+          noBroadcast,
         });
       } else if (item.type === 'sensibleFt') {
-        let { address, amount, codehash, genesis, rabinApis } = item;
+        let {
+          address,
+          amount,
+          codehash,
+          genesis,
+          rabinApis,
+          noBroadcast = false,
+        } = item;
         data.push({
           receivers: [
             {
@@ -154,6 +163,7 @@ const transferAll = (type = 1, param = []) => {
           codehash,
           genesis,
           rabinApis,
+          noBroadcast,
         });
       }
     });

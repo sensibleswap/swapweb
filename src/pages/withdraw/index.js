@@ -207,8 +207,10 @@ export default class Withdraw extends Component {
       payload: {
         address: bsvToAddress,
         amount: txFee,
+        noBroadcast: true,
       },
     });
+    debugger;
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }

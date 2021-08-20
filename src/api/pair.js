@@ -7,9 +7,7 @@ class Token extends BaseAPI {
   }
 
   querySwapInfo(symbol) {
-    return this._request('swapinfo', {
-      symbol,
-    });
+    return this._request('swapinfo', { symbol });
   }
 
   reqSwap(params) {

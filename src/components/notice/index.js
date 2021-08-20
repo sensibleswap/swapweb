@@ -9,6 +9,7 @@ const onClose = () => {
 };
 
 export default function Notice(props) {
+  return null;
   if (sessionStorage.getItem(VOLT_NOTICE_CLOSED)) {
     return null;
   }

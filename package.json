@@ -27,6 +27,7 @@
     "bsv-web-wallet": "github:sensibleswap/bsv-web-wallet",
     "eventemitter3": "^4.0.7",
     "js-cookie": "^2.2.1",
+    "node-gzip": "^1.1.2",
     "qrcode.react": "^1.0.1",
     "querystringify": "^2.2.0",
     "react-clipboard.js": "^2.0.16",

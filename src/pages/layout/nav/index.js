@@ -17,11 +17,11 @@ const menu = [
     label: _('pool'),
     path: 'pool/add',
   },
-  {
-    key: 'farm',
-    label: _('farm'),
-    path: 'farm',
-  },
+  // {
+  //   key: 'farm',
+  //   label: _('farm'),
+  //   path: 'farm',
+  // },
   // {
   //     key: 'explore',
   //     label: _('explore')

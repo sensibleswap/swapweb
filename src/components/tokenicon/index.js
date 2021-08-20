@@ -19,6 +19,9 @@ const icons = {
   usdt: {
     type: 'iconlogo-usdt',
   },
+  ovts: {
+    url: 'assets/ovts.png',
+  },
 };
 
 export default function TokenIcon(props) {

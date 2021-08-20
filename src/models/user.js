@@ -151,12 +151,16 @@ export default {
     },
 
     *transferBsv({ payload }, { call, put, select }) {
-      const { address, amount } = payload;
+      const { address, amount, noBroadcast } = payload;
       const type = yield select((state) => state.user.walletType);
 
       log('transferBsv:', payload);
       try {
-        const res = yield bsv.transferBsv(type, { address, amount });
+        const res = yield bsv.transferBsv(
+          type,
+          { address, amount },
+          noBroadcast,
+        );
         log(res);
         return res;
       } catch (error) {
