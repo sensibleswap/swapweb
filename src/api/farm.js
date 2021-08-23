@@ -1,5 +1,6 @@
 'use strict';
 import BaseAPI from './base';
+import { gzip } from 'node-gzip';
 import { TSWAP_NETWORK } from 'common/const';
 
 class Farm extends BaseAPI {
@@ -26,7 +27,7 @@ class Farm extends BaseAPI {
     return this._request('reqfarmargs', params, 'POST');
   }
 
-  deposit(params) {
+  async deposit(params) {
     return this._request('deposit', params, 'POST', true);
   }
 

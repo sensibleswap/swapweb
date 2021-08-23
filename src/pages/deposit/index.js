@@ -1,6 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
+import { gzip } from 'node-gzip';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
@@ -271,16 +272,19 @@ export default class Deposit extends Component {
     }
 
     debugger;
+    const data = await gzip({
+      symbol: currentPair,
+      requestIndex: requestIndex,
+      bsvRawTx: tx_res[0].txHex,
+      bsvOutputIndex: 0,
+      tokenRawTx: tx_res[1].txHex,
+      tokenOutputIndex: 0,
+      amountCheckRawTx: tx_res[1].routeCheckTxHex,
+    });
     const deposit_res = await dispatch({
       type: 'farm/deposit',
       payload: {
-        symbol: currentPair,
-        requestIndex: requestIndex,
-        bsvRawTx: tx_res[0].txHex,
-        bsvOutputIndex: 0,
-        tokenRawTx: tx_res[1].txHex,
-        tokenOutputIndex: 0,
-        amountCheckRawTx: tx_res[1].routeCheckTxHex,
+        data,
       },
     });
     debugger;

@@ -52,12 +52,12 @@ export default class API {
         // credentials: 'include',
       };
     } else {
+      key = url + body;
       let body = JSON.stringify(data);
       if (gz) {
-        body = await gzip(body);
+        // body = await gzip(body);
         console.log('gzip-body:', body);
       }
-      key = url + body;
       options = {
         method,
         body,
