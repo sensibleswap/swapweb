@@ -4,6 +4,7 @@ import { withRouter, connect } from 'umi';
 import { Button, Tooltip } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc, formatSat } from 'common/utils';
+import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
 import CustomIcon from 'components/icon';
 import Header from '../layout/header';
@@ -36,7 +37,7 @@ export default class FarmC extends Component {
   }
 
   componentDidMount() {
-    // EventBus.on('reloadPair', this.fetch);
+    EventBus.on('reloadPair', this.fetch);
     this.fetch();
   }
 

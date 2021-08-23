@@ -262,17 +262,15 @@ export default class Deposit extends Component {
         ],
       },
     });
-    debugger;
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }
 
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
-      return message.error(_('txs_fail'));
-    }
+    // if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    //   return message.error(_('txs_fail'));
+    // }
 
-    debugger;
-    const data = await gzip({
+    let data = {
       symbol: currentPair,
       requestIndex: requestIndex,
       bsvRawTx: tx_res[0].txHex,
@@ -280,22 +278,24 @@ export default class Deposit extends Component {
       tokenRawTx: tx_res[1].txHex,
       tokenOutputIndex: 0,
       amountCheckRawTx: tx_res[1].routeCheckTxHex,
-    });
+    };
+    data = JSON.stringify(data);
+    data = await gzip(data);
     const deposit_res = await dispatch({
       type: 'farm/deposit',
       payload: {
         data,
       },
     });
-    debugger;
-    if (deposit_res.code) {
+    if (!deposit_res.code && deposit_res.data.txid) {
+      message.success('success');
+      this.updateData();
+      this.setState({
+        formFinish: true,
+      });
+    } else {
       return message.error(deposit_res.msg);
     }
-    message.success('success');
-    this.updateData();
-    this.setState({
-      formFinish: true,
-    });
   };
 
   login() {

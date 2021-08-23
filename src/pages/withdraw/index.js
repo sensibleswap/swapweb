@@ -1,6 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
+import { gzip } from 'node-gzip';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
@@ -210,24 +211,29 @@ export default class Withdraw extends Component {
         noBroadcast: true,
       },
     });
-    debugger;
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }
 
-    if (!tx_res.txid) {
-      return message.error(_('txs_fail'));
-    }
+    // if (!tx_res.txid) {
+    //   return message.error(_('txs_fail'));
+    // }
 
+    let data = {
+      symbol: currentPair,
+      requestIndex,
+      tokenRemoveAmount: _value,
+      bsvRawTx: tx_res.txHex,
+      bsvOutputIndex: 0,
+    };
+    data = JSON.stringify(data);
+    data = await gzip(data);
     const withdraw_res = await dispatch({
       type: 'farm/withdraw',
       payload: {
-        symbol: currentPair,
-        requestIndex,
-        tokenRemoveAmount: _value,
+        data,
       },
     });
-    debugger;
     if (withdraw_res.code) {
       return message.error(withdraw_res.msg);
     }
@@ -235,35 +241,37 @@ export default class Withdraw extends Component {
     const sign_res = await dispatch({
       type: 'user/signTx',
       payload: {
-        txHex,
-        scriptHex,
-        satoshis,
-        inputIndex,
+        datas: {
+          txHex,
+          scriptHex,
+          satoshis,
+          inputIndex,
+          address: userAddress,
+        },
       },
     });
-    debugger;
-    if (sign_res.msg) {
+    if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
     }
-    const { pubKey, sig } = sign_res;
+    const { publicKey, sig } = sign_res;
     const withdraw2_res = await dispatch({
       type: 'farm/withdraw2',
       payload: {
         symbol: currentPair,
         requestIndex,
-        pubKey,
+        pubKey: publicKey,
         sig,
       },
     });
-    debugger;
-    if (withdraw2_res.code) {
+    if (!withdraw2_res.code && withdraw2_res.data.txid) {
+      message.success('success');
+      this.updateData();
+      this.setState({
+        formFinish: true,
+      });
+    } else {
       return message.error(withdraw2_res.msg);
     }
-    message.success('success');
-    this.updateData();
-    this.setState({
-      formFinish: true,
-    });
   };
 
   login() {

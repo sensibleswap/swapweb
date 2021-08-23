@@ -214,7 +214,7 @@ export default {
     *signTx({ payload }, { call, put, select }) {
       const type = yield select((state) => state.user.walletType);
       try {
-        const res = yield bsv.signTx(type, payload.params);
+        const res = yield bsv.signTx(type, payload.datas);
         log(res);
         return res;
       } catch (error) {
