@@ -4,7 +4,7 @@ import { connect } from 'umi';
 import debug from 'debug';
 import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin, Modal } from 'antd';
-import { DownOutlined, SettingOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
@@ -276,6 +276,8 @@ export default class Swap extends Component {
     let newOriginAddAmount, newAimAddAmount;
     if (originAddAmount > 0) {
       _originAddAmount = BigInt(_originAddAmount.toString());
+      console.log(amount1, FEE_FACTOR, swapFeeRate);
+      debugger;
       const addAmountWithFee =
         _originAddAmount * BigInt(FEE_FACTOR - swapFeeRate);
       newAmount1 = BigInt(amount1) + _originAddAmount;
