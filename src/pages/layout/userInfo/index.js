@@ -88,13 +88,15 @@ export default class UserInfo extends Component {
           dispatch({
             type: 'pair/updatePairData',
           });
-          dispatch({
-            type: 'farm/updatePairData',
-            payload: {
-              address: userAddress,
-            },
-          });
 
+          if (localStorage.getItem(TSWAP_NETWORK) === 'testnet') {
+            dispatch({
+              type: 'farm/updatePairData',
+              payload: {
+                address: userAddress,
+              },
+            });
+          }
           if (isLogin) {
             const res = await dispatch({
               type: 'user/updateUserData',
