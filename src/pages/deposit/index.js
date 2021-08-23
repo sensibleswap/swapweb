@@ -76,8 +76,7 @@ export default class Deposit extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, allPairs, currentPair } = this.props;
-      const { lptoken = {} } = allPairs[currentPair];
+      const { userBalance, allPairs, currentPair, lptoken } = this.props;
       const LP = userBalance[lptoken.tokenID] || 0;
       const _addLp = e.target.value;
       if (_addLp <= 0) {
@@ -96,7 +95,7 @@ export default class Deposit extends Component {
   };
 
   slideData = (value) => {
-    const { userBalance, allPairs, currentPair, lptoken } = this.props;
+    const { userBalance, lptoken } = this.props;
     const LP = userBalance[lptoken.tokenID] || 0;
     this.setState({
       addLPRate: value,

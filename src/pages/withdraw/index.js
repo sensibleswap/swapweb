@@ -78,7 +78,8 @@ export default class Withdraw extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, allPairs, currentPair } = this.props;
+      const { userBalance, allPairs, currentPair, lockedTokenAmount } =
+        this.props;
       const { lptoken = {} } = allPairs[currentPair];
       const LP = userBalance[lptoken.tokenID] || 0;
       const _addLp = e.target.value;
