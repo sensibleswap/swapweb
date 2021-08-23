@@ -7,6 +7,7 @@ interface CssExports {
   account_icon: string;
   account_name: string;
   account_trigger: string;
+  address_qrcode: string;
   app_title: string;
   btn: string;
   btns: string;

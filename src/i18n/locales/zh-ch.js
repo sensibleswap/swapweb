@@ -222,16 +222,15 @@ const texts = {
 
   farm: 'Farm',
   lock_earn: 'Lock and earn',
-  earned: 'Earned',
-  depositors: 'Depositors',
-  crop: 'Crop',
-  harvest: 'Harvest',
-  farm_item_desc:
-    'Provide liquidity and deposit your LP %s token to earn Swap token (TokenSwap utility token)',
+  earned: '赚取',
+  depositors: '存款人数',
+  crop: '成熟的庄家',
+  harvest: '收割',
+  farm_item_desc: '给%1交易对提供流动性，将LP %1锁仓赚取TokenSwap平台币 Swap',
   apy_info:
     'APY =(Fee + (TSC payout)* TSC price) *365/Total deposited LP token value(USDT)',
-  deposit: 'Deposit',
-  earn: 'Earn',
+  deposit: '充值',
+  earn: '赚取',
   deposit_success: 'Deposit successful',
   deposited: 'deposited',
   swap_success: '交易成功',
@@ -242,5 +241,7 @@ const texts = {
   farm_withdraw: 'Withdraw',
   farm_withdraw_success: 'Withdraw successful',
   Withdrew: 'Withdrew',
+  tvl: '总锁仓资金',
+  apy: '年化收益',
 };
 module.exports = texts;

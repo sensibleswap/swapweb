@@ -118,6 +118,18 @@ export default {
       log('withdraw2:', payload, res);
       return res;
     },
+
+    *harvest({ payload }, { call, put }) {
+      const res = yield farmApi.harvest.call(farmApi, payload);
+      log('harvest:', payload, res);
+      return res;
+    },
+
+    *harvest2({ payload }, { call, put }) {
+      const res = yield farmApi.harvest2.call(farmApi, payload);
+      log('harvest:', payload, res);
+      return res;
+    },
   },
 
   reducers: {

@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button, Popover, Modal, message } from 'antd';
+import { Button, Popover, Modal, message, Tooltip } from 'antd';
 import {
   UpOutlined,
   SwapOutlined,
@@ -10,6 +10,7 @@ import {
   CloseOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
+import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
@@ -303,7 +304,7 @@ export default class UserInfo extends Component {
 
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
-    const { userAddressShort, connecting, isLogin } = this.props;
+    const { userAddressShort, userAddress, connecting, isLogin } = this.props;
     return (
       <>
         {isLogin ? (
@@ -314,10 +315,24 @@ export default class UserInfo extends Component {
             onVisibleChange={this.handleVisibleChange}
             placement="bottomRight"
           >
-            <div className={styles.account_trigger}>
-              <span style={{ marginRight: 10 }}>{userAddressShort} </span>
-              {this.renderWalletIcon()}
-            </div>
+            <Tooltip
+              overlayClassName={styles.address_qrcode}
+              title={
+                <div style={{ backgroundColor: '#fff', padding: 5 }}>
+                  <QRCode
+                    value={userAddress}
+                    style={{ width: '145px', height: '145px' }}
+                  />
+                </div>
+              }
+              placement="bottomRight"
+              trigger="hover"
+            >
+              <div className={styles.account_trigger}>
+                <span style={{ marginRight: 10 }}>{userAddressShort} </span>
+                {this.renderWalletIcon()}
+              </div>
+            </Tooltip>
           </Popover>
         ) : (
           <>

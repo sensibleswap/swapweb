@@ -183,7 +183,7 @@ export default class Deposit extends Component {
               </div>
             </div>
             <div className={styles.pair_right}>
-              3,000 % APY
+              3,000 % {_('apy')}
               <CustomIcon
                 type="iconi"
                 style={{

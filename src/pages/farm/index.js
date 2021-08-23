@@ -1,9 +1,10 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, message, Spin } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { jc, formatSat } from 'common/utils';
+import { gzip } from 'node-gzip';
+import { jc, formatSat, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
 import CustomIcon from 'components/icon';
@@ -22,8 +23,14 @@ const TSC = 'TSC';
   return {
     ...user,
     ...farm,
-    loading:
-      effects['farm/getAllPairs'] || effects['farm/getPairData'] || false,
+    loading: effects['farm/getAllPairs'] || false,
+    submiting:
+      effects['farm/reqSwap'] ||
+      effects['farm/harvest'] ||
+      effects['farm/harvest2'] ||
+      effects['user/transferBsv'] ||
+      effects['user/signTx'] ||
+      false,
   };
 })
 export default class FarmC extends Component {
@@ -74,8 +81,91 @@ export default class FarmC extends Component {
     });
   };
 
+  harvest = async (currentPair) => {
+    const { dispatch, userAddress } = this.props;
+
+    let res = await dispatch({
+      type: 'farm/reqSwap',
+      payload: {
+        symbol: currentPair,
+        address: userAddress,
+        op: 3,
+      },
+    });
+
+    if (res.code) {
+      return message.error(res.msg);
+    }
+
+    const { requestIndex, bsvToAddress, txFee } = res.data;
+    const tx_res = await dispatch({
+      type: 'user/transferBsv',
+      payload: {
+        address: bsvToAddress,
+        amount: txFee,
+        noBroadcast: true,
+      },
+    });
+
+    if (tx_res.msg) {
+      return message.error(tx_res.msg);
+    }
+
+    let data = {
+      symbol: currentPair,
+      requestIndex,
+      bsvRawTx: tx_res.txHex,
+      bsvOutputIndex: 0,
+    };
+    data = JSON.stringify(data);
+    data = await gzip(data);
+    const harvest_res = await dispatch({
+      type: 'farm/harvest',
+      payload: {
+        data,
+      },
+    });
+
+    if (harvest_res.code) {
+      return message.error(harvest_res.msg);
+    }
+    const { txHex, scriptHex, satoshis, inputIndex } = harvest_res.data;
+    const sign_res = await dispatch({
+      type: 'user/signTx',
+      payload: {
+        datas: {
+          txHex,
+          scriptHex,
+          satoshis,
+          inputIndex,
+          address: userAddress,
+        },
+      },
+    });
+
+    if (sign_res.msg && !sign_res.sig) {
+      return message.error(sign_res);
+    }
+    const { publicKey, sig } = sign_res;
+    const harvest2_res = await dispatch({
+      type: 'farm/harvest2',
+      payload: {
+        symbol: currentPair,
+        requestIndex,
+        pubKey: publicKey,
+        sig,
+      },
+    });
+
+    if (!harvest2_res.code && harvest2_res.data.txid) {
+      message.success('success');
+      this.fetch();
+    } else {
+      return message.error(harvest2_res.msg);
+    }
+  };
+
   renderItem(pairName, data, index) {
-    pairName = pairName.toUpperCase();
     const { symbol1, symbol2 } = this.props;
     const { poolTokenAmount, rewardTokenAmount = 0, addressCount } = data;
     const { current_item } = this.state;
@@ -100,17 +190,17 @@ export default class FarmC extends Component {
           </div>
         </div>
         <div className={styles.item_desc}>
-          {_('farm_item_desc', `${pairName}`)}
+          {_('farm_item_desc').replace(/%1/g, `${pairName.toUpperCase()}`)}
         </div>
         <div className={styles.item_data}>
           <div className={styles.item_data_left}>
-            <div className={styles.label}>TVL</div>
+            <div className={styles.label}>{_('tvl')}</div>
             <div className={styles.value}>{poolTokenAmount}*lp price</div>
           </div>
           <div className={styles.item_data_right}>
             <Tooltip title={_('apy_info')}>
               <div className={styles.label} style={{ cursor: 'pointer' }}>
-                APY
+                {_('apy')}
                 <CustomIcon
                   type="iconi"
                   style={{
@@ -135,14 +225,24 @@ export default class FarmC extends Component {
               <div className={styles.label}>{_('depositors')}</div>
               <div className={styles.value}>{addressCount}</div>
             </div>
-            <div style={{ width: 78 }}>
-              <div className={styles.label}>{_('crop')}:</div>
-              <div className={styles.value}>
-                {formatSat(rewardTokenAmount)} {TSC}
+            <div>
+              <div className={styles.label}>
+                {_('crop')}({TSC}):
+              </div>
+              <div
+                className={styles.value}
+                style={{ fontSize: 12, color: '#2F80ED' }}
+              >
+                {formatAmount(formatSat(rewardTokenAmount), 4)}
               </div>
             </div>
           </div>
-          <Button type="primary" className={styles.btn}>
+          <Button
+            type="primary"
+            className={styles.btn}
+            disabled={rewardTokenAmount <= 0}
+            onClick={() => this.harvest(pairName)}
+          >
             {_('harvest')}
           </Button>
         </div>
@@ -167,65 +267,69 @@ export default class FarmC extends Component {
     const { app_pannel, currentMenuIndex } = this.state;
 
     return (
-      <section className={styles.container}>
-        <section
-          className={
-            app_pannel ? jc(styles.left, styles.app_hide) : styles.left
-          }
-        >
-          <div className={styles.left_inner}>
-            <Header />
-            {this.renderContent()}
-            <Button
-              type="primary"
-              className={styles.app_start_btn}
-              onClick={this.showPannel}
-            >
-              {_('start_deposit')}
-            </Button>
-          </div>
-        </section>
-        <section className={styles.right}>
-          <div
+      <Spin spinning={this.props.submiting}>
+        <section className={styles.container}>
+          <section
             className={
-              app_pannel ? styles.sidebar : jc(styles.sidebar, styles.app_hide)
+              app_pannel ? jc(styles.left, styles.app_hide) : styles.left
             }
           >
-            <div className={styles.app_title}>
-              {_('pool')}
-              <div className={styles.close} onClick={this.hidePannel}>
-                <CloseOutlined />
-              </div>
+            <div className={styles.left_inner}>
+              <Header />
+              {this.renderContent()}
+              <Button
+                type="primary"
+                className={styles.app_start_btn}
+                onClick={this.showPannel}
+              >
+                {_('start_deposit')}
+              </Button>
             </div>
-
-            <div className={styles.right_box}>
-              <div className={styles.head}>
-                <div className={styles.menu}>
-                  {['deposit', 'withdraw'].map((item, index) => (
-                    <span
-                      className={
-                        index === currentMenuIndex
-                          ? jc(styles.menu_item, styles.menu_item_selected)
-                          : styles.menu_item
-                      }
-                      key={item}
-                      onClick={() => {
-                        this.setState({
-                          currentMenuIndex: index,
-                        });
-                      }}
-                    >
-                      {_(item)}
-                    </span>
-                  ))}
+          </section>
+          <section className={styles.right}>
+            <div
+              className={
+                app_pannel
+                  ? styles.sidebar
+                  : jc(styles.sidebar, styles.app_hide)
+              }
+            >
+              <div className={styles.app_title}>
+                {_('pool')}
+                <div className={styles.close} onClick={this.hidePannel}>
+                  <CloseOutlined />
                 </div>
               </div>
-              {currentMenuIndex === 0 && <Deposit />}
-              {currentMenuIndex === 1 && <Withdraw />}
+
+              <div className={styles.right_box}>
+                <div className={styles.head}>
+                  <div className={styles.menu}>
+                    {['deposit', 'withdraw'].map((item, index) => (
+                      <span
+                        className={
+                          index === currentMenuIndex
+                            ? jc(styles.menu_item, styles.menu_item_selected)
+                            : styles.menu_item
+                        }
+                        key={item}
+                        onClick={() => {
+                          this.setState({
+                            currentMenuIndex: index,
+                          });
+                        }}
+                      >
+                        {_(item)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                {currentMenuIndex === 0 && <Deposit />}
+                {currentMenuIndex === 1 && <Withdraw />}
+              </div>
             </div>
-          </div>
+          </section>
         </section>
-      </section>
+      </Spin>
     );
   }
 }

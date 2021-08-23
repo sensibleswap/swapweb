@@ -43,7 +43,9 @@ const datas = [
     submiting:
       effects['farm/reqSwap'] ||
       effects['farm/withdraw'] ||
-      effects['user/transferAll'] ||
+      effects['farm/withdraw2'] ||
+      effects['user/transferBsv'] ||
+      effects['user/signTx'] ||
       false,
   };
 })
