@@ -237,7 +237,7 @@ const texts = {
   lp_balance: '可提取',
   added: '添加',
   deposit_earn: '锁仓赚币',
-  start_deposit: '开始锁仓t',
+  start_deposit: '开始锁仓',
   farm_withdraw: '提取LP token',
   farm_withdraw_success: '提取成功',
   withdrew: '提取了',
