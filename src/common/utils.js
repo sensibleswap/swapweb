@@ -3,7 +3,7 @@
 import bytes from 'bytes';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
-import { TSWAP_NETWORK } from 'common/const';
+import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
 import debug from 'debug';
 const log = debug('utils');
 const location = window.location;
@@ -219,5 +219,6 @@ export function strAbbreviation(str, arr = [7, 5]) {
 }
 
 export function isTestNet() {
-  return window.localStorage.getItem(TSWAP_NETWORK) === 'testnet';
+  const net = window.localStorage.getItem(TSWAP_NETWORK) || DEFAULT_NET;
+  return net === 'testnet';
 }

@@ -332,7 +332,7 @@ export default class UserInfo extends Component {
             placement="bottomRight"
           >
             <div className={styles.account_trigger}>
-              <span style={{ marginRight: 10 }}>{userAddressShort} </span>
+              <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
               {this.renderWalletIcon()}
             </div>
           </Popover>
@@ -375,7 +375,7 @@ export default class UserInfo extends Component {
           >
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
+              {/*<li onClick={() => this.connectWebWallet(2, 'mainnet')}>
                 Volt {_('web_wallet')}
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
@@ -385,7 +385,7 @@ export default class UserInfo extends Component {
               <li onClick={() => this.connectWebWallet(2, 'testnet')}>
                 BSV Testnet
                 <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
-              </li>
+        </li>*/}
               <li
                 onClick={() => this.connectWebWallet(1)}
                 style={{ fontSize: 15 }}
@@ -393,11 +393,11 @@ export default class UserInfo extends Component {
                 TS {_('web_wallet')}
                 {_('test_only')}
               </li>
-              {process.env.NODE_ENV === 'development' && (
+              {/*process.env.NODE_ENV === 'development' && (
                 <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>
                   Chrome Ext
                 </li>
-              )}
+              )*/}
             </ul>
           </Modal>
         )}

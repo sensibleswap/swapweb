@@ -228,7 +228,7 @@ const texts = {
   farm: 'Farm',
   lock_earn: 'Lock and earn',
   depositors: 'Depositors',
-  crop: 'Crop',
+  crop: 'Yield',
   harvest: 'Harvest',
   farm_item_desc:
     'Provide liquidity and deposit your LP %s token to earn Swap token (TokenSwap utility token)',
