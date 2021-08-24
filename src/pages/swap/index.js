@@ -31,9 +31,9 @@ const FormItem = Form.Item;
     loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
     submiting:
       effects['pair/reqSwap'] ||
-      effects['pair/swap'] ||
+      effects['pair/token1toToken2'] ||
+      effects['pair/token2toToken1'] ||
       effects['user/transferBsv'] ||
-      effects['user/transferFtTres'] ||
       effects['user/transferAll'] ||
       false,
   };
