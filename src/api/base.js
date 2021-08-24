@@ -1,14 +1,13 @@
 'use strict';
 import 'whatwg-fetch';
 import querystring from 'querystringify';
-import { TSWAP_NETWORK } from 'common/const';
-const { localStorage } = window;
+import { isTestNet } from 'common/utils';
 
 export default class API {
   constructor() {
     this.baseUrl = 'https://api.tswap.io/';
-    if (localStorage.getItem(TSWAP_NETWORK) === 'testnet') {
-      this.baseUrl = 'https://api.tswap.io/test/';
+    if (isTestNet()) {
+      this.baseUrl = 'https://api.tswap.io/v2/test/';
     }
 
     this._requestQueue = {};

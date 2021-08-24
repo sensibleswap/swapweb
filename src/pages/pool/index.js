@@ -6,7 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Pair from 'components/pair';
 import Loading from 'components/loading';
-import TokenLogo from 'components/tokenicon';
+import TokenPair from 'components/tokenPair';
 import Notice from 'components/notice';
 import Header from '../layout/header';
 import styles from './index.less';
@@ -54,12 +54,7 @@ export default class Pool extends Component {
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenLogo name={symbol1} size={40} />
-              <TokenLogo
-                name={symbol2}
-                size={40}
-                style={{ marginLeft: '-12px' }}
-              />
+              <TokenPair symbol1={symbol1} symbol2={symbol2} size={40} />
             </div>
             <div className={styles.name}>
               LP({symbol2}/{symbol1})

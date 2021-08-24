@@ -1,5 +1,6 @@
 import pairApi from '../api/pair';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
+import { isTestNet } from 'common/utils';
 import debug from 'debug';
 const log = debug('pair');
 
@@ -106,6 +107,18 @@ export default {
 
     *swap({ payload }, { call, put }) {
       const res = yield pairApi.swap.call(pairApi, payload);
+      log('swap:', payload, res);
+      return res;
+    },
+
+    *token1toToken2({ payload }, { call, put }) {
+      const res = yield pairApi.token1toToken2.call(pairApi, payload);
+      log('swap:', payload, res);
+      return res;
+    },
+
+    *token2toToken1({ payload }, { call, put }) {
+      const res = yield pairApi.token2toToken1.call(pairApi, payload);
       log('swap:', payload, res);
       return res;
     },

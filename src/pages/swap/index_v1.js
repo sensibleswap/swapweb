@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
-import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
@@ -606,9 +605,9 @@ export default class Swap extends Component {
         payload: {
           address: bsvToAddress,
           amount: total.toString(),
-          noBroadcast: true,
         },
       });
+
       if (ts_res.msg) {
         return message.error(ts_res.msg);
       }
@@ -618,9 +617,8 @@ export default class Swap extends Component {
 
       payload = {
         ...payload,
-        // token1TxID: ts_res.txid,
-        bsvOutputIndex: 0,
-        bsvRawTx: ts_res.txHex,
+        token1TxID: ts_res.txid,
+        token1OutputIndex: 0,
         token1AddAmount: amount.toString(),
       };
     } else {
@@ -636,7 +634,6 @@ export default class Swap extends Component {
               type: 'bsv',
               address: bsvToAddress,
               amount: txFee,
-              noBroadcast: true,
             },
             {
               type: 'sensibleFt',
@@ -645,7 +642,6 @@ export default class Swap extends Component {
               codehash: token2.codeHash,
               genesis: token2.tokenID,
               rabinApis,
-              noBroadcast: true,
             },
           ],
         },
@@ -663,32 +659,26 @@ export default class Swap extends Component {
       // console.log(tx_res); debugger;
       payload = {
         ...payload,
-        bsvRawTx: tx_res[0].txHex,
-        bsvOutputIndex: 0,
-        token2RawTx: tx_res[1].txHex,
+        minerFeeTxID: tx_res[0].txid,
+        minerFeeTxOutputIndex: 0,
+        token2TxID: tx_res[1].txid,
         token2OutputIndex: 0,
-        amountCheckRawTx: tx_res[1].routeCheckTxHex,
       };
     }
 
-    let swap_data = JSON.stringify(payload);
-    swap_data = await gzip(swap_data);
-
     const swap_res = await dispatch({
-      type: dirForward ? 'pair/token1toToken2' : 'pair/token2toToken1',
-      payload: {
-        data: swap_data,
-      },
+      type: 'pair/swap',
+      payload,
     });
 
-    if (swap_res.code && !swap_res.data.txid) {
+    if (swap_res.code) {
       return message.error(swap_res.msg);
     }
     message.success('success');
     this.updateData();
     this.setState({
       formFinish: true,
-      txid: swap_res.data.txid,
+      txid: swap_res.data,
       txFee: txFee,
     });
   };
@@ -709,7 +699,7 @@ export default class Swap extends Component {
 
   renderResult() {
     const { origin_amount, aim_amount, txFee, dirForward, txid } = this.state;
-    const { token1, token2 } = this.props;
+    const { token1, token2, userAddress } = this.props;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const symbol1 = origin_token.symbol.toUpperCase();

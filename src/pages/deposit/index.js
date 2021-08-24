@@ -7,6 +7,7 @@ import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
+import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import styles from './index.less';
 import _ from 'i18n';
@@ -112,6 +113,7 @@ export default class Deposit extends Component {
       symbol1,
       symbol2,
       lptoken,
+      rewardToken,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP, price } = this.state;
@@ -140,12 +142,7 @@ export default class Deposit extends Component {
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol2} size={25} />
-                <TokenLogo
-                  name={symbol1}
-                  size={25}
-                  style={{ marginLeft: '-10px' }}
-                />
+                <TokenPair symbol1={symbol2} symbol2={symbol1} size={25} />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}-LP
@@ -178,7 +175,7 @@ export default class Deposit extends Component {
                 <TokenLogo name="tsc" size={25} />
               </div>
               <div className={styles.name} style={{ fontSize: 22 }}>
-                TSC
+                {rewardToken.symbol}
               </div>
             </div>
             <div className={styles.pair_right}>

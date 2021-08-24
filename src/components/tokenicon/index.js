@@ -22,6 +22,12 @@ const icons = {
   ovts: {
     url: 'assets/ovts.png',
   },
+  test: {
+    type: 'iconTS',
+  },
+  tbsv: {
+    type: 'iconlogo-bitcoin',
+  },
 };
 
 export default function TokenIcon(props) {

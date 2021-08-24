@@ -242,8 +242,10 @@ const texts = {
   start_deposit: 'Start Deposit',
   farm_withdraw: 'Withdraw',
   farm_withdraw_success: 'Withdraw successful',
-  Withdrew: 'Withdrew',
+  withdrew: 'Withdrew',
   tvl: 'TVL',
   apy: 'APY',
+  yield_tips: 'your withdrawable yield: %s',
+  harvest_success: 'Yield Withdrawal successful',
 };
 module.exports = texts;

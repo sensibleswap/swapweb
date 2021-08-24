@@ -2,17 +2,15 @@
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
+import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Tooltip, Modal } from 'antd';
-import {
-  QuestionCircleOutlined,
-  DownOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
+import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import SelectToken from '../selectToken';
@@ -682,6 +680,7 @@ export default class Liquidity extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+            noBroadcast: true,
           },
           {
             type: 'sensibleFt',
@@ -690,6 +689,7 @@ export default class Liquidity extends Component {
             codehash: token2.codeHash,
             genesis: token2.tokenID,
             rabinApis,
+            noBroadcast: true,
           },
         ],
       },
@@ -701,20 +701,26 @@ export default class Liquidity extends Component {
       return message.error(_('txs_fail'));
     }
 
+    let liq_data = {
+      symbol: currentPair,
+      requestIndex: requestIndex,
+      bsvRawTx: tx_res[0].txHex,
+      bsvOutputIndex: 0,
+      token2RawTx: tx_res[1].txHex,
+      token2OutputIndex: 0,
+      token1AddAmount: _origin_amount.toString(),
+      amountCheckRawTx: tx_res[1].routeCheckTxHex,
+    };
+    liq_data = JSON.stringify(liq_data);
+    liq_data = await gzip(liq_data);
     const addliq_res = await dispatch({
       type: 'pair/addLiq',
       payload: {
-        symbol: currentPair,
-        requestIndex: requestIndex,
-        token1TxID: tx_res[0].txid,
-        token1OutputIndex: 0,
-        token2TxID: tx_res[1].txid,
-        token2OutputIndex: 0,
-        token1AddAmount: _origin_amount.toString(),
+        data: liq_data,
       },
     });
 
-    if (addliq_res.code) {
+    if (addliq_res.code && !addliq_res.data.txid) {
       return message.error(addliq_res.msg);
     }
     message.success('success');
@@ -760,11 +766,11 @@ export default class Liquidity extends Component {
         </div>
         <div className={styles.result_data2}>
           {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
-          <TokenLogo name={symbol1} size={20} style={{ marginLeft: 10 }} />
-          <TokenLogo
-            name={symbol2}
+          <TokenPair
+            symbol1={symbol1}
+            symbol2={symbol2}
             size={20}
-            style={{ marginLeft: '-7px' }}
+            style={{ marginLeft: 10 }}
           />{' '}
           <span style={{ fontWeight: 700, marginLeft: 10 }}>
             {symbol1}/{symbol2}-LP

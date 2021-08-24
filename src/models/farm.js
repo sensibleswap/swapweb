@@ -14,6 +14,7 @@ export default {
     symbol1: '',
     symbol2: '',
     lptoken: {},
+    rewardToken: {},
   },
 
   subscriptions: {
@@ -34,7 +35,12 @@ export default {
         localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
       if (!currentPair || !data[currentPair]) {
         Object.keys(data).forEach((item) => {
-          if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
+          if (
+            item.indexOf('bsv-') > -1 ||
+            item.indexOf('-bsv') > -1 ||
+            item.indexOf('tbsv-') ||
+            item.indexOf('-tbsv')
+          ) {
             currentPair = item;
             localStorage.setItem(TSWAP_CURRENT_PAIR, item);
           }
@@ -140,13 +146,20 @@ export default {
       const { allPairs } = action.payload;
       let { currentPair } = action.payload;
       if (!currentPair) currentPair = state.currentPair;
-      const { token, lockedTokenAmount } = allPairs[currentPair];
+      if (!currentPair) {
+        return {
+          ...state,
+          ...action.payload,
+        };
+      }
+      const { token, lockedTokenAmount, rewardToken } = allPairs[currentPair];
       const pairName = currentPair.toUpperCase().split('-');
       const [symbol1, symbol2] = pairName;
       return {
         ...state,
         ...action.payload,
         lptoken: token,
+        rewardToken,
         symbol1,
         symbol2,
         lockedTokenAmount: formatSat(lockedTokenAmount, token.decimal),

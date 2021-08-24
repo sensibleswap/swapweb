@@ -1,22 +1,22 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button, Tooltip, message, Spin } from 'antd';
+import { Button, Tooltip, message, Spin, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { gzip } from 'node-gzip';
 import { jc, formatSat, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
+import TokenPair from 'components/tokenPair';
 import CustomIcon from 'components/icon';
 import Header from '../layout/header';
 import Deposit from '../deposit';
 import Withdraw from '../withdraw';
-import debug from 'debug';
+// import debug from 'debug';
 import styles from './index.less';
 import _ from 'i18n';
-const log = debug('farm');
+// const log = debug('farm');
 
-const TSC = 'TSC';
 @withRouter
 @connect(({ user, farm, loading }) => {
   const { effects } = loading;
@@ -81,7 +81,7 @@ export default class FarmC extends Component {
     });
   };
 
-  harvest = async (currentPair) => {
+  harvest = async (currentPair, params) => {
     const { dispatch, userAddress } = this.props;
 
     let res = await dispatch({
@@ -111,18 +111,18 @@ export default class FarmC extends Component {
       return message.error(tx_res.msg);
     }
 
-    let data = {
+    let hav_data = {
       symbol: currentPair,
       requestIndex,
       bsvRawTx: tx_res.txHex,
       bsvOutputIndex: 0,
     };
-    data = JSON.stringify(data);
-    data = await gzip(data);
+    hav_data = JSON.stringify(hav_data);
+    hav_data = await gzip(hav_data);
     const harvest_res = await dispatch({
       type: 'farm/harvest',
       payload: {
-        data,
+        data: hav_data,
       },
     });
 
@@ -156,19 +156,58 @@ export default class FarmC extends Component {
         sig,
       },
     });
-
-    if (!harvest2_res.code && harvest2_res.data.txid) {
-      message.success('success');
+    const { code, data, msg } = harvest2_res;
+    const amount = formatSat(
+      data.rewardTokenAmount,
+      params.rewardToken.decimal,
+    );
+    if (!code && data.txid) {
+      // message.success('success');
+      this.showModal(amount, data.txid, params.rewardToken.symbol);
       this.fetch();
     } else {
-      return message.error(harvest2_res.msg);
+      return message.error(msg);
     }
   };
+  showModal(amount, txid, symbol) {
+    Modal.info({
+      title: '',
+      content: (
+        <div className={styles.mod_content}>
+          <div className={styles.icon}>
+            <CustomIcon
+              type="iconicon-success"
+              style={{ fontSize: 60, fontWeight: 'bold', color: '#2BB696' }}
+            />
+          </div>
+          <div className={styles.amount}>
+            <span style={{ marginRight: 30 }}>{amount}</span>
+            <TokenLogo
+              name={symbol}
+              style={{ fontSize: 20, marginRight: 10 }}
+            />
+            <span className={styles.symbo}>{symbol}</span>
+          </div>
+          <div className={styles.txt}>{_('harvest_success')}</div>
+          <div className={styles.txid}>{`Txid: ${txid}`}</div>
+        </div>
+      ),
+      className: styles.mod,
+      icon: '',
+      width: 375,
+    });
+  }
 
   renderItem(pairName, data, index) {
     const { symbol1, symbol2 } = this.props;
-    const { poolTokenAmount, rewardTokenAmount = 0, addressCount } = data;
+    const {
+      poolTokenAmount,
+      rewardTokenAmount = 0,
+      addressCount,
+      rewardToken,
+    } = data;
     const { current_item } = this.state;
+    const _rewardTokenAmount = formatSat(rewardTokenAmount);
     return (
       <div
         className={
@@ -178,12 +217,7 @@ export default class FarmC extends Component {
       >
         <div className={styles.item_title}>
           <div className={styles.icon}>
-            <TokenLogo name={symbol2} size={20} />
-            <TokenLogo
-              name={symbol1}
-              size={20}
-              style={{ marginLeft: '-6px' }}
-            />
+            <TokenPair symbol1={symbol2} symbol2={symbol1} size={20} />
           </div>
           <div className={styles.name}>
             {symbol2}/{symbol1}
@@ -198,7 +232,7 @@ export default class FarmC extends Component {
             <div className={styles.value}>{poolTokenAmount}*lp price</div>
           </div>
           <div className={styles.item_data_right}>
-            <Tooltip title={_('apy_info')}>
+            <Tooltip title={_('apy_info')} placement="bottom">
               <div
                 className={styles.label}
                 style={{
@@ -234,21 +268,28 @@ export default class FarmC extends Component {
             </div>
             <div>
               <div className={styles.label}>
-                {_('crop')}({TSC}):
+                {_('crop')}({rewardToken.symbol}):
               </div>
-              <div
-                className={styles.value}
-                style={{ fontSize: 12, color: '#2F80ED' }}
+              <Tooltip
+                title={`${_('yield_tips', _rewardTokenAmount)} ${
+                  rewardToken.symbol
+                }`}
+                placement="bottom"
               >
-                {formatAmount(formatSat(rewardTokenAmount), 4)}
-              </div>
+                <div
+                  className={styles.value}
+                  style={{ fontSize: 12, color: '#2F80ED' }}
+                >
+                  {formatAmount(_rewardTokenAmount, 4)}
+                </div>
+              </Tooltip>
             </div>
           </div>
           <Button
             type="primary"
             className={styles.btn}
             disabled={rewardTokenAmount <= 0}
-            onClick={() => this.harvest(pairName)}
+            onClick={() => this.harvest(pairName, data)}
           >
             {_('harvest')}
           </Button>

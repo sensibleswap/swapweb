@@ -1,12 +1,14 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
+import { gzip } from 'node-gzip';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
+import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import Pool from '../pool';
 import styles from './index.less';
@@ -128,8 +130,7 @@ export default class RemovePage extends Component {
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenLogo name={symbol1} size={40} />
-              <TokenLogo name={symbol2} size={40} />
+              <TokenPair symbol1={symbol1} symbol2={symbol2} size={40} />
             </div>
             <div className={styles.name}>
               {symbol2}/{symbol1}
@@ -247,12 +248,7 @@ export default class RemovePage extends Component {
           </div>
           <div className={styles.s_box}>
             <div className={styles.coin}>
-              <TokenLogo name={symbol1} size={30} />
-              <TokenLogo
-                name={symbol2}
-                size={30}
-                style={{ marginLeft: '-10px' }}
-              />
+              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
             </div>
             <div className={styles.name}>
               {symbol1}/{symbol2}-LP
@@ -315,7 +311,6 @@ export default class RemovePage extends Component {
       lptoken,
       rabinApis,
     } = this.props;
-    const { removeToken1, removeToken2 } = this.calc();
     const LP = userBalance[lptoken.tokenID];
 
     let res = await dispatch({
@@ -353,6 +348,7 @@ export default class RemovePage extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: txFee,
+            noBroadcast: true,
           },
           {
             type: 'sensibleFt',
@@ -361,6 +357,7 @@ export default class RemovePage extends Component {
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis,
+            noBroadcast: true,
           },
         ],
       },
@@ -373,19 +370,25 @@ export default class RemovePage extends Component {
       return message.error(_('txs_fail'));
     }
 
+    let liq_data = {
+      symbol: currentPair,
+      requestIndex: requestIndex,
+      bsvRawTx: tx_res[0].txHex,
+      bsvOutputIndex: 0,
+      lpTokenRawTx: tx_res[1].txHex,
+      lpTokenOutputIndex: 0,
+      amountCheckRawTx: tx_res[1].routeCheckTxHex,
+    };
+    liq_data = JSON.stringify(liq_data);
+    liq_data = await gzip(liq_data);
     const removeliq_res = await dispatch({
       type: 'pair/removeLiq',
       payload: {
-        symbol: currentPair,
-        requestIndex: requestIndex,
-        minerFeeTxID: tx_res[0].txid,
-        minerFeeTxOutputIndex: 0,
-        lpTokenTxID: tx_res[1].txid,
-        lpTokenOutputIndex: 0,
+        data: liq_data,
       },
     });
 
-    if (removeliq_res.code) {
+    if (removeliq_res.code && !removeliq_res.data.txid) {
       return message.error(removeliq_res.msg);
     }
     message.success('success');
@@ -474,8 +477,7 @@ export default class RemovePage extends Component {
           <div className={styles.f_item}>
             <div className={styles.f_label}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={20} />
-                <TokenLogo name={symbol2} size={20} />
+                <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}

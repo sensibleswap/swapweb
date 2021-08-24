@@ -1,12 +1,12 @@
 'use strict';
 import BaseAPI from './base';
-import { TSWAP_NETWORK } from 'common/const';
+import { isTestNet } from 'common/utils';
 
 class Farm extends BaseAPI {
   constructor(props) {
     super(props);
     this.baseUrl = 'https://api.tswap.io/farm/';
-    if (localStorage.getItem(TSWAP_NETWORK) === 'testnet') {
+    if (isTestNet()) {
       this.baseUrl = 'https://api.tswap.io/farm/test/';
     }
   }

@@ -7,6 +7,7 @@ import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
+import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import styles from '../deposit/index.less';
 import _ from 'i18n';
@@ -148,12 +149,7 @@ export default class Withdraw extends Component {
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol2} size={25} />
-                <TokenLogo
-                  name={symbol1}
-                  size={25}
-                  style={{ marginLeft: '-10px' }}
-                />
+                <TokenPair symbol1={symbol2} symbol2={symbol1} size={25} />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}-LP
@@ -321,7 +317,7 @@ export default class Withdraw extends Component {
           />
         </div>
         <div className={styles.finish_title}>{_('withdraw_success')}</div>
-        <div className={styles.small_title}>{_('Withdrew')}</div>
+        <div className={styles.small_title}>{_('withdrew')}</div>
 
         <div className={styles.pair_data}>
           <div className={styles.pair_left}>{addLP}</div>
