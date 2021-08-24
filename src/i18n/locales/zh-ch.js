@@ -226,9 +226,9 @@ const texts = {
   depositors: '存款人数',
   crop: '收益',
   harvest: '提取',
-  farm_item_desc: '给%1交易对提供流动性，将LP %1锁仓赚取 ${token}',
+  farm_item_desc: '给%1交易对提供流动性，将LP %1锁仓赚取 %2',
   apy_info:
-    'APY =(手续费收入 + (${token}收益)* ${token}价格) *365/LP token锁仓总价值(USDT)',
+    'APY =(手续费收入 + (%1收益)* %1价格) *365/LP token锁仓总价值(USDT)',
   deposit: '锁仓',
   earn: '赚取',
   deposit_success: '锁仓成功',

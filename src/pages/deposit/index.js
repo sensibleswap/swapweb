@@ -150,7 +150,6 @@ export default class Deposit extends Component {
             </div>
             <div className={styles.pair_right}>
               <Input
-                style={{ width: 130 }}
                 className={styles.input}
                 value={addLP}
                 onChange={this.changeData}

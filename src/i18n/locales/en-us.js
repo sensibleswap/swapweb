@@ -231,9 +231,9 @@ const texts = {
   crop: 'Yield',
   harvest: 'Harvest',
   farm_item_desc:
-    'Provide liquidity and deposit your LP %s token to earn Swap token (TokenSwap utility token)',
+    'Provide liquidity and deposit your LP %1 token to earn Swap token (TokenSwap utility token)',
   apy_info:
-    'APY =(Fee + (TSC payout)* TSC price) *365/Total deposited LP token value(USDT)',
+    'APY =(Fee + (%1 payout)* %1 price) *365/Total deposited LP token value(USDT)',
   deposit: 'Deposit',
   earn: 'Earn',
   deposit_success: 'Deposit successful',

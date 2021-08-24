@@ -186,7 +186,7 @@ export default class FarmC extends Component {
               name={symbol}
               style={{ fontSize: 20, marginRight: 10 }}
             />
-            <span className={styles.symbo}>{symbol}</span>
+            <span className={styles.symbol}>{symbol}</span>
           </div>
           <div className={styles.txt}>{_('harvest_success')}</div>
           <div className={styles.txid}>{`Txid: ${txid}`}</div>
@@ -224,7 +224,9 @@ export default class FarmC extends Component {
           </div>
         </div>
         <div className={styles.item_desc}>
-          {_('farm_item_desc').replace(/%1/g, `${pairName.toUpperCase()}`)}
+          {_('farm_item_desc')
+            .replace(/%1/g, `${pairName.toUpperCase()}`)
+            .replace('%2', rewardToken.symbol)}
         </div>
         <div className={styles.item_data}>
           <div className={styles.item_data_left}>
@@ -232,7 +234,10 @@ export default class FarmC extends Component {
             <div className={styles.value}>{poolTokenAmount}*lp price</div>
           </div>
           <div className={styles.item_data_right}>
-            <Tooltip title={_('apy_info')} placement="bottom">
+            <Tooltip
+              title={_('apy_info').replace(/%1/g, rewardToken.symbol)}
+              placement="bottom"
+            >
               <div
                 className={styles.label}
                 style={{
