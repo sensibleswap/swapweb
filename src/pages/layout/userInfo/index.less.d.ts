@@ -23,6 +23,7 @@ interface CssExports {
   line: string;
   login_dialog: string;
   persission_title: string;
+  qr_icon: string;
   tips: string;
   title: string;
   user_pop: string;

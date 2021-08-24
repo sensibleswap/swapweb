@@ -239,5 +239,11 @@ const texts = {
   deposit_success: 'Deposit successful',
   deposited: 'deposited',
   deposit_earn: 'Deposit & Earn',
+  start_deposit: 'Start Deposit',
+  farm_withdraw: 'Withdraw',
+  farm_withdraw_success: 'Withdraw successful',
+  Withdrew: 'Withdrew',
+  tvl: 'TVL',
+  apy: 'APY',
 };
 module.exports = texts;

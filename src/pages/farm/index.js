@@ -199,7 +199,14 @@ export default class FarmC extends Component {
           </div>
           <div className={styles.item_data_right}>
             <Tooltip title={_('apy_info')}>
-              <div className={styles.label} style={{ cursor: 'pointer' }}>
+              <div
+                className={styles.label}
+                style={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
                 {_('apy')}
                 <CustomIcon
                   type="iconi"

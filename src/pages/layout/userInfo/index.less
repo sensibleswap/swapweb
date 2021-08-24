@@ -93,9 +93,19 @@
     line-height: 40px;
     border: 1px solid #e3e6ee;
     border-radius: 70px;
-    padding: 0 5px 0 20px;
+    padding: 0 5px 0 8px;
     display: flex;
     align-items: center;
+  }
+
+  .qr_icon {
+    padding: 5px;
+    background-color: #eeeff3;
+    border-radius: 50%;
+    margin-right: 5px;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
   }
 
   .bd {
@@ -157,26 +167,31 @@
     .ant-modal-content {
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
     }
+
     .ant-modal-content,
     .ant-modal-header {
       border-radius: 8px;
       border-bottom: none;
     }
+
     .ant-modal-body {
       padding: 25px 22px 10px;
     }
   }
+
   .title {
     font-size: 24px;
     font-weight: 500;
     margin-bottom: 25px;
     text-align: center;
   }
+
   ul,
   li {
     padding: 0;
     margin: 0 0 20px;
   }
+
   li {
     list-style-type: none;
     background-color: #eeeff3;
@@ -195,8 +210,13 @@
 }
 
 .address_qrcode {
-  :global(.ant-tooltip-inner) {
-    background-color: #fff;
+  :global {
+    .ant-tooltip-inner {
+      background-color: #fff;
+    }
+    .ant-tooltip-arrow-content {
+      background-color: #fff;
+    }
   }
 }
 
@@ -317,6 +337,7 @@
 
   .user_pop {
     height: 100vh;
+
     .app_title {
       display: flex;
     }

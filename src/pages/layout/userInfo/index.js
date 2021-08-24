@@ -244,14 +244,27 @@ export default class UserInfo extends Component {
         </div>
         <div className={styles.hd}>
           <div className={styles.left}>
-            <div className={styles.account_name}>
-              <Clipboard
-                text={userAddress}
-                label={userAddressShort}
-                style={{ marginRight: 10 }}
-              />
-              {this.renderWalletIcon()}
-            </div>
+            <Tooltip
+              overlayClassName={styles.address_qrcode}
+              title={
+                <div style={{ backgroundColor: '#fff', padding: 5 }}>
+                  <QRCode
+                    value={userAddress}
+                    style={{ width: '145px', height: '145px' }}
+                  />
+                </div>
+              }
+              placement="bottomRight"
+              trigger="hover"
+            >
+              <div className={styles.account_name}>
+                <div className={styles.qr_icon}>
+                  <img src="assets/qr.png" style={{ width: 14, height: 14 }} />
+                </div>
+                <Clipboard text={userAddress} label={userAddressShort} />
+                {this.renderWalletIcon()}
+              </div>
+            </Tooltip>
           </div>
           <div className={styles.account_icon} onClick={this.closePop}>
             <UpOutlined />
@@ -318,24 +331,10 @@ export default class UserInfo extends Component {
             onVisibleChange={this.handleVisibleChange}
             placement="bottomRight"
           >
-            <Tooltip
-              overlayClassName={styles.address_qrcode}
-              title={
-                <div style={{ backgroundColor: '#fff', padding: 5 }}>
-                  <QRCode
-                    value={userAddress}
-                    style={{ width: '145px', height: '145px' }}
-                  />
-                </div>
-              }
-              placement="bottomRight"
-              trigger="hover"
-            >
-              <div className={styles.account_trigger}>
-                <span style={{ marginRight: 10 }}>{userAddressShort} </span>
-                {this.renderWalletIcon()}
-              </div>
-            </Tooltip>
+            <div className={styles.account_trigger}>
+              <span style={{ marginRight: 10 }}>{userAddressShort} </span>
+              {this.renderWalletIcon()}
+            </div>
           </Popover>
         ) : (
           <>
@@ -387,7 +386,10 @@ export default class UserInfo extends Component {
                 BSV Testnet
                 <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
               </li>
-              <li onClick={() => this.connectWebWallet(1)}>
+              <li
+                onClick={() => this.connectWebWallet(1)}
+                style={{ fontSize: 15 }}
+              >
                 TS {_('web_wallet')}
                 {_('test_only')}
               </li>
