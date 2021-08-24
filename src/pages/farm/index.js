@@ -343,7 +343,7 @@ export default class FarmC extends Component {
               }
             >
               <div className={styles.app_title}>
-                {_('pool')}
+                {_('farm')}
                 <div className={styles.close} onClick={this.hidePannel}>
                   <CloseOutlined />
                 </div>
