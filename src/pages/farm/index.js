@@ -231,7 +231,9 @@ export default class FarmC extends Component {
         <div className={styles.item_data}>
           <div className={styles.item_data_left}>
             <div className={styles.label}>{_('tvl')}</div>
-            <div className={styles.value}>{poolTokenAmount}*lp price</div>
+            <div className={styles.value}>
+              {formatSat(poolTokenAmount)} * lp price
+            </div>
           </div>
           <div className={styles.item_data_right}>
             <Tooltip
@@ -262,7 +264,7 @@ export default class FarmC extends Component {
                 />
               </div>
             </Tooltip>
-            <div className={styles.value}>3, 000%</div>
+            <div className={styles.value}>0</div>
           </div>
         </div>
         <div className={styles.item_action}>
