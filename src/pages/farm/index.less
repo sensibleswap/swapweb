@@ -1,7 +1,7 @@
 @import '../layout.less';
 
 .content {
-  height: calc(~'100vh - 117px');
+  min-height: calc(~'100vh - 117px');
   overflow-y: auto;
   clear: both;
 }
@@ -181,11 +181,14 @@
 }
 
 @media only screen and (max-width: 767.99px) {
+  .content {
+    margin-top: 50px;
+  }
   .items {
     justify-content: center;
   }
   .right_box {
-    // height: calc(~'100% - 50px');
+    height: calc(~'100vh - 50px');
     width: 100%;
   }
 }

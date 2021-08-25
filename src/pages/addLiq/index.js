@@ -361,7 +361,7 @@ export default class Liquidity extends Component {
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
-      <div className={styles.content}>
+      <div className={styles.add_content}>
         <Spin spinning={submiting}>
           <Form onSubmit={this.preHandleSubmit} ref={this.formRef}>
             <div className={styles.title}>
@@ -752,7 +752,7 @@ export default class Liquidity extends Component {
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
-      <div className={styles.content}>
+      <div className={styles.add_content}>
         <div className={styles.finish_logo}>
           <CustomIcon
             type="iconicon-success"

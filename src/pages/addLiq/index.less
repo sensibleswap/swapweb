@@ -37,7 +37,7 @@
   }
 }
 
-.content {
+.add_content {
   padding: 0 20px 10px;
 }
 
@@ -94,6 +94,7 @@
     margin-right: 15px;
     margin-left: 10px;
   }
+
   :global(.ant-form-item) {
     margin-bottom: 0;
   }
@@ -115,6 +116,7 @@
   padding-top: 20px;
   border-top: 1px solid #eee;
 }
+
 .result_data2 {
   font-size: 16px;
   font-weight: 500;
@@ -137,6 +139,7 @@
   margin: 13px 0 0;
   width: 100%;
 }
+
 .btn_wait,
 .btn_wait:hover,
 .btn_wait:focus,
@@ -144,6 +147,7 @@
   color: #2f80ed;
   background-color: rgba(47, 128, 237, 0.2);
 }
+
 .btn_warn,
 .btn_warn:hover,
 .btn_warn:focus,
@@ -196,6 +200,7 @@
   text-align: center;
   margin-top: 20px;
 }
+
 .finish_title {
   font-size: 28px;
   font-weight: 700;
@@ -350,6 +355,7 @@
   top: 0;
   left: 0;
 }
+
 .warning {
   color: red;
   padding: 0.5em 0.5em 0;
@@ -357,13 +363,24 @@
 
 @media only screen and (max-width: 767.99px) {
   .container {
-    height: calc(~'100% - 50px');
+    min-height: calc(~'100% - 50px');
     width: 100%;
   }
-  .content {
-    padding: 20px;
+
+  .add_content {
+    padding: 0 20px 20px;
+    min-height: calc(~'100vh - 120px');
   }
+
   .selectToken_wrap {
     position: static;
+  }
+
+  .switch_icon {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+  .input {
+    width: 120px;
   }
 }
