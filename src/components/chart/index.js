@@ -3,17 +3,19 @@ import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
+import { Spin } from 'antd';
 import { formatTime, formatAmount } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
 
-const record_num = [(60 / 10) * 24];
+const d = (60 / 10) * 24;
+const record_num = [d, d * 7, d * 30];
 let option;
 
 option = {
   xAxis: {
     type: 'category',
-    data: xData,
+    data: [],
     show: false,
   },
   yAxis: {
@@ -28,7 +30,7 @@ option = {
   },
   series: [
     {
-      data: datas[0],
+      data: [],
       type: 'line',
       showSymbol: false,
       encode: {
@@ -44,10 +46,11 @@ option = {
   ],
 };
 
-@connect(({ user, loading }) => {
+@connect(({ history, loading }) => {
   const { effects } = loading;
   return {
-    ...user,
+    ...history,
+    loading: effects['history/query'],
   };
 })
 export default class Chart extends Component {
@@ -62,9 +65,7 @@ export default class Chart extends Component {
     this.init();
   }
   async init() {
-    const data = await this.initData();
     // console.log(data);
-    const [price, time] = data;
     const chartDom = document.getElementById('J_Chart');
     this.myChart = echarts.init(chartDom);
     // const { brokenLine } = this.props.pair_data;
@@ -74,7 +75,7 @@ export default class Chart extends Component {
     //     xData.push(brokenLine[item].time);
     //     data.push(brokenLine[item].amount);
     // })
-    this.switch(0);
+    await this.switch(0);
     // option.xAxis.data = time;
     // option.series[0].data = price;
     option && this.myChart.setOption(option);
@@ -88,10 +89,11 @@ export default class Chart extends Component {
     return ts;
   }
 
-  async initData(index) {
+  async getData(index) {
+    if (this.busy) return;
+    this.busy = true;
     const num = record_num[index];
-    const url =
-      'https://api.sensible.satoplay.cn/contract/swap-data/863fb03584f1d140994856ef946b567dfaa73510/d5c8c7058119c0c6a20b3b4d542be41d3518b8fa?start=690000&size=204';
+    const url = `https://api.sensible.satoplay.cn/contract/swap-data/863fb03584f1d140994856ef946b567dfaa73510/d5c8c7058119c0c6a20b3b4d542be41d3518b8fa?start=690000&size=${num}`;
 
     return new Promise((resolve, reject) => {
       fetch(url)
@@ -119,14 +121,16 @@ export default class Chart extends Component {
               time.push(formatTime(ts * 1000));
             });
           }
-
+          this.busy = false;
           resolve([price, time]);
         });
     });
   }
 
-  switch = (index) => {
-    const data = await this.initData(index);
+  switch = async (index) => {
+    const { codeHash, genesisHash, decimal } = this.props.token;
+    debugger;
+    const data = await this.getData(index);
     const [price, time] = data;
     option.xAxis.data = time;
     option.series[0].data = price;
@@ -153,7 +157,9 @@ export default class Chart extends Component {
             </span>
           ))}
         </div>
-        <div id="J_Chart" className={styles.chart}></div>
+        <Spin spinning={this.busy}>
+          <div id="J_Chart" className={styles.chart}></div>
+        </Spin>
       </>
     );
   }

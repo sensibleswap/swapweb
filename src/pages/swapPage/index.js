@@ -45,15 +45,15 @@ export default class SwapPage extends Component {
     if (loading || !token1.symbol) return <Loading />;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
-
+    console.log(token2);
     return (
       <div className={styles.content}>
         <div className={styles.chart}>
-          <div className={styles.chart_title}>
+          <span className={styles.chart_title}>
             <span>{symbol1}</span>/{symbol2}
-          </div>
+          </span>
           <div style={{ marginTop: '-20px' }}>
-            <Chart />
+            <Chart token={token2} />
           </div>
         </div>
         <h3 className={styles.title}>{_('pair_stat')}</h3>
