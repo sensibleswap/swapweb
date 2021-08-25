@@ -5,6 +5,8 @@ interface CssExports {
   app_start_btn: string;
   app_title: string;
   box: string;
+  chart: string;
+  chart_title: string;
   close: string;
   container: string;
   container_center: string;

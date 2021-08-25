@@ -6,6 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
+import Chart from 'components/chart';
 import Header from '../layout/header';
 import Swap from '../swap';
 import PairStat from '../pairStat';
@@ -47,14 +48,14 @@ export default class SwapPage extends Component {
 
     return (
       <div className={styles.content}>
-        <div className={styles.main_title}>
-          <h2>
-            <span className={styles.strong}>
-              {symbol2}/{symbol1}
-            </span>
-          </h2>
+        <div className={styles.chart}>
+          <div className={styles.chart_title}>
+            <span>{symbol1}</span>/{symbol2}
+          </div>
+          <div style={{ marginTop: '-20px' }}>
+            <Chart />
+          </div>
         </div>
-
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />
       </div>
