@@ -259,7 +259,7 @@ export default class UserInfo extends Component {
             >
               <div className={styles.account_name}>
                 <div className={styles.qr_icon}>
-                  <img src="assets/qr.png" style={{ width: 14, height: 14 }} />
+                  <img src="assets/qr.png" style={{ width: 22, height: 22 }} />
                 </div>
                 <Clipboard text={userAddress} label={userAddressShort} />
                 {this.renderWalletIcon()}
