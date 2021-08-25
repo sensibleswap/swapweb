@@ -6,17 +6,16 @@ import { isTestNet } from 'common/utils';
 export default class API {
   constructor() {
     this.baseUrl = 'https://api.tswap.io/';
-    if (isTestNet()) {
-      this.baseUrl = 'https://api.tswap.io/v2/test/';
-    }
 
     this._requestQueue = {};
   }
 
   _request(api, params = {}, method = 'GET', url = '', catchError) {
-    // const data = {
-    //     params: JSON.stringify(params)
-    // };
+    if (isTestNet()) {
+      this.baseUrl = 'https://api.tswap.io/v2/test/';
+    } else {
+      this.baseUrl = 'https://api.tswap.io/';
+    }
 
     if (url) this.baseUrl = url;
 

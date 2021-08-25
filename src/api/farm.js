@@ -3,12 +3,25 @@ import BaseAPI from './base';
 import { isTestNet } from 'common/utils';
 
 class Farm extends BaseAPI {
-  constructor(props) {
-    super(props);
-    this.baseUrl = 'https://api.tswap.io/farm/';
+  // constructor(props) {
+  //   super(props);
+  //   this.baseUrl = 'https://api.tswap.io/farm/';
+  //   if (isTestNet()) {
+  //     this.baseUrl = 'https://api.tswap.io/farm/test/';
+  //   }
+  // }
+
+  _request(api, params = {}, method = 'GET', url = '', catchError) {
     if (isTestNet()) {
       this.baseUrl = 'https://api.tswap.io/farm/test/';
+    } else {
+      this.baseUrl = 'https://api.tswap.io/farm';
     }
+
+    if (url) this.baseUrl = url;
+
+    let api_url = this.baseUrl + api;
+    return this.sendRequest(api_url, params, method, catchError);
   }
 
   queryAllPairs(address) {
