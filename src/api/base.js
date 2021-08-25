@@ -5,7 +5,7 @@ import { isTestNet } from 'common/utils';
 
 export default class API {
   constructor() {
-    this.baseUrl = 'https://api.tswap.io/';
+    this.baseUrl = 'https://api.tswap.io/v2/';
 
     this._requestQueue = {};
   }
@@ -14,7 +14,7 @@ export default class API {
     if (isTestNet()) {
       this.baseUrl = 'https://api.tswap.io/v2/test/';
     } else {
-      this.baseUrl = 'https://api.tswap.io/';
+      this.baseUrl = 'https://api.tswap.io/v2/';
     }
 
     if (url) this.baseUrl = url;
