@@ -3,13 +3,20 @@ import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
-import { Spin } from 'antd';
+import { Spin, message } from 'antd';
 import { formatTime, formatAmount } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
 
-const d = (60 / 10) * 24;
-const record_num = [d, d * 7, d * 30];
+const hashes = {
+  'bsv-boex': {
+    codeHash: 'c833f2ca7fae0be5d2b3e893794d5c81be017c66',
+    genesisHash: '7286ee5b042662fb79b826e08e0f1398dd0b2a0d',
+    decimal: 0,
+  },
+};
+
+const record_num = [100, 500, 2000];
 let option;
 
 option = {
@@ -46,11 +53,12 @@ option = {
   ],
 };
 
-@connect(({ history, loading }) => {
+@connect(({ pair, history, loading }) => {
   const { effects } = loading;
   return {
+    ...pair,
     ...history,
-    loading: effects['history/query'],
+    loading: effects['history/query'] || effects['pair/getAllPairs'],
   };
 })
 export default class Chart extends Component {
@@ -81,56 +89,51 @@ export default class Chart extends Component {
     option && this.myChart.setOption(option);
   }
 
-  timestamp(height) {
-    const ts =
-      3 * 3300 +
-      1626957491 +
-      ((height - 697021) * (1629015011 - 1626957491)) / (700436 - 697021.0);
-    return ts;
-  }
-
   async getData(index) {
-    if (this.busy) return;
-    this.busy = true;
-    const num = record_num[index];
-    const url = `https://api.sensible.satoplay.cn/contract/swap-data/863fb03584f1d140994856ef946b567dfaa73510/d5c8c7058119c0c6a20b3b4d542be41d3518b8fa?start=690000&size=${num}`;
-
-    return new Promise((resolve, reject) => {
-      fetch(url)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log(data);
-          let time = [],
-            price = [];
-          if (data.code) {
-            message.error(data.msg);
-          } else {
-            const new_data = data.data.reverse();
-            new_data.forEach((item, index) => {
-              const { outToken1Amount, outToken2Amount, height } = item;
-              price.push(
-                formatAmount(
-                  outToken1Amount / (outToken2Amount / 100000000),
-                  8,
-                ),
-              );
-              const ts = height === '4294967295' ? 0 : this.timestamp(height);
-
-              time.push(formatTime(ts * 1000));
-            });
-          }
-          this.busy = false;
-          resolve([price, time]);
-        });
+    const size = record_num[index];
+    if (!hashes[this.props.currentPair]) return [];
+    const { codeHash, genesisHash, decimal } = hashes[this.props.currentPair];
+    const res = await this.props.dispatch({
+      type: 'history/query',
+      payload: {
+        codeHash,
+        genesisHash,
+        size,
+        index,
+      },
     });
+
+    if (res.code) {
+      message.error(res.msg);
+      return false;
+    }
+    if (!res) {
+      return false;
+    }
+
+    let time = [],
+      price = [];
+    res.forEach((item, index) => {
+      const { outToken1Amount, outToken2Amount, timestamp } = item;
+      price.push(
+        formatAmount(
+          outToken2Amount /
+            Math.pow(10, decimal) /
+            (outToken1Amount / Math.pow(10, 8)),
+          decimal,
+        ),
+      );
+
+      time.push(formatTime(timestamp * 1000));
+    });
+
+    return [price, time];
   }
 
   switch = async (index) => {
-    const { codeHash, genesisHash, decimal } = this.props.token;
-    debugger;
     const data = await this.getData(index);
+    if (!data) return;
+
     const [price, time] = data;
     option.xAxis.data = time;
     option.series[0].data = price;
@@ -144,20 +147,20 @@ export default class Chart extends Component {
     const { chart_index } = this.state;
     return (
       <>
-        <div className={styles.trigger_wrap}>
-          {['1D', '1W', '1M'].map((item, index) => (
-            <span
-              onClick={() => this.switch(index)}
-              key={item}
-              className={
-                index === chart_index ? styles.current_trigger : styles.trigger
-              }
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-        <Spin spinning={this.busy}>
+        {/*<div className={styles.trigger_wrap}>
+                    {['1D', '1W', '1M'].map((item, index) => (
+                        <span
+                            onClick={() => this.switch(index)}
+                            key={item}
+                            className={
+                                index === chart_index ? styles.current_trigger : styles.trigger
+                            }
+                        >
+                            {item}
+                        </span>
+                    ))}
+                        </div>*/}
+        <Spin spinning={this.props.loading}>
           <div id="J_Chart" className={styles.chart}></div>
         </Spin>
       </>
