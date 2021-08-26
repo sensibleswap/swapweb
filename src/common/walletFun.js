@@ -81,7 +81,6 @@ const exitAccount = () => {
 };
 const transferBsv = (type = 1, { address, amount }, noBroadcast = false) => {
   if (type === 1) {
-    console.log('address, amount, noBroadcast', address, amount, noBroadcast);
     return webWallet.transferBsv({
       noBroadcast,
       receivers: [

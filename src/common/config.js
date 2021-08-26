@@ -35,3 +35,5 @@ export const slippage_data = {
 
 export const feeRate = 0.0025;
 export const FEE_FACTOR = 10000;
+
+export const MINAMOUNT = 1000;
