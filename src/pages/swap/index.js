@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
-import { slippage_data, feeRate, FEE_FACTOR } from 'common/config';
+import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
 import CustomIcon from 'components/icon';
@@ -598,8 +598,8 @@ export default class Swap extends Component {
         total = userTotal;
         amount = BigInt(userTotal) - BigInt(txFee);
       }
-      if (amount < 10000) {
-        return message.error(_('lac_balance'));
+      if (amount < MINAMOUNT) {
+        return message.error(_('lower_amount', MINAMOUNT));
       }
       const ts_res = await dispatch({
         type: 'user/transferBsv',
