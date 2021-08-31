@@ -5,6 +5,7 @@ import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Pair from 'components/pair';
+import Chart from 'components/chart';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import Notice from 'components/notice';
@@ -51,10 +52,11 @@ export default class Pool extends Component {
     const symbol2 = token2.symbol.toUpperCase();
     return (
       <div className={styles.content}>
+        <Chart type="pool" />
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={40} />
+              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
             </div>
             <div className={styles.name}>
               LP({symbol2}/{symbol1})

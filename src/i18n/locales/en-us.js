@@ -194,7 +194,7 @@ const texts = {
   deposit_title: 'Deposit Web Wallet',
   withdraw_title: 'Withdraw',
   availabel: 'Availabel',
-  amount: 'Amount',
+  money: 'Amount',
   address: 'Address',
   paymail: 'paymail',
   all_balance: 'Max',
@@ -247,5 +247,6 @@ const texts = {
   apy: 'APY',
   yield_tips: 'your withdrawable yield: %s',
   harvest_success: 'Yield Withdrawal successful',
+  amount: 'Amount',
 };
 module.exports = texts;
