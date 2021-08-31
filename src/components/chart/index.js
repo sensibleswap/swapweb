@@ -40,9 +40,15 @@ export default class Chart extends Component {
       tooltip: {
         trigger: 'axis',
         formatter: function (params) {
-          return `${_('date')}: ${params[0].name} <br />${
-            props.type === 'pool' ? _('amount') : _('price')
-          }: ${params[0].data} BSV`;
+          if (props.type === 'pool') {
+            return `${_('date')}: ${params[0].name} <br />${_('amount')}: ${
+              params[0].data
+            } BSV<br />`;
+          } else {
+            return `${_('date')}: ${params[0].name} <br />${_('price')}: ${
+              params[0].data
+            } BSV<br />${_('amount')}: ${params[1].data} BSV`;
+          }
         },
       },
       series: [
@@ -57,6 +63,20 @@ export default class Chart extends Component {
           },
           lineStyle: {
             color: '#2BB696',
+            width: 3,
+          },
+        },
+        {
+          data: [],
+          type: 'line',
+          showSymbol: false,
+          encode: {
+            x: 'type',
+            y: 'data',
+            tooltip: ['Income'],
+          },
+          lineStyle: {
+            color: '#BB6BD9',
             width: 3,
           },
         },
@@ -82,6 +102,9 @@ export default class Chart extends Component {
     // option.xAxis.data = time;
     // option.series[0].data = price;
     this.option && this.myChart.setOption(this.option);
+    this.myChart.on('click', function (params) {
+      console.log(params);
+    });
   }
   componentWillUnmount() {
     this.myChart.dispose();
@@ -136,12 +159,19 @@ export default class Chart extends Component {
     const [price, amount, time] = data;
     const { type } = this.props;
     this.option.xAxis.data = time;
-    this.option.series[0].data = type === 'pool' ? amount : price;
+    if (type === 'pool') {
+      this.option.series[0].data = amount;
+    } else {
+      this.option.series[0].data = price;
+      this.option.series[1].data = amount;
+    }
+
     this.myChart.setOption(this.option);
     this.setState({
       chart_index: index,
     });
   };
+
   renderMenu = () => {
     const { allPairs, currentPair } = this.props;
 
