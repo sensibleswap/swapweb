@@ -15,7 +15,7 @@ class Farm extends BaseAPI {
     if (isTestNet()) {
       this.baseUrl = 'https://api.tswap.io/farm/test/';
     } else {
-      this.baseUrl = 'https://api.tswap.io/farm';
+      this.baseUrl = 'https://api.tswap.io/farm/';
     }
 
     if (url) this.baseUrl = url;

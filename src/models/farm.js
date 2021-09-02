@@ -152,7 +152,16 @@ export default {
           ...action.payload,
         };
       }
-      const { token, lockedTokenAmount, rewardToken } = allPairs[currentPair];
+      let token = {},
+        lockedTokenAmount = 0,
+        rewardToken = {};
+      if (allPairs[currentPair]) {
+        const currentPairObj = allPairs[currentPair];
+        token = currentPairObj.token;
+        lockedTokenAmount = currentPairObj.lockedTokenAmount;
+        rewardToken = currentPairObj.rewardToken;
+      }
+
       const pairName = currentPair.toUpperCase().split('-');
       const [symbol1, symbol2] = pairName;
       return {
