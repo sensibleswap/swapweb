@@ -10,11 +10,15 @@ import { Bsv } from '@volt-wallet/sdk';
 // });
 
 const bsv = new Bsv({
-  iframeUrl: 'https://sdkpage.volt.id/iframe/',
-  popupUrl: 'https://sdkpage.volt.id/popup/',
+  iframeUrl: 'http://47.108.83.26:9000/iframe/',
+  popupUrl: 'http://47.108.83.26:9000/popup/',
+  // apiPrefix: {
+  //   tls: true,
+  //   endpoint: 'volt.id',
+  // },
   apiPrefix: {
-    tls: true,
-    endpoint: 'volt.id',
+    tls: false,
+    endpoint: '47.108.83.26:7001',
   },
 });
 

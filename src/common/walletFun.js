@@ -93,6 +93,7 @@ const transferBsv = (type = 1, { address, amount }, noBroadcast = false) => {
   }
   if (type === 2) {
     return voltWallet.transfer({
+      noBroadcast,
       type: 'bsv',
       data: {
         amountExact: false,
@@ -170,6 +171,7 @@ const transferAll = (type = 1, param = []) => {
   }
   if (type === 2) {
     let data = [];
+    let noBroadcast = false;
     param.forEach((item) => {
       const { address, amount, codehash, genesis } = item;
       if (item.type === 'bsv') {
@@ -190,9 +192,11 @@ const transferAll = (type = 1, param = []) => {
           },
         });
       }
+      noBroadcast = item.noBroadcast;
     });
 
     return voltWallet.batchTransfer({
+      noBroadcast,
       errorBreak: true,
       list: data,
     });
@@ -202,6 +206,10 @@ const transferAll = (type = 1, param = []) => {
 const signTx = (type, param) => {
   if (type === 1) {
     return webWallet.signTx(param);
+  }
+
+  if (type === 2) {
+    return voltWallet.signTx(params);
   }
 };
 export default {

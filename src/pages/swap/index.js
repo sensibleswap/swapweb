@@ -680,8 +680,8 @@ export default class Swap extends Component {
         data: swap_data,
       },
     });
-
-    if (swap_res.code && !swap_res.data.txid) {
+    // console.log(swap_res);
+    if (swap_res.code && !swap_res.data) {
       return message.error(swap_res.msg);
     }
     message.success('success');

@@ -277,18 +277,6 @@ export default class Liquidity extends Component {
         </div>
 
         <div className={styles.info_item}>
-          <div className={styles.info_label}>
-            {_('pooled', token1.symbol.toUpperCase())}
-          </div>
-          <div className={styles.info_value}>{total_origin_amount}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>
-            {_('pooled', token2.symbol.toUpperCase())}
-          </div>
-          <div className={styles.info_value}>{total_aim_amount}</div>
-        </div>
-        <div className={styles.info_item}>
           <div className={styles.info_label}>{_('your_share')}</div>
           <div className={styles.info_value}>{share}%</div>
         </div>
