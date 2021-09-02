@@ -490,6 +490,13 @@ export default class Swap extends Component {
     } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
       // 未输入数量
       return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+    } else if (parseFloat(origin_amount) <= formatSat(MINAMOUNT)) {
+      // 数额太小
+      return (
+        <Button className={styles.btn_wait}>
+          {_('lower_amount', MINAMOUNT)}
+        </Button>
+      );
     } else if (parseFloat(origin_amount) > parseFloat(balance || 0)) {
       // 余额不足
       return (

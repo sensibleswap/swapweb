@@ -682,6 +682,7 @@ export default class Liquidity extends Component {
         ],
       },
     });
+    // console.log(tx_res)
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }
@@ -707,7 +708,7 @@ export default class Liquidity extends Component {
         data: liq_data,
       },
     });
-
+    // console.log(addliq_res)
     if (addliq_res.code && !addliq_res.data.txid) {
       return message.error(addliq_res.msg);
     }

@@ -312,7 +312,7 @@ export default class UserInfo extends Component {
       return (
         <CustomIcon
           type="iconicon-volt-tokenswap-circle"
-          style={{ fontSize: 30 }}
+          style={{ fontSize: 30, marginLeft: 10 }}
         />
       );
     }
