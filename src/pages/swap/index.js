@@ -489,6 +489,11 @@ export default class Swap extends Component {
     } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
       // 未输入数量
       return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+    } else if (parseFloat(origin_amount) <= formatSat(1000)) {
+      // 数额太小
+      return (
+        <Button className={styles.btn_wait}>{_('lower_amount', 1000)}</Button>
+      );
     } else if (parseFloat(origin_amount) > parseFloat(balance || 0)) {
       // 余额不足
       return (
@@ -598,8 +603,8 @@ export default class Swap extends Component {
         amount = BigInt(userTotal) - BigInt(txFee);
       }
 
-      if (amount < 10000) {
-        return message.error(_('lac_balance'));
+      if (amount < 1000) {
+        return message.error(_('lower_amount', 1000));
       }
       const ts_res = await dispatch({
         type: 'user/transferBsv',
