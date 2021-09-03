@@ -104,9 +104,10 @@ export default class Chart extends Component {
     // option.xAxis.data = time;
     // option.series[0].data = price;
     this.option && this.myChart.setOption(this.option);
+    const _self = this;
     this.myChart.on('mouseover', function (params) {
       console.log(params);
-      this.setState({
+      _self.setState({
         cur_price: params.data,
         cur_amount: params.value,
       });
@@ -226,7 +227,7 @@ export default class Chart extends Component {
   };
 
   render() {
-    const { chart_index } = this.state;
+    const { chart_index, cur_amount, cur_price } = this.state;
     const { token1, token2 } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
@@ -242,6 +243,11 @@ export default class Chart extends Component {
             />
           </span>
         </Dropdown>
+        <div className={styles.info}>
+          <div>
+            {_('price')}: {cur_price}
+          </div>
+        </div>
         {/*<div>
                     <div className={styles.trigger_wrap}>
                     {['1D', '1W', '1M'].map((item, index) => (
