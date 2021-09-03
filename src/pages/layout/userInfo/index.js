@@ -1,6 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
+import querystring from 'querystringify';
 import { Button, Popover, Modal, message, Tooltip } from 'antd';
 import {
   UpOutlined,
@@ -18,6 +19,8 @@ import { isTestNet } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
+
+const query = querystring.parse(window.location.search);
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -382,10 +385,13 @@ export default class UserInfo extends Component {
                   style={{ fontSize: 35 }}
                 />
               </li>
-              <li onClick={() => this.connectWebWallet(2, 'testnet')}>
-                BSV Testnet
-                <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
-              </li>
+
+              {query.env === 'local' && (
+                <li onClick={() => this.connectWebWallet(2, 'testnet')}>
+                  BSV Testnet
+                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
+                </li>
+              )}
               <li
                 onClick={() => this.connectWebWallet(1)}
                 style={{ fontSize: 15 }}
