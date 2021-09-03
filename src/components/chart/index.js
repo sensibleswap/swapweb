@@ -26,6 +26,8 @@ export default class Chart extends Component {
     super(props);
     this.state = {
       chart_index: 0,
+      cur_price: '',
+      cur_amount: '',
     };
     this.option = {
       xAxis: {
@@ -102,8 +104,12 @@ export default class Chart extends Component {
     // option.xAxis.data = time;
     // option.series[0].data = price;
     this.option && this.myChart.setOption(this.option);
-    this.myChart.on('click', function (params) {
+    this.myChart.on('mouseover', function (params) {
       console.log(params);
+      this.setState({
+        cur_price: params.data,
+        cur_amount: params.value,
+      });
     });
   }
   componentWillUnmount() {
