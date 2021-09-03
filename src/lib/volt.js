@@ -9,23 +9,23 @@ import { Bsv } from '@volt-wallet/sdk';
 //   },
 // });
 
-const bsv = new Bsv({
-  iframeUrl: 'https://sdkpage.volt.id/test/iframe/', // iframe 页面地址, 测试时使用这个地址
-  popupUrl: 'https://sdkpage.volt.id/test/popup/', // popup 页面地址, 测试时使用这个地址
-  apiPrefix: {
-    tls: true, // 后端接口是否 https
-    endpoint: 'volt.id', // 后端接口地址, 测试时使用这个地址
-  },
-});
-
 // const bsv = new Bsv({
-//   iframeUrl: 'https://sdkpage.volt.id/iframe/',
-//   popupUrl: 'https://sdkpage.volt.id/popup/',
+//   iframeUrl: 'https://sdkpage.volt.id/test/iframe/', // iframe 页面地址, 测试时使用这个地址
+//   popupUrl: 'https://sdkpage.volt.id/test/popup/', // popup 页面地址, 测试时使用这个地址
 //   apiPrefix: {
-//     tls: true,
-//     endpoint: 'volt.id',
+//     tls: true, // 后端接口是否 https
+//     endpoint: 'volt.id', // 后端接口地址, 测试时使用这个地址
 //   },
 // });
+
+const bsv = new Bsv({
+  iframeUrl: 'https://sdkpage.volt.id/iframe/',
+  popupUrl: 'https://sdkpage.volt.id/popup/',
+  apiPrefix: {
+    tls: true,
+    endpoint: 'volt.id',
+  },
+});
 
 // bsv.enableDebug(true)
 
