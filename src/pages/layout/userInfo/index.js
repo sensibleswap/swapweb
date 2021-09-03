@@ -312,7 +312,7 @@ export default class UserInfo extends Component {
       return (
         <CustomIcon
           type="iconicon-volt-tokenswap-circle"
-          style={{ fontSize: 30 }}
+          style={{ fontSize: 30, marginLeft: 10 }}
         />
       );
     }
@@ -375,7 +375,7 @@ export default class UserInfo extends Component {
           >
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              {/*<li onClick={() => this.connectWebWallet(2, 'mainnet')}>
+              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
                 Volt {_('web_wallet')}
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
@@ -385,7 +385,7 @@ export default class UserInfo extends Component {
               <li onClick={() => this.connectWebWallet(2, 'testnet')}>
                 BSV Testnet
                 <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
-        </li>*/}
+              </li>
               <li
                 onClick={() => this.connectWebWallet(1)}
                 style={{ fontSize: 15 }}

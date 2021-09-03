@@ -637,10 +637,6 @@ export default class Liquidity extends Component {
       _origin_amount = token1AddAmount;
       _aim_amount = token2AddAmount;
       // if (new_origin_amount !== origin_amount) {
-      this.setState({
-        _origin_amount: _origin_amount.toString(),
-        _aim_amount: _aim_amount.toString(),
-      });
       // return this.showModal({
       //   origin_amount,
       //   aim_amount,
@@ -650,6 +646,10 @@ export default class Liquidity extends Component {
       // }
     }
 
+    this.setState({
+      _origin_amount: _origin_amount.toString(),
+      _aim_amount: _aim_amount.toString(),
+    });
     this.handleSubmit(data, _origin_amount, _aim_amount);
   };
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
@@ -682,6 +682,7 @@ export default class Liquidity extends Component {
         ],
       },
     });
+    // console.log(tx_res)
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }
@@ -707,7 +708,7 @@ export default class Liquidity extends Component {
         data: liq_data,
       },
     });
-
+    // console.log(addliq_res)
     if (addliq_res.code && !addliq_res.data.txid) {
       return message.error(addliq_res.msg);
     }

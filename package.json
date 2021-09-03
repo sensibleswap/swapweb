@@ -22,7 +22,7 @@
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "^1.8.2",
-    "@volt-wallet/sdk": "^1.0.7",
+    "@volt-wallet/sdk": "^1.4.0",
     "bignumber.js": "^9.0.1",
     "bsv-web-wallet": "github:sensibleswap/bsv-web-wallet",
     "echarts": "^5.1.2",
