@@ -233,7 +233,7 @@ const texts = {
   farm_item_desc:
     'Provide liquidity and deposit your LP %1 token to earn Swap token (TokenSwap utility token)',
   apy_info:
-    'APY =(Fee + (%1 payout)* %1 price) *365/Total deposited LP token value(USDT)',
+    'APY = rewardTokenAmountPerBlock * 144 * 365 * lockedTokenAmount / poolTokenAmount',
   deposit: 'Deposit',
   earn: 'Earn',
   deposit_success: 'Deposit successful',

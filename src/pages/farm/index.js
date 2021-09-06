@@ -202,12 +202,16 @@ export default class FarmC extends Component {
     const { symbol1, symbol2 } = this.props;
     const {
       poolTokenAmount,
+      rewardAmountPerBlock,
+      lockedTokenAmount = 0,
       rewardTokenAmount = 0,
       addressCount,
       rewardToken,
     } = data;
     const { current_item } = this.state;
     const _rewardTokenAmount = formatSat(rewardTokenAmount);
+    const _yield =
+      (rewardAmountPerBlock * 144 * 365 * lockedTokenAmount) / poolTokenAmount;
     return (
       <div
         className={
@@ -264,7 +268,7 @@ export default class FarmC extends Component {
                 />
               </div>
             </Tooltip>
-            <div className={styles.value}>0</div>
+            <div className={styles.value}>{_yield}</div>
           </div>
         </div>
         <div className={styles.item_action}>
