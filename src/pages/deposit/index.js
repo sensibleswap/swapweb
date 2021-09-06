@@ -171,7 +171,7 @@ export default class Deposit extends Component {
           >
             <div className={styles.pair_left}>
               <div className={styles.icon} style={{ marginRight: 10 }}>
-                <TokenLogo name="tsc" size={25} />
+                <TokenLogo name={symbol2} size={25} />
               </div>
               <div className={styles.name} style={{ fontSize: 22 }}>
                 {rewardToken.symbol}
