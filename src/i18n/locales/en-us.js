@@ -72,7 +72,7 @@ const texts = {
   input: 'Input',
   balance: 'Balance',
   pool_share: 'Prices and pool share',
-  pooled: 'Pooled',
+  pooled: 'Pooled %s',
   your_share: 'Your share of Pool',
   select_a_token_pair: 'Select a token pair',
   supply_liq: 'Supply liquidity',
@@ -233,7 +233,7 @@ const texts = {
   farm_item_desc:
     'Provide liquidity and deposit your LP %1 token to earn Swap token (TokenSwap utility token)',
   apy_info:
-    'APY = rewardTokenAmountPerBlock * 144 * 365 * lockedTokenAmount / poolTokenAmount',
+    'APY = rewardTokenAmountPerBlock * 144 * 365 *  BOEX price / TVL * 100%',
   deposit: 'Deposit',
   earn: 'Earn',
   deposit_success: 'Deposit successful',

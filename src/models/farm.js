@@ -15,6 +15,7 @@ export default {
     symbol2: '',
     lptoken: {},
     rewardToken: {},
+    currentPairYield: 0,
   },
 
   subscriptions: {
@@ -54,7 +55,10 @@ export default {
           currentPair,
         },
       });
-      return data;
+      return {
+        data,
+        currentPair,
+      };
     },
 
     *updatePairData({ payload }, { call, put, select }) {

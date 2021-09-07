@@ -5,6 +5,7 @@ import { Button, Tooltip, message, Spin, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
+import pairApi from '../../api/pair';
 import { jc, formatSat, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
@@ -13,6 +14,7 @@ import CustomIcon from 'components/icon';
 import Header from '../layout/header';
 import Deposit from '../deposit';
 import Withdraw from '../withdraw';
+import Loading from 'components/loading';
 // import debug from 'debug';
 import styles from './index.less';
 import _ from 'i18n';
@@ -41,6 +43,7 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
+      pairData: {},
     };
   }
 
@@ -57,7 +60,13 @@ export default class FarmC extends Component {
         address: userAddress,
       },
     });
+    const { currentPair } = this.props;
 
+    const res = await pairApi.querySwapInfo(currentPair.replace('-v2', ''));
+
+    this.setState({
+      pairData: res.data,
+    });
     // let { currentPair } = this.props;
     // log('currentPair:', currentPair);
     // if (currentPair) {
@@ -200,25 +209,55 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { symbol1, symbol2 } = this.props;
+    const { symbol1, symbol2, loading, dispatch } = this.props;
     const {
       poolTokenAmount,
       rewardAmountPerBlock,
-      lockedTokenAmount = 0,
       rewardTokenAmount = 0,
       addressCount,
       rewardToken,
     } = data;
-    const { current_item } = this.state;
-    const _rewardTokenAmount = formatSat(rewardTokenAmount);
-    let _yield = BigNumber(rewardAmountPerBlock)
-      .div(Math.pow(10, rewardToken.decimal))
+    const { decimal } = rewardToken;
+    const { current_item, pairData } = this.state;
+    if (loading || !pairData.swapLpAmount) {
+      return null;
+    }
+    const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
+    const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
+    const bsv_amount = formatSat(swapToken1Amount);
+    const token_amount = formatSat(swapToken2Amount, decimal);
+    const lp_amount = formatSat(swapLpAmount, decimal);
+    const lp_price = BigNumber(bsv_amount * 2).div(lp_amount);
+    const token_price = BigNumber(bsv_amount).div(token_amount);
+    const reword_amount = formatSat(rewardAmountPerBlock, decimal);
+    const _total = formatAmount(
+      BigNumber(formatSat(poolTokenAmount, decimal)).multipliedBy(lp_price),
+      8,
+    );
+    let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
       .multipliedBy(365)
-      .multipliedBy(lockedTokenAmount || 0)
-      .div(poolTokenAmount);
+      .multipliedBy(token_price)
+      .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
+      .multipliedBy(100);
+    // console.log('bsv_amount:', formatAmount(bsv_amount, 8),
+    // 'token_amount:', formatAmount(token_amount, decimal),
+    // 'lp_amount:', formatAmount(lp_amount, decimal),
+    // 'lp_price:', formatAmount(lp_price, 8),
+    // 'token_price:', formatAmount(token_price, 8),
+    // 'reword_amount:', formatAmount(reword_amount,decimal),
+    // 'poolTokenAmount:', poolTokenAmount);
 
-    _yield = formatAmount(_yield, 4);
+    _yield = formatAmount(_yield, 2);
+    // console.log('reword_amount * 144 * 365 * token_price / (poolTokenAmount * lp_price) =',_yield)
+    if (current_item === index) {
+      dispatch({
+        type: 'farm/save',
+        payload: {
+          currentPairYield: _yield,
+        },
+      });
+    }
 
     return (
       <div
@@ -243,9 +282,7 @@ export default class FarmC extends Component {
         <div className={styles.item_data}>
           <div className={styles.item_data_left}>
             <div className={styles.label}>{_('tvl')}</div>
-            <div className={styles.value}>
-              {formatSat(poolTokenAmount)} * lp price
-            </div>
+            <div className={styles.value}>{_total} BSV</div>
           </div>
           <div className={styles.item_data_right}>
             <Tooltip
@@ -276,7 +313,7 @@ export default class FarmC extends Component {
                 />
               </div>
             </Tooltip>
-            <div className={styles.value}>{_yield}</div>
+            <div className={styles.value}>{_yield}%</div>
           </div>
         </div>
         <div className={styles.item_action}>
@@ -299,7 +336,7 @@ export default class FarmC extends Component {
                   className={styles.value}
                   style={{ fontSize: 12, color: '#2F80ED' }}
                 >
-                  {formatAmount(_rewardTokenAmount, 4)}
+                  {formatAmount(_rewardTokenAmount, rewardToken.decimal)}
                 </div>
               </Tooltip>
             </div>

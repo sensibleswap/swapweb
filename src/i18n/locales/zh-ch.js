@@ -227,8 +227,7 @@ const texts = {
   crop: '收益',
   harvest: '提取',
   farm_item_desc: '给%1交易对提供流动性，将LP %1锁仓赚取 %2',
-  apy_info:
-    'APY = 每区块奖励 * 144 * 365 * 个人锁仓LP token / LP token锁仓总额',
+  apy_info: 'APY = (每区块奖励 * 144 * 365) * 收益token价格/锁仓总价值 * 100%',
   deposit: '锁仓',
   earn: '赚取',
   deposit_success: '锁仓成功',
