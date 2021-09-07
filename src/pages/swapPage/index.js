@@ -46,7 +46,7 @@ export default class SwapPage extends Component {
     // console.log(token2);
     return (
       <div className={styles.content}>
-        <Chart />
+        <Chart type="swap" />
 
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />

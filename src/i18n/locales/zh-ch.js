@@ -217,7 +217,7 @@ const texts = {
   notice720:
     'tswap已经升级完毕，同时开通了新的mc/bsv交易对，如果在2021年7月22日16时前还有流动性在旧的bsv-mc流动池中没有提取的，请前往https://v1.tswap.io进行提取流动性。未提取流动性的用户根据在流动池中的比例将获得了新的mc token的空投。因此旧池˙中提取流动性出来的只有bsv，旧的mc token已停止使用。',
 
-  cant_remove: '你没用可移除的流动性资产',
+  cant_remove: '你没有可移除的流动性资产',
   test_only: '（建议仅供测试）',
 
   farm: '流动性挖矿',
@@ -228,7 +228,7 @@ const texts = {
   harvest: '提取',
   farm_item_desc: '给%1交易对提供流动性，将LP %1锁仓赚取 %2',
   apy_info:
-    'APY =(手续费收入 + (%1收益)* %1价格) *365/LP token锁仓总价值(USDT)',
+    'APY = 每区块奖励 * 144 * 365 * 个人锁仓LP token / LP token锁仓总额',
   deposit: '锁仓',
   earn: '赚取',
   deposit_success: '锁仓成功',
@@ -246,5 +246,6 @@ const texts = {
   yield_tips: '可提取的收益: %s',
   harvest_success: '收益提取成功',
   amount: '数量',
+  volume: '交易量',
 };
 module.exports = texts;

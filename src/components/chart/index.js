@@ -11,8 +11,6 @@ import TokenPair from 'components/tokenPair';
 import styles from './index.less';
 import _ from 'i18n';
 
-const record_num = [100, 500, 2000];
-
 @connect(({ pair, history, loading }) => {
   const { effects } = loading;
   return {
@@ -30,6 +28,11 @@ export default class Chart extends Component {
       cur_amount: '',
     };
     this.option = {
+      grid: {
+        bottom: 30,
+        left: 20,
+        right: 20,
+      },
       xAxis: {
         type: 'category',
         data: [],
@@ -47,9 +50,9 @@ export default class Chart extends Component {
               params[0].data
             } BSV<br />`;
           } else {
-            return `${_('date')}: ${params[0].name} <br />${_('price')}: ${
-              params[0].data
-            } BSV<br />${_('amount')}: ${params[1].data} BSV`;
+            return `${_('date')}: ${params[0].name} <br />${_('volume')}: ${
+              params[1].data
+            } BSV<br />${_('price')}: ${params[0].data} BSV`;
           }
         },
       },
@@ -65,7 +68,7 @@ export default class Chart extends Component {
           },
           lineStyle: {
             color: '#2BB696',
-            width: 3,
+            width: 1,
           },
         },
         {
@@ -79,7 +82,7 @@ export default class Chart extends Component {
           },
           lineStyle: {
             color: '#BB6BD9',
-            width: 3,
+            width: 1,
           },
         },
       ],
@@ -90,45 +93,39 @@ export default class Chart extends Component {
     this.init();
   }
   async init() {
-    // console.log(data);
     const chartDom = document.getElementById('J_Chart');
     this.myChart = echarts.init(chartDom);
-    // const { brokenLine } = this.props.pair_data;
-    // const xData = [];
-    // const data = [];
-    // brokenLine && Object.keys(brokenLine).forEach(item => {
-    //     xData.push(brokenLine[item].time);
-    //     data.push(brokenLine[item].amount);
-    // })
     await this.switch(0);
-    // option.xAxis.data = time;
-    // option.series[0].data = price;
+
     this.option && this.myChart.setOption(this.option);
-    const _self = this;
-    this.myChart.on('mouseover', function (params) {
-      console.log(params);
-      _self.setState({
-        cur_price: params.data,
-        cur_amount: params.value,
-      });
-    });
-  }
-  componentWillUnmount() {
-    this.myChart.dispose();
   }
 
-  async getData(index) {
-    const size = record_num[index];
-    const { currentPair, allPairs, token2 } = this.props;
+  switch = async () => {
+    const data = await this.getData();
+    if (!data) return;
+
+    const [price, amount, volumn, time] = data;
+    const { type } = this.props;
+    this.option.xAxis.data = time;
+    if (type === 'pool') {
+      this.option.series[0].data = amount;
+    } else {
+      this.option.series[0].data = price;
+      this.option.series[1].data = volumn;
+    }
+
+    this.myChart.setOption(this.option);
+  };
+
+  async getData() {
+    const { currentPair, allPairs, type } = this.props;
     const { swapCodeHash, swapID } = allPairs[currentPair];
-    const { decimal } = token2;
     const res = await this.props.dispatch({
       type: 'history/query',
       payload: {
         codeHash: swapCodeHash,
         genesisHash: swapID,
-        size,
-        index,
+        type,
       },
     });
 
@@ -139,45 +136,28 @@ export default class Chart extends Component {
 
     let time = [],
       price = [],
-      amount = [];
-    res.length > 0 &&
-      res.forEach((item, index) => {
-        const { outToken1Amount, outToken2Amount, timestamp } = item;
-        price.push(
-          formatAmount(
-            outToken1Amount /
-              Math.pow(10, 8) /
-              (outToken2Amount / Math.pow(10, decimal)),
-            8,
-          ),
-        );
-        amount.push(formatAmount((outToken1Amount / Math.pow(10, 8)) * 2, 8));
+      amount = [],
+      volumn = [];
+    if (res.length > 0) {
+      if (type === 'pool') {
+        res.forEach((item, index) => {
+          const { outToken1Amount, timestamp } = item;
+          amount.push(formatAmount((outToken1Amount / Math.pow(10, 8)) * 2, 8));
+          time.push(formatTime(timestamp * 1000));
+        });
+      } else {
+        res.forEach((item, index) => {
+          const { minPrice, maxPrice, token1Volume, timestamp } = item;
+          price.push(formatAmount((minPrice + maxPrice) / 2, 8));
+          volumn.push(formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8));
 
-        time.push(formatTime(timestamp * 1000));
-      });
-
-    return [price, amount, time];
-  }
-
-  switch = async (index) => {
-    const data = await this.getData(index);
-    if (!data) return;
-
-    const [price, amount, time] = data;
-    const { type } = this.props;
-    this.option.xAxis.data = time;
-    if (type === 'pool') {
-      this.option.series[0].data = amount;
-    } else {
-      this.option.series[0].data = price;
-      this.option.series[1].data = amount;
+          time.push(formatTime(timestamp * 1000));
+        });
+      }
     }
 
-    this.myChart.setOption(this.option);
-    this.setState({
-      chart_index: index,
-    });
-  };
+    return [price, amount, volumn, time];
+  }
 
   renderMenu = () => {
     const { allPairs, currentPair } = this.props;
@@ -188,7 +168,7 @@ export default class Chart extends Component {
           const symbols = item.toUpperCase();
           const symbols_arr = symbols.split('-');
           return (
-            <Menu.Item>
+            <Menu.Item key={item}>
               <div
                 className={styles.menu_item}
                 onClick={() => this.selectToken(item)}
@@ -226,8 +206,11 @@ export default class Chart extends Component {
     });
   };
 
+  componentWillUnmount() {
+    this.myChart.dispose();
+  }
+
   render() {
-    const { chart_index, cur_amount, cur_price } = this.state;
     const { token1, token2 } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
@@ -236,36 +219,25 @@ export default class Chart extends Component {
       <div className={styles.chart_container}>
         <Dropdown overlay={menu} overlayClassName={styles.drop_menu}>
           <span className={styles.chart_title}>
-            <span>{symbol2}</span>/{symbol1}
+            {symbol2 === 'USDT' ? (
+              <>
+                <span>{symbol1}</span>/{symbol2}
+              </>
+            ) : (
+              <>
+                <span>{symbol2}</span>/{symbol1}
+              </>
+            )}
             <CustomIcon
               type="iconDropdown"
               style={{ fontSize: 20, marginLeft: 40 }}
             />
           </span>
         </Dropdown>
-        <div className={styles.info}>
-          <div>
-            {_('price')}: {cur_price}
-          </div>
-        </div>
-        {/*<div>
-                    <div className={styles.trigger_wrap}>
-                    {['1D', '1W', '1M'].map((item, index) => (
-                        <span
-                            onClick={() => this.switch(index)}
-                            key={item}
-                            className={
-                                index === chart_index ? styles.current_trigger : styles.trigger
-                            }
-                        >
-                            {item}
-                        </span>
-                    ))}
-                        </div>*/}
+
         <Spin spinning={this.props.loading}>
           <div id="J_Chart" className={styles.chart}></div>
         </Spin>
-        {/*</div>*/}
       </div>
     );
   }

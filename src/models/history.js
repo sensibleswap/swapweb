@@ -21,28 +21,28 @@ export default {
         return [];
       }
       const his = yield select((state) => state.history.history);
-      const { index } = payload;
+      const { type = 'swap' } = payload;
       if (
         his[currentPair] &&
-        his[currentPair][index] &&
-        his[currentPair][index].length > 0
+        his[currentPair][type] &&
+        his[currentPair][type].length > 0
       ) {
-        return his[currentPair][index];
+        return his[currentPair][type];
       }
 
       const res = yield historyApi.query.call(historyApi, payload);
-      console.log('query:', res.data);
+      const newData = [...res.data].reverse();
 
       if (res.code === 0) {
         yield put({
           type: 'saveData',
           payload: {
-            data: res.data.reverse(),
-            index,
+            data: newData,
             currentPair,
+            type,
           },
         });
-        return res.data;
+        return newData;
       }
 
       return res;
@@ -54,12 +54,12 @@ export default {
       return { ...state, ...action.payload };
     },
     saveData(state, action) {
-      const { currentPair, data, index } = action.payload;
+      const { currentPair, data, type } = action.payload;
       let { history } = state;
       if (!history[currentPair]) {
         history[currentPair] = [];
       }
-      history[currentPair][index] = data;
+      history[currentPair][type] = data;
       return {
         ...state,
         history,

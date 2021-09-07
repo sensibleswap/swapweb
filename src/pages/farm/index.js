@@ -4,6 +4,7 @@ import { withRouter, connect } from 'umi';
 import { Button, Tooltip, message, Spin, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { gzip } from 'node-gzip';
+import BigNumber from 'bignumber.js';
 import { jc, formatSat, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
@@ -202,12 +203,23 @@ export default class FarmC extends Component {
     const { symbol1, symbol2 } = this.props;
     const {
       poolTokenAmount,
+      rewardAmountPerBlock,
+      lockedTokenAmount = 0,
       rewardTokenAmount = 0,
       addressCount,
       rewardToken,
     } = data;
     const { current_item } = this.state;
     const _rewardTokenAmount = formatSat(rewardTokenAmount);
+    let _yield = BigNumber(rewardAmountPerBlock)
+      .div(Math.pow(10, rewardToken.decimal))
+      .multipliedBy(144)
+      .multipliedBy(365)
+      .multipliedBy(lockedTokenAmount || 0)
+      .div(poolTokenAmount);
+
+    _yield = formatAmount(_yield, 4);
+
     return (
       <div
         className={
@@ -264,7 +276,7 @@ export default class FarmC extends Component {
                 />
               </div>
             </Tooltip>
-            <div className={styles.value}>0</div>
+            <div className={styles.value}>{_yield}</div>
           </div>
         </div>
         <div className={styles.item_action}>

@@ -209,7 +209,7 @@ const signTx = (type, param) => {
   }
 
   if (type === 2) {
-    return voltWallet.signTx(params);
+    return voltWallet.signTx(param);
   }
 };
 export default {
