@@ -1,4 +1,4 @@
-export const DEFAULT_NET = 'testnet';
+export const DEFAULT_NET = 'maintest';
 export const DEFAULT_PAIR = 'bsv-mc';
 
 export const TSWAP_NETWORK = 'TSwapNetwork';
