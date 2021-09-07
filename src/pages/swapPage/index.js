@@ -50,7 +50,9 @@ export default class SwapPage extends Component {
         <div className={styles.main_title}>
           <h2>
             <span className={styles.strong}>
-              {symbol2}/{symbol1}
+              {symbol2 === 'USDT'
+                ? `${symbol1}/${symbol2}`
+                : `${symbol2}/${symbol1}`}
             </span>
           </h2>
         </div>
