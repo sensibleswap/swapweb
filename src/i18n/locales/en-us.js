@@ -230,8 +230,7 @@ const texts = {
   depositors: 'Depositors',
   crop: 'Yield',
   harvest: 'Harvest',
-  farm_item_desc:
-    'Provide liquidity and deposit your LP %1 token to earn Swap token (TokenSwap utility token)',
+  farm_item_desc: 'Provide liquidity and deposit your LP %1 to earn %2',
   apy_info:
     'APY = rewardTokenAmountPerBlock * 144 * 365 *  BOEX price / TVL * 100%',
   deposit: 'Deposit',
