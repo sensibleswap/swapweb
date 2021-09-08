@@ -25,6 +25,7 @@ const COLOR2 = '#BB6BD9';
 export default class Chart extends Component {
   constructor(props) {
     super(props);
+    const { currentPair } = props;
     this.state = {
       chart_index: 0,
       cur_price: '',
@@ -61,7 +62,9 @@ export default class Chart extends Component {
           } else {
             return `${_('date')}: ${params[0].name} <br />${_('volume')}: ${
               params[1].data
-            } BSV<br />${_('price')}: ${params[0].data} BSV`;
+            } BSV<br />${_('price')}: ${params[0].data} ${
+              currentPair === 'bsv-usdt' ? 'USDT' : 'BSV'
+            }`;
           }
         },
       },

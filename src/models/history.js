@@ -28,6 +28,9 @@ export default {
       ) {
         return his[currentPair][type];
       }
+      if (currentPair === 'bsv-usdt') {
+        payload.interval = 1;
+      }
 
       const res = yield historyApi.query.call(historyApi, payload);
       const newData = [...res.data].reverse();
