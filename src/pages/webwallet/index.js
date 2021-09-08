@@ -117,7 +117,7 @@ export default class WebWallet extends Component {
               <FormItem name={'amount'} rules={[{ required: true }]}>
                 <Input
                   className={styles.input}
-                  addonBefore={`${_('amount')}:`}
+                  addonBefore={`${_('money')}:`}
                   addonAfter={
                     <span
                       onClick={this.setMaxAmount}

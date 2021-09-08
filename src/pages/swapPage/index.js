@@ -6,6 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
+import Chart from 'components/chart';
 import Header from '../layout/header';
 import Swap from '../swap';
 import PairStat from '../pairStat';
@@ -42,20 +43,10 @@ export default class SwapPage extends Component {
   renderContent() {
     const { loading, token1, token2, pairData } = this.props;
     if (loading || !token1.symbol) return <Loading />;
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-
+    // console.log(token2);
     return (
       <div className={styles.content}>
-        <div className={styles.main_title}>
-          <h2>
-            <span className={styles.strong}>
-              {symbol2 === 'USDT'
-                ? `${symbol1}/${symbol2}`
-                : `${symbol2}/${symbol1}`}
-            </span>
-          </h2>
-        </div>
+        <Chart type="swap" />
 
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />

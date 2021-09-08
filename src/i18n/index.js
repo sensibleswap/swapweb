@@ -5,7 +5,6 @@ const en_us = require('./locales/en-us');
 
 // let locale = zh_cn;
 export const lang = Cookie.get('lang') || navigator.language;
-console.log(lang);
 
 const langData = {
   'en-us': en_us,

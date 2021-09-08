@@ -194,7 +194,7 @@ const texts = {
   deposit_title: '充值',
   withdraw_title: '提款',
   availabel: '可用余额',
-  amount: '金额',
+  money: '金额',
   address: '地址',
   all_balance: '所有余额',
   back_to_swap: '返回到交易页面',
@@ -244,5 +244,7 @@ const texts = {
   apy: '年化收益',
   yield_tips: '可提取的收益: %s',
   harvest_success: '收益提取成功',
+  amount: '数量',
+  volume: '交易量',
 };
 module.exports = texts;
