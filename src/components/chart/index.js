@@ -11,6 +11,9 @@ import TokenPair from 'components/tokenPair';
 import styles from './index.less';
 import _ from 'i18n';
 
+const COLOR1 = '#2BB696';
+const COLOR2 = '#BB6BD9';
+
 @connect(({ pair, history, loading }) => {
   const { effects } = loading;
   return {
@@ -38,15 +41,21 @@ export default class Chart extends Component {
         data: [],
         show: false,
       },
-      yAxis: {
-        type: 'value',
-        show: false,
-      },
+      yAxis: [
+        {
+          type: 'value',
+          show: false,
+        },
+        {
+          type: 'value',
+          show: false,
+        },
+      ],
       tooltip: {
         trigger: 'axis',
         formatter: function (params) {
           if (props.type === 'pool') {
-            return `${_('date')}: ${params[0].name} <br />${_('amount')}: ${
+            return `${_('date')}: ${params[0].name} <br />TVL: ${
               params[0].data
             } BSV<br />`;
           } else {
@@ -67,9 +76,10 @@ export default class Chart extends Component {
             tooltip: ['Income'],
           },
           lineStyle: {
-            color: '#2BB696',
+            color: COLOR1,
             width: 1,
           },
+          yAxisIndex: 0,
         },
         {
           data: [],
@@ -81,9 +91,10 @@ export default class Chart extends Component {
             tooltip: ['Income'],
           },
           lineStyle: {
-            color: '#BB6BD9',
+            color: COLOR2,
             width: 1,
           },
+          yAxisIndex: 1,
         },
       ],
     };
@@ -119,7 +130,7 @@ export default class Chart extends Component {
 
   async getData() {
     const { currentPair, allPairs, type } = this.props;
-    const { swapCodeHash, swapID } = allPairs[currentPair];
+    const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
     const res = await this.props.dispatch({
       type: 'history/query',
       payload: {
@@ -148,7 +159,15 @@ export default class Chart extends Component {
       } else {
         res.forEach((item, index) => {
           const { minPrice, maxPrice, token1Volume, timestamp } = item;
-          price.push(formatAmount((minPrice + maxPrice) / 2, 8));
+          let _price =
+            (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
+          if (currentPair === 'bsv-usdt') {
+            _price = 1 / _price;
+            price.push(formatAmount(_price, 6));
+          } else {
+            price.push(formatAmount(_price, 8));
+          }
+
           volumn.push(formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8));
 
           time.push(formatTime(timestamp * 1000));
@@ -211,7 +230,7 @@ export default class Chart extends Component {
   }
 
   render() {
-    const { token1, token2 } = this.props;
+    const { token1, token2, type } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     const menu = this.renderMenu();
@@ -234,6 +253,35 @@ export default class Chart extends Component {
             />
           </span>
         </Dropdown>
+        {type === 'swap' && (
+          <div className={styles.data_info}>
+            <div>
+              <span
+                className={styles.dot}
+                style={{ backgroundColor: COLOR1 }}
+              ></span>{' '}
+              {_('price')}
+            </div>
+            <div>
+              <span
+                className={styles.dot}
+                style={{ backgroundColor: COLOR2 }}
+              ></span>{' '}
+              {_('volume')}
+            </div>
+          </div>
+        )}
+        {type === 'pool' && (
+          <div className={styles.data_info}>
+            <div>
+              <span
+                className={styles.dot}
+                style={{ backgroundColor: COLOR1 }}
+              ></span>{' '}
+              TVL
+            </div>
+          </div>
+        )}
 
         <Spin spinning={this.props.loading}>
           <div id="J_Chart" className={styles.chart}></div>

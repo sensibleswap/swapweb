@@ -1,6 +1,5 @@
 import historyApi from '../api/history';
 import debug from 'debug';
-import { select } from '../i18n/locales/zh-ch';
 const log = debug('history');
 
 export default {

@@ -7,7 +7,7 @@ class History extends BaseAPI {
     if (isTestNet()) {
       this.baseUrl = 'https://api.sensiblequery.com/test/contract/';
     } else {
-      this.baseUrl = 'https://api.sensible.satoplay.cn/contract/';
+      this.baseUrl = 'https://api.sensiblequery.com/contract/';
     }
 
     if (url) this.baseUrl = url;
@@ -30,17 +30,6 @@ class History extends BaseAPI {
       });
     }
   }
-  // querySwapData(params) {
-  //   const { codeHash, genesisHash } = params;
-  //   return this._request(`swap-aggregate/${codeHash}/${genesisHash}`, { start: 690000, interval: 100});
-
-  // }
-
-  // queryAmountData(params) {
-  //   const { codeHash, genesisHash } = params;
-  //   return this._request(`swap-data/${codeHash}/${genesisHash}`, { start: 690000, size: 100});
-
-  // }
 }
 
 export default new History();
