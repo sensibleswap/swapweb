@@ -1,5 +1,7 @@
+import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
-import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
+import pairApi from '../api/pair';
+import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR, USDT_PAIR } from 'common/const';
 import { formatSat } from 'common/utils';
 import debug from 'debug';
 const log = debug('farm');
@@ -16,6 +18,7 @@ export default {
     lptoken: {},
     rewardToken: {},
     currentPairYield: 0,
+    bsvPrice: 0,
   },
 
   subscriptions: {
@@ -48,11 +51,24 @@ export default {
         });
       }
 
+      let bsvPrice = 0;
+
+      const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+
+      if (price_res.code === 0) {
+        bsvPrice = BigNumber(price_res.data.swapToken2Amount)
+          .div(price_res.data.swapToken1Amount)
+          .multipliedBy(Math.pow(10, 8 - 6))
+          .toString();
+        console.log(bsvPrice);
+      }
+
       yield put({
         type: 'saveFarm',
         payload: {
           allPairs: data,
           currentPair,
+          bsvPrice,
         },
       });
       return {
@@ -69,10 +85,23 @@ export default {
       if (code !== 0) {
         return res;
       }
+
+      let bsvPrice = 0;
+      const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+
+      if (price_res.code === 0) {
+        bsvPrice = BigNumber(price_res.data.swapToken2Amount)
+          .div(price_res.data.swapToken1Amount)
+          .multipliedBy(Math.pow(10, 8 - 6))
+          .toString();
+        console.log(bsvPrice);
+      }
+
       yield put({
         type: 'saveFarm',
         payload: {
           allPairs: data,
+          bsvPrice,
         },
       });
 

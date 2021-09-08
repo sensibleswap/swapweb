@@ -5,7 +5,7 @@ import * as echarts from 'echarts';
 import { connect } from 'umi';
 import { Spin, message, Dropdown, Menu } from 'antd';
 import { formatTime, formatAmount } from 'common/utils';
-import { TSWAP_CURRENT_PAIR } from 'common/const';
+import { TSWAP_CURRENT_PAIR, USDT_PAIR } from 'common/const';
 import CustomIcon from 'components/icon';
 import TokenPair from 'components/tokenPair';
 import styles from './index.less';
@@ -63,7 +63,7 @@ export default class Chart extends Component {
             return `${_('date')}: ${params[0].name} <br />${_('volume')}: ${
               params[1].data
             } BSV<br />${_('price')}: ${params[0].data} ${
-              currentPair === 'bsv-usdt' ? 'USDT' : 'BSV'
+              currentPair === USDT_PAIR ? 'USDT' : 'BSV'
             }`;
           }
         },
@@ -164,7 +164,7 @@ export default class Chart extends Component {
           const { minPrice, maxPrice, token1Volume, timestamp } = item;
           let _price =
             (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
-          if (currentPair === 'bsv-usdt') {
+          if (currentPair === USDT_PAIR) {
             _price = 1 / _price;
             price.push(formatAmount(_price, 6));
           } else {

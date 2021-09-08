@@ -87,7 +87,8 @@ export default class UserInfo extends Component {
       setTimeout(async () => {
         while (this.polling) {
           await sleep(20 * 1e3);
-          const { dispatch, busy, isLogin, userAddress } = _self.props;
+          const { dispatch, busy, isLogin, userAddress, currentPair } =
+            _self.props;
           if (busy) return;
           dispatch({
             type: 'pair/updatePairData',

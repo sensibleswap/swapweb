@@ -1,4 +1,5 @@
 import historyApi from '../api/history';
+import { USDT_PAIR } from 'common/const';
 import debug from 'debug';
 const log = debug('history');
 
@@ -28,7 +29,7 @@ export default {
       ) {
         return his[currentPair][type];
       }
-      if (currentPair === 'bsv-usdt') {
+      if (currentPair === USDT_PAIR) {
         payload.interval = 1;
       }
 

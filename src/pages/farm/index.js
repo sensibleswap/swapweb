@@ -209,7 +209,7 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { symbol1, symbol2, loading, dispatch } = this.props;
+    const { symbol1, symbol2, loading, dispatch, bsvPrice } = this.props;
     const {
       poolTokenAmount,
       rewardAmountPerBlock,
@@ -230,26 +230,26 @@ export default class FarmC extends Component {
     const lp_price = BigNumber(bsv_amount * 2).div(lp_amount);
     const token_price = BigNumber(bsv_amount).div(token_amount);
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
-    const _total = formatAmount(
-      BigNumber(formatSat(poolTokenAmount, decimal)).multipliedBy(lp_price),
-      8,
-    );
+    let _total = BigNumber(formatSat(poolTokenAmount, decimal))
+      .multipliedBy(lp_price)
+      .multipliedBy(bsvPrice);
+    console.log(_total.toString());
+    if (_total.isGreaterThan(1000000)) {
+      _total = formatAmount(_total.div(1000000), 2);
+      _total = _total + 'm';
+    } else if (_total.isGreaterThan(1000)) {
+      _total = formatAmount(_total.div(1000), 2);
+      _total = _total + 'k';
+    }
+    console.log(_total);
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
       .multipliedBy(365)
       .multipliedBy(token_price)
       .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
       .multipliedBy(100);
-    // console.log('bsv_amount:', formatAmount(bsv_amount, 8),
-    // 'token_amount:', formatAmount(token_amount, decimal),
-    // 'lp_amount:', formatAmount(lp_amount, decimal),
-    // 'lp_price:', formatAmount(lp_price, 8),
-    // 'token_price:', formatAmount(token_price, 8),
-    // 'reword_amount:', formatAmount(reword_amount,decimal),
-    // 'poolTokenAmount:', poolTokenAmount);
 
     _yield = formatAmount(_yield, 2);
-    // console.log('reword_amount * 144 * 365 * token_price / (poolTokenAmount * lp_price) =',_yield)
     if (current_item === index) {
       dispatch({
         type: 'farm/save',
@@ -282,7 +282,7 @@ export default class FarmC extends Component {
         <div className={styles.item_data}>
           <div className={styles.item_data_left}>
             <div className={styles.label}>{_('tvl')}</div>
-            <div className={styles.value}>{_total} BSV</div>
+            <div className={styles.value}>{_total} USDT</div>
           </div>
           <div className={styles.item_data_right}>
             <Tooltip
