@@ -1,6 +1,5 @@
 import pairApi from '../api/pair';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
-import { isTestNet } from 'common/utils';
 import debug from 'debug';
 const log = debug('pair');
 

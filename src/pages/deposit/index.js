@@ -114,6 +114,7 @@ export default class Deposit extends Component {
       symbol2,
       lptoken,
       rewardToken,
+      currentPairYield,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP, price } = this.state;
@@ -178,7 +179,7 @@ export default class Deposit extends Component {
               </div>
             </div>
             <div className={styles.pair_right}>
-              0 {_('apy')}
+              {currentPairYield}% {_('apy')}
               <CustomIcon
                 type="iconi"
                 style={{
@@ -343,10 +344,7 @@ export default class Deposit extends Component {
         <div className={styles.pair_data}>
           <div className={styles.pair_left}>{addLP}</div>
           <div className={styles.pair_right}>
-            <div className={styles.icon} style={{ marginRight: 10 }}>
-              <CustomIcon type="iconlogo-bitcoin" />
-              <CustomIcon type="iconlogo-vusd" />
-            </div>{' '}
+            <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />{' '}
             {symbol1}/{symbol2}-LP
           </div>
         </div>
