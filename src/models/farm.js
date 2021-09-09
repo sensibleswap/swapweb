@@ -60,7 +60,6 @@ export default {
           .div(price_res.data.swapToken1Amount)
           .multipliedBy(Math.pow(10, 8 - 6))
           .toString();
-        console.log(bsvPrice);
       }
 
       yield put({
@@ -94,7 +93,6 @@ export default {
           .div(price_res.data.swapToken1Amount)
           .multipliedBy(Math.pow(10, 8 - 6))
           .toString();
-        console.log(bsvPrice);
       }
 
       yield put({

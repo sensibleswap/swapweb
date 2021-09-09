@@ -94,14 +94,13 @@ export default class UserInfo extends Component {
             type: 'pair/updatePairData',
           });
 
-          if (isTestNet()) {
-            dispatch({
-              type: 'farm/updatePairData',
-              payload: {
-                address: userAddress,
-              },
-            });
-          }
+          dispatch({
+            type: 'farm/updatePairData',
+            payload: {
+              address: userAddress,
+            },
+          });
+
           if (isLogin) {
             const res = await dispatch({
               type: 'user/updateUserData',

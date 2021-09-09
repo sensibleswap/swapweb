@@ -275,11 +275,6 @@ export default class Liquidity extends Component {
             />
           </div>
         </div>
-
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>{_('your_share')}</div>
-          <div className={styles.info_value}>{share}%</div>
-        </div>
       </div>
     );
   }

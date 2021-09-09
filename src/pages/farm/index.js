@@ -233,7 +233,7 @@ export default class FarmC extends Component {
     let _total = BigNumber(formatSat(poolTokenAmount, decimal))
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
-    console.log(_total.toString());
+
     if (_total.isGreaterThan(1000000)) {
       _total = formatAmount(_total.div(1000000), 2);
       _total = _total + 'm';
@@ -241,7 +241,7 @@ export default class FarmC extends Component {
       _total = formatAmount(_total.div(1000), 2);
       _total = _total + 'k';
     }
-    console.log(_total);
+
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
       .multipliedBy(365)
