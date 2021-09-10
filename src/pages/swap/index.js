@@ -96,23 +96,35 @@ export default class Swap extends Component {
           'aim_amount',
         ]);
         const { lastMod } = this.state;
+        const { token1, token2 } = this.props;
+        const decimal = !dirForward ? token1.decimal : token2.decimal;
         if (lastMod === 'origin') {
           current.setFieldsValue({
             aim_amount: origin_amount,
           });
-          this.calcAmount(0, origin_amount);
+          const { newOriginAddAmount } = this.calcAmount(0, origin_amount);
+          const fee = formatAmount(
+            BigNumber(newOriginAddAmount).multipliedBy(feeRate),
+            decimal,
+          );
           this.setState({
             lastMod: 'aim',
             aim_amount: origin_amount,
+            fee,
           });
         } else if (lastMod === 'aim') {
           current.setFieldsValue({
             origin_amount: aim_amount,
           });
           this.calcAmount(aim_amount, 0);
+          const fee = formatAmount(
+            BigNumber(aim_amount).multipliedBy(feeRate),
+            decimal,
+          );
           this.setState({
             lastMod: 'origin',
             origin_amount: aim_amount,
+            fee,
           });
         }
       },
