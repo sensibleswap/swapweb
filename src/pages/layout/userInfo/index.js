@@ -15,7 +15,6 @@ import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
-import { isTestNet } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';

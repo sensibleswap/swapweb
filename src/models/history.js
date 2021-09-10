@@ -20,15 +20,15 @@ export default {
       if (!currentPair) {
         return [];
       }
-      const his = yield select((state) => state.history.history);
+      // const his = yield select((state) => state.history.history);
       const { type = 'swap' } = payload;
-      if (
-        his[currentPair] &&
-        his[currentPair][type] &&
-        his[currentPair][type].length > 0
-      ) {
-        return his[currentPair][type];
-      }
+      // if (
+      //   his[currentPair] &&
+      //   his[currentPair][type] &&
+      //   his[currentPair][type].length > 0
+      // ) {
+      //   return his[currentPair][type];
+      // }
       if (currentPair === USDT_PAIR) {
         payload.interval = 1;
       }
@@ -37,14 +37,14 @@ export default {
       const newData = [...res.data].reverse();
 
       if (res.code === 0) {
-        yield put({
-          type: 'saveData',
-          payload: {
-            data: newData,
-            currentPair,
-            type,
-          },
-        });
+        // yield put({
+        //   type: 'saveData',
+        //   payload: {
+        //     data: newData,
+        //     currentPair,
+        //     type,
+        //   },
+        // });
         return newData;
       }
 
@@ -56,17 +56,17 @@ export default {
     save(state, action) {
       return { ...state, ...action.payload };
     },
-    saveData(state, action) {
-      const { currentPair, data, type } = action.payload;
-      let { history } = state;
-      if (!history[currentPair]) {
-        history[currentPair] = [];
-      }
-      history[currentPair][type] = data;
-      return {
-        ...state,
-        history,
-      };
-    },
+    // saveData(state, action) {
+    //   const { currentPair, data, type } = action.payload;
+    //   let { history } = state;
+    //   if (!history[currentPair]) {
+    //     history[currentPair] = [];
+    //   }
+    //   history[currentPair][type] = data;
+    //   return {
+    //     ...state,
+    //     history,
+    //   };
+    // },
   },
 };
