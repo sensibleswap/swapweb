@@ -29,11 +29,11 @@ export function agentVersion() {
 }
 
 export const slippage_data = {
-  slippage_tolerance_index: 'VoltTokenSwapSlipTolIndex',
   slippage_tolerance_value: 'VoltTokenSwapSlipTolValue',
-  datas: ['0.1', '0.5', '5.00'],
-  defaultIndex: 1,
+  defaultSlipValue: 1,
 };
 
 export const feeRate = 0.0025;
 export const FEE_FACTOR = 10000;
+
+export const MINAMOUNT = 1000;

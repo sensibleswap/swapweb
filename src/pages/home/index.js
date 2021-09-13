@@ -2,14 +2,14 @@
 import React, { Component } from 'react';
 import { Button, Alert } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import styles from './index.less';
-import _ from 'i18n';
-
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';
 import Footer from '../layout/footer';
 import CustomIcon from 'components/icon';
+import Notice from 'components/notice';
 import Cookie from 'js-cookie';
+import styles from './index.less';
+import _ from 'i18n';
 
 const _lang = Cookie.get('lang') || navigator.language;
 export default class Home extends Component {
@@ -150,7 +150,7 @@ export default class Home extends Component {
     const isZh = _lang.toLowerCase() === 'zh-cn';
     return (
       <>
-        <Alert message={_('notice720')} type="success" banner={true} />
+        <Notice />
         <section className={styles.container}>
           <section className={styles.head}>
             <div className={styles.head_inner}>

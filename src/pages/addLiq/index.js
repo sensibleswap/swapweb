@@ -2,16 +2,15 @@
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
+import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Tooltip, Modal } from 'antd';
-import {
-  QuestionCircleOutlined,
-  DownOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
+import { TSWAP_CURRENT_PAIR } from 'common/const';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
+import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import SelectToken from '../selectToken';
@@ -276,23 +275,6 @@ export default class Liquidity extends Component {
             />
           </div>
         </div>
-
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>
-            {_('pooled', token1.symbol.toUpperCase())}
-          </div>
-          <div className={styles.info_value}>{total_origin_amount}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>
-            {_('pooled', token2.symbol.toUpperCase())}
-          </div>
-          <div className={styles.info_value}>{total_aim_amount}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>{_('your_share')}</div>
-          <div className={styles.info_value}>{share}%</div>
-        </div>
       </div>
     );
   }
@@ -337,32 +319,32 @@ export default class Liquidity extends Component {
     return this.renderInfo(total_origin_amount, total_aim_amount, share);
   }
 
-  renderResultInfo() {
-    const { token1, token2, pairData, userBalance, lptoken } = this.props;
-    const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+  // renderResultInfo() {
+  //   const { token1, token2, pairData, userBalance, lptoken } = this.props;
+  //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
 
-    const total_origin_amount = formatAmount(
-      BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
-      token1.decimal,
-    ).toString();
-    const total_aim_amount = formatAmount(
-      BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
-      token2.decimal,
-    ).toString();
+  //   const total_origin_amount = formatAmount(
+  //     BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
+  //     token1.decimal,
+  //   ).toString();
+  //   const total_aim_amount = formatAmount(
+  //     BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
+  //     token2.decimal,
+  //   ).toString();
 
-    const LP = userBalance[lptoken.tokenID] || 0;
-    const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
+  //   const LP = userBalance[lptoken.tokenID] || 0;
+  //   const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
 
-    const share = (rate * 100).toFixed(4);
-    return this.renderInfo(total_origin_amount, total_aim_amount, share);
-  }
+  //   const share = (rate * 100).toFixed(4);
+  //   return this.renderInfo(total_origin_amount, total_aim_amount, share);
+  // }
 
   renderForm() {
     const { token1, token2, userBalance, submiting } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
-      <div className={styles.content}>
+      <div className={styles.add_content}>
         <Spin spinning={submiting}>
           <Form onSubmit={this.preHandleSubmit} ref={this.formRef}>
             <div className={styles.title}>
@@ -650,10 +632,6 @@ export default class Liquidity extends Component {
       _origin_amount = token1AddAmount;
       _aim_amount = token2AddAmount;
       // if (new_origin_amount !== origin_amount) {
-      // this.setState({
-      //   _origin_amount,
-      //   _aim_amount,
-      // });
       // return this.showModal({
       //   origin_amount,
       //   aim_amount,
@@ -663,6 +641,10 @@ export default class Liquidity extends Component {
       // }
     }
 
+    this.setState({
+      _origin_amount: _origin_amount.toString(),
+      _aim_amount: _aim_amount.toString(),
+    });
     this.handleSubmit(data, _origin_amount, _aim_amount);
   };
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
@@ -678,27 +660,24 @@ export default class Liquidity extends Component {
       payload: {
         datas: [
           {
-            receivers: [
-              {
-                address: bsvToAddress,
-                amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
-              },
-            ],
+            type: 'bsv',
+            address: bsvToAddress,
+            amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+            noBroadcast: true,
           },
           {
-            receivers: [
-              {
-                address: tokenToAddress,
-                amount: _aim_amount.toString(),
-              },
-            ],
+            type: 'sensibleFt',
+            address: tokenToAddress,
+            amount: _aim_amount.toString(),
             codehash: token2.codeHash,
             genesis: token2.tokenID,
             rabinApis,
+            noBroadcast: true,
           },
         ],
       },
     });
+    // console.log(tx_res)
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }
@@ -706,26 +685,33 @@ export default class Liquidity extends Component {
       return message.error(_('txs_fail'));
     }
 
+    let liq_data = {
+      symbol: currentPair,
+      requestIndex: requestIndex,
+      bsvRawTx: tx_res[0].txHex,
+      bsvOutputIndex: 0,
+      token2RawTx: tx_res[1].txHex,
+      token2OutputIndex: 0,
+      token1AddAmount: _origin_amount.toString(),
+      amountCheckRawTx: tx_res[1].routeCheckTxHex,
+    };
+    liq_data = JSON.stringify(liq_data);
+    liq_data = await gzip(liq_data);
     const addliq_res = await dispatch({
       type: 'pair/addLiq',
       payload: {
-        symbol: currentPair,
-        requestIndex: requestIndex,
-        token1TxID: tx_res[0].txid,
-        token1OutputIndex: 0,
-        token2TxID: tx_res[1].txid,
-        token2OutputIndex: 0,
-        token1AddAmount: _origin_amount.toString(),
+        data: liq_data,
       },
     });
-
-    if (addliq_res.code) {
+    // console.log(addliq_res)
+    if (addliq_res.code && !addliq_res.data.txid) {
       return message.error(addliq_res.msg);
     }
     message.success('success');
     await this.updateData();
     this.setState({
       formFinish: true,
+      lpAddAmount: addliq_res.data.lpAddAmount,
     });
   };
 
@@ -744,23 +730,37 @@ export default class Liquidity extends Component {
   }
 
   renderResult() {
-    const { token1, token2, history, spinning } = this.props;
+    const { token1, token2, history, allPairs, currentPair } = this.props;
+    const { _origin_amount, _aim_amount, lpAddAmount } = this.state;
+    const { lptoken = {} } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
-      <div className={styles.content}>
+      <div className={styles.add_content}>
         <div className={styles.finish_logo}>
           <CustomIcon
             type="iconicon-success"
             style={{ fontSize: 80, color: '#2BB696' }}
           />
         </div>
-        <div className={styles.finish_title}>
-          {symbol2}/{symbol1}
+        <div className={styles.finish_title}>{_('add_success')}</div>
+        <div className={styles.result_data1}>
+          {_('added')} {formatSat(_origin_amount, token1.decimal)} {symbol1} +{' '}
+          {formatSat(_aim_amount, token2.decimal)} {symbol2}
         </div>
-        <div className={styles.finish_desc}>{_('add_success')}</div>
-
-        <Spin spinning={spinning}>{this.renderResultInfo()}</Spin>
+        <div className={styles.result_data2}>
+          {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
+          <TokenPair
+            symbol1={symbol1}
+            symbol2={symbol2}
+            size={20}
+            style={{ marginLeft: 10 }}
+          />{' '}
+          <span style={{ fontWeight: 700, marginLeft: 10 }}>
+            {symbol1}/{symbol2}-LP
+          </span>
+        </div>
+        {/*this.renderResultInfo()*/}
         <Button
           className={styles.done_btn}
           onClick={() => {
@@ -800,11 +800,6 @@ export default class Liquidity extends Component {
               {_('remove_liq_short')}
             </span>
           </div>
-          <div className={styles.help}>
-            <Tooltip title={_('swap_question')} placement="bottom">
-              <QuestionCircleOutlined />
-            </Tooltip>
-          </div>
         </div>
         {formFinish ? this.renderResult() : this.renderForm()}
       </div>
@@ -814,6 +809,7 @@ export default class Liquidity extends Component {
   selectedToken = async (currentPair) => {
     this.showUI('form');
     if (currentPair && currentPair !== this.props.currentPair) {
+      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
       if (this.state.page === 'selectToken') {
         this.props.dispatch({
           type: 'pair/getPairData',

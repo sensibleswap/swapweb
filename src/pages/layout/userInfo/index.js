@@ -1,7 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button, Popover, Modal } from 'antd';
+import querystring from 'querystringify';
+import { Button, Popover, Modal, message, Tooltip } from 'antd';
 import {
   UpOutlined,
   SwapOutlined,
@@ -10,12 +11,15 @@ import {
   CloseOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
+import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
-import { strAbbreviation } from 'common/utils';
 import Clipboard from 'components/clipboard';
+import CustomIcon from 'components/icon';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
+
+const query = querystring.parse(window.location.search);
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -44,16 +48,29 @@ export default class UserInfo extends Component {
       chooseLogin_visible: false,
       select_account_index: '',
       wallet_list: [],
-      isLogin: false,
     };
     this.polling = true;
   }
 
   componentDidMount() {
+    // if (!_notice) {
+    //   _notice = true;
+    //   Modal.info({
+    //     title: _('notice'),
+    //     content: (
+    //       <div>
+    //         <p>{_('notice720')}</p>
+    //       </div>
+    //     ),
+    //     closable: true,
+    //     footer: null,
+    //   });
+    // }
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
     const res = this.props.dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
     if (res.msg) {
       return message.error(res.msg);
@@ -64,20 +81,33 @@ export default class UserInfo extends Component {
   }
 
   fetchPairData = async () => {
-    const { currentPair, dispatch } = this.props;
     const _self = this;
     if (_timer < 1) {
       setTimeout(async () => {
         while (this.polling) {
-          await sleep(30 * 1e3);
-          const { dispatch, busy } = _self.props;
+          await sleep(20 * 1e3);
+          const { dispatch, busy, isLogin, userAddress, currentPair } =
+            _self.props;
           if (busy) return;
-          await dispatch({
+          dispatch({
             type: 'pair/updatePairData',
           });
-          await dispatch({
-            type: 'user/updateUserData',
+
+          dispatch({
+            type: 'farm/updatePairData',
+            payload: {
+              address: userAddress,
+            },
           });
+
+          if (isLogin) {
+            const res = await dispatch({
+              type: 'user/updateUserData',
+            });
+            if (res.msg && res.msg.indexOf('not_login') > -1) {
+              this.disConnect();
+            }
+          }
         }
       });
     }
@@ -123,7 +153,7 @@ export default class UserInfo extends Component {
     this.setState({ pop_visible: visible });
   };
 
-  connectWebWallet = async () => {
+  connectWebWallet = async (type, network) => {
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
@@ -133,15 +163,27 @@ export default class UserInfo extends Component {
       });
     }
 
-    await dispatch({
+    const con_res = await dispatch({
       type: 'user/connectWebWallet',
+      payload: {
+        type,
+        network,
+      },
     });
+
+    if (con_res.msg) {
+      return message.error(con_res.msg);
+    }
     const res = await dispatch({
       type: 'user/loadingUserData',
+      payload: {
+        type,
+      },
     });
     if (res.msg) {
-      return message.error(msg.error);
+      return message.error(res.msg);
     }
+
     EventBus.emit('reloadPair');
   };
 
@@ -163,15 +205,7 @@ export default class UserInfo extends Component {
   };
 
   // connectExtWallet = () => {
-  //   const popWidth = 380;
-  //   const popHeight = 600;
-  //   const popTop = Math.round((window.innerHeight - popHeight) / 2);
-  //   const popLeft = Math.round((window.innerWidth - popWidth) / 2);
-  //   window.open(
-  //     'chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/notification.html',
-  //     'voltWalletPopup',
-  //     `width=${popWidth}, height=${popHeight}, left=${popLeft}, top=${popTop}, resizable,scrollbars,status`,
-  //   );
+  //   console.log(window.bsv.a)
   // };
 
   disConnect = async () => {
@@ -202,7 +236,7 @@ export default class UserInfo extends Component {
   };
 
   renderPop() {
-    const { userAddress } = this.props;
+    const { userAddress, userAddressShort, walletType } = this.props;
     return (
       <div className={styles.user_pop}>
         <div className={styles.app_title}>
@@ -212,12 +246,27 @@ export default class UserInfo extends Component {
         </div>
         <div className={styles.hd}>
           <div className={styles.left}>
-            <div className={styles.account_name}>
-              <Clipboard
-                text={userAddress}
-                label={strAbbreviation(userAddress, [5, 4])}
-              />
-            </div>
+            <Tooltip
+              overlayClassName={styles.address_qrcode}
+              title={
+                <div style={{ backgroundColor: '#fff', padding: 5 }}>
+                  <QRCode
+                    value={userAddress}
+                    style={{ width: '145px', height: '145px' }}
+                  />
+                </div>
+              }
+              placement="bottomRight"
+              trigger="hover"
+            >
+              <div className={styles.account_name}>
+                <div className={styles.qr_icon}>
+                  <img src="assets/qr1.png" style={{ width: 22, height: 22 }} />
+                </div>
+                <Clipboard text={userAddress} label={userAddressShort} />
+                {this.renderWalletIcon()}
+              </div>
+            </Tooltip>
           </div>
           <div className={styles.account_icon} onClick={this.closePop}>
             <UpOutlined />
@@ -230,18 +279,20 @@ export default class UserInfo extends Component {
             />
             <span className={styles.name}>{_('switch_wallet')}</span>
           </div>
-          <div
-            className={styles.line}
-            onClick={() => {
-              this.props.history.push('/webwallet');
-              this.closePop();
-            }}
-          >
-            <DollarOutlined
-              style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }}
-            />
-            <span className={styles.name}>{_('withdraw')}</span>
-          </div>
+          {walletType === 1 && (
+            <div
+              className={styles.line}
+              onClick={() => {
+                this.props.history.push('/webwallet');
+                this.closePop();
+              }}
+            >
+              <DollarOutlined
+                style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }}
+              />
+              <span className={styles.name}>{_('withdraw')}</span>
+            </div>
+          )}
         </div>
         <div className={styles.ft}>
           <Button
@@ -255,10 +306,23 @@ export default class UserInfo extends Component {
       </div>
     );
   }
+  renderWalletIcon() {
+    const { walletType } = this.props;
+    if (walletType === 1) {
+      return <span className={styles.dot} style={{ marginRight: 5 }}></span>;
+    } else if (walletType === 2) {
+      return (
+        <CustomIcon
+          type="iconicon-volt-tokenswap-circle"
+          style={{ fontSize: 30, marginLeft: 10 }}
+        />
+      );
+    }
+  }
 
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
-    const { userAddress, connecting, isLogin } = this.props;
+    const { userAddressShort, userAddress, connecting, isLogin } = this.props;
     return (
       <>
         {isLogin ? (
@@ -270,8 +334,8 @@ export default class UserInfo extends Component {
             placement="bottomRight"
           >
             <div className={styles.account_trigger}>
-              {strAbbreviation(userAddress, [5, 4])}{' '}
-              <span className={styles.dot}></span>
+              <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
+              {this.renderWalletIcon()}
             </div>
           </Popover>
         ) : (
@@ -303,18 +367,42 @@ export default class UserInfo extends Component {
 
         {chooseLogin_visible && (
           <Modal
-            title="connect to a wallet"
+            title=""
             visible={chooseLogin_visible}
             footer={null}
             className={styles.chooseLogin_dialog}
             width="400px"
             onCancel={this.closeChooseDialog}
+            closable={false}
           >
+            <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              <li onClick={() => this.connectWebWallet(1)}>Web Wallet</li>
-              {process.env.NODE_ENV === 'development' && (
-                <li id="J_VoltExtConnectBtn">Chrome Ext</li>
+              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
+                Volt {_('web_wallet')}
+                <CustomIcon
+                  type="iconicon-volt-tokenswap-circle"
+                  style={{ fontSize: 35 }}
+                />
+              </li>
+
+              {query.env === 'local' && (
+                <li onClick={() => this.connectWebWallet(2, 'testnet')}>
+                  BSV Testnet
+                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
+                </li>
               )}
+              <li
+                onClick={() => this.connectWebWallet(1)}
+                style={{ fontSize: 15 }}
+              >
+                TS {_('web_wallet')}
+                {_('test_only')}
+              </li>
+              {/*process.env.NODE_ENV === 'development' && (
+                <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>
+                  Chrome Ext
+                </li>
+              )*/}
             </ul>
           </Modal>
         )}

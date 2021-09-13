@@ -38,6 +38,9 @@ export default class WebWallet extends Component {
     });
     const res = await dispatch({
       type: 'user/loadingUserData',
+      payload: {
+        type: 1,
+      },
     });
     if (res.msg) {
       return message.error(msg.error);
@@ -64,6 +67,9 @@ export default class WebWallet extends Component {
     message.success(_('withdraw_success'));
     dispatch({
       type: 'user/loadingUserData',
+      payload: {
+        type: 1,
+      },
     });
   };
   setMaxAmount = () => {
@@ -111,7 +117,7 @@ export default class WebWallet extends Component {
               <FormItem name={'amount'} rules={[{ required: true }]}>
                 <Input
                   className={styles.input}
-                  addonBefore={`${_('amount')}:`}
+                  addonBefore={`${_('money')}:`}
                   addonAfter={
                     <span
                       onClick={this.setMaxAmount}

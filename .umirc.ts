@@ -9,7 +9,7 @@ export default defineConfig({
     type: 'none',
   },
   favicon: '/assets/ts.png',
-  title: 'TokenSwap - 基于比特币协议的链上去中心化交易所',
+  title: 'TokenSwap - AMM DEX running on BSV',
   routes,
   fastRefresh: {},
   cssModulesTypescriptLoader: {},

@@ -37,6 +37,7 @@ export default {
         Object.keys(data).forEach((item) => {
           if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
             currentPair = item;
+            localStorage.setItem(TSWAP_CURRENT_PAIR, item);
           }
         });
       }
@@ -97,6 +98,7 @@ export default {
     },
 
     *reqSwap({ payload }, { call, put }) {
+      payload.source = 'tswap.io';
       const res = yield pairApi.reqSwap.call(pairApi, payload);
       log('reqSwap:', res);
       return res;
@@ -104,6 +106,18 @@ export default {
 
     *swap({ payload }, { call, put }) {
       const res = yield pairApi.swap.call(pairApi, payload);
+      log('swap:', payload, res);
+      return res;
+    },
+
+    *token1toToken2({ payload }, { call, put }) {
+      const res = yield pairApi.token1toToken2.call(pairApi, payload);
+      log('swap:', payload, res);
+      return res;
+    },
+
+    *token2toToken1({ payload }, { call, put }) {
+      const res = yield pairApi.token2toToken1.call(pairApi, payload);
       log('swap:', payload, res);
       return res;
     },

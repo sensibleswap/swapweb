@@ -7,9 +7,7 @@ class Token extends BaseAPI {
   }
 
   querySwapInfo(symbol) {
-    return this._request('swapinfo', {
-      symbol,
-    });
+    return this._request('swapinfo', { symbol });
   }
 
   reqSwap(params) {
@@ -17,15 +15,15 @@ class Token extends BaseAPI {
   }
 
   swap(params) {
-    const apiName = params.op === 3 ? 'token1totoken2' : 'token2totoken1';
+    const apiName = params.op === 3 ? 'token1toToken2' : 'token2toToken1';
 
     return this._request(apiName, params, 'POST');
   }
-  token1totoken2(params) {
+  token1toToken2(params) {
     return this._request('token1totoken2', params, 'POST');
   }
 
-  token2totoken1(params) {
+  token2toToken1(params) {
     return this._request('token2totoken1', params, 'POST');
   }
 

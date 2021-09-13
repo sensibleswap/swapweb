@@ -3,6 +3,7 @@
 import bytes from 'bytes';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
+import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
 import debug from 'debug';
 const log = debug('utils');
 const location = window.location;
@@ -185,6 +186,7 @@ export function jc() {
 }
 
 export const formatSat = (value, dec = 8) => {
+  if (!value) return 0;
   return BigNumber(value).div(Math.pow(10, dec)).toString();
 };
 
@@ -196,6 +198,7 @@ export function sleep(ms) {
 
 export const formatAmount = (value, n = 4) => {
   if (!value) return 0;
+
   const arr = value.toString().split('.');
   if (value.toString().indexOf('e') > -1 || (arr[1] && arr[1].length > n)) {
     return BigNumber(value).toFixed(n);
@@ -210,4 +213,9 @@ export function strAbbreviation(str, arr = [7, 5]) {
   const pre = str.substr(0, arr[0]);
   const aft = str.substr(-arr[1], arr[1]);
   return pre + '……' + aft;
+}
+
+export function isTestNet() {
+  const net = window.localStorage.getItem(TSWAP_NETWORK) || DEFAULT_NET;
+  return net === 'testnet';
 }

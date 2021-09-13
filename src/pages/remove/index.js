@@ -1,13 +1,14 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Slider, Button, Spin, message, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { gzip } from 'node-gzip';
+import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
+import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import Pool from '../pool';
 import styles from './index.less';
@@ -43,6 +44,7 @@ const datas = [
     ...user,
     ...pair,
     loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
+    spinning: effects['pair/getPairData'] || effects['user/loadingUserData'],
     submiting:
       effects['pair/reqSwap'] ||
       effects['pair/removeLiq'] ||
@@ -54,7 +56,8 @@ export default class RemovePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      removeRate: 0,
+      removeLp: 0,
       page: 'form',
       formFinish: false,
       symbol1: '',
@@ -90,11 +93,13 @@ export default class RemovePage extends Component {
       const { token1, token2 } = allPairs[currentPair];
       const symbol1 = token1.symbol.toUpperCase();
       const symbol2 = token2.symbol.toUpperCase();
-      const price = BigNumber(swapToken2Amount).div(swapToken1Amount);
+      const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
+        formatSat(swapToken1Amount, token1.decimal),
+      );
       this.setState({
         symbol1,
         symbol2,
-        price: formatAmount(price, 8),
+        price: formatAmount(price, token2.decimal),
       });
     }
     // console.log(pairData);
@@ -110,6 +115,7 @@ export default class RemovePage extends Component {
     });
     dispatch({
       type: 'user/loadingUserData',
+      payload: {},
     });
   }
 
@@ -124,8 +130,7 @@ export default class RemovePage extends Component {
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenLogo name={symbol1} size={40} />
-              <TokenLogo name={symbol2} size={40} />
+              <TokenPair symbol1={symbol1} symbol2={symbol2} size={40} />
             </div>
             <div className={styles.name}>
               {symbol2}/{symbol1}
@@ -139,12 +144,37 @@ export default class RemovePage extends Component {
     );
   }
 
-  changeData = (value) => {
-    this.setState({ value });
+  changeData = (e) => {
+    let value;
+    if (e.target) {
+      //输入框变化值
+      const { userBalance, allPairs, currentPair } = this.props;
+      const { lptoken = {} } = allPairs[currentPair];
+      const LP = userBalance[lptoken.tokenID] || 0;
+      const _removeLp = e.target.value;
+      if (_removeLp <= 0) {
+        value = 0;
+      } else if (_removeLp >= LP) {
+        value = 100;
+      } else {
+        value = BigNumber(_removeLp).div(LP).multipliedBy(100).toString();
+      }
+      return this.setState({
+        removeLP: _removeLp,
+        removeRate: value,
+      });
+    }
+    this.slideData(e);
   };
 
   slideData = (value) => {
-    this.setState({ value });
+    const { userBalance, allPairs, currentPair } = this.props;
+    const { lptoken = {} } = allPairs[currentPair];
+    const LP = userBalance[lptoken.tokenID] || 0;
+    this.setState({
+      removeRate: value,
+      removeLP: BigNumber(LP).multipliedBy(value).div(100).toString(),
+    });
   };
   calc = () => {
     const {
@@ -165,8 +195,8 @@ export default class RemovePage extends Component {
     }
     LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    const { value } = this.state;
-    const removeLP = LP.multipliedBy(value).div(100);
+    const { removeRate } = this.state;
+    const removeLP = LP.multipliedBy(removeRate).div(100);
     const rate = removeLP.div(swapLpAmount);
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
@@ -178,22 +208,25 @@ export default class RemovePage extends Component {
       token2.decimal,
     );
     return {
-      removeToken1: formatAmount(removeToken1, 8),
-      removeToken2: formatAmount(removeToken2, 8),
+      removeToken1: formatAmount(removeToken1, token1.decimal),
+      removeToken2: formatAmount(removeToken2, token2.decimal),
       removeLP: formatSat(removeLP, lptoken.decimal),
     };
   };
 
   renderForm() {
-    const { currentPair, loading, submiting } = this.props;
+    const { currentPair, loading, submiting, userBalance, pairData, allPairs } =
+      this.props;
     if (loading || !currentPair) return <Loading />;
-    const { value, price, symbol1, symbol2 } = this.state;
-    const { removeToken1, removeToken2, removeLP } = this.calc();
+    const { lptoken = {} } = allPairs[currentPair];
+    const { removeRate, removeLP, symbol1, symbol2 } = this.state;
+    const LP = userBalance[lptoken.tokenID] || 0;
+    const { removeToken1, removeToken2 } = this.calc();
     return (
-      <div className={styles.content}>
+      <div className={styles.remove_content}>
         <Spin spinning={submiting}>
-          <div className={styles.data}>{value}%</div>
-          <Slider value={value} onChange={this.slideData} />
+          <div className={styles.data}>{formatAmount(removeRate, 2)}%</div>
+          <Slider value={removeRate} onChange={this.slideData} />
 
           <div className={styles.datas}>
             {datas.map((item) => (
@@ -207,22 +240,30 @@ export default class RemovePage extends Component {
             ))}
           </div>
 
-          <div className={styles.pair_box}>
-            <div className={styles.pair_left}>
-              <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={25} />
-                <TokenLogo name={symbol2} size={25} />
-              </div>
-              <div className={styles.name}>
-                {symbol2}/{symbol1}
-              </div>
+          <div
+            className={styles.lp_balance}
+            onClick={() => this.changeData(100)}
+          >
+            {_('lp_balance')}: <span>{LP}</span>
+          </div>
+          <div className={styles.s_box}>
+            <div className={styles.coin}>
+              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
             </div>
-            <div className={styles.pair_right}>{removeLP}</div>
+            <div className={styles.name}>
+              {symbol1}/{symbol2}-LP
+            </div>
+            <Input
+              className={styles.input}
+              value={removeLP}
+              onChange={this.changeData}
+              // formatter={(value) => parseFloat(value || 0)}
+            />
           </div>
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 20 }} />
+              <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
             </div>
             <div className={styles.line}></div>
           </div>
@@ -239,32 +280,15 @@ export default class RemovePage extends Component {
             <div className={styles.values_right}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo
-                    name={symbol1}
-                    size={30}
-                    style={{ margigRight: 10 }}
-                  />{' '}
-                  {symbol1}
+                  <TokenLogo name={symbol1} size={20} />
+                  <div style={{ marginLeft: 5 }}>{symbol1}</div>
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo
-                    name={symbol2}
-                    size={30}
-                    style={{ margigRight: 10 }}
-                  />{' '}
-                  {symbol2}
+                  <TokenLogo name={symbol2} size={20} />
+                  <div style={{ marginLeft: 5 }}>{symbol2}</div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.price}>
-            <div className={styles.label}>{_('price')}</div>
-            <div className={styles.value}>
-              <div>
-                1 {symbol1} = {price} {symbol2}
               </div>
             </div>
           </div>
@@ -276,17 +300,17 @@ export default class RemovePage extends Component {
   }
 
   handleSubmit = async () => {
-    const { value } = this.state;
+    const { removeRate } = this.state;
     const {
       dispatch,
       currentPair,
       userAddress,
-      // token2,
+      token1,
+      token2,
       userBalance,
       lptoken,
       rabinApis,
     } = this.props;
-    const { removeToken1, removeToken2 } = this.calc();
     const LP = userBalance[lptoken.tokenID];
 
     let res = await dispatch({
@@ -304,33 +328,16 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    // const bsv_tx_res = await dispatch({
-    //   type: 'user/transferBsv',
-    //   payload: {
-    //     address: bsvToAddress,
-    //     amount: txFee,
-    //   },
-    // });
+    if (
+      BigNumber(txFee + 100000)
+        .div(Math.pow(10, token1.decimal))
+        .isGreaterThan(userBalance.BSV || 0)
+    ) {
+      return message.error(_('lac_token_balance', 'BSV'));
+    }
 
-    // if (bsv_tx_res.msg) {
-    //   return message.error(bsv_tx_res.msg);
-    // }
-
-    // const token_tx_res = await dispatch({
-    //   type: 'user/transferFtTres',
-    //   payload: {
-    //     address: tokenToAddress,
-    //     amount: _value,
-    //     codehash: lptoken.codeHash,
-    //     genesishash: lptoken.tokenID,
-    //   },
-    // });
-
-    // if (token_tx_res.msg) {
-    //   return message.error(token_tx_res.msg);
-    // }
-    const removeLP = BigNumber(value).multipliedBy(LP).div(100);
-    const _value = removeLP
+    const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);
+    const _removeRate = removeLP
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
     const tx_res = await dispatch({
@@ -338,23 +345,19 @@ export default class RemovePage extends Component {
       payload: {
         datas: [
           {
-            receivers: [
-              {
-                address: bsvToAddress,
-                amount: txFee,
-              },
-            ],
+            type: 'bsv',
+            address: bsvToAddress,
+            amount: txFee,
+            noBroadcast: true,
           },
           {
-            receivers: [
-              {
-                address: tokenToAddress,
-                amount: _value,
-              },
-            ],
+            type: 'sensibleFt',
+            address: tokenToAddress,
+            amount: _removeRate,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis,
+            noBroadcast: true,
           },
         ],
       },
@@ -367,19 +370,25 @@ export default class RemovePage extends Component {
       return message.error(_('txs_fail'));
     }
 
+    let liq_data = {
+      symbol: currentPair,
+      requestIndex: requestIndex,
+      bsvRawTx: tx_res[0].txHex,
+      bsvOutputIndex: 0,
+      lpTokenRawTx: tx_res[1].txHex,
+      lpTokenOutputIndex: 0,
+      amountCheckRawTx: tx_res[1].routeCheckTxHex,
+    };
+    liq_data = JSON.stringify(liq_data);
+    liq_data = await gzip(liq_data);
     const removeliq_res = await dispatch({
       type: 'pair/removeLiq',
       payload: {
-        symbol: currentPair,
-        requestIndex: requestIndex,
-        minerFeeTxID: tx_res[0].txid,
-        minerFeeTxOutputIndex: 0,
-        lpTokenTxID: tx_res[1].txid,
-        lpTokenOutputIndex: 0,
+        data: liq_data,
       },
     });
 
-    if (removeliq_res.code) {
+    if (removeliq_res.code && !removeliq_res.data.txid) {
       return message.error(removeliq_res.msg);
     }
     message.success('success');
@@ -387,8 +396,14 @@ export default class RemovePage extends Component {
     this.setState({
       formFinish: true,
       final_lp: removeLP.toString(),
-      receive_token1: removeToken1,
-      receive_token2: removeToken2,
+      receive_token1: formatSat(
+        removeliq_res.data.token1Amount,
+        token1.decimal,
+      ),
+      receive_token2: formatSat(
+        removeliq_res.data.token2Amount,
+        token2.decimal,
+      ),
     });
   };
 
@@ -397,7 +412,8 @@ export default class RemovePage extends Component {
   }
 
   renderButton() {
-    const { isLogin, pairData } = this.props;
+    const { isLogin, pairData, userBalance, lptoken } = this.props;
+    const LP = userBalance[lptoken.tokenID];
     if (!isLogin) {
       // 未登录
       return (
@@ -408,6 +424,8 @@ export default class RemovePage extends Component {
     } else if (!pairData) {
       // 不存在的交易对
       return <Button className={styles.btn_wait}>{_('no_pair')}</Button>;
+    } else if (!LP || LP === '0') {
+      return <Button className={styles.btn_wait}>{_('cant_remove')}</Button>;
     } else {
       return (
         <Button
@@ -441,11 +459,11 @@ export default class RemovePage extends Component {
   }
 
   renderResult() {
-    // const { userBalance, lptoken } = this.props;
     // const LP = userBalance[lptoken.tokenID];
-    const { symbol1, symbol2, final_lp } = this.state;
+    const { symbol1, symbol2, final_lp, receive_token1, receive_token2 } =
+      this.state;
     return (
-      <div className={styles.content}>
+      <div className={styles.remove_content}>
         <div className={styles.finish_logo}>
           <CustomIcon
             type="iconicon-success"
@@ -453,29 +471,57 @@ export default class RemovePage extends Component {
           />
         </div>
         <div className={styles.finish_title}>{_('liq_removed')}</div>
-        <div className={styles.small_title}>{_('your_pos')}</div>
 
-        <div className={styles.pair_box}>
-          <div className={styles.pair_left}>
-            <div className={styles.icon}>
-              <CustomIcon type="iconlogo-bitcoin" />
-              <CustomIcon type="iconlogo-vusd" />
+        <div className={styles.f_box}>
+          <div className={styles.f_title}>{_('your_pos')}</div>
+          <div className={styles.f_item}>
+            <div className={styles.f_label}>
+              <div className={styles.icon}>
+                <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />
+              </div>
+              <div className={styles.name}>
+                {symbol2}/{symbol1}
+              </div>
             </div>
-            <div className={styles.name}>
-              {symbol2}/{symbol1}
-            </div>
+            <div className={styles.f_value}>{final_lp}</div>
           </div>
-          <div className={styles.pair_right}>{final_lp}</div>
         </div>
 
-        {this.renderInfo()}
+        <div className={styles.switch_icon} style={{ margin: '6px 0' }}>
+          <div className={styles.icon} onClick={this.switch}>
+            <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
+          </div>
+        </div>
+
+        <div className={styles.f_box}>
+          <div className={styles.f_title}>{_('your_re_liq')}</div>
+          <div className={styles.f_item}>
+            <div className={styles.f_label}>
+              <div className={styles.icon}>
+                <TokenLogo name={symbol1} size={20} />
+              </div>
+              <div className={styles.name}>
+                {receive_token1} {symbol1}
+              </div>
+            </div>
+            <div className={styles.f_value}>
+              <div className={styles.icon}>
+                <TokenLogo name={symbol2} size={20} />
+              </div>
+              <div className={styles.name}>
+                {receive_token2} {symbol2}
+              </div>
+            </div>
+          </div>
+        </div>
         <Button
           type="primary"
           className={styles.done_btn}
           onClick={() => {
             this.setState({
               formFinish: false,
-              value: 0,
+              removeRate: 0,
+              removeLP: 0,
             });
           }}
         >
@@ -511,7 +557,6 @@ export default class RemovePage extends Component {
                 {_('remove_liq_short')}
               </span>
             </div>
-            <div className={styles.help}></div>
           </div>
           {formFinish ? this.renderResult() : this.renderForm()}
         </div>

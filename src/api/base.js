@@ -1,26 +1,22 @@
 'use strict';
 import 'whatwg-fetch';
 import querystring from 'querystringify';
-const { localStorage } = window;
+import { isTestNet } from 'common/utils';
 
 export default class API {
   constructor() {
-    this.baseUrl = 'https://api.tswap.io/';
-    // this.baseUrl = '/';
+    this.baseUrl = 'https://api.tswap.io/v2/';
 
     this._requestQueue = {};
   }
 
   _request(api, params = {}, method = 'GET', url = '', catchError) {
-    // const data = {
-    //     params: JSON.stringify(params)
-    // };
-
-    if (localStorage.getItem('TSwapNetwork') === 'testnet') {
-      this.baseUrl = 'https://api.tswap.io/test/';
+    if (isTestNet()) {
+      this.baseUrl = 'https://api.tswap.io/v2/test/';
     } else {
-      this.baseUrl = 'https://api.tswap.io/';
+      this.baseUrl = 'https://api.tswap.io/v2/';
     }
+
     if (url) this.baseUrl = url;
 
     let api_url = this.baseUrl + api;

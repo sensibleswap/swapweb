@@ -13,6 +13,21 @@ const icons = {
   boex: {
     url: 'assets/boex.jpeg',
   },
+  tsc: {
+    type: 'iconTS',
+  },
+  usdt: {
+    type: 'iconlogo-usdt',
+  },
+  ovts: {
+    url: 'assets/ovts.png',
+  },
+  test: {
+    type: 'iconTS',
+  },
+  tbsv: {
+    type: 'iconlogo-bitcoin',
+  },
 };
 
 export default function TokenIcon(props) {

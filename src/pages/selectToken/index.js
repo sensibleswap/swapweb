@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import { Input } from 'antd';
 import { ArrowLeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { TSWAP_CURRENT_PAIR } from 'common/const';
-import TokenLogo from 'components/tokenicon';
+import TokenPair from 'components/tokenPair';
 import { connect } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
@@ -121,11 +120,10 @@ export default class SelectToken extends Component {
                   onClick={() => this.select(item.name)}
                 >
                   <div className={styles.icon}>
-                    <TokenLogo name={item.token1.symbol} size={25} />
-                    <TokenLogo
-                      name={item.token2.symbol}
+                    <TokenPair
+                      symbol1={item.token1.symbol}
+                      symbol2={item.token2.symbol}
                       size={25}
-                      style={{ marginLeft: '-8px' }}
                     />
                   </div>
                   <div className={styles.title}>
