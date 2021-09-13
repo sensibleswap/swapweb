@@ -319,8 +319,26 @@ export default class FarmC extends Component {
         <div className={styles.item_action}>
           <div className={styles.item_action_data}>
             <div style={{ width: 78 }}>
-              <div className={styles.label}>{_('depositors')}</div>
-              <div className={styles.value}>{addressCount}</div>
+              <Tooltip title={_('payout_tips')} placement="bottom">
+                <div className={styles.label}>
+                  {_('payout')}
+                  <CustomIcon
+                    type="iconi"
+                    style={{
+                      border: '1px solid #e8e8e8',
+                      backgroundColor: '#fff',
+                      borderRadius: '50%',
+                      fontSize: 15,
+                      padding: 2,
+                      width: 15,
+                      textAlign: 'center',
+                      marginLeft: 10,
+                      cursor: 'pointer',
+                    }}
+                  />
+                </div>
+              </Tooltip>
+              <div className={styles.value}>{reword_amount.toString()}</div>
             </div>
             <div>
               <div className={styles.label}>

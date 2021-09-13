@@ -246,5 +246,7 @@ const texts = {
   harvest_success: '收益提取成功',
   amount: '数量',
   volume: '交易量',
+  payout: '奖励',
+  payout_tips: '每个区块的奖励',
 };
 module.exports = texts;

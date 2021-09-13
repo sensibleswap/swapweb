@@ -248,5 +248,7 @@ const texts = {
   harvest_success: 'Yield Withdrawal successful',
   amount: 'Amount',
   volume: 'Volume',
+  payout: 'Payout',
+  payout_tips: 'Payout per BSV block',
 };
 module.exports = texts;
