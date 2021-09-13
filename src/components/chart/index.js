@@ -19,7 +19,8 @@ function sleep(ms) {
     setTimeout(resolve, ms);
   });
 }
-let _timer1 = 0;
+
+let _timer = 0;
 @connect(({ pair, history, loading }) => {
   const { effects } = loading;
   return {
@@ -116,6 +117,7 @@ export default class Chart extends Component {
   componentDidMount() {
     this.init();
   }
+
   async init() {
     this.setState({
       loading: true,
@@ -128,10 +130,11 @@ export default class Chart extends Component {
       loading: false,
     });
 
-    if (_timer1 < 1) {
-      setTimeout(async () => {
+    if (!_timer) {
+      _timer = setTimeout(async () => {
         while (this.polling) {
           await sleep(60 * 1e3);
+
           await this.switch(0);
           this.option && this.myChart.setOption(this.option);
         }
@@ -159,6 +162,7 @@ export default class Chart extends Component {
   async getData() {
     const { currentPair, allPairs, type } = this.props;
     const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
+    // console.log('getdata-currentPair', currentPair)
     const res = await this.props.dispatch({
       type: 'history/query',
       payload: {
@@ -245,6 +249,7 @@ export default class Chart extends Component {
   selectToken = (currentPair) => {
     if (currentPair === this.props.currentPair) return;
     window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
+
     this.props.dispatch({
       type: 'pair/getPairData',
       payload: {
