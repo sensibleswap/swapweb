@@ -62,7 +62,7 @@ export default class FarmC extends Component {
     });
     const { currentPair } = this.props;
 
-    const res = await pairApi.querySwapInfo(currentPair.replace('-v2', ''));
+    const res = await pairApi.querySwapInfo(currentPair);
 
     this.setState({
       pairData: res.data,
@@ -88,6 +88,23 @@ export default class FarmC extends Component {
   hidePannel = () => {
     this.setState({
       app_pannel: false,
+    });
+  };
+
+  changeCurrentFarm = async (currentPair) => {
+    const { allPairs, dispatch } = this.props;
+    dispatch({
+      type: 'farm/saveFarm',
+      payload: {
+        currentPair,
+        allPairs,
+      },
+    });
+
+    const res = await pairApi.querySwapInfo(currentPair);
+
+    this.setState({
+      pairData: res.data,
     });
   };
 
@@ -209,20 +226,24 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { symbol1, symbol2, loading, dispatch, bsvPrice } = this.props;
+    const { loading, dispatch, bsvPrice, currentPair } = this.props;
+    const [symbol1, symbol2] = pairName.toUpperCase().split('-');
     const {
       poolTokenAmount,
       rewardAmountPerBlock,
       rewardTokenAmount = 0,
-      addressCount,
       rewardToken,
     } = data;
     const { decimal } = rewardToken;
-    const { current_item, pairData } = this.state;
-    if (loading || !pairData.swapLpAmount) {
+    const { current_item, pairData = {} } = this.state;
+    if (loading) {
       return null;
     }
-    const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
+    const {
+      swapLpAmount = 0,
+      swapToken1Amount = 0,
+      swapToken2Amount = 0,
+    } = pairData;
     const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
     const bsv_amount = formatSat(swapToken1Amount);
     const token_amount = formatSat(swapToken2Amount, decimal);
@@ -264,9 +285,12 @@ export default class FarmC extends Component {
     return (
       <div
         className={
-          current_item === index ? jc(styles.item, styles.current) : styles.item
+          pairName === currentPair
+            ? jc(styles.item, styles.current)
+            : styles.item
         }
         key={pairName}
+        onClick={() => this.changeCurrentFarm(pairName)}
       >
         <div className={styles.item_title}>
           <div className={styles.icon}>
