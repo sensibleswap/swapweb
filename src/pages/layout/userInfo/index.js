@@ -188,14 +188,18 @@ export default class UserInfo extends Component {
   };
 
   chooseLoginWallet = () => {
-    this.setState({
-      chooseLogin_visible: true,
-      // pop_visible: false,
-    });
-    if (this.state.pop_visible) {
+    if (query.env === 'webview') {
+      this.connectWebWallet(3);
+    } else {
       this.setState({
-        pop_visible: false,
+        chooseLogin_visible: true,
+        // pop_visible: false,
       });
+      if (this.state.pop_visible) {
+        this.setState({
+          pop_visible: false,
+        });
+      }
     }
   };
   closeChooseDialog = () => {

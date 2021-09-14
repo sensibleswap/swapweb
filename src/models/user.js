@@ -39,8 +39,12 @@ export default {
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
         const tokenBalance = yield bsv.getSensibleFtBalance(type);
+        if (type === 3) {
+          accountInfo.network =
+            parseInt(accountInfo.token_map_id) === 1 ? 'mainnet' : 'testnet';
+        }
         const network =
-          type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
+          type === 2 ? yield bsv.getNetwork(type) : accountInfo.network;
 
         localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
 
@@ -97,7 +101,7 @@ export default {
           type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
 
         localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
-        const paymail = yield bsv.getPaymail();
+        const paymail = type === 3 ? accountInfo.email : yield bsv.getPaymail();
 
         const userBalance = {
           BSV: bsvBalance,
@@ -142,12 +146,31 @@ export default {
     },
     *connectWebWallet({ payload }, { call, put }) {
       const { type, network } = payload;
+      let res;
       try {
-        yield bsv.connectWallet(type, network);
-        return {};
+        res = yield bsv.connectWallet(type, network);
+        console.log('connectWebWallet:', res);
       } catch (error) {
         return { msg: error.message || error.toString() };
       }
+      // if(type === 3) {
+      //   res = {"email":"support@volt.id","name":"BSV","token_map_id":1,"address":"1B5t3zszPNGdSAL7GwnKwjMtPBTVeDdQhA","bsvBalance":154989}
+      //   yield put({
+      //     type: 'save',
+      //     payload: {
+
+      //     }
+      //   })
+      // }
+      // if(res.name) {
+      //   yield put({
+      //     type: 'save',
+      //     payload: {
+      //       accountInfo:
+      //     }
+      //   })
+      // }
+      return {};
     },
 
     *transferBsv({ payload }, { call, put, select }) {
