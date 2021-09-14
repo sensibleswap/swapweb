@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
+import querystring from 'querystringify';
 import { Spin, message, Dropdown, Menu } from 'antd';
 import { formatTime, formatAmount } from 'common/utils';
 import { TSWAP_CURRENT_PAIR, USDT_PAIR } from 'common/const';
@@ -11,6 +12,7 @@ import TokenPair from 'components/tokenPair';
 import styles from './index.less';
 import _ from 'i18n';
 
+const query = querystring.parse(window.location.search);
 const COLOR1 = '#2BB696';
 const COLOR2 = '#BB6BD9';
 
@@ -218,29 +220,32 @@ export default class Chart extends Component {
         {Object.keys(allPairs).map((item) => {
           const symbols = item.toUpperCase();
           const symbols_arr = symbols.split('-');
-          return (
-            <Menu.Item key={item}>
-              <div
-                className={styles.menu_item}
-                onClick={() => this.selectToken(item)}
-              >
-                <TokenPair
-                  symbol1={symbols_arr[0]}
-                  symbol2={symbols_arr[1]}
-                  size={25}
-                />
-                <span className={styles.menu_name}>{symbols}</span>
-                <div>
-                  {currentPair === item && (
-                    <CustomIcon
-                      type="icona-Group570"
-                      style={{ fontSize: 20 }}
-                    />
-                  )}
+          let { test } = allPairs[item];
+          if ((test && query.env === 'local') || !test) {
+            return (
+              <Menu.Item key={item}>
+                <div
+                  className={styles.menu_item}
+                  onClick={() => this.selectToken(item)}
+                >
+                  <TokenPair
+                    symbol1={symbols_arr[0]}
+                    symbol2={symbols_arr[1]}
+                    size={25}
+                  />
+                  <span className={styles.menu_name}>{symbols}</span>
+                  <div>
+                    {currentPair === item && (
+                      <CustomIcon
+                        type="icona-Group570"
+                        style={{ fontSize: 20 }}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Menu.Item>
-          );
+              </Menu.Item>
+            );
+          }
         })}
       </Menu>
     );
