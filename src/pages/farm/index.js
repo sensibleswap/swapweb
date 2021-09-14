@@ -230,6 +230,7 @@ export default class FarmC extends Component {
     const lp_price = BigNumber(bsv_amount * 2).div(lp_amount);
     const token_price = BigNumber(bsv_amount).div(token_amount);
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
+
     let _total = BigNumber(formatSat(poolTokenAmount, decimal))
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
@@ -240,6 +241,8 @@ export default class FarmC extends Component {
     } else if (_total.isGreaterThan(1000)) {
       _total = formatAmount(_total.div(1000), 2);
       _total = _total + 'k';
+    } else {
+      _total = formatAmount(_total, 2);
     }
 
     let _yield = BigNumber(reword_amount)
@@ -332,7 +335,7 @@ export default class FarmC extends Component {
                       padding: 2,
                       width: 15,
                       textAlign: 'center',
-                      marginLeft: 10,
+                      marginLeft: 8,
                       cursor: 'pointer',
                     }}
                   />

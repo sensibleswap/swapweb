@@ -319,26 +319,6 @@ export default class Liquidity extends Component {
     return this.renderInfo(total_origin_amount, total_aim_amount, share);
   }
 
-  // renderResultInfo() {
-  //   const { token1, token2, pairData, userBalance, lptoken } = this.props;
-  //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-
-  //   const total_origin_amount = formatAmount(
-  //     BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
-  //     token1.decimal,
-  //   ).toString();
-  //   const total_aim_amount = formatAmount(
-  //     BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
-  //     token2.decimal,
-  //   ).toString();
-
-  //   const LP = userBalance[lptoken.tokenID] || 0;
-  //   const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
-
-  //   const share = (rate * 100).toFixed(4);
-  //   return this.renderInfo(total_origin_amount, total_aim_amount, share);
-  // }
-
   renderForm() {
     const { token1, token2, userBalance, submiting } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
@@ -547,16 +527,6 @@ export default class Liquidity extends Component {
     let { origin_amount, aim_amount, lastMod } = this.state;
     let _origin_amount, _aim_amount;
 
-    // console.log(BigNumber(txFee + 100000).toString(),
-    // BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)).toString(),
-    //   BigNumber(origin_amount)
-    // .plus(
-    //   BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal))
-    // ).toString(), BigNumber(origin_amount)
-    // .plus(
-    //   BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal))
-    // )
-    // .isGreaterThan(userBalance.BSV || 0))
     if (
       BigNumber(origin_amount)
         .plus(BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)))
@@ -591,23 +561,8 @@ export default class Liquidity extends Component {
         )[1];
       }
 
-      // const new_aim_amount = formatSat(token2AddAmount, token2.decimal);
-
       _origin_amount = token1AddAmount;
       _aim_amount = token2AddAmount;
-
-      // if (new_aim_amount !== aim_amount) {
-      //   this.setState({
-      //     _origin_amount,
-      //     _aim_amount,
-      //   });
-      // return this.showModal({
-      //   origin_amount,
-      //   aim_amount,
-      //   new_origin_amount: origin_amount,
-      //   new_aim_amount,
-      // });
-      // }
     } else if (lastMod === 'aim') {
       const token2AddAmount = BigNumber(aim_amount)
         .multipliedBy(Math.pow(10, token2.decimal))
@@ -627,18 +582,8 @@ export default class Liquidity extends Component {
         )[1];
       }
 
-      // const new_origin_amount = formatSat(token1AddAmount, token1.decimal);
-
       _origin_amount = token1AddAmount;
       _aim_amount = token2AddAmount;
-      // if (new_origin_amount !== origin_amount) {
-      // return this.showModal({
-      //   origin_amount,
-      //   aim_amount,
-      //   new_origin_amount,
-      //   new_aim_amount: aim_amount,
-      // });
-      // }
     }
 
     this.setState({
@@ -806,31 +751,20 @@ export default class Liquidity extends Component {
     );
   }
 
-  selectedToken = async (currentPair) => {
+  selectedToken = async () => {
     this.showUI('form');
-    if (currentPair && currentPair !== this.props.currentPair) {
-      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-      if (this.state.page === 'selectToken') {
-        this.props.dispatch({
-          type: 'pair/getPairData',
-          payload: {
-            currentPair,
-          },
-        });
-      }
 
-      this.setState({
-        origin_amount: 0,
-        aim_amount: 0,
-        lastMod: '',
-      });
+    this.setState({
+      origin_amount: 0,
+      aim_amount: 0,
+      lastMod: '',
+    });
 
-      this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
-    }
+    this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
   };
 
   render() {
-    const { loading, currentPair } = this.props;
+    const { loading } = this.props;
     if (loading) return <Loading />;
     const { page } = this.state;
     return (
@@ -839,7 +773,7 @@ export default class Liquidity extends Component {
           {this.renderSwap()}
           {page === 'selectToken' && (
             <div className={styles.selectToken_wrap}>
-              <SelectToken close={(id) => this.selectedToken(id, page)} />
+              <SelectToken finish={() => this.selectedToken()} />
             </div>
           )}
         </div>

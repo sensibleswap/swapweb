@@ -3,26 +3,14 @@ import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
-import querystring from 'querystringify';
-import { Spin, message, Dropdown, Menu } from 'antd';
-import { formatTime, formatAmount } from 'common/utils';
-import { TSWAP_CURRENT_PAIR, USDT_PAIR } from 'common/const';
-import CustomIcon from 'components/icon';
-import TokenPair from 'components/tokenPair';
+import { Spin } from 'antd';
+import { USDT_PAIR } from 'common/const';
 import styles from './index.less';
 import _ from 'i18n';
 
-const query = querystring.parse(window.location.search);
 const COLOR1 = '#2BB696';
 const COLOR2 = '#BB6BD9';
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-let _timer = 0;
 @connect(({ pair, history, loading }) => {
   const { effects } = loading;
   return {
@@ -113,184 +101,39 @@ export default class Chart extends Component {
     this.polling = true;
   }
 
-  componentWillUnmount() {
-    this.polling = false;
-  }
   componentDidMount() {
     this.init();
   }
 
   async init() {
-    this.setState({
-      loading: true,
-    });
+    const { chartData, type } = this.props;
     const chartDom = document.getElementById('J_Chart');
     this.myChart = echarts.init(chartDom);
-    await this.switch(0);
-    this.option && this.myChart.setOption(this.option);
-    this.setState({
-      loading: false,
-    });
 
-    if (!_timer) {
-      _timer = setTimeout(async () => {
-        while (this.polling) {
-          await sleep(60 * 1e3);
-
-          await this.switch(0);
-          this.option && this.myChart.setOption(this.option);
-        }
-      });
-    }
-  }
-
-  switch = async () => {
-    const data = await this.getData();
-    if (!data) return;
-
-    const [price, amount, volumn, time] = data;
-    const { type } = this.props;
-    this.option.xAxis.data = time;
-    if (type === 'pool') {
-      this.option.series[0].data = amount;
+    if (chartData.length > 1) {
+      const [price, amount, volumn, time] = chartData;
+      this.option.xAxis.data = time;
+      if (type === 'pool') {
+        this.option.series[0].data = amount;
+      } else {
+        this.option.series[0].data = price;
+        this.option.series[1].data = volumn;
+      }
     } else {
-      this.option.series[0].data = price;
-      this.option.series[1].data = volumn;
+      this.option.series[0].data = [];
     }
 
     this.myChart.setOption(this.option);
-  };
-
-  async getData() {
-    const { currentPair, allPairs, type } = this.props;
-    const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
-    // console.log('getdata-currentPair', currentPair)
-    const res = await this.props.dispatch({
-      type: 'history/query',
-      payload: {
-        codeHash: swapCodeHash,
-        genesisHash: swapID,
-        type,
-      },
-    });
-
-    if (res.code) {
-      message.error(res.msg);
-      return false;
-    }
-
-    let time = [],
-      price = [],
-      amount = [],
-      volumn = [];
-    if (res.length > 0) {
-      if (type === 'pool') {
-        res.forEach((item, index) => {
-          const { outToken1Amount, timestamp } = item;
-          amount.push(formatAmount((outToken1Amount / Math.pow(10, 8)) * 2, 8));
-          time.push(formatTime(timestamp * 1000));
-        });
-      } else {
-        res.forEach((item, index) => {
-          const { minPrice, maxPrice, token1Volume, timestamp } = item;
-          let _price =
-            (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
-          if (currentPair === USDT_PAIR) {
-            _price = 1 / _price;
-            price.push(formatAmount(_price, 6));
-          } else {
-            price.push(formatAmount(_price, 8));
-          }
-
-          volumn.push(formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8));
-
-          time.push(formatTime(timestamp * 1000));
-        });
-      }
-    }
-
-    return [price, amount, volumn, time];
   }
-
-  renderMenu = () => {
-    const { allPairs, currentPair } = this.props;
-
-    return (
-      <Menu>
-        {Object.keys(allPairs).map((item) => {
-          const symbols = item.toUpperCase();
-          const symbols_arr = symbols.split('-');
-          let { test } = allPairs[item];
-          if ((test && query.env === 'local') || !test) {
-            return (
-              <Menu.Item key={item}>
-                <div
-                  className={styles.menu_item}
-                  onClick={() => this.selectToken(item)}
-                >
-                  <TokenPair
-                    symbol1={symbols_arr[0]}
-                    symbol2={symbols_arr[1]}
-                    size={25}
-                  />
-                  <span className={styles.menu_name}>{symbols}</span>
-                  <div>
-                    {currentPair === item && (
-                      <CustomIcon
-                        type="icona-Group570"
-                        style={{ fontSize: 20 }}
-                      />
-                    )}
-                  </div>
-                </div>
-              </Menu.Item>
-            );
-          }
-        })}
-      </Menu>
-    );
-  };
-
-  selectToken = (currentPair) => {
-    if (currentPair === this.props.currentPair) return;
-    window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-
-    this.props.dispatch({
-      type: 'pair/getPairData',
-      payload: {
-        currentPair,
-      },
-    });
-  };
 
   componentWillUnmount() {
     this.myChart.dispose();
   }
 
   render() {
-    const { token1, token2, type } = this.props;
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-    const menu = this.renderMenu();
+    const { type } = this.props;
     return (
       <div className={styles.chart_container}>
-        <Dropdown overlay={menu} overlayClassName={styles.drop_menu}>
-          <span className={styles.chart_title}>
-            {symbol2 === 'USDT' ? (
-              <>
-                <span>{symbol1}</span>/{symbol2}
-              </>
-            ) : (
-              <>
-                <span>{symbol2}</span>/{symbol1}
-              </>
-            )}
-            <CustomIcon
-              type="iconDropdown"
-              style={{ fontSize: 20, marginLeft: 40 }}
-            />
-          </span>
-        </Dropdown>
         {type === 'swap' && (
           <div className={styles.data_info}>
             <div>
@@ -321,9 +164,7 @@ export default class Chart extends Component {
           </div>
         )}
 
-        <Spin spinning={this.props.loading || this.state.loading}>
-          <div id="J_Chart" className={styles.chart}></div>
-        </Spin>
+        <div id="J_Chart" className={styles.chart}></div>
       </div>
     );
   }

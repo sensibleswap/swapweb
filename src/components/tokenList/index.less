@@ -1,0 +1,88 @@
+.big {
+  padding: 20px 20px 40px;
+  background-color: #fff;
+}
+
+.search_input {
+  :global {
+    .ant-input {
+      border-radius: 8px 0 0 8px;
+      height: 50px;
+      padding-top: 15px;
+      padding-left: 15px;
+      padding-bottom: 15px;
+    }
+
+    .ant-input-group-addon .ant-btn {
+      border-radius: 0 8px 8px 0 !important;
+      height: 50px;
+      padding-top: 15px;
+    }
+  }
+}
+
+.token_list {
+  overflow-y: auto;
+  height: 368px;
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f6f6f9;
+    border-radius: 55px;
+    margin-top: 15px;
+    height: 70px;
+    padding: 0 20px 0 15px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700px;
+
+    .icon_name {
+      display: flex;
+      align-items: center;
+    }
+
+    .name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-left: 15px;
+    }
+
+    .selected {
+      padding-top: 4px;
+    }
+  }
+}
+
+.small {
+  padding: 20px 10px;
+  background-color: #fff;
+  border-radius: 8px;
+
+  .search_input {
+    :global {
+      .ant-input {
+        height: 40px;
+      }
+
+      .ant-input-group-addon .ant-btn {
+        border-radius: 0 8px 8px 0 !important;
+        height: 40px;
+        padding-top: 10px;
+      }
+    }
+  }
+
+  .token_list {
+    height: auto;
+    max-height: 300px;
+
+    .item {
+      margin-top: 10px;
+      height: 48px;
+      padding: 0 10px;
+      border-radius: 50px;
+    }
+  }
+}

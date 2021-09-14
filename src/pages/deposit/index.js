@@ -180,18 +180,6 @@ export default class Deposit extends Component {
             </div>
             <div className={styles.pair_right}>
               {currentPairYield}% {_('apy')}
-              <CustomIcon
-                type="iconi"
-                style={{
-                  backgroundColor: '#fff',
-                  borderRadius: '50%',
-                  fontSize: 15,
-                  padding: 2,
-                  width: 15,
-                  textAlign: 'center',
-                  marginLeft: 5,
-                }}
-              />
             </div>
           </div>
 

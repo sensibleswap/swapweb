@@ -1,23 +1,36 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { Button } from 'antd';
+import EventBus from 'common/eventBus';
+import { Button, Dropdown, message, Spin } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
+import { formatTime, formatAmount } from 'common/utils';
+import { USDT_PAIR } from 'common/const';
+import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
 import Chart from 'components/chart';
+import TokenList from 'components/tokenList';
 import Header from '../layout/header';
 import Swap from '../swap';
 import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+let _timer = 0;
 @connect(({ pair, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
     loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
+    loadingChartData: effects['history/query'],
   };
 })
 export default class SwapPage extends Component {
@@ -25,6 +38,7 @@ export default class SwapPage extends Component {
     super(props);
     this.state = {
       app_pannel: false,
+      chartData: [],
     };
   }
 
@@ -40,13 +54,132 @@ export default class SwapPage extends Component {
     });
   };
 
+  componentWillUnmount() {
+    this.polling = false;
+  }
+
+  componentDidMount() {
+    EventBus.on('reloadPair', this.fetch);
+    this.fetch();
+  }
+
+  fetch = async () => {
+    const { dispatch } = this.props;
+    await dispatch({
+      type: 'pair/getAllPairs',
+    });
+
+    let { currentPair } = this.props;
+    if (currentPair) {
+      await dispatch({
+        type: 'pair/getPairData',
+        payload: {
+          currentPair,
+        },
+      });
+      const chartData = await this.getData();
+      this.setState({
+        chartData,
+      });
+      if (!_timer) {
+        _timer = setTimeout(async () => {
+          while (this.polling) {
+            // console.log(i++)
+            await sleep(15 * 1e3);
+
+            const chartData1 = await this.getData();
+            this.setState({
+              chartData: chartData1,
+            });
+          }
+        });
+      }
+    }
+  };
+
+  async getData() {
+    const { currentPair, allPairs, type } = this.props;
+    if (!allPairs[currentPair]) return [];
+    const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
+
+    const res = await this.props.dispatch({
+      type: 'history/query',
+      payload: {
+        codeHash: swapCodeHash,
+        genesisHash: swapID,
+        type,
+      },
+    });
+
+    if (res.code) {
+      message.error(res.msg);
+      return false;
+    }
+
+    let time = [],
+      price = [],
+      amount = [],
+      volumn = [];
+    if (res.length > 0) {
+      if (type === 'pool') {
+        res.forEach((item, index) => {
+          const { outToken1Amount, timestamp } = item;
+          amount.push(formatAmount((outToken1Amount / Math.pow(10, 8)) * 2, 8));
+          time.push(formatTime(timestamp * 1000));
+        });
+      } else {
+        res.forEach((item, index) => {
+          const { minPrice, maxPrice, token1Volume, timestamp } = item;
+          let _price =
+            (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
+          if (currentPair === USDT_PAIR) {
+            _price = 1 / _price;
+            price.push(formatAmount(_price, 6));
+          } else {
+            price.push(formatAmount(_price, 8));
+          }
+
+          volumn.push(formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8));
+
+          time.push(formatTime(timestamp * 1000));
+        });
+      }
+    }
+
+    debugger;
+    return [price, amount, volumn, time];
+  }
+
   renderContent() {
-    const { loading, token1, token2, pairData } = this.props;
+    const { loading, token1, token2, pairData, loadingChartData } = this.props;
     if (loading || !token1.symbol) return <Loading />;
-    // console.log(token2);
+    const { chartData } = this.state;
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
+
     return (
       <div className={styles.content}>
-        <Chart type="swap" />
+        <Dropdown
+          overlay={<TokenList size="small" />}
+          overlayClassName={styles.drop_menu}
+        >
+          <span className={styles.chart_title}>
+            {symbol2 === 'USDT' ? (
+              <>
+                <span>{symbol1}</span>/{symbol2}
+              </>
+            ) : (
+              <>
+                <span>{symbol2}</span>/{symbol1}
+              </>
+            )}
+            <CustomIcon
+              type="iconDropdown"
+              style={{ fontSize: 20, marginLeft: 40 }}
+            />
+          </span>
+        </Dropdown>
+        <Chart type="swap" chartData={chartData} />
 
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />
