@@ -92,7 +92,7 @@ export default class FarmC extends Component {
   };
 
   harvest = async (currentPair, params) => {
-    const { dispatch, userAddress } = this.props;
+    const { dispatch, userAddress, changeAddress } = this.props;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -113,6 +113,7 @@ export default class FarmC extends Component {
       payload: {
         address: bsvToAddress,
         amount: txFee,
+        changeAddress,
         noBroadcast: true,
       },
     });

@@ -31,7 +31,7 @@ const FormItem = Form.Item;
       effects['pair/reqSwap'] ||
       effects['pair/addLiq'] ||
       effects['user/transferBsv'] ||
-      effects['user/transferFtTres'] ||
+      // effects['user/transferFtTres'] ||
       effects['user/transferAll'] ||
       false,
   };

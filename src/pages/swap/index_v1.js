@@ -32,7 +32,7 @@ const FormItem = Form.Item;
       effects['pair/reqSwap'] ||
       effects['pair/swap'] ||
       effects['user/transferBsv'] ||
-      effects['user/transferFtTres'] ||
+      // effects['user/transferFtTres'] ||
       effects['user/transferAll'] ||
       false,
   };
@@ -578,8 +578,14 @@ export default class Swap extends Component {
 
   submit = async (data) => {
     const { dirForward, origin_amount, reqSwapData } = this.state;
-    const { dispatch, currentPair, token2, rabinApis, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      token2,
+      rabinApis,
+      userBalance,
+      changeAddress,
+    } = this.props;
 
     const { bsvToAddress, tokenToAddress, txFee, requestIndex } =
       reqSwapData || data;
@@ -605,6 +611,7 @@ export default class Swap extends Component {
         payload: {
           address: bsvToAddress,
           amount: total.toString(),
+          changeAddress,
         },
       });
 

@@ -172,8 +172,14 @@ export default class Withdraw extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, userAddress, userBalance, lptoken } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      userBalance,
+      lptoken,
+      changeAddress,
+    } = this.props;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -206,6 +212,7 @@ export default class Withdraw extends Component {
       payload: {
         address: bsvToAddress,
         amount: txFee,
+        changeAddress,
         noBroadcast: true,
       },
     });

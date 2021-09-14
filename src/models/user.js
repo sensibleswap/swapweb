@@ -13,6 +13,7 @@ export default {
     accountInfo: {},
     userBalance: {},
     userAddress: '',
+    changeAddress: '',
     walletType: 1,
   },
 
@@ -38,6 +39,7 @@ export default {
       try {
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
+        const changeAddress = yield bsv.getChangeAddress(type);
         const tokenBalance = yield bsv.getSensibleFtBalance(type);
         if (type === 3) {
           accountInfo.network =
@@ -61,6 +63,7 @@ export default {
           tokenBalance,
           userBalance,
           userAddress,
+          changeAddress,
         );
 
         yield put({
@@ -70,6 +73,7 @@ export default {
             userBalance,
             userAddress: paymail || userAddress,
             userAddressShort: paymail || strAbbreviation(userAddress, [5, 4]),
+            changeAddress,
             isLogin: true,
             walletType: type || 1,
           },
@@ -96,6 +100,7 @@ export default {
       try {
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
+        const changeAddress = yield bsv.getChangeAddress(type);
         const tokenBalance = yield bsv.getSensibleFtBalance(type);
         const network =
           type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
@@ -115,6 +120,7 @@ export default {
             userBalance,
             userAddress: paymail || userAddress,
             userAddressShort: paymail || strAbbreviation(userAddress, [5, 4]),
+            changeAddress,
             isLogin: true,
           },
         });
@@ -174,14 +180,14 @@ export default {
     },
 
     *transferBsv({ payload }, { call, put, select }) {
-      const { address, amount, noBroadcast } = payload;
+      const { address, amount, note, changeAddress, noBroadcast } = payload;
       const type = yield select((state) => state.user.walletType);
 
       log('transferBsv:', payload);
       try {
         const res = yield bsv.transferBsv(
           type,
-          { address, amount },
+          { address, amount, note, changeAddress },
           noBroadcast,
         );
         log(res);

@@ -17,7 +17,6 @@ const callJavaScriptBridge = (method, param = {}) => {
       console.log('result:', result, 'msg:', msg);
       msg ? reject(new Error(msg)) : resolve(result);
     };
-    console.log('data:', data);
     window._volt_javascript_bridge.postMessage(JSON.stringify(data));
   });
 };
@@ -33,7 +32,6 @@ const connectWallet = async (type = 1, network) => {
     const res = await callJavaScriptBridge('volt.bsv.connectAccount', {
       token_map_id: 1,
     });
-    console.log('connectResult:', res);
     return res;
   }
 };
@@ -47,7 +45,6 @@ const getAccountInfo = async (type = 1) => {
   }
   if (type === 3) {
     const res = await callJavaScriptBridge('volt.bsv.getAccountInfo');
-    console.log('accountInfo:', res);
     return res;
   }
 };
@@ -72,9 +69,8 @@ const getBsvBalance = async (type = 1) => {
 
   if (type === 3) {
     const res = await callJavaScriptBridge('volt.bsv.getBsvBalance');
-    console.log('bsvBalance:', res);
 
-    return formatSat(res.balance);
+    return formatSat(res.free);
   }
 };
 
@@ -88,7 +84,6 @@ const getAddress = async (type = 1) => {
 
   if (type === 3) {
     const res = await callJavaScriptBridge('volt.bsv.getDepositAddress');
-    console.log('DepositAddress:', res);
     return res;
   }
 };
@@ -122,7 +117,6 @@ const getSensibleFtBalance = async (type = 1) => {
 
   if (type === 3) {
     const res = await callJavaScriptBridge('volt.bsv.getSensibleFtBalance');
-    console.log('SensibleFtBalance:', res);
 
     const userBalance = {};
     res.forEach((item) => {
@@ -136,13 +130,12 @@ const exitAccount = async (type) => {
   voltWallet.disconnectAccount();
   if (type === 3) {
     const res = await callJavaScriptBridge('volt.bsv.disconnectAccount');
-    console.log('disconnectAccount:', res);
     return res;
   }
 };
 const transferBsv = async (
   type = 1,
-  { address, amount },
+  { address, amount, note = '', changeAddress },
   noBroadcast = false,
 ) => {
   if (type === 1) {
@@ -169,13 +162,17 @@ const transferBsv = async (
   if (type === 3) {
     const res = await callJavaScriptBridge('volt.bsv.transfer', {
       noBroadcast,
-      type: 'bsv',
-      data: {
-        amountExact: false,
-        receivers: [{ address, amount }],
-      },
+      list: [
+        {
+          type: 'bsv',
+          note,
+          receiver_address: address,
+          receiver_amount: amount,
+          change_address: changeAddress,
+        },
+      ],
     });
-    console.log('disconnectAccount:', res);
+    console.log('transfer:', res);
     return res;
   }
 };
