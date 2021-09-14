@@ -88,6 +88,13 @@ const getAddress = async (type = 1) => {
   }
 };
 
+const getChangeAddress = async (type = 3) => {
+  if (type === 3) {
+    const res = await callJavaScriptBridge('volt.bsv.getChangeAddress');
+    return res;
+  }
+};
+
 const getNetwork = (type = 1) => {
   if (type === 1) {
     return '';
@@ -172,6 +179,21 @@ const transferBsv = async (
         },
       ],
     });
+    console.log(
+      'params',
+      JSON.stringify({
+        noBroadcast,
+        list: [
+          {
+            type: 'bsv',
+            note,
+            receiver_address: address,
+            receiver_amount: amount,
+            change_address: changeAddress,
+          },
+        ],
+      }),
+    );
     console.log('transfer:', res);
     return res;
   }
@@ -288,6 +310,47 @@ const transferAll = (type = 1, param = []) => {
       list: data,
     });
   }
+
+  if (type === 3) {
+    let data = [];
+    let noBroadcast = false;
+    param.forEach((item) => {
+      const {
+        address,
+        amount,
+        codehash,
+        genesis,
+        changeAddress,
+        note = '',
+      } = item;
+      if (item.type === 'bsv') {
+        data.push({
+          type: 'bsv',
+          note,
+          receiver_address: address,
+          receiver_amount: amount,
+          change_address: changeAddress,
+        });
+      } else if (item.type === 'sensibleFt') {
+        data.push({
+          type: 'sensibleFt',
+          note,
+          receiver_address: address,
+          receiver_amount: amount,
+          change_address: changeAddress,
+          codehash,
+          genesis,
+        });
+      }
+      noBroadcast = item.noBroadcast;
+    });
+
+    return voltWallet.batchTransfer({
+      noBroadcast,
+      errorBreak: true,
+      list: data,
+    });
+  }
 };
 
 const signTx = async (type, param) => {
@@ -316,6 +379,7 @@ export default {
   getPaymail,
   getBsvBalance,
   getAddress,
+  getChangeAddress,
   getNetwork,
   getSensibleFtBalance,
   exitAccount,

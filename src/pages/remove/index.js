@@ -310,6 +310,7 @@ export default class RemovePage extends Component {
       userBalance,
       lptoken,
       rabinApis,
+      changeAddress,
     } = this.props;
     const LP = userBalance[lptoken.tokenID];
 
@@ -348,12 +349,14 @@ export default class RemovePage extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: txFee,
+            changeAddress,
             noBroadcast: true,
           },
           {
             type: 'sensibleFt',
             address: tokenToAddress,
             amount: _removeRate,
+            changeAddress,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis,

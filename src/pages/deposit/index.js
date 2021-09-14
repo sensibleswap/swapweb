@@ -207,8 +207,14 @@ export default class Deposit extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, userAddress, userBalance, lptoken } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      userBalance,
+      lptoken,
+      changeAddress,
+    } = this.props;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -244,12 +250,14 @@ export default class Deposit extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: txFee,
+            changeAddress,
             noBroadcast: true,
           },
           {
             type: 'sensibleFt',
             address: tokenToAddress,
             amount: _value,
+            changeAddress,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis: lptoken.rabinApis,

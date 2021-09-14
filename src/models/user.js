@@ -100,7 +100,8 @@ export default {
       try {
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
-        const changeAddress = yield bsv.getChangeAddress(type);
+        const changeAddress =
+          type === 3 ? yield bsv.getChangeAddress(type) : '';
         const tokenBalance = yield bsv.getSensibleFtBalance(type);
         const network =
           type === 1 ? accountInfo.network : yield bsv.getNetwork(type);

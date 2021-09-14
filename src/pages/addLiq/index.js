@@ -650,7 +650,8 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const { token2, currentPair, dispatch, rabinApis } = this.props;
+    const { token2, currentPair, dispatch, rabinApis, changeAddress } =
+      this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
@@ -663,12 +664,14 @@ export default class Liquidity extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+            changeAddress,
             noBroadcast: true,
           },
           {
             type: 'sensibleFt',
             address: tokenToAddress,
             amount: _aim_amount.toString(),
+            changeAddress,
             codehash: token2.codeHash,
             genesis: token2.tokenID,
             rabinApis,
