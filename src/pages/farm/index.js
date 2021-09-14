@@ -244,12 +244,14 @@ export default class FarmC extends Component {
       swapToken1Amount = 0,
       swapToken2Amount = 0,
     } = pairData;
-    const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
+    const _rewardTokenAmount = formatSat(rewardTokenAmount || 0, decimal);
     const bsv_amount = formatSat(swapToken1Amount);
     const token_amount = formatSat(swapToken2Amount, decimal);
     const lp_amount = formatSat(swapLpAmount, decimal);
-    const lp_price = BigNumber(bsv_amount * 2).div(lp_amount);
-    const token_price = BigNumber(bsv_amount).div(token_amount);
+    const lp_price =
+      lp_amount > 0 ? BigNumber(bsv_amount * 2).div(lp_amount) : 0;
+    const token_price =
+      token_amount > 0 ? BigNumber(bsv_amount).div(token_amount) : 0;
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
     let _total = BigNumber(formatSat(poolTokenAmount, decimal))
       .multipliedBy(lp_price)
@@ -265,14 +267,17 @@ export default class FarmC extends Component {
       _total = formatAmount(_total, 2);
     }
 
-    let _yield = BigNumber(reword_amount)
-      .multipliedBy(144)
-      .multipliedBy(365)
-      .multipliedBy(token_price)
-      .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
-      .multipliedBy(100);
+    let _yield = '0.00';
+    if (lp_price > 0 && poolTokenAmount > 0) {
+      _yield = BigNumber(reword_amount)
+        .multipliedBy(144)
+        .multipliedBy(365)
+        .multipliedBy(token_price)
+        .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
+        .multipliedBy(100);
 
-    _yield = formatAmount(_yield, 2);
+      _yield = formatAmount(_yield, 2);
+    }
     if (current_item === index) {
       dispatch({
         type: 'farm/save',
