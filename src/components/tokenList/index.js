@@ -47,7 +47,7 @@ export default class TokenList extends Component {
         },
       });
       const { finish } = this.props;
-      finish && finish();
+      finish && finish(currentPair);
     }
   };
 

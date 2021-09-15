@@ -26,7 +26,8 @@ import _ from 'i18n';
   return {
     ...user,
     ...farm,
-    loading: effects['farm/getAllPairs'] || false,
+    loading:
+      effects['farm/getAllPairs'] || effects['farm/getPairData'] || false,
     submiting:
       effects['farm/reqSwap'] ||
       effects['farm/harvest'] ||
@@ -43,7 +44,6 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
-      pairData: {},
     };
   }
 
@@ -60,23 +60,12 @@ export default class FarmC extends Component {
         address: userAddress,
       },
     });
-    const { currentPair } = this.props;
-
-    const res = await pairApi.querySwapInfo(currentPair.replace('-v2', ''));
-
-    this.setState({
-      pairData: res.data,
-    });
-    // let { currentPair } = this.props;
-    // log('currentPair:', currentPair);
-    // if (currentPair) {
-    //   await dispatch({
-    //     type: 'farm/getPairData',
-    //     payload: {
-    //       currentPair,
-    //     },
-    //   });
-    // }
+    // this.setState({
+    //   loading: true
+    // })
+    // dispatch({
+    //   type: 'farm/getPairData'
+    // });
   };
 
   showPannel = () => {
@@ -88,6 +77,17 @@ export default class FarmC extends Component {
   hidePannel = () => {
     this.setState({
       app_pannel: false,
+    });
+  };
+
+  changeCurrentFarm = async (currentPair) => {
+    const { allPairs, dispatch } = this.props;
+    dispatch({
+      type: 'farm/saveFarm',
+      payload: {
+        currentPair,
+        allPairs,
+      },
     });
   };
 
@@ -209,29 +209,33 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { symbol1, symbol2, loading, dispatch, bsvPrice } = this.props;
+    const { loading, dispatch, bsvPrice, currentPair, pairsData } = this.props;
+
+    if (loading) {
+      return null;
+    }
+    const [symbol1, symbol2] = pairName.toUpperCase().split('-');
     const {
       poolTokenAmount,
       rewardAmountPerBlock,
       rewardTokenAmount = 0,
-      addressCount,
       rewardToken,
     } = data;
     const { decimal } = rewardToken;
-    const { current_item, pairData } = this.state;
-    if (loading || !pairData.swapLpAmount) {
-      return null;
-    }
-    const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
+    const {
+      swapLpAmount = 0,
+      swapToken1Amount = 0,
+      swapToken2Amount = 0,
+    } = pairsData[pairName];
+    //swapLpAmount和poolTokenAmount是lp的数量，是不带精度的！
     const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
     const bsv_amount = formatSat(swapToken1Amount);
     const token_amount = formatSat(swapToken2Amount, decimal);
-    const lp_amount = formatSat(swapLpAmount, decimal);
-    const lp_price = BigNumber(bsv_amount * 2).div(lp_amount);
+    // const lp_amount = formatSat(swapLpAmount, decimal);
+    const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
     const token_price = BigNumber(bsv_amount).div(token_amount);
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
-
-    let _total = BigNumber(formatSat(poolTokenAmount, decimal))
+    let _total = BigNumber(poolTokenAmount)
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
 
@@ -253,21 +257,24 @@ export default class FarmC extends Component {
       .multipliedBy(100);
 
     _yield = formatAmount(_yield, 2);
-    if (current_item === index) {
-      dispatch({
-        type: 'farm/save',
-        payload: {
-          currentPairYield: _yield,
-        },
-      });
-    }
+    let { pairYields } = this.props;
+    pairYields[pairName] = _yield;
+    dispatch({
+      type: 'farm/save',
+      payload: {
+        pairYields,
+      },
+    });
 
     return (
       <div
         className={
-          current_item === index ? jc(styles.item, styles.current) : styles.item
+          pairName === currentPair
+            ? jc(styles.item, styles.current)
+            : styles.item
         }
         key={pairName}
+        onClick={() => this.changeCurrentFarm(pairName)}
       >
         <div className={styles.item_title}>
           <div className={styles.icon}>

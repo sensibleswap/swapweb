@@ -97,8 +97,11 @@ export default class SwapPage extends Component {
     }
   };
 
-  async getData() {
-    const { currentPair, allPairs, type } = this.props;
+  async getData(currentPair) {
+    const { allPairs, type } = this.props;
+    if (!currentPair) {
+      currentPair = this.props.currentPair;
+    }
     if (!allPairs[currentPair]) return [];
     const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
 
@@ -146,9 +149,16 @@ export default class SwapPage extends Component {
       }
     }
 
-    debugger;
     return [price, amount, volumn, time];
   }
+
+  changeTokenPair = async (currentPair) => {
+    console.log('currentPair:', currentPair);
+    const chartData = await this.getData(currentPair);
+    this.setState({
+      chartData,
+    });
+  };
 
   renderContent() {
     const { loading, token1, token2, pairData, loadingChartData } = this.props;
@@ -160,7 +170,7 @@ export default class SwapPage extends Component {
     return (
       <div className={styles.content}>
         <Dropdown
-          overlay={<TokenList size="small" />}
+          overlay={<TokenList size="small" finish={this.changeTokenPair} />}
           overlayClassName={styles.drop_menu}
         >
           <span className={styles.chart_title}>

@@ -106,10 +106,13 @@ export default class Chart extends Component {
   }
 
   async init() {
-    const { chartData, type } = this.props;
     const chartDom = document.getElementById('J_Chart');
     this.myChart = echarts.init(chartDom);
+    this.handleData();
+  }
 
+  handleData() {
+    const { chartData, type } = this.props;
     if (chartData.length > 1) {
       const [price, amount, volumn, time] = chartData;
       this.option.xAxis.data = time;
@@ -122,12 +125,29 @@ export default class Chart extends Component {
     } else {
       this.option.series[0].data = [];
     }
-
     this.myChart.setOption(this.option);
+    this.setState({
+      chartData,
+    });
   }
 
   componentWillUnmount() {
     this.myChart.dispose();
+  }
+  componentWillReceiveProps(nextProps) {
+    const oldData = this.state.chartData;
+    const newData = nextProps.chartData;
+    console.log(nextProps.currentPair, this.props.currentPair);
+
+    if (
+      oldData.length !== newData.length ||
+      oldData[0].length !== newData[0].length ||
+      oldData[1].length !== newData[1].length ||
+      oldData[2].length !== newData[2].length ||
+      oldData[3].length !== newData[3].length
+    ) {
+      this.handleData();
+    }
   }
 
   render() {

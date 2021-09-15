@@ -4,7 +4,7 @@ import { connect } from 'umi';
 import { gzip } from 'node-gzip';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
-import { formatAmount } from 'common/utils';
+import { formatAmount, formatSat } from 'common/utils';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
@@ -55,7 +55,6 @@ export default class Deposit extends Component {
       addLPRate: 0,
       addLP: 0,
       formFinish: false,
-      price: 0,
     };
   }
 
@@ -114,11 +113,18 @@ export default class Deposit extends Component {
       symbol2,
       lptoken,
       rewardToken,
-      currentPairYield,
+      pairYields,
+      pairsData,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
-    const { addLPRate, addLP, price } = this.state;
+    const { addLPRate, addLP } = this.state;
     const balance = userBalance[lptoken.tokenID] || 0;
+    const currentPairData = pairsData[currentPair];
+    const { swapToken1Amount, swapToken2Amount } = currentPairData;
+    const bsv_amount = formatSat(swapToken1Amount);
+    const { decimal } = rewardToken;
+    const token_amount = formatSat(swapToken2Amount, decimal);
+    const price = formatAmount(token_amount / bsv_amount, decimal);
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -179,7 +185,7 @@ export default class Deposit extends Component {
               </div>
             </div>
             <div className={styles.pair_right}>
-              {currentPairYield}% {_('apy')}
+              {pairYields[currentPair]}% {_('apy')}
             </div>
           </div>
 
@@ -287,7 +293,7 @@ export default class Deposit extends Component {
   }
 
   renderButton() {
-    const { isLogin, pairData, userBalance, lptoken } = this.props;
+    const { isLogin, userBalance, lptoken } = this.props;
     const { addLP } = this.state;
     const LP = userBalance[lptoken.tokenID];
     if (!isLogin) {
