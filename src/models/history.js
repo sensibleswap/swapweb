@@ -20,31 +20,11 @@ export default {
       if (!currentPair) {
         return [];
       }
-      // const his = yield select((state) => state.history.history);
-      const { type = 'swap' } = payload;
-      // if (
-      //   his[currentPair] &&
-      //   his[currentPair][type] &&
-      //   his[currentPair][type].length > 0
-      // ) {
-      //   return his[currentPair][type];
-      // }
-      if (currentPair === USDT_PAIR || currentPair === 'bsv-tsc') {
-        payload.interval = 1;
-      }
 
       const res = yield historyApi.query.call(historyApi, payload);
       const newData = [...res.data].reverse();
 
       if (res.code === 0) {
-        // yield put({
-        //   type: 'saveData',
-        //   payload: {
-        //     data: newData,
-        //     currentPair,
-        //     type,
-        //   },
-        // });
         return newData;
       }
 

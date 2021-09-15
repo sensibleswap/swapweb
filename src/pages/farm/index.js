@@ -342,7 +342,7 @@ export default class FarmC extends Component {
                       padding: 2,
                       width: 15,
                       textAlign: 'center',
-                      marginLeft: 10,
+                      marginLeft: 8,
                       cursor: 'pointer',
                     }}
                   />
