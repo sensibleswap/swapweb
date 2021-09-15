@@ -26,7 +26,8 @@ import _ from 'i18n';
   return {
     ...user,
     ...farm,
-    loading: effects['farm/getAllPairs'] || false,
+    loading:
+      effects['farm/getAllPairs'] || effects['farm/getPairData'] || false,
     submiting:
       effects['farm/reqSwap'] ||
       effects['farm/harvest'] ||
@@ -43,7 +44,6 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
-      pairData: {},
     };
   }
 
@@ -60,23 +60,12 @@ export default class FarmC extends Component {
         address: userAddress,
       },
     });
-    const { currentPair } = this.props;
-
-    const res = await pairApi.querySwapInfo(currentPair);
-
-    this.setState({
-      pairData: res.data,
-    });
-    // let { currentPair } = this.props;
-    // log('currentPair:', currentPair);
-    // if (currentPair) {
-    //   await dispatch({
-    //     type: 'farm/getPairData',
-    //     payload: {
-    //       currentPair,
-    //     },
-    //   });
-    // }
+    // this.setState({
+    //   loading: true
+    // })
+    // dispatch({
+    //   type: 'farm/getPairData'
+    // });
   };
 
   showPannel = () => {
@@ -99,12 +88,6 @@ export default class FarmC extends Component {
         currentPair,
         allPairs,
       },
-    });
-
-    const res = await pairApi.querySwapInfo(currentPair);
-
-    this.setState({
-      pairData: res.data,
     });
   };
 
@@ -226,7 +209,11 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { loading, dispatch, bsvPrice, currentPair } = this.props;
+    const { loading, dispatch, bsvPrice, currentPair, pairsData } = this.props;
+
+    if (loading) {
+      return null;
+    }
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');
     const {
       poolTokenAmount,
@@ -235,25 +222,20 @@ export default class FarmC extends Component {
       rewardToken,
     } = data;
     const { decimal } = rewardToken;
-    const { current_item, pairData = {} } = this.state;
-    if (loading) {
-      return null;
-    }
     const {
       swapLpAmount = 0,
       swapToken1Amount = 0,
       swapToken2Amount = 0,
-    } = pairData;
-    const _rewardTokenAmount = formatSat(rewardTokenAmount || 0, decimal);
+    } = pairsData[pairName];
+    //swapLpAmount和poolTokenAmount是lp的数量，是不带精度的！
+    const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
     const bsv_amount = formatSat(swapToken1Amount);
     const token_amount = formatSat(swapToken2Amount, decimal);
-    const lp_amount = formatSat(swapLpAmount, decimal);
-    const lp_price =
-      lp_amount > 0 ? BigNumber(bsv_amount * 2).div(lp_amount) : 0;
-    const token_price =
-      token_amount > 0 ? BigNumber(bsv_amount).div(token_amount) : 0;
+    // const lp_amount = formatSat(swapLpAmount, decimal);
+    const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
+    const token_price = BigNumber(bsv_amount).div(token_amount);
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
-    let _total = BigNumber(formatSat(poolTokenAmount, decimal))
+    let _total = BigNumber(poolTokenAmount)
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
 
@@ -267,25 +249,22 @@ export default class FarmC extends Component {
       _total = formatAmount(_total, 2);
     }
 
-    let _yield = '0.00';
-    if (lp_price > 0 && poolTokenAmount > 0) {
-      _yield = BigNumber(reword_amount)
-        .multipliedBy(144)
-        .multipliedBy(365)
-        .multipliedBy(token_price)
-        .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
-        .multipliedBy(100);
+    let _yield = BigNumber(reword_amount)
+      .multipliedBy(144)
+      .multipliedBy(365)
+      .multipliedBy(token_price)
+      .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
+      .multipliedBy(100);
 
-      _yield = formatAmount(_yield, 2);
-    }
-    if (current_item === index) {
-      dispatch({
-        type: 'farm/save',
-        payload: {
-          currentPairYield: _yield,
-        },
-      });
-    }
+    _yield = formatAmount(_yield, 2);
+    let { pairYields } = this.props;
+    pairYields[pairName] = _yield;
+    dispatch({
+      type: 'farm/save',
+      payload: {
+        pairYields,
+      },
+    });
 
     return (
       <div
