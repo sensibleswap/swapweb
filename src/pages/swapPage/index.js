@@ -40,6 +40,7 @@ export default class SwapPage extends Component {
       app_pannel: false,
       chartData: [],
     };
+    this.polling = true;
   }
 
   showPannel = () => {
@@ -81,16 +82,18 @@ export default class SwapPage extends Component {
       this.setState({
         chartData,
       });
+      EventBus.emit('reloadChart', chartData);
       if (!_timer) {
         _timer = setTimeout(async () => {
           while (this.polling) {
             // console.log(i++)
-            await sleep(15 * 1e3);
+            await sleep(60 * 1e3);
 
-            const chartData1 = await this.getData();
+            const chartData = await this.getData();
             this.setState({
-              chartData: chartData1,
+              chartData,
             });
+            EventBus.emit('reloadChart', chartData);
           }
         });
       }
@@ -158,6 +161,7 @@ export default class SwapPage extends Component {
     this.setState({
       chartData,
     });
+    EventBus.emit('reloadChart', chartData);
   };
 
   renderContent() {

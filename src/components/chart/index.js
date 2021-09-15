@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
-import { Spin } from 'antd';
+import EventBus from 'common/eventBus';
 import { USDT_PAIR } from 'common/const';
 import styles from './index.less';
 import _ from 'i18n';
@@ -108,11 +108,11 @@ export default class Chart extends Component {
   async init() {
     const chartDom = document.getElementById('J_Chart');
     this.myChart = echarts.init(chartDom);
-    this.handleData();
+    EventBus.on('reloadChart', (chartData) => this.handleData(chartData));
   }
 
-  handleData() {
-    const { chartData, type } = this.props;
+  handleData(chartData) {
+    const { type } = this.props;
     if (chartData.length > 1) {
       const [price, amount, volumn, time] = chartData;
       this.option.xAxis.data = time;
@@ -133,21 +133,6 @@ export default class Chart extends Component {
 
   componentWillUnmount() {
     this.myChart.dispose();
-  }
-  componentWillReceiveProps(nextProps) {
-    const oldData = this.state.chartData;
-    const newData = nextProps.chartData;
-    console.log(nextProps.currentPair, this.props.currentPair);
-
-    if (
-      oldData.length !== newData.length ||
-      oldData[0].length !== newData[0].length ||
-      oldData[1].length !== newData[1].length ||
-      oldData[2].length !== newData[2].length ||
-      oldData[3].length !== newData[3].length
-    ) {
-      this.handleData();
-    }
   }
 
   render() {
