@@ -4,7 +4,7 @@ const readdir = require('readdir');
 
 const gitCommitHash = process.env.GITHUB_SHA.substr(0, 7);
 
-// console.log(process.env.GITHUB_SHA, process.env.ALIYUN_OSS_SECRET);
+console.log(process.env.GITHUB_SHA, process.env);
 
 const client = new OSS({
   region: 'oss-cn-hongkong',
