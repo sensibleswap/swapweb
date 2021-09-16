@@ -18,6 +18,6 @@ jobs:
           cache: 'npm'
         env:
           ALIYUN_OSS_SECRET: ${{secrets.ALIYUN_OSS_SECRET}}
-      - run: npm ci
+      - run: npm install
       - run: npm run build
       - run: node ./deploy/uploadDist.js
