@@ -17,8 +17,9 @@ export default {
     symbol2: '',
     lptoken: {},
     rewardToken: {},
-    currentPairYield: 0,
+    pairYields: {},
     bsvPrice: 0,
+    pairsData: {},
   },
 
   subscriptions: {
@@ -50,6 +51,18 @@ export default {
           }
         });
       }
+      let p = [];
+      let pairsData = {};
+      const pairs = Object.keys(data);
+      pairs.forEach((item) => {
+        p.push(pairApi.querySwapInfo(item));
+      });
+      const datas_res = yield Promise.all(p);
+      pairs.forEach((item, index) => {
+        if (datas_res[index].code === 0) {
+          pairsData[item] = datas_res[index].data;
+        }
+      });
 
       let bsvPrice = 0;
 
@@ -68,6 +81,7 @@ export default {
           allPairs: data,
           currentPair,
           bsvPrice,
+          pairsData,
         },
       });
       return {
@@ -105,6 +119,25 @@ export default {
 
       // console.log(data)
       return data;
+    },
+
+    *getPairData({ payload }, { call, put, select }) {
+      const allPairs = yield select((state) => state.farm.allPairs);
+      let p = [];
+      let pairsData = {};
+      const pairs = Object.keys(allPairs);
+      pairs.forEach((item) => {
+        p.push(pairApi.querySwapInfo(item));
+      });
+      const res = yield Promise.all(p);
+      console.log(res);
+      debugger;
+      yield put({
+        type: 'save',
+        payload: {
+          pairsData,
+        },
+      });
     },
 
     // *getPairData({ payload }, { call, put }) {

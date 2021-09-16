@@ -232,7 +232,7 @@ const texts = {
   harvest: 'Harvest',
   farm_item_desc: 'Provide liquidity and deposit your LP %1 to earn %2',
   apy_info:
-    'APY = rewardTokenAmountPerBlock * 144 * 365 *  BOEX price / TVL * 100%',
+    'APY = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
   deposit: 'Deposit',
   earn: 'Earn',
   deposit_success: 'Deposit successful',
