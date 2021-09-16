@@ -18,6 +18,10 @@ const main = async () => {
     const url = `/tokenswap/${gitCommitHash}/${fileName}`;
     await client.put(url, path.resolve(__dirname, '../dist', fileName));
   }
+
+  console.log(
+    `preview page: https://tstest.volt.id/${gitCommitHash}/index.html#/`,
+  );
 };
 
 main();
