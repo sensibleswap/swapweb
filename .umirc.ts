@@ -2,6 +2,7 @@ import { defineConfig } from 'umi';
 import routes from './config/routes';
 
 export default defineConfig({
+  publicPath: './',
   history: {
     type: 'hash',
   },
