@@ -1,12 +1,14 @@
 'use strict';
 import React, { Component } from 'react';
 import { Input } from 'antd';
+import querystring from 'querystringify';
 import { ArrowLeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import TokenPair from 'components/tokenPair';
 import { connect } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
 
+const query = querystring.parse(window.location.search);
 const { Search } = Input;
 @connect(({ pair }) => {
   return {
@@ -44,6 +46,7 @@ export default class SelectToken extends Component {
   select = (id) => {
     // const { dispatch, close, type } = this.props
 
+    window.localStorage.setItem(TSWAP_CURRENT_PAIR, id);
     this.props.close(id);
   };
 
@@ -112,32 +115,38 @@ export default class SelectToken extends Component {
           </div>
           <div className={styles.token_list}>
             {showList &&
-              showList.map((item, index) => (
-                <div
-                  className={styles.item}
-                  key={item.name + index}
-                  onClick={() => this.select(item.name)}
-                >
-                  <div className={styles.icon}>
-                    <TokenPair
-                      symbol1={item.token1.symbol}
-                      symbol2={item.token2.symbol}
-                      size={25}
-                    />
-                  </div>
-                  <div className={styles.title}>
-                    <div className={styles.name}>{item.name.toUpperCase()}</div>
-                  </div>
-                  <div className={styles.selected}>
-                    {item.name === currentPair && (
-                      <CheckCircleOutlined
-                        theme="filled"
-                        style={{ color: '#2F80ED', fontSize: 30 }}
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
+              showList.map((item, index) => {
+                if ((item.test && query.env === 'local') || !item.test) {
+                  return (
+                    <div
+                      className={styles.item}
+                      key={item.name + index}
+                      onClick={() => this.select(item.name)}
+                    >
+                      <div className={styles.icon}>
+                        <TokenPair
+                          symbol1={item.token1.symbol}
+                          symbol2={item.token2.symbol}
+                          size={25}
+                        />
+                      </div>
+                      <div className={styles.title}>
+                        <div className={styles.name}>
+                          {item.name.toUpperCase()}
+                        </div>
+                      </div>
+                      <div className={styles.selected}>
+                        {item.name === currentPair && (
+                          <CheckCircleOutlined
+                            theme="filled"
+                            style={{ color: '#2F80ED', fontSize: 30 }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+              })}
           </div>
         </div>
       </div>

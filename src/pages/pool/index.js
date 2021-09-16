@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Pair from 'components/pair';

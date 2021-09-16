@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';

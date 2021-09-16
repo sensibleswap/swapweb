@@ -29,7 +29,7 @@ export default {
       // ) {
       //   return his[currentPair][type];
       // }
-      if (currentPair === USDT_PAIR) {
+      if (currentPair === USDT_PAIR || currentPair === 'bsv-tsc') {
         payload.interval = 1;
       }
 
