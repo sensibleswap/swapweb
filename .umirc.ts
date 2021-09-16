@@ -9,7 +9,7 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  favicon: '/assets/ts.png',
+  favicon: './assets/ts.png',
   title: 'TokenSwap - AMM DEX running on BSV',
   routes,
   fastRefresh: {},
