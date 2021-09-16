@@ -7,7 +7,7 @@ const gitCommitHash = process.env.GITHUB_SHA.substr(0, 7);
 const client = new OSS({
   region: 'oss-cn-hongkong',
   accessKeyId: 'LTAI5tL3nUgFyKsgsXTh3JkM',
-  accessKeySecret: process.env.ALIYUN_OSS_SECRET,
+  accessKeySecret: 'JeNcDgYO4f8gLT3TG9wnf81cEoYcIe',
   bucket: 'volt',
 });
 
