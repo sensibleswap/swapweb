@@ -60,12 +60,6 @@ export default class FarmC extends Component {
         address: userAddress,
       },
     });
-    // this.setState({
-    //   loading: true
-    // })
-    // dispatch({
-    //   type: 'farm/getPairData'
-    // });
   };
 
   showPannel = () => {

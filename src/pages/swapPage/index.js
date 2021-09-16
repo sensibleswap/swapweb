@@ -79,9 +79,6 @@ export default class SwapPage extends Component {
         },
       });
       const chartData = await this.getData();
-      this.setState({
-        chartData,
-      });
       EventBus.emit('reloadChart', chartData);
       if (!_timer) {
         _timer = setTimeout(async () => {
@@ -90,9 +87,6 @@ export default class SwapPage extends Component {
             await sleep(60 * 1e3);
 
             const chartData = await this.getData();
-            this.setState({
-              chartData,
-            });
             EventBus.emit('reloadChart', chartData);
           }
         });
@@ -156,18 +150,13 @@ export default class SwapPage extends Component {
   }
 
   changeTokenPair = async (currentPair) => {
-    console.log('currentPair:', currentPair);
     const chartData = await this.getData(currentPair);
-    this.setState({
-      chartData,
-    });
     EventBus.emit('reloadChart', chartData);
   };
 
   renderContent() {
-    const { loading, token1, token2, pairData, loadingChartData } = this.props;
+    const { loading, token1, token2, pairData } = this.props;
     if (loading || !token1.symbol) return <Loading />;
-    const { chartData } = this.state;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
 
@@ -193,7 +182,7 @@ export default class SwapPage extends Component {
             />
           </span>
         </Dropdown>
-        <Chart type="swap" chartData={chartData} />
+        <Chart type="swap" />
 
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />
