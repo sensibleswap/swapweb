@@ -260,7 +260,6 @@ export default class Withdraw extends Component {
       },
     });
 
-    console.log('sign_res', JSON.stringify(sign_res));
     if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
     }
@@ -270,15 +269,6 @@ export default class Withdraw extends Component {
 
     const { publicKey, sig } = sign_res;
 
-    console.log(
-      'PARAMS',
-      JSON.stringify({
-        symbol: currentPair,
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      }),
-    );
     const withdraw2_res = await dispatch({
       type: 'farm/withdraw2',
       payload: {

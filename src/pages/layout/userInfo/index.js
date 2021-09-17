@@ -166,9 +166,8 @@ export default class UserInfo extends Component {
   };
 
   connectWebWallet = async (type, network) => {
-    console.log(this.connecting);
-    if (this.connecting) return;
-    this.connecting = true;
+    if (this.busy) return;
+    this.busy = true;
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
@@ -187,7 +186,7 @@ export default class UserInfo extends Component {
     });
 
     if (con_res.msg) {
-      this.connecting = false;
+      this.busy = false;
       return message.error(con_res.msg);
     }
     const res = await dispatch({
@@ -197,16 +196,16 @@ export default class UserInfo extends Component {
       },
     });
     if (res.msg) {
-      this.connecting = false;
+      this.busy = false;
       return message.error(res.msg);
     }
-    this.connecting = false;
+    this.busy = false;
 
     EventBus.emit('reloadPair');
   };
 
   chooseLoginWallet = () => {
-    if (query.env === 'webview') {
+    if (query.env === 'webview' && window._volt_javascript_bridge) {
       this.connectWebWallet(3);
     } else {
       this.setState({

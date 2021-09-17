@@ -152,24 +152,14 @@ export default class FarmC extends Component {
       },
     });
 
-    console.log('sign_res:', JSON.stringify(sign_res));
     if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
     }
     if (sign_res[0]) {
       sign_res = sign_res[0];
     }
-    // console.log('sign_res1:', JSON.stringify(sign_res));
     const { publicKey, sig } = sign_res;
-    console.log(
-      'PARAMS',
-      JSON.stringify({
-        symbol: currentPair,
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      }),
-    );
+
     const harvest2_res = await dispatch({
       type: 'farm/harvest2',
       payload: {
@@ -179,7 +169,6 @@ export default class FarmC extends Component {
         sig,
       },
     });
-    console.log('harvest2_res:', JSON.stringify(harvest2_res));
     if (harvest2_res.msg) {
       return message.error(harvest2_res.msg);
     }

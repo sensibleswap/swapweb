@@ -683,7 +683,6 @@ export default class Liquidity extends Component {
         ],
       },
     });
-    console.log('tx_res:', JSON.stringify(tx_res));
     if (tx_res.msg) {
       return message.error(tx_res.msg);
     }

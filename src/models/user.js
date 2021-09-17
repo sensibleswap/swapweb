@@ -156,11 +156,8 @@ export default {
       const { type, network } = payload;
       let res;
       try {
-        console.log(1);
         res = yield bsv.connectWallet(type, network);
-        console.log('connectWebWallet:', JSON.stringify(res));
       } catch (error) {
-        console.log('connectWebWallet-error:', JSON.stringify(error));
         return { msg: error.message || error.toString() };
       }
       return {};

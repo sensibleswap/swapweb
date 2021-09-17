@@ -14,7 +14,6 @@ const callJavaScriptBridge = (method, param = {}) => {
 
   return new Promise((resolve, reject) => {
     window[jsCallbackName] = function (result, msg) {
-      console.log('result:', result, 'msg:', msg);
       msg ? reject(new Error(msg)) : resolve(result);
     };
     window._volt_javascript_bridge.postMessage(JSON.stringify(data));
@@ -179,22 +178,6 @@ const transferBsv = async (
         },
       ],
     });
-    console.log(
-      'params',
-      JSON.stringify({
-        noBroadcast,
-        list: [
-          {
-            type: 'bsv',
-            note,
-            receiver_address: address,
-            receiver_amount: amount,
-            change_address: changeAddress,
-          },
-        ],
-      }),
-    );
-    console.log('transfer:', res);
     return res;
   }
 };
