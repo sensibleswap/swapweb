@@ -1,155 +1,24 @@
 'use strict';
-import React, { Component } from 'react';
-import { Input } from 'antd';
-import querystring from 'querystringify';
-import { ArrowLeftOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import TokenPair from 'components/tokenPair';
-import { connect } from 'umi';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import TokenList from 'components/tokenList';
 import styles from './index.less';
 import _ from 'i18n';
 
-const query = querystring.parse(window.location.search);
-const { Search } = Input;
-@connect(({ pair }) => {
-  return {
-    ...pair,
-  };
-})
-export default class SelectToken extends Component {
-  constructor(props) {
-    super(props);
-    const { allPairs } = props;
-    let _allPairs = [],
-      _showList = [];
-    Object.keys(allPairs).forEach((item) => {
-      const _obj = {
-        ...allPairs[item],
-        name: item,
-      };
-      _allPairs.push(_obj);
-      _showList.push(_obj);
-    });
-    this.state = {
-      showList: _showList,
-      allPairs: _allPairs,
-    };
-  }
-
-  // componentDidMount() {
-  //     const {tokens} = this.props;
-
-  //     this.setState({
-  //         showList: tokens,
-  //     })
-  // }
-
-  select = (id) => {
-    // const { dispatch, close, type } = this.props
-
-    window.localStorage.setItem(TSWAP_CURRENT_PAIR, id);
-    this.props.close(id);
-  };
-
-  escapeRegExpWildcards(searchStr) {
-    const regExp = /([\(\[\{\\\^\$\}\]\)\?\*\+\.])/gim;
-    if (searchStr && regExp.test(searchStr)) {
-      return searchStr.replace(regExp, '\\$1');
-    }
-    return searchStr;
-  }
-
-  searchByKeywords(keywords, searchArr) {
-    const keywordsExp = new RegExp(
-      '.*?' + this.escapeRegExpWildcards(keywords) + '.*?',
-      'img',
-    );
-
-    return searchArr.filter((v) => {
-      return (
-        keywordsExp.test(v.token1.symbol) ||
-        keywordsExp.test(v.token2.symbol) ||
-        keywords == v.token1.tokenID ||
-        keywords == v.token2.tokenID
-      );
-    });
-  }
-
-  handleChange = (e) => {
-    const { value } = e.target;
-    const { allPairs } = this.state;
-    // if(!token) return;
-    if (!value) {
-      return this.setState({
-        showList: allPairs,
-      });
-    }
-    const res = this.searchByKeywords(value, allPairs);
-    this.setState({
-      showList: res,
-    });
-  };
-
-  render() {
-    const { showList } = this.state;
-    const { currentPair } = this.props;
-    return (
-      <div className={styles.container}>
-        <div className={styles.head}>
-          <div className={styles.back}>
-            <ArrowLeftOutlined
-              onClick={() => this.props.close()}
-              style={{ fontSize: 16, color: '#2F80ED', fontWeight: 700 }}
-            />
-          </div>
-          <div className={styles.title}>{_('select_token')}</div>
-          <div className={styles.done}></div>
+export default function SelectToken(props) {
+  const { finish } = props;
+  return (
+    <div className={styles.container}>
+      <div className={styles.head}>
+        <div className={styles.back}>
+          <ArrowLeftOutlined
+            onClick={() => finish()}
+            style={{ fontSize: 16, color: '#2F80ED', fontWeight: 700 }}
+          />
         </div>
-        <div className={styles.content}>
-          <div className={styles.search}>
-            <Search
-              size="large"
-              className={styles.search_input}
-              placeholder={_('search_token_holder')}
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className={styles.token_list}>
-            {showList &&
-              showList.map((item, index) => {
-                if ((item.test && query.env === 'local') || !item.test) {
-                  return (
-                    <div
-                      className={styles.item}
-                      key={item.name + index}
-                      onClick={() => this.select(item.name)}
-                    >
-                      <div className={styles.icon}>
-                        <TokenPair
-                          symbol1={item.token1.symbol}
-                          symbol2={item.token2.symbol}
-                          size={25}
-                        />
-                      </div>
-                      <div className={styles.title}>
-                        <div className={styles.name}>
-                          {item.name.toUpperCase()}
-                        </div>
-                      </div>
-                      <div className={styles.selected}>
-                        {item.name === currentPair && (
-                          <CheckCircleOutlined
-                            theme="filled"
-                            style={{ color: '#2F80ED', fontSize: 30 }}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  );
-                }
-              })}
-          </div>
-        </div>
+        <div className={styles.title}>{_('select_token')}</div>
+        <div className={styles.done}></div>
       </div>
-    );
-  }
+      <TokenList finish={finish} />
+    </div>
+  );
 }

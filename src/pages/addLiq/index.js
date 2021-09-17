@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
 import { gzip } from 'node-gzip';
-import { Button, Form, Input, Spin, message, Tooltip, Modal } from 'antd';
+import { Button, Form, Input, Spin, message, Modal } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
@@ -18,6 +18,8 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 
+const type = 'pool';
+// let _poolTimer = 0;
 const FormItem = Form.Item;
 @withRouter
 @connect(({ user, pair, loading }) => {
@@ -75,6 +77,7 @@ export default class Liquidity extends Component {
         },
       });
     }
+    EventBus.emit('reloadChart', type);
   };
 
   changeOriginAmount = (e) => {
@@ -814,29 +817,19 @@ export default class Liquidity extends Component {
 
   selectedToken = async (currentPair) => {
     this.showUI('form');
-    if (currentPair && currentPair !== this.props.currentPair) {
-      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-      if (this.state.page === 'selectToken') {
-        this.props.dispatch({
-          type: 'pair/getPairData',
-          payload: {
-            currentPair,
-          },
-        });
-      }
 
-      this.setState({
-        origin_amount: 0,
-        aim_amount: 0,
-        lastMod: '',
-      });
+    if (!currentPair) return;
+    this.setState({
+      origin_amount: 0,
+      aim_amount: 0,
+      lastMod: '',
+    });
 
-      this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
-    }
+    this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
   };
 
   render() {
-    const { loading, currentPair } = this.props;
+    const { loading } = this.props;
     if (loading) return <Loading />;
     const { page } = this.state;
     return (
@@ -845,7 +838,7 @@ export default class Liquidity extends Component {
           {this.renderSwap()}
           {page === 'selectToken' && (
             <div className={styles.selectToken_wrap}>
-              <SelectToken close={(id) => this.selectedToken(id, page)} />
+              <SelectToken finish={(id) => this.selectedToken(id, page)} />
             </div>
           )}
         </div>

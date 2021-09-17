@@ -2,7 +2,7 @@ import bsv from 'common/walletFun';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
 import { strAbbreviation } from 'common/utils';
 import debug from 'debug';
-import 'common/vconsole';
+// import 'common/vconsole';
 const log = debug('user');
 const { localStorage } = window;
 

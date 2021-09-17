@@ -51,7 +51,7 @@ export default class Head extends Component {
   render() {
     const { currentMenu } = this.state;
     return (
-      <div className={styles.header_inner}>
+      <div className={styles.nav_container}>
         <Link to="/" className={styles.logo}>
           <CustomIcon type="iconTS_logo" style={{ fontSize: 50 }} />
         </Link>

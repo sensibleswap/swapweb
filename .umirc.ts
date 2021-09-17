@@ -2,13 +2,14 @@ import { defineConfig } from 'umi';
 import routes from './config/routes';
 
 export default defineConfig({
+  publicPath: './',
   history: {
     type: 'hash',
   },
   nodeModulesTransform: {
     type: 'none',
   },
-  favicon: '/assets/ts.png',
+  favicon: './assets/ts.png',
   title: 'TokenSwap - AMM DEX running on BSV',
   routes,
   fastRefresh: {},
@@ -28,6 +29,16 @@ export default defineConfig({
     {
       from: 'public/assets/',
       to: 'assets/',
+    },
+  ],
+  links: [
+    {
+      // Google fonts hosting supported in China
+      // Website: http://googlefonts.cn/
+      // Add other font styles by choosing font styles on the official site.
+      // Only normal, semi-bold and bold selected at the current stage
+      href: 'https://fonts.font.im/css?family=Roboto:400,500,700',
+      rel: 'stylesheet',
     },
   ],
   // chunks: ['vendors', 'umi', 'react'],

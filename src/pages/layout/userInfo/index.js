@@ -82,10 +82,12 @@ export default class UserInfo extends Component {
 
   fetchPairData = async () => {
     const _self = this;
+    let i = 0;
     if (_timer < 1) {
       setTimeout(async () => {
         while (this.polling) {
           await sleep(20 * 1e3);
+          i++;
           const { dispatch, busy, isLogin, userAddress, currentPair } =
             _self.props;
           if (busy) return;
@@ -106,6 +108,16 @@ export default class UserInfo extends Component {
             });
             if (res.msg && res.msg.indexOf('not_login') > -1) {
               this.disConnect();
+            }
+          }
+
+          if (i > 1) {
+            i = 0;
+            const { hash } = location;
+            if (hash.indexOf('swap') > -1) {
+              EventBus.emit('reloadChart', 'swap');
+            } else if (hash.indexOf('pool') > -1) {
+              EventBus.emit('reloadChart', 'pool');
             }
           }
         }

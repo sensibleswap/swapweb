@@ -8,8 +8,6 @@ interface CssExports {
   data_info: string;
   dot: string;
   drop_menu: string;
-  menu_item: string;
-  menu_name: string;
   trigger: string;
   trigger_wrap: string;
 }

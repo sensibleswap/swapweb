@@ -15,131 +15,133 @@ const _lang = Cookie.get('lang') || navigator.language;
 export default class Home extends Component {
   renderList() {
     return (
-      <div className={styles.list}>
-        <div className={styles.list_hd}>
-          <div className={styles.col_1}>{_('feature')}</div>
-          <div className={styles.col_2}>{_('tokenswap')}</div>
-          <div className={styles.col_3}>{_('cex')}</div>
-          <div className={styles.col_4}>{_('other_dex')}</div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_1')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
+      <div className={styles.list_container}>
+        <div className={styles.list}>
+          <div className={styles.list_hd}>
+            <div className={styles.col_1}>{_('feature')}</div>
+            <div className={styles.col_2}>{_('tokenswap')}</div>
+            <div className={styles.col_3}>{_('cex')}</div>
+            <div className={styles.col_4}>{_('other_dex')}</div>
           </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_1')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CheckOutlined className={styles.green} />
+            </div>
           </div>
-          <div className={styles.col_4}>
-            <CheckOutlined className={styles.green} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_2')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CheckOutlined className={styles.green} />
+            </div>
           </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_2')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_3')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CloseOutlined className={styles.red} />
+            </div>
           </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_4')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CloseOutlined className={styles.red} />
+            </div>
           </div>
-          <div className={styles.col_4}>
-            <CheckOutlined className={styles.green} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_5')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CloseOutlined className={styles.red} />
+            </div>
           </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_3')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_6')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CloseOutlined className={styles.red} />
+            </div>
           </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_7')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CheckOutlined className={styles.green} />
+            </div>
           </div>
-          <div className={styles.col_4}>
-            <CloseOutlined className={styles.red} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_8')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CheckOutlined className={styles.green} />
+            </div>
           </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_4')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_9')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CloseOutlined className={styles.red} />
+            </div>
           </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CloseOutlined className={styles.red} />
-          </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_5')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
-          </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CloseOutlined className={styles.red} />
-          </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_6')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
-          </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CloseOutlined className={styles.red} />
-          </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_7')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
-          </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CheckOutlined className={styles.green} />
-          </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_8')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
-          </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CheckOutlined className={styles.green} />
-          </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_9')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
-          </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CloseOutlined className={styles.red} />
-          </div>
-        </div>
-        <div className={styles.list_item}>
-          <div className={styles.col_1}>{_('lb_10')}</div>
-          <div className={styles.col_2}>
-            <CheckOutlined className={styles.green} />
-          </div>
-          <div className={styles.col_3}>
-            <CloseOutlined className={styles.red} />
-          </div>
-          <div className={styles.col_4}>
-            <CloseOutlined className={styles.red} />
+          <div className={styles.list_item}>
+            <div className={styles.col_1}>{_('lb_10')}</div>
+            <div className={styles.col_2}>
+              <CheckOutlined className={styles.green} />
+            </div>
+            <div className={styles.col_3}>
+              <CloseOutlined className={styles.red} />
+            </div>
+            <div className={styles.col_4}>
+              <CloseOutlined className={styles.red} />
+            </div>
           </div>
         </div>
       </div>
@@ -152,12 +154,13 @@ export default class Home extends Component {
       <>
         <Notice />
         <section className={styles.container}>
-          <section className={styles.head}>
+          <nav className={styles.head}>
             <div className={styles.head_inner}>
               <Nav />
               <div className={styles.head_right}>
                 <Button
                   type="primary"
+                  className={styles.cta}
                   onClick={() => {
                     this.props.history.push('swap');
                   }}
@@ -167,7 +170,7 @@ export default class Home extends Component {
                 <Lang />
               </div>
             </div>
-          </section>
+          </nav>
           <section className={styles.main}>
             <div className={styles.logo}>
               <CustomIcon type="iconTS_Logo" style={{ fontSize: 70 }} />

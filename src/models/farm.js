@@ -121,49 +121,6 @@ export default {
       return data;
     },
 
-    *getPairData({ payload }, { call, put, select }) {
-      const allPairs = yield select((state) => state.farm.allPairs);
-      let p = [];
-      let pairsData = {};
-      const pairs = Object.keys(allPairs);
-      pairs.forEach((item) => {
-        p.push(pairApi.querySwapInfo(item));
-      });
-      const res = yield Promise.all(p);
-      console.log(res);
-      debugger;
-      yield put({
-        type: 'save',
-        payload: {
-          pairsData,
-        },
-      });
-    },
-
-    // *getPairData({ payload }, { call, put }) {
-    //     let { currentPair } = payload;
-    //     const res = yield farmApi.querySwapInfo.call(farmApi, currentPair);
-    //     log('init-farmData:', currentPair, res);
-    //     const { code, msg, data } = res;
-    //     if (code !== 0) {
-    //         console.log(msg);
-    //         return res;
-    //     }
-    //     if (currentPair) {
-    //         yield put({
-    //             type: 'save',
-    //             payload: {
-    //                 pairData: data,
-    //                 currentPair,
-    //                 mode: 'force',
-    //             },
-    //         });
-    //     }
-
-    //     // console.log(data)
-    //     return data;
-    // },
-
     *reqSwap({ payload }, { call, put }) {
       payload.source = 'tswap.io';
       const res = yield farmApi.reqSwap.call(farmApi, payload);
