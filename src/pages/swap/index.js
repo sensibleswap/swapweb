@@ -458,8 +458,14 @@ export default class Swap extends Component {
   renderButton() {
     const { isLogin, pairData, token1, token2, userBalance } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { slip, lastMod, origin_amount, aim_amount, dirForward, tol } =
-      this.state;
+    const {
+      slip,
+      lastMod,
+      origin_amount,
+      aim_amount,
+      dirForward,
+      tol,
+    } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const balance = userBalance[origin_token.tokenID || 'BSV'];
@@ -574,8 +580,13 @@ export default class Swap extends Component {
 
   submit = async (data) => {
     const { dirForward, origin_amount, reqSwapData } = this.state;
-    const { dispatch, currentPair, token2, rabinApis, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      token2,
+      rabinApis,
+      userBalance,
+    } = this.props;
 
     const { bsvToAddress, tokenToAddress, txFee, requestIndex } =
       reqSwapData || data;

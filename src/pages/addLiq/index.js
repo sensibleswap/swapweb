@@ -525,8 +525,14 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token1,
+      token2,
+      userBalance,
+    } = this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',

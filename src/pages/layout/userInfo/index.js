@@ -88,8 +88,13 @@ export default class UserInfo extends Component {
         while (this.polling) {
           await sleep(20 * 1e3);
           i++;
-          const { dispatch, busy, isLogin, userAddress, currentPair } =
-            _self.props;
+          const {
+            dispatch,
+            busy,
+            isLogin,
+            userAddress,
+            currentPair,
+          } = _self.props;
           if (busy) return;
           dispatch({
             type: 'pair/updatePairData',

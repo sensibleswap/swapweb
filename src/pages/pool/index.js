@@ -43,8 +43,13 @@ export default class Pool extends Component {
   };
 
   renderContent() {
-    const { currentPair, pairData, loading, allPairs, userBalance } =
-      this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      allPairs,
+      userBalance,
+    } = this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];

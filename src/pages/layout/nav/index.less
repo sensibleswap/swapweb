@@ -1,51 +1,59 @@
+.nav_container {
+  display: flex;
+  align-items: center;
+}
+
 .logo {
-    float: left;
-    margin-top: -5px;
-    //   font-size: 18px;
-    :global(.iconfont) {
-      font-size: 40px;
-      margin-right: 90px;
-      color: #333;
-    }
+  //   font-size: 18px;
+  :global(.iconfont) {
+    font-size: 40px;
+    margin-right: 90px;
+    color: #333;
   }
-  
-  .menu {
-    float: left;
+}
+
+.menu {
+  height: 40px;
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+
+  .menu_item {
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 0 20px;
+    color: #333;
+    border-radius: 100px;
     height: 40px;
-    line-height: 40px;
-    display: flex;
-    flex: 1;
-  
-    .menu_item {
-      display: inline-block;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 16px;
-      padding: 0 20px;
-      color: #333;
-      border-radius: 100px;
-      height: 40px;
-      margin-right: 30px;
-      text-align: center;
-    }
-  
-    .menu_item:last-child {
-      margin-right: 0;
-    }
-  
-    .menu_item_selected {
-      background-color: #2F80ED;
-      color: #fff;
-    }
+    margin-right: 30px;
+    text-align: center;
   }
-  
+
+  .menu_item:last-child {
+    margin-right: 0;
+  }
+
+  .menu_item_selected {
+    background-color: #2f80ed;
+    color: #fff;
+  }
+}
 
 @media only screen and (max-width: 767.99px) {
   .logo {
     display: none;
   }
-  .menu .menu_item {
-    padding: 0 22px;
-    margin-right: 0;
+  .menu {
+    .menu_item {
+      padding: 0 15px;
+      margin-right: 0;
+    }
+
+    .menu_item_selected {
+      padding: 0 20px;
+    }
   }
 }
