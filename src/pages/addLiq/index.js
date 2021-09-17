@@ -270,10 +270,11 @@ export default class Liquidity extends Component {
             <CustomIcon
               type="iconSwitch"
               style={{
-                fontSize: 20,
+                fontSize: 22,
                 backgroundColor: '#F6F6F9',
                 borderRadius: '50%',
                 padding: 4,
+                marginLeft: 5,
               }}
             />
           </div>
@@ -379,7 +380,7 @@ export default class Liquidity extends Component {
             </div>
 
             <div className={styles.switch_icon}>
-              <PlusOutlined />
+              <PlusOutlined style={{ fontSize: 18 }} />
             </div>
 
             <div className={styles.title}>

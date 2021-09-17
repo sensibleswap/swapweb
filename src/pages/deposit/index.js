@@ -166,7 +166,7 @@ export default class Deposit extends Component {
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
+              <CustomIcon type="iconArrow2" style={{ fontSize: 14 }} />
             </div>
             <div className={styles.line}></div>
           </div>
@@ -201,8 +201,13 @@ export default class Deposit extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, userAddress, userBalance, lptoken } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      userBalance,
+      lptoken,
+    } = this.props;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
