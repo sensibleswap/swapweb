@@ -341,7 +341,7 @@ export default class RemovePage extends Component {
     const _removeRate = removeLP
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
-    const tx_res = await dispatch({
+    let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {
         datas: [
@@ -369,6 +369,9 @@ export default class RemovePage extends Component {
       return message.error(tx_res.msg);
     }
 
+    if (tx_res.list) {
+      tx_res = tx_res.list;
+    }
     if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
       return message.error(_('txs_fail'));
     }

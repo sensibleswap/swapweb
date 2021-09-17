@@ -656,7 +656,7 @@ export default class Liquidity extends Component {
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
 
-    const tx_res = await dispatch({
+    let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {
         datas: [
@@ -680,9 +680,12 @@ export default class Liquidity extends Component {
         ],
       },
     });
-    // console.log(tx_res)
+    console.log('tx_res:', JSON.stringify(tx_res));
     if (tx_res.msg) {
       return message.error(tx_res.msg);
+    }
+    if (tx_res.list) {
+      tx_res = tx_res.list;
     }
     if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
       return message.error(_('txs_fail'));

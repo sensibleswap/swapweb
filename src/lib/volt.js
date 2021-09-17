@@ -19,7 +19,7 @@ import { Bsv } from '@volt-wallet/sdk';
 // });
 
 const bsv = new Bsv({
-  iframeUrl: 'http://192.168.0.128:6021/dist/webpack/',
+  iframeUrl: 'https://sdkpage.volt.id/iframe/',
   popupUrl: 'https://sdkpage.volt.id/popup/',
   apiPrefix: {
     tls: true,

@@ -238,7 +238,7 @@ const transferSensibleFt = (
   //   return res;
   // }
 };
-const transferAll = (type = 1, param = []) => {
+const transferAll = async (type = 1, param = []) => {
   if (type === 1) {
     let data = [];
     param.forEach((item) => {
@@ -345,11 +345,12 @@ const transferAll = (type = 1, param = []) => {
       noBroadcast = item.noBroadcast;
     });
 
-    return voltWallet.batchTransfer({
+    const res = await callJavaScriptBridge('volt.bsv.transfer', {
       noBroadcast,
       errorBreak: true,
-      list: data,
+      list: data.list ? data.list : data,
     });
+    return res;
   }
 };
 
@@ -363,14 +364,11 @@ const signTx = async (type, param) => {
   }
 
   if (type === 3) {
-    await window._volt_javascript_bridge.postMessage(
-      JSON.stringify({
-        method: 'volt.bsv.signTx',
-        param,
-        callback: 'signCallback',
-      }),
-    );
-    return window.signCallback();
+    const res = await callJavaScriptBridge('volt.bsv.signTx', {
+      list: [param],
+    });
+
+    return res;
   }
 };
 export default {

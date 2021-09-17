@@ -2,6 +2,7 @@ import bsv from 'common/walletFun';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
 import { strAbbreviation } from 'common/utils';
 import debug from 'debug';
+import 'common/vconsole';
 const log = debug('user');
 const { localStorage } = window;
 
@@ -119,7 +120,7 @@ export default {
           payload: {
             accountInfo,
             userBalance,
-            userAddress: paymail || userAddress,
+            userAddress,
             userAddressShort: paymail || strAbbreviation(userAddress, [5, 4]),
             changeAddress,
             isLogin: true,
@@ -155,28 +156,13 @@ export default {
       const { type, network } = payload;
       let res;
       try {
+        console.log(1);
         res = yield bsv.connectWallet(type, network);
-        console.log('connectWebWallet:', res);
+        console.log('connectWebWallet:', JSON.stringify(res));
       } catch (error) {
+        console.log('connectWebWallet-error:', JSON.stringify(error));
         return { msg: error.message || error.toString() };
       }
-      // if(type === 3) {
-      //   res = {"email":"support@volt.id","name":"BSV","token_map_id":1,"address":"1B5t3zszPNGdSAL7GwnKwjMtPBTVeDdQhA","bsvBalance":154989}
-      //   yield put({
-      //     type: 'save',
-      //     payload: {
-
-      //     }
-      //   })
-      // }
-      // if(res.name) {
-      //   yield put({
-      //     type: 'save',
-      //     payload: {
-      //       accountInfo:
-      //     }
-      //   })
-      // }
       return {};
     },
 

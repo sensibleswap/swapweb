@@ -635,6 +635,7 @@ export default class Swap extends Component {
           noBroadcast: true,
         },
       });
+      console.log('ts_res:', JSON.stringify(ts_res));
       if (ts_res.msg) {
         return message.error(ts_res.msg);
       }
@@ -646,7 +647,7 @@ export default class Swap extends Component {
         ...payload,
         // token1TxID: ts_res.txid,
         bsvOutputIndex: 0,
-        bsvRawTx: ts_res.txHex,
+        bsvRawTx: ts_res.list ? ts_res.list[0].txHex : ts_res.txHex,
         token1AddAmount: amount.toString(),
       };
     } else {
@@ -654,7 +655,7 @@ export default class Swap extends Component {
         .multipliedBy(Math.pow(10, token2.decimal))
         .toString();
 
-      const tx_res = await dispatch({
+      let tx_res = await dispatch({
         type: 'user/transferAll',
         payload: {
           datas: [
@@ -678,17 +679,20 @@ export default class Swap extends Component {
           ],
         },
       });
-      // console.log(tx_res)
       if (!tx_res) {
         return message.error(_('txs_fail'));
       }
       if (tx_res.msg) {
         return message.error(tx_res.msg);
       }
+      if (tx_res.list) {
+        tx_res = tx_res.list;
+      }
       if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
         return message.error(_('txs_fail'));
       }
-      // console.log(tx_res); debugger;
+      console.log('tx_res[0]:', JSON.stringify(tx_res[0]));
+      console.log('tx_res[1]:', JSON.stringify(tx_res[1]));
       payload = {
         ...payload,
         bsvRawTx: tx_res[0].txHex,
@@ -698,8 +702,8 @@ export default class Swap extends Component {
         amountCheckRawTx: tx_res[1].routeCheckTxHex,
       };
     }
-
     let swap_data = JSON.stringify(payload);
+    console.log('data:', swap_data);
     swap_data = await gzip(swap_data);
 
     const swap_res = await dispatch({
@@ -708,7 +712,7 @@ export default class Swap extends Component {
         data: swap_data,
       },
     });
-    // console.log(swap_res);
+    console.log('swap_res', swap_res);
     if (swap_res.code && !swap_res.data) {
       return message.error(swap_res.msg);
     }
