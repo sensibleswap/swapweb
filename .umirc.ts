@@ -2,13 +2,14 @@ import { defineConfig } from 'umi';
 import routes from './config/routes';
 
 export default defineConfig({
+  publicPath: './',
   history: {
     type: 'hash',
   },
   nodeModulesTransform: {
     type: 'none',
   },
-  favicon: '/assets/ts.png',
+  favicon: './assets/ts.png',
   title: 'TokenSwap - AMM DEX running on BSV',
   routes,
   fastRefresh: {},
