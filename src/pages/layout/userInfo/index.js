@@ -154,6 +154,9 @@ export default class UserInfo extends Component {
   };
 
   connectWebWallet = async (type, network) => {
+    console.log(this.connecting);
+    if (this.connecting) return;
+    this.connecting = true;
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
@@ -172,6 +175,7 @@ export default class UserInfo extends Component {
     });
 
     if (con_res.msg) {
+      this.connecting = false;
       return message.error(con_res.msg);
     }
     const res = await dispatch({
@@ -181,8 +185,10 @@ export default class UserInfo extends Component {
       },
     });
     if (res.msg) {
+      this.connecting = false;
       return message.error(res.msg);
     }
+    this.connecting = false;
 
     EventBus.emit('reloadPair');
   };
