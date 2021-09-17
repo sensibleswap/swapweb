@@ -17,8 +17,9 @@ export default {
     symbol2: '',
     lptoken: {},
     rewardToken: {},
-    currentPairYield: 0,
+    pairYields: {},
     bsvPrice: 0,
+    pairsData: {},
   },
 
   subscriptions: {
@@ -50,6 +51,18 @@ export default {
           }
         });
       }
+      let p = [];
+      let pairsData = {};
+      const pairs = Object.keys(data);
+      pairs.forEach((item) => {
+        p.push(pairApi.querySwapInfo(item));
+      });
+      const datas_res = yield Promise.all(p);
+      pairs.forEach((item, index) => {
+        if (datas_res[index].code === 0) {
+          pairsData[item] = datas_res[index].data;
+        }
+      });
 
       let bsvPrice = 0;
 
@@ -68,6 +81,7 @@ export default {
           allPairs: data,
           currentPair,
           bsvPrice,
+          pairsData,
         },
       });
       return {
@@ -106,30 +120,6 @@ export default {
       // console.log(data)
       return data;
     },
-
-    // *getPairData({ payload }, { call, put }) {
-    //     let { currentPair } = payload;
-    //     const res = yield farmApi.querySwapInfo.call(farmApi, currentPair);
-    //     log('init-farmData:', currentPair, res);
-    //     const { code, msg, data } = res;
-    //     if (code !== 0) {
-    //         console.log(msg);
-    //         return res;
-    //     }
-    //     if (currentPair) {
-    //         yield put({
-    //             type: 'save',
-    //             payload: {
-    //                 pairData: data,
-    //                 currentPair,
-    //                 mode: 'force',
-    //             },
-    //         });
-    //     }
-
-    //     // console.log(data)
-    //     return data;
-    // },
 
     *reqSwap({ payload }, { call, put }) {
       payload.source = 'tswap.io';
