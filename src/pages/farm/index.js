@@ -205,7 +205,7 @@ export default class FarmC extends Component {
   renderItem(pairName, data, index) {
     const { loading, dispatch, bsvPrice, currentPair, pairsData } = this.props;
 
-    if (loading) {
+    if (loading || !pairsData[pairName]) {
       return null;
     }
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');

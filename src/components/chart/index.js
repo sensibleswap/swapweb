@@ -3,20 +3,18 @@ import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
+import { Spin } from 'antd';
 import EventBus from 'common/eventBus';
-import { USDT_PAIR } from 'common/const';
+import { USDT_PAIR, COLOR1, COLOR2 } from 'common/const';
 import styles from './index.less';
 import _ from 'i18n';
-
-const COLOR1 = '#2BB696';
-const COLOR2 = '#BB6BD9';
 
 @connect(({ pair, history, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
     ...history,
-    loading: effects['pair/getAllPairs'],
+    loading: effects['pair/getAllPairs'] || effects['history/query'],
   };
 })
 export default class Chart extends Component {
@@ -27,6 +25,7 @@ export default class Chart extends Component {
       chart_index: 0,
       cur_price: '',
       cur_amount: '',
+      chartData: [],
     };
     this.option = {
       grid: {
@@ -108,11 +107,12 @@ export default class Chart extends Component {
   async init() {
     const chartDom = document.getElementById('J_Chart');
     this.myChart = echarts.init(chartDom);
-    EventBus.on('reloadChart', (chartData) => this.handleData(chartData));
+    EventBus.on('reloadChart', (type) => this.handleData(type));
   }
 
-  handleData(chartData) {
-    const { type } = this.props;
+  async handleData(type) {
+    if (type !== this.props.type) return;
+    const chartData = await this.getChartData(type);
     if (chartData.length > 1) {
       const [price, amount, volumn, time] = chartData;
       this.option.xAxis.data = time;
@@ -131,46 +131,33 @@ export default class Chart extends Component {
     });
   }
 
+  async getChartData(type) {
+    const { dispatch } = this.props;
+    const res = await dispatch({
+      type: 'history/query',
+      payload: {
+        type,
+      },
+    });
+
+    if (res.msg) {
+      message.error(res.msg);
+      return [];
+    }
+    return res;
+  }
+
   componentWillUnmount() {
     this.myChart.dispose();
   }
 
   render() {
-    const { type } = this.props;
+    const { loading } = this.props;
+    const { chartData } = this.state;
     return (
-      <div className={styles.chart_container}>
-        {type === 'swap' && (
-          <div className={styles.data_info}>
-            <div>
-              <span
-                className={styles.dot}
-                style={{ backgroundColor: COLOR1 }}
-              ></span>{' '}
-              {_('price')}
-            </div>
-            <div>
-              <span
-                className={styles.dot}
-                style={{ backgroundColor: COLOR2 }}
-              ></span>{' '}
-              {_('volume')}
-            </div>
-          </div>
-        )}
-        {type === 'pool' && (
-          <div className={styles.data_info}>
-            <div>
-              <span
-                className={styles.dot}
-                style={{ backgroundColor: COLOR1 }}
-              ></span>{' '}
-              TVL
-            </div>
-          </div>
-        )}
-
+      <Spin spinning={chartData.length < 1 && loading}>
         <div id="J_Chart" className={styles.chart}></div>
-      </div>
+      </Spin>
     );
   }
 }

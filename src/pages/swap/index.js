@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
+import EventBus from 'common/eventBus';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin, Modal } from 'antd';
@@ -687,14 +688,15 @@ export default class Swap extends Component {
     });
   };
 
-  updateData() {
+  async updateData() {
     const { dispatch, currentPair } = this.props;
-    dispatch({
+    await dispatch({
       type: 'pair/getPairData',
       payload: {
         currentPair,
       },
     });
+    EventBus.emit('reloadChart', 'swap');
     dispatch({
       type: 'user/loadingUserData',
       payload: {},

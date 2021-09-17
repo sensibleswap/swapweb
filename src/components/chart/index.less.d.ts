@@ -3,9 +3,11 @@
 interface CssExports {
   chart: string;
   chart_container: string;
+  chart_title: string;
   current_trigger: string;
   data_info: string;
   dot: string;
+  drop_menu: string;
   trigger: string;
   trigger_wrap: string;
 }

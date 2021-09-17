@@ -2,29 +2,19 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import EventBus from 'common/eventBus';
-import { Button, Dropdown, message, Spin } from 'antd';
+import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
-import { formatTime, formatAmount } from 'common/utils';
-import { USDT_PAIR } from 'common/const';
-import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
-import Chart from 'components/chart';
-import TokenList from 'components/tokenList';
+import Chart from 'components/chart/swapChart';
+
 import Header from '../layout/header';
 import Swap from '../swap';
 import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-let _timer = 0;
 @connect(({ pair, loading }) => {
   const { effects } = loading;
   return {
@@ -39,7 +29,7 @@ export default class SwapPage extends Component {
     this.state = {
       app_pannel: false,
     };
-    this.polling = true;
+    this.swapPolling = true;
   }
 
   showPannel = () => {
@@ -53,10 +43,6 @@ export default class SwapPage extends Component {
       app_pannel: false,
     });
   };
-
-  componentWillUnmount() {
-    this.polling = false;
-  }
 
   componentDidMount() {
     EventBus.on('reloadPair', this.fetch);
@@ -77,80 +63,9 @@ export default class SwapPage extends Component {
           currentPair,
         },
       });
-      const chartData = await this.getData();
-      EventBus.emit('reloadChart', chartData);
-      if (!_timer) {
-        _timer = setTimeout(async () => {
-          while (this.polling) {
-            // console.log(i++)
-            await sleep(60 * 1e3);
 
-            const chartData = await this.getData();
-            EventBus.emit('reloadChart', chartData);
-          }
-        });
-      }
+      EventBus.emit('reloadChart', 'swap');
     }
-  };
-
-  async getData(currentPair) {
-    const { allPairs, type } = this.props;
-    if (!currentPair) {
-      currentPair = this.props.currentPair;
-    }
-    if (!allPairs[currentPair]) return [];
-    const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
-
-    const res = await this.props.dispatch({
-      type: 'history/query',
-      payload: {
-        codeHash: swapCodeHash,
-        genesisHash: swapID,
-        type,
-      },
-    });
-
-    if (res.code) {
-      message.error(res.msg);
-      return false;
-    }
-
-    let time = [],
-      price = [],
-      amount = [],
-      volumn = [];
-    if (res.length > 0) {
-      if (type === 'pool') {
-        res.forEach((item, index) => {
-          const { outToken1Amount, timestamp } = item;
-          amount.push(formatAmount((outToken1Amount / Math.pow(10, 8)) * 2, 8));
-          time.push(formatTime(timestamp * 1000));
-        });
-      } else {
-        res.forEach((item, index) => {
-          const { minPrice, maxPrice, token1Volume, timestamp } = item;
-          let _price =
-            (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
-          if (currentPair === USDT_PAIR) {
-            _price = 1 / _price;
-            price.push(formatAmount(_price, 6));
-          } else {
-            price.push(formatAmount(_price, 8));
-          }
-
-          volumn.push(formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8));
-
-          time.push(formatTime(timestamp * 1000));
-        });
-      }
-    }
-
-    return [price, amount, volumn, time];
-  }
-
-  changeTokenPair = async (currentPair) => {
-    const chartData = await this.getData(currentPair);
-    EventBus.emit('reloadChart', chartData);
   };
 
   renderContent() {
@@ -161,27 +76,7 @@ export default class SwapPage extends Component {
 
     return (
       <div className={styles.content}>
-        <Dropdown
-          overlay={<TokenList size="small" finish={this.changeTokenPair} />}
-          overlayClassName={styles.drop_menu}
-        >
-          <span className={styles.chart_title}>
-            {symbol2 === 'USDT' ? (
-              <>
-                <span>{symbol1}</span>/{symbol2}
-              </>
-            ) : (
-              <>
-                <span>{symbol2}</span>/{symbol1}
-              </>
-            )}
-            <CustomIcon
-              type="iconDropdown"
-              style={{ fontSize: 20, marginLeft: 40 }}
-            />
-          </span>
-        </Dropdown>
-        <Chart type="swap" />
+        <Chart symbol1={symbol1} symbol2={symbol2} />
 
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />

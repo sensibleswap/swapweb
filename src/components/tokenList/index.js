@@ -36,11 +36,11 @@ export default class TokenList extends Component {
     };
   }
 
-  select = (currentPair) => {
+  select = async (currentPair) => {
     if (currentPair && currentPair !== this.props.currentPair) {
       window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
 
-      this.props.dispatch({
+      await this.props.dispatch({
         type: 'pair/getPairData',
         payload: {
           currentPair,

@@ -5,13 +5,11 @@ interface CssExports {
   app_start_btn: string;
   app_title: string;
   box: string;
-  chart_title: string;
   close: string;
   container: string;
   container_center: string;
   content: string;
   desc: string;
-  drop_menu: string;
   left: string;
   left_inner: string;
   link: string;
