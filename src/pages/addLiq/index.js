@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
 import BigNumber from 'bignumber.js';
 import { gzip } from 'node-gzip';
-import { Button, Form, Input, Spin, message, Tooltip, Modal } from 'antd';
+import { Button, Form, Input, Spin, message, Modal } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
@@ -18,6 +18,8 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 
+const type = 'pool';
+// let _poolTimer = 0;
 const FormItem = Form.Item;
 @withRouter
 @connect(({ user, pair, loading }) => {
@@ -75,6 +77,7 @@ export default class Liquidity extends Component {
         },
       });
     }
+    EventBus.emit('reloadChart', type);
   };
 
   changeOriginAmount = (e) => {
@@ -522,8 +525,14 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token1,
+      token2,
+      userBalance,
+    } = this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',

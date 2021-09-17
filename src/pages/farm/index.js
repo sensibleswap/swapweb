@@ -60,12 +60,6 @@ export default class FarmC extends Component {
         address: userAddress,
       },
     });
-    // this.setState({
-    //   loading: true
-    // })
-    // dispatch({
-    //   type: 'farm/getPairData'
-    // });
   };
 
   showPannel = () => {
@@ -211,7 +205,7 @@ export default class FarmC extends Component {
   renderItem(pairName, data, index) {
     const { loading, dispatch, bsvPrice, currentPair, pairsData } = this.props;
 
-    if (loading) {
+    if (loading || !pairsData[pairName]) {
       return null;
     }
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');
@@ -342,7 +336,7 @@ export default class FarmC extends Component {
                       padding: 2,
                       width: 15,
                       textAlign: 'center',
-                      marginLeft: 10,
+                      marginLeft: 8,
                       cursor: 'pointer',
                     }}
                   />

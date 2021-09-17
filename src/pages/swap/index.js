@@ -2,14 +2,13 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
+import EventBus from 'common/eventBus';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
-import { TSWAP_CURRENT_PAIR } from 'common/const';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
@@ -59,29 +58,6 @@ export default class Swap extends Component {
     };
     this.formRef = React.createRef();
   }
-
-  componentDidMount() {
-    EventBus.on('reloadPair', this.fetch);
-    this.fetch();
-  }
-
-  fetch = async () => {
-    const { dispatch } = this.props;
-    await dispatch({
-      type: 'pair/getAllPairs',
-    });
-
-    let { currentPair } = this.props;
-    log('currentPair:', currentPair);
-    if (currentPair) {
-      await dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          currentPair,
-        },
-      });
-    }
-  };
 
   switch = async () => {
     let { dirForward } = this.state;
@@ -482,8 +458,14 @@ export default class Swap extends Component {
   renderButton() {
     const { isLogin, pairData, token1, token2, userBalance } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { slip, lastMod, origin_amount, aim_amount, dirForward, tol } =
-      this.state;
+    const {
+      slip,
+      lastMod,
+      origin_amount,
+      aim_amount,
+      dirForward,
+      tol,
+    } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const balance = userBalance[origin_token.tokenID || 'BSV'];
@@ -598,8 +580,13 @@ export default class Swap extends Component {
 
   submit = async (data) => {
     const { dirForward, origin_amount, reqSwapData } = this.state;
-    const { dispatch, currentPair, token2, rabinApis, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      token2,
+      rabinApis,
+      userBalance,
+    } = this.props;
 
     const { bsvToAddress, tokenToAddress, txFee, requestIndex } =
       reqSwapData || data;
@@ -712,14 +699,15 @@ export default class Swap extends Component {
     });
   };
 
-  updateData() {
+  async updateData() {
     const { dispatch, currentPair } = this.props;
-    dispatch({
+    await dispatch({
       type: 'pair/getPairData',
       payload: {
         currentPair,
       },
     });
+    EventBus.emit('reloadChart', 'swap');
     dispatch({
       type: 'user/loadingUserData',
       payload: {},
@@ -795,22 +783,12 @@ export default class Swap extends Component {
     );
   }
 
-  selectedToken = (currentPair) => {
-    if (currentPair && currentPair !== this.props.currentPair) {
-      // if (this.state.page === 'selectToken') {
-      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-      this.props.dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          currentPair,
-        },
-      });
-      // }
-      this.setState({
-        origin_amount: 0,
-        aim_amount: 0,
-      });
-    }
+  selectedToken = () => {
+    this.setState({
+      origin_amount: 0,
+      aim_amount: 0,
+    });
+
     this.showUI('form');
   };
   showModal = (origin, aim, slip) => {
@@ -856,7 +834,7 @@ export default class Swap extends Component {
           }}
         >
           <div className={styles.selectToken_wrap}>
-            <SelectToken close={(id) => this.selectedToken(id, page)} />
+            <SelectToken finish={() => this.selectedToken()} />
           </div>
         </div>
       </div>

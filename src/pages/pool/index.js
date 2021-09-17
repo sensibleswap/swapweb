@@ -5,7 +5,7 @@ import { Button, Alert } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import Pair from 'components/pair';
-import Chart from 'components/chart';
+import Chart from 'components/chart/poolChart';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import Notice from 'components/notice';
@@ -43,8 +43,13 @@ export default class Pool extends Component {
   };
 
   renderContent() {
-    const { currentPair, pairData, loading, allPairs, userBalance } =
-      this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      allPairs,
+      userBalance,
+    } = this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];
@@ -52,7 +57,7 @@ export default class Pool extends Component {
     const symbol2 = token2.symbol.toUpperCase();
     return (
       <div className={styles.content}>
-        <Chart type="pool" />
+        <Chart symbol1={symbol1} symbol2={symbol2} />
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>

@@ -7,12 +7,13 @@ import UserInfo from '../userInfo';
 import Lang from '../lang';
 
 export default function Header() {
-
-    return <header className={styles.header}>
-        <Nav />
-        <div className={styles.user_info}>
-            <UserInfo />
-            <Lang />
-        </div>
-    </header>;
+  return (
+    <header className={styles.header}>
+      <Nav />
+      <div className={styles.user_info}>
+        <UserInfo />
+        <Lang />
+      </div>
+    </header>
+  );
 }
