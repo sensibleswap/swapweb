@@ -353,12 +353,8 @@ export default class Swap extends Component {
     const { slip, fee } = this.state;
     const symbol1 = origin_token.symbol.toUpperCase();
     const symbol2 = aim_token.symbol.toUpperCase();
-    const _swapToken1Amount = BigNumber(swapToken1Amount)
-      .div(Math.pow(10, token1.decimal))
-      .toString();
-    const _swapToken2Amount = BigNumber(swapToken2Amount)
-      .div(Math.pow(10, token2.decimal))
-      .toString();
+    const _swapToken1Amount = formatSat(swapToken1Amount, token1.decimal);
+    const _swapToken2Amount = formatSat(swapToken2Amount, token2.decimal);
     const price = dirForward
       ? formatAmount(_swapToken2Amount / _swapToken1Amount, token2.decimal)
       : formatAmount(_swapToken1Amount / _swapToken2Amount, token1.decimal);

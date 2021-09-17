@@ -1,6 +1,7 @@
 // 通用函数
 'use strict';
 import bytes from 'bytes';
+import format from 'format-number';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
@@ -187,7 +188,10 @@ export function jc() {
 
 export const formatSat = (value, dec = 8) => {
   if (!value) return 0;
-  return BigNumber(value).div(Math.pow(10, dec)).toString();
+
+  const formatter = format();
+
+  return formatter(BigNumber(value).div(Math.pow(10, dec)));
 };
 
 export function sleep(ms) {

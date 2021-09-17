@@ -47,7 +47,7 @@ export default defineConfig({
     },
     {
       href:
-        'https://fonts.font.im/css?family=Noto+Sans+SC:wght@400;500;700&display=swap',
+        'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
       rel: 'stylesheet',
     },
   ],
