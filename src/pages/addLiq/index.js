@@ -849,7 +849,7 @@ export default class Liquidity extends Component {
           {this.renderSwap()}
           {page === 'selectToken' && (
             <div className={styles.selectToken_wrap}>
-              <SelectToken close={(id) => this.selectedToken(id, page)} />
+              <SelectToken finish={(id) => this.selectedToken(id, page)} />
             </div>
           )}
         </div>
