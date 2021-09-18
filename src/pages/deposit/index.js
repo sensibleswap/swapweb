@@ -166,7 +166,7 @@ export default class Deposit extends Component {
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
+              <CustomIcon type="iconArrow2" style={{ fontSize: 14 }} />
             </div>
             <div className={styles.line}></div>
           </div>

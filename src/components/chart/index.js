@@ -76,7 +76,7 @@ export default class Chart extends Component {
           },
           lineStyle: {
             color: COLOR1,
-            width: 1,
+            width: 1.5,
           },
           yAxisIndex: 0,
         },
@@ -91,7 +91,7 @@ export default class Chart extends Component {
           },
           lineStyle: {
             color: COLOR2,
-            width: 1,
+            width: 1.5,
           },
           yAxisIndex: 1,
         },

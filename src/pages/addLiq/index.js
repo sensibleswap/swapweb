@@ -270,10 +270,11 @@ export default class Liquidity extends Component {
             <CustomIcon
               type="iconSwitch"
               style={{
-                fontSize: 20,
+                fontSize: 22,
                 backgroundColor: '#F6F6F9',
                 borderRadius: '50%',
                 padding: 4,
+                marginLeft: 5,
               }}
             />
           </div>
@@ -379,7 +380,7 @@ export default class Liquidity extends Component {
             </div>
 
             <div className={styles.switch_icon}>
-              <PlusOutlined />
+              <PlusOutlined style={{ fontSize: 18 }} />
             </div>
 
             <div className={styles.title}>
@@ -525,8 +526,14 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token1,
+      token2,
+      userBalance,
+    } = this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -653,8 +660,13 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const { token2, currentPair, dispatch, rabinApis, changeAddress } =
-      this.props;
+    const {
+      token2,
+      currentPair,
+      dispatch,
+      rabinApis,
+      changeAddress,
+    } = this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;

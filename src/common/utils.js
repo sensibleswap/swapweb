@@ -187,6 +187,7 @@ export function jc() {
 
 export const formatSat = (value, dec = 8) => {
   if (!value) return 0;
+
   return BigNumber(value).div(Math.pow(10, dec)).toString();
 };
 

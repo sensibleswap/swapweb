@@ -33,11 +33,21 @@ export default defineConfig({
   ],
   links: [
     {
+      rel: 'preconnect',
+      href: 'https://fonts.font.im',
+      crossOrigin: true,
+    },
+    {
       // Google fonts hosting supported in China
       // Website: http://googlefonts.cn/
       // Add other font styles by choosing font styles on the official site.
       // Only normal, semi-bold and bold selected at the current stage
-      href: 'https://fonts.font.im/css?family=Roboto:400,500,700',
+      href: 'https://fonts.font.im/css?family=Roboto:400,500,700&display=swap',
+      rel: 'stylesheet',
+    },
+    {
+      href:
+        'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
       rel: 'stylesheet',
     },
   ],
