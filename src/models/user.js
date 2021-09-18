@@ -22,22 +22,12 @@ export default {
 
   effects: {
     *loadingUserData({ payload }, { call, put, select }) {
-      // yield bsv.requestAccount().then();
-      // console.log(bsv.getAccount, bsv.getAccount())
       let { type } = payload;
       if (!type) {
         type = yield select((state) => state.user.walletType) || 1;
       }
-      let accountInfo;
       try {
-        accountInfo = yield bsv.getAccountInfo(type);
-      } catch (error) {
-        // console.log(error);
-        return { msg: error };
-      }
-      if (!accountInfo || !accountInfo.email) return false;
-
-      try {
+        const accountInfo = yield bsv.getAccountInfo(type);
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
         const changeAddress = yield bsv.getChangeAddress(type);
@@ -87,18 +77,9 @@ export default {
       return {};
     },
     *updateUserData({ payload }, { call, put, select }) {
-      // yield bsv.requestAccount().then();
-      // console.log(bsv.getAccount, bsv.getAccount())
-      let accountInfo;
       const type = yield select((state) => state.user.walletType);
       try {
-        accountInfo = yield bsv.getAccountInfo(type);
-      } catch (error) {
-        // console.log(error);
-        return { msg: error.message || error.toString() };
-      }
-      if (!accountInfo || !accountInfo.email) return false;
-      try {
+        const accountInfo = yield bsv.getAccountInfo(type);
         const bsvBalance = yield bsv.getBsvBalance(type);
         const userAddress = yield bsv.getAddress(type);
         const changeAddress =
@@ -107,8 +88,8 @@ export default {
         const network =
           type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
 
-        localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
         const paymail = type === 3 ? accountInfo.email : yield bsv.getPaymail();
+        localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
 
         const userBalance = {
           BSV: bsvBalance,

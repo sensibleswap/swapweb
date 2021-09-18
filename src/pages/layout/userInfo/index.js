@@ -15,17 +15,14 @@ import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
+import { sleep } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
 
 const query = querystring.parse(window.location.search);
+const isApp = query.env === 'webview' && window._volt_javascript_bridge;
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
 let _timer = 0;
 @withRouter
 @connect(({ pair, user, loading }) => {
@@ -53,28 +50,8 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
-    // if (!_notice) {
-    //   _notice = true;
-    //   Modal.info({
-    //     title: _('notice'),
-    //     content: (
-    //       <div>
-    //         <p>{_('notice720')}</p>
-    //       </div>
-    //     ),
-    //     closable: true,
-    //     footer: null,
-    //   });
-    // }
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
-    const res = this.props.dispatch({
-      type: 'user/loadingUserData',
-      payload: {},
-    });
-    if (res.msg) {
-      return message.error(res.msg);
-    }
   }
   componentWillUnmount() {
     this.polling = false;
@@ -142,8 +119,7 @@ export default class UserInfo extends Component {
       type: 'user/getWalletList',
     });
     const { wid } = this.props;
-    // const res = await Volt.getWalletList();
-    // console.log(res)
+
     if (!Array.isArray(res)) return;
     const list = res.filter((v) => v.tokenid === 1);
     let current_index = list.findIndex((v) => parseInt(v.id) === parseInt(wid));
@@ -205,18 +181,13 @@ export default class UserInfo extends Component {
   };
 
   chooseLoginWallet = () => {
-    if (query.env === 'webview' && window._volt_javascript_bridge) {
-      this.connectWebWallet(3);
-    } else {
+    this.setState({
+      chooseLogin_visible: true,
+    });
+    if (this.state.pop_visible) {
       this.setState({
-        chooseLogin_visible: true,
-        // pop_visible: false,
+        pop_visible: false,
       });
-      if (this.state.pop_visible) {
-        this.setState({
-          pop_visible: false,
-        });
-      }
     }
   };
   closeChooseDialog = () => {
@@ -224,10 +195,6 @@ export default class UserInfo extends Component {
       chooseLogin_visible: false,
     });
   };
-
-  // connectExtWallet = () => {
-  //   console.log(window.bsv.a)
-  // };
 
   disConnect = async () => {
     this.props.dispatch({
@@ -344,6 +311,7 @@ export default class UserInfo extends Component {
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
     const { userAddressShort, userAddress, connecting, isLogin } = this.props;
+
     return (
       <>
         {isLogin ? (
@@ -398,7 +366,9 @@ export default class UserInfo extends Component {
           >
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
+              <li
+                onClick={() => this.connectWebWallet(isApp ? 3 : 2, 'mainnet')}
+              >
                 Volt {_('web_wallet')}
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
@@ -407,18 +377,24 @@ export default class UserInfo extends Component {
               </li>
 
               {query.env === 'local' && (
-                <li onClick={() => this.connectWebWallet(2, 'testnet')}>
+                <li
+                  onClick={() =>
+                    this.connectWebWallet(isApp ? 3 : 2, 'testnet')
+                  }
+                >
                   BSV Testnet
                   <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
                 </li>
               )}
-              <li
-                onClick={() => this.connectWebWallet(1)}
-                style={{ fontSize: 15 }}
-              >
-                TS {_('web_wallet')}
-                {_('test_only')}
-              </li>
+              {!isApp && (
+                <li
+                  onClick={() => this.connectWebWallet(1)}
+                  style={{ fontSize: 15 }}
+                >
+                  TS {_('web_wallet')}
+                  {_('test_only')}
+                </li>
+              )}
               {/*process.env.NODE_ENV === 'development' && (
                 <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>
                   Chrome Ext
