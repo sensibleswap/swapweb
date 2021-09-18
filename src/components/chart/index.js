@@ -110,7 +110,7 @@ export default class Chart extends Component {
     EventBus.on('reloadChart', (type) => this.handleData(type));
   }
 
-  async handleData(type) {
+  handleData = async (type) => {
     if (type !== this.props.type) return;
     const chartData = await this.getChartData(type);
     if (chartData.length > 1) {
@@ -125,11 +125,12 @@ export default class Chart extends Component {
     } else {
       this.option.series[0].data = [];
     }
+
     this.myChart.setOption(this.option);
     this.setState({
       chartData,
     });
-  }
+  };
 
   async getChartData(type) {
     const { dispatch } = this.props;
