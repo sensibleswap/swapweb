@@ -4,56 +4,63 @@
   min-height: calc(~'100vh - 117px');
   overflow-y: auto;
   clear: both;
+  margin-right: 40px;
 }
 
-.items {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+.farm_intro {
+  font-size: 14px;
+  margin-bottom: 25px;
 }
 
 .item {
-  width: 274px;
+  background-color: #fff;
   border-radius: 8px;
-  margin-right: 20px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 20px;
-  background-color: #f6f7f9;
-  border: 1px solid #f6f7f9;
+  border: 1px solid #dbdbdb;
   cursor: pointer;
 }
 
 .item.current {
-  background-color: #eeeff3;
   border: 1px solid #2f80ed;
-}
+  box-shadow: 0px 10px 15px rgba(213, 213, 223, 0.4);
 
-.item_title {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 500;
-
-  .icon {
-    margin-right: 20px;
-    display: flex;
+  .lp_amount {
+    font-weight: 500;
   }
 }
 
-.item_desc {
-  margin-top: 20px;
-  font-size: 12px;
-  line-height: 14px;
+.item_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .item_title {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+
+    .icon {
+      margin-right: 10px;
+      display: flex;
+    }
+  }
+
+  .lp_amount {
+    font-size: 14px;
+  }
 }
 
 .item_data {
   margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
 }
 
 .label {
-  font-size: 10px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   :global(.iconfont) {
@@ -63,17 +70,7 @@
 
 .value {
   font-size: 14px;
-}
-
-.item_action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.item_action_data {
-  display: flex;
+  margin-top: 3px;
 }
 
 .btn {
@@ -83,6 +80,10 @@
   border-radius: 8px;
   height: 36px;
   line-height: 34px;
+
+  &:disabled {
+    background-color: #fff;
+  }
 }
 
 .head {
@@ -188,11 +189,32 @@
 
 @media only screen and (max-width: 767.99px) {
   .content {
-    margin-top: 50px;
+    margin-top: 60px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
-  .items {
-    justify-content: center;
+
+  .item_header {
+    display: block;
+
+    .lp_amount {
+      margin-top: 10px;
+    }
   }
+
+  .item_data {
+    margin-top: 15px;
+  }
+
+  .item_detail_line_2 {
+    width: 50%;
+    margin-top: 20px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
   .right_box {
     height: calc(~'100vh - 50px');
     width: 100%;
