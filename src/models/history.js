@@ -1,5 +1,6 @@
 import historyApi from '../api/history';
 import { USDT_PAIR } from 'common/const';
+import { message } from 'antd';
 import { formatTime, formatAmount } from 'common/utils';
 import debug from 'debug';
 const log = debug('history');
@@ -31,12 +32,12 @@ export default {
         currentPair,
         type,
       });
-      const newData = [...res.data].reverse();
 
-      if (res.code) {
-        message.error(res.msg);
+      if (!res || res.code) {
+        console.log(res.msg);
         return [];
       }
+      const newData = [...res.data].reverse();
 
       let time = [],
         price = [],

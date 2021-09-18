@@ -79,8 +79,12 @@ export default class Withdraw extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, allPairs, currentPair, lockedTokenAmount } =
-        this.props;
+      const {
+        userBalance,
+        allPairs,
+        currentPair,
+        lockedTokenAmount,
+      } = this.props;
       const { lptoken = {} } = allPairs[currentPair];
       const LP = userBalance[lptoken.tokenID] || 0;
       const _addLp = e.target.value;
@@ -172,8 +176,14 @@ export default class Withdraw extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, userAddress, userBalance, lptoken } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      userBalance,
+      lptoken,
+      changeAddress,
+    } = this.props;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -201,11 +211,12 @@ export default class Withdraw extends Component {
     const _value = BigNumber(addLP)
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
-    const tx_res = await dispatch({
+    let tx_res = await dispatch({
       type: 'user/transferBsv',
       payload: {
         address: bsvToAddress,
         amount: txFee,
+        changeAddress,
         noBroadcast: true,
       },
     });
@@ -213,9 +224,13 @@ export default class Withdraw extends Component {
       return message.error(tx_res.msg);
     }
 
-    // if (!tx_res.txid) {
-    //   return message.error(_('txs_fail'));
-    // }
+    if (tx_res.list) {
+      tx_res = tx_res.list[0];
+    }
+
+    if (!tx_res.txid) {
+      return message.error(_('txs_fail'));
+    }
 
     let data = {
       symbol: currentPair,
@@ -236,7 +251,7 @@ export default class Withdraw extends Component {
       return message.error(withdraw_res.msg);
     }
     const { txHex, scriptHex, satoshis, inputIndex } = withdraw_res.data;
-    const sign_res = await dispatch({
+    let sign_res = await dispatch({
       type: 'user/signTx',
       payload: {
         datas: {
@@ -248,10 +263,16 @@ export default class Withdraw extends Component {
         },
       },
     });
+
     if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
     }
+    if (sign_res[0]) {
+      sign_res = sign_res[0];
+    }
+
     const { publicKey, sig } = sign_res;
+
     const withdraw2_res = await dispatch({
       type: 'farm/withdraw2',
       payload: {

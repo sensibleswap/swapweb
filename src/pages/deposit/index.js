@@ -207,6 +207,7 @@ export default class Deposit extends Component {
       userAddress,
       userBalance,
       lptoken,
+      changeAddress,
     } = this.props;
 
     let res = await dispatch({
@@ -235,7 +236,7 @@ export default class Deposit extends Component {
     const _value = BigNumber(addLP)
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
-    const tx_res = await dispatch({
+    let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {
         datas: [
@@ -243,12 +244,14 @@ export default class Deposit extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: txFee,
+            changeAddress,
             noBroadcast: true,
           },
           {
             type: 'sensibleFt',
             address: tokenToAddress,
             amount: _value,
+            changeAddress,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis: lptoken.rabinApis,
@@ -261,9 +264,12 @@ export default class Deposit extends Component {
       return message.error(tx_res.msg);
     }
 
-    // if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
-    //   return message.error(_('txs_fail'));
-    // }
+    if (tx_res.list) {
+      tx_res = tx_res.list;
+    }
+    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+      return message.error(_('txs_fail'));
+    }
 
     let data = {
       symbol: currentPair,

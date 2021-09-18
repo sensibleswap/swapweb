@@ -1,6 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { Input } from 'antd';
+import EventBus from 'common/eventBus';
 import querystring from 'querystringify';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
@@ -47,6 +48,12 @@ export default class TokenList extends Component {
         },
       });
       const { finish } = this.props;
+      const { hash } = location;
+      if (hash.indexOf('swap') > -1) {
+        EventBus.emit('reloadChart', 'swap');
+      } else if (hash.indexOf('pool') > -1) {
+        EventBus.emit('reloadChart', 'pool');
+      }
       finish && finish(currentPair);
     }
   };

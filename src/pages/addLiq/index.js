@@ -33,7 +33,7 @@ const FormItem = Form.Item;
       effects['pair/reqSwap'] ||
       effects['pair/addLiq'] ||
       effects['user/transferBsv'] ||
-      effects['user/transferFtTres'] ||
+      // effects['user/transferFtTres'] ||
       effects['user/transferAll'] ||
       false,
   };
@@ -660,12 +660,18 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const { token2, currentPair, dispatch, rabinApis } = this.props;
+    const {
+      token2,
+      currentPair,
+      dispatch,
+      rabinApis,
+      changeAddress,
+    } = this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
 
-    const tx_res = await dispatch({
+    let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {
         datas: [
@@ -673,12 +679,14 @@ export default class Liquidity extends Component {
             type: 'bsv',
             address: bsvToAddress,
             amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+            changeAddress,
             noBroadcast: true,
           },
           {
             type: 'sensibleFt',
             address: tokenToAddress,
             amount: _aim_amount.toString(),
+            changeAddress,
             codehash: token2.codeHash,
             genesis: token2.tokenID,
             rabinApis,
@@ -687,9 +695,11 @@ export default class Liquidity extends Component {
         ],
       },
     });
-    // console.log(tx_res)
     if (tx_res.msg) {
       return message.error(tx_res.msg);
+    }
+    if (tx_res.list) {
+      tx_res = tx_res.list;
     }
     if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
       return message.error(_('txs_fail'));
@@ -818,29 +828,19 @@ export default class Liquidity extends Component {
 
   selectedToken = async (currentPair) => {
     this.showUI('form');
-    if (currentPair && currentPair !== this.props.currentPair) {
-      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-      if (this.state.page === 'selectToken') {
-        this.props.dispatch({
-          type: 'pair/getPairData',
-          payload: {
-            currentPair,
-          },
-        });
-      }
 
-      this.setState({
-        origin_amount: 0,
-        aim_amount: 0,
-        lastMod: '',
-      });
+    if (!currentPair) return;
+    this.setState({
+      origin_amount: 0,
+      aim_amount: 0,
+      lastMod: '',
+    });
 
-      this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
-    }
+    this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
   };
 
   render() {
-    const { loading, currentPair } = this.props;
+    const { loading } = this.props;
     if (loading) return <Loading />;
     const { page } = this.state;
     return (

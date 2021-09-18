@@ -86,7 +86,7 @@ export default class FarmC extends Component {
   };
 
   harvest = async (currentPair, params) => {
-    const { dispatch, userAddress } = this.props;
+    const { dispatch, userAddress, changeAddress } = this.props;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -102,17 +102,22 @@ export default class FarmC extends Component {
     }
 
     const { requestIndex, bsvToAddress, txFee } = res.data;
-    const tx_res = await dispatch({
+    let tx_res = await dispatch({
       type: 'user/transferBsv',
       payload: {
         address: bsvToAddress,
         amount: txFee,
+        changeAddress,
         noBroadcast: true,
       },
     });
 
     if (tx_res.msg) {
       return message.error(tx_res.msg);
+    }
+
+    if (tx_res.list) {
+      tx_res = tx_res.list[0];
     }
 
     let hav_data = {
@@ -134,7 +139,7 @@ export default class FarmC extends Component {
       return message.error(harvest_res.msg);
     }
     const { txHex, scriptHex, satoshis, inputIndex } = harvest_res.data;
-    const sign_res = await dispatch({
+    let sign_res = await dispatch({
       type: 'user/signTx',
       payload: {
         datas: {
@@ -150,7 +155,11 @@ export default class FarmC extends Component {
     if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
     }
+    if (sign_res[0]) {
+      sign_res = sign_res[0];
+    }
     const { publicKey, sig } = sign_res;
+
     const harvest2_res = await dispatch({
       type: 'farm/harvest2',
       payload: {
@@ -160,6 +169,9 @@ export default class FarmC extends Component {
         sig,
       },
     });
+    if (harvest2_res.msg) {
+      return message.error(harvest2_res.msg);
+    }
     const { code, data, msg } = harvest2_res;
     const amount = formatSat(
       data.rewardTokenAmount,

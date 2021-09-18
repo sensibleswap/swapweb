@@ -510,22 +510,35 @@ export default class Swap extends Component {
     } else if (beyond) {
       // 超出容忍度
       return (
-        <Button className={styles.btn_warn} onClick={this.preSubmit}>
+        <Button className={styles.btn_warn} onClick={this.handleSubmit}>
           {_('swap_anyway')}
         </Button>
       );
     } else {
       return (
-        <Button className={styles.btn} type="primary" onClick={this.preSubmit}>
+        <Button
+          className={styles.btn}
+          type="primary"
+          onClick={this.handleSubmit}
+        >
           {_('swap')}
         </Button>
       );
     }
   }
 
-  preSubmit = async () => {
-    const { dirForward, origin_amount, aim_amount, lastMod } = this.state;
-    const { dispatch, currentPair, userAddress, token2 } = this.props;
+  handleSubmit = async () => {
+    const { dirForward, origin_amount } = this.state;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token2,
+      rabinApis,
+      userBalance,
+      changeAddress,
+    } = this.props;
+
     const res = await dispatch({
       type: 'pair/reqSwap',
       payload: {
@@ -539,53 +552,7 @@ export default class Swap extends Component {
       return message.error(msg);
     }
 
-    this.setState({
-      reqSwapData: data,
-    });
-    let old_aim_amount = aim_amount;
-    let old_origin_amount = origin_amount;
-    if (lastMod === 'origin') {
-      const { newAimAddAmount } = this.calcAmount(origin_amount, 0, data);
-      const slip = BigNumber(newAimAddAmount)
-        .minus(old_aim_amount)
-        .div(old_aim_amount);
-
-      if (newAimAddAmount !== old_aim_amount) {
-        return this.showModal(
-          origin_amount,
-          newAimAddAmount,
-          slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
-        );
-      }
-    } else if (lastMod === 'aim') {
-      const { newOriginAddAmount } = this.calcAmount(0, aim_amount, data);
-      const slip = BigNumber(newOriginAddAmount)
-        .minus(origin_amount)
-        .div(origin_amount);
-
-      if (newOriginAddAmount !== old_origin_amount) {
-        return this.showModal(
-          newOriginAddAmount,
-          aim_amount,
-          slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
-        );
-      }
-    }
-    this.submit(data);
-  };
-
-  submit = async (data) => {
-    const { dirForward, origin_amount, reqSwapData } = this.state;
-    const {
-      dispatch,
-      currentPair,
-      token2,
-      rabinApis,
-      userBalance,
-    } = this.props;
-
-    const { bsvToAddress, tokenToAddress, txFee, requestIndex } =
-      reqSwapData || data;
+    const { bsvToAddress, tokenToAddress, txFee, requestIndex } = data;
     let payload = {
       symbol: currentPair,
       requestIndex: requestIndex,
@@ -608,9 +575,11 @@ export default class Swap extends Component {
         payload: {
           address: bsvToAddress,
           amount: total.toString(),
+          changeAddress,
           noBroadcast: true,
         },
       });
+
       if (ts_res.msg) {
         return message.error(ts_res.msg);
       }
@@ -622,7 +591,7 @@ export default class Swap extends Component {
         ...payload,
         // token1TxID: ts_res.txid,
         bsvOutputIndex: 0,
-        bsvRawTx: ts_res.txHex,
+        bsvRawTx: ts_res.list ? ts_res.list[0].txHex : ts_res.txHex,
         token1AddAmount: amount.toString(),
       };
     } else {
@@ -630,7 +599,7 @@ export default class Swap extends Component {
         .multipliedBy(Math.pow(10, token2.decimal))
         .toString();
 
-      const tx_res = await dispatch({
+      let tx_res = await dispatch({
         type: 'user/transferAll',
         payload: {
           datas: [
@@ -638,12 +607,14 @@ export default class Swap extends Component {
               type: 'bsv',
               address: bsvToAddress,
               amount: txFee,
+              changeAddress,
               noBroadcast: true,
             },
             {
               type: 'sensibleFt',
               address: tokenToAddress,
               amount,
+              changeAddress,
               codehash: token2.codeHash,
               genesis: token2.tokenID,
               rabinApis,
@@ -652,17 +623,19 @@ export default class Swap extends Component {
           ],
         },
       });
-      // console.log(tx_res)
       if (!tx_res) {
         return message.error(_('txs_fail'));
       }
       if (tx_res.msg) {
         return message.error(tx_res.msg);
       }
+      if (tx_res.list) {
+        tx_res = tx_res.list;
+      }
       if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
         return message.error(_('txs_fail'));
       }
-      // console.log(tx_res); debugger;
+
       payload = {
         ...payload,
         bsvRawTx: tx_res[0].txHex,
@@ -672,8 +645,8 @@ export default class Swap extends Component {
         amountCheckRawTx: tx_res[1].routeCheckTxHex,
       };
     }
-
     let swap_data = JSON.stringify(payload);
+
     swap_data = await gzip(swap_data);
 
     const swap_res = await dispatch({
@@ -682,7 +655,7 @@ export default class Swap extends Component {
         data: swap_data,
       },
     });
-    // console.log(swap_res);
+
     if (swap_res.code && !swap_res.data) {
       return message.error(swap_res.msg);
     }
@@ -787,31 +760,6 @@ export default class Swap extends Component {
 
     this.showUI('form');
   };
-  showModal = (origin, aim, slip) => {
-    const { dirForward } = this.state;
-    const { token1, token2 } = this.props;
-    const origin_token = dirForward ? token1 : token2;
-    const aim_token = dirForward ? token2 : token1;
-    Modal.confirm({
-      title: _('swap_price_change_title'),
-      onOk: this.handleOk,
-      icon: '',
-      content: _('swap_price_change_content')
-        .replace('%1', `${origin} ${origin_token.symbol.toUpperCase()}`)
-        .replace('%2', `${aim} ${aim_token.symbol.toUpperCase()}`)
-        .replace('%3', slip),
-      okText: _('swap'),
-      cancelText: _('cancel'),
-      wrapClassName: 'confirm_dialog',
-      width: 400,
-    });
-  };
-  handleOk = () => {
-    this.setState({
-      modalVisible: false,
-    });
-    this.submit();
-  };
 
   render() {
     const { currentPair, loading } = this.props;
@@ -821,18 +769,12 @@ export default class Swap extends Component {
     return (
       <div style={{ position: 'relative' }}>
         {this.renderSwap()}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            display: page === 'selectToken' ? 'block' : 'none',
-          }}
-        >
+
+        {page === 'selectToken' && (
           <div className={styles.selectToken_wrap}>
             <SelectToken finish={() => this.selectedToken()} />
           </div>
-        </div>
+        )}
       </div>
     );
   }

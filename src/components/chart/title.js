@@ -1,6 +1,5 @@
 'use strict';
 import { Dropdown } from 'antd';
-import EventBus from 'common/eventBus';
 import CustomIcon from 'components/icon';
 import TokenList from 'components/tokenList';
 import styles from './index.less';
@@ -10,12 +9,7 @@ export default function chartTitle(props) {
   const { symbol1, symbol2, type } = props;
   return (
     <Dropdown
-      overlay={
-        <TokenList
-          size="small"
-          finish={() => EventBus.emit('reloadChart', type)}
-        />
-      }
+      overlay={<TokenList size="small" />}
       overlayClassName={styles.drop_menu}
     >
       <span className={styles.chart_title}>
