@@ -22,6 +22,7 @@ interface CssExports {
   info_label: string;
   info_title: string;
   info_title_swap: string;
+  info_value: string;
   input: string;
   item_label: string;
   item_value: string;

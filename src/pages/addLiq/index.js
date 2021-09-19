@@ -323,26 +323,6 @@ export default class Liquidity extends Component {
     return this.renderInfo(total_origin_amount, total_aim_amount, share);
   }
 
-  // renderResultInfo() {
-  //   const { token1, token2, pairData, userBalance, lptoken } = this.props;
-  //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-
-  //   const total_origin_amount = formatAmount(
-  //     BigNumber(swapToken1Amount).div(Math.pow(10, token1.decimal)),
-  //     token1.decimal,
-  //   ).toString();
-  //   const total_aim_amount = formatAmount(
-  //     BigNumber(swapToken2Amount).div(Math.pow(10, token2.decimal)),
-  //     token2.decimal,
-  //   ).toString();
-
-  //   const LP = userBalance[lptoken.tokenID] || 0;
-  //   const rate = LP / formatSat(swapLpAmount, lptoken.decimal);
-
-  //   const share = (rate * 100).toFixed(4);
-  //   return this.renderInfo(total_origin_amount, total_aim_amount, share);
-  // }
-
   renderForm() {
     const { token1, token2, userBalance, submiting } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
@@ -526,14 +506,8 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const {
-      dispatch,
-      currentPair,
-      userAddress,
-      token1,
-      token2,
-      userBalance,
-    } = this.props;
+    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
+      this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -660,13 +634,8 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const {
-      token2,
-      currentPair,
-      dispatch,
-      rabinApis,
-      changeAddress,
-    } = this.props;
+    const { token2, currentPair, dispatch, rabinApis, changeAddress } =
+      this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
@@ -743,6 +712,7 @@ export default class Liquidity extends Component {
         currentPair,
       },
     });
+    EventBus.emit('reloadChart', 'pool');
     dispatch({
       type: 'user/loadingUserData',
       payload: {},
