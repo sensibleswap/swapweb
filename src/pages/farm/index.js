@@ -222,11 +222,13 @@ export default class FarmC extends Component {
     }
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');
     const {
+      lockedTokenAmount,
       poolTokenAmount,
       rewardAmountPerBlock,
       rewardTokenAmount = 0,
       rewardToken,
     } = data;
+
     const { decimal } = rewardToken;
     const {
       swapLpAmount = 0,
@@ -282,25 +284,26 @@ export default class FarmC extends Component {
         key={pairName}
         onClick={() => this.changeCurrentFarm(pairName)}
       >
-        <div className={styles.item_title}>
-          <div className={styles.icon}>
-            <TokenPair symbol1={symbol2} symbol2={symbol1} size={20} />
+        <div className={styles.item_header}>
+          <div className={styles.item_title}>
+            <div className={styles.icon}>
+              <TokenPair symbol1={symbol2} symbol2={symbol1} size={20} />
+            </div>
+            <div className={styles.name}>
+              {symbol2}/{symbol1}
+            </div>
           </div>
-          <div className={styles.name}>
-            {symbol2}/{symbol1}
+          <div className={styles.lp_amount}>
+            {_('your_deposited_lp')}: {formatSat(lockedTokenAmount, decimal)}
           </div>
         </div>
-        <div className={styles.item_desc}>
-          {_('farm_item_desc')
-            .replace(/%1/g, `${pairName.toUpperCase()}`)
-            .replace('%2', rewardToken.symbol)}
-        </div>
+
         <div className={styles.item_data}>
-          <div className={styles.item_data_left}>
+          <div>
             <div className={styles.label}>{_('tvl')}</div>
             <div className={styles.value}>{_total} USDT</div>
           </div>
-          <div className={styles.item_data_right}>
+          <div>
             <Tooltip
               title={_('apy_info').replace(/%1/g, rewardToken.symbol)}
               placement="bottom"
@@ -331,58 +334,57 @@ export default class FarmC extends Component {
             </Tooltip>
             <div className={styles.value}>{_yield}%</div>
           </div>
-        </div>
-        <div className={styles.item_action}>
-          <div className={styles.item_action_data}>
-            <div style={{ width: 78 }}>
-              <Tooltip title={_('payout_tips')} placement="bottom">
-                <div className={styles.label}>
-                  {_('payout')}
-                  <CustomIcon
-                    type="iconi"
-                    style={{
-                      border: '1px solid #e8e8e8',
-                      backgroundColor: '#fff',
-                      borderRadius: '50%',
-                      fontSize: 15,
-                      padding: 2,
-                      width: 15,
-                      textAlign: 'center',
-                      marginLeft: 8,
-                      cursor: 'pointer',
-                    }}
-                  />
-                </div>
-              </Tooltip>
-              <div className={styles.value}>{reword_amount.toString()}</div>
-            </div>
-            <div>
+          <div>
+            <Tooltip title={_('payout_tips')} placement="bottom">
               <div className={styles.label}>
-                {_('crop')}({rewardToken.symbol}):
+                {_('payout')}
+                <CustomIcon
+                  type="iconi"
+                  style={{
+                    border: '1px solid #e8e8e8',
+                    backgroundColor: '#fff',
+                    borderRadius: '50%',
+                    fontSize: 15,
+                    padding: 2,
+                    width: 15,
+                    textAlign: 'center',
+                    marginLeft: 8,
+                    cursor: 'pointer',
+                  }}
+                />
               </div>
-              <Tooltip
-                title={`${_('yield_tips', _rewardTokenAmount)} ${
-                  rewardToken.symbol
-                }`}
-                placement="bottom"
-              >
-                <div
-                  className={styles.value}
-                  style={{ fontSize: 12, color: '#2F80ED' }}
-                >
-                  {formatAmount(_rewardTokenAmount, rewardToken.decimal)}
-                </div>
-              </Tooltip>
-            </div>
+            </Tooltip>
+            <div className={styles.value}>{reword_amount.toString()}</div>
           </div>
-          <Button
-            type="primary"
-            className={styles.btn}
-            disabled={rewardTokenAmount <= 0}
-            onClick={() => this.harvest(pairName, data)}
-          >
-            {_('harvest')}
-          </Button>
+          <div className={styles.item_detail_line_2}>
+            <div className={styles.label}>
+              {_('crop')} ({rewardToken.symbol}):
+            </div>
+            <Tooltip
+              title={`${_('yield_tips', _rewardTokenAmount)} ${
+                rewardToken.symbol
+              }`}
+              placement="bottom"
+            >
+              <div
+                className={styles.value}
+                style={{ fontSize: 12, color: '#2F80ED' }}
+              >
+                {formatAmount(_rewardTokenAmount, rewardToken.decimal)}
+              </div>
+            </Tooltip>
+          </div>
+
+          <div className={styles.item_detail_line_2}>
+            <Button
+              type="primary"
+              className={styles.btn}
+              disabled={rewardTokenAmount <= 0}
+              onClick={() => this.harvest(pairName, data)}
+            >
+              {_('harvest')}
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -392,6 +394,7 @@ export default class FarmC extends Component {
     const { allPairs } = this.props;
     return (
       <div className={styles.content}>
+        <div className={styles.farm_intro}>{_('farm_desc')}</div>
         <div className={styles.items}>
           {Object.keys(allPairs).map((item, index) => {
             return this.renderItem(item, allPairs[item], index);
