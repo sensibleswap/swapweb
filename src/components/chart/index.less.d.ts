@@ -13,6 +13,7 @@ interface CssExports {
   time_picker_bottom: string;
   time_picker_top: string;
   time_range_picker: string;
+  tooltip: string;
   trigger: string;
   trigger_wrap: string;
 }

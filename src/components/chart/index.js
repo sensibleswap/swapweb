@@ -54,18 +54,27 @@ export default class Chart extends Component {
       ],
       tooltip: {
         trigger: 'axis',
+        className: styles.tooltip,
+        renderMode: 'html',
         formatter: function (params) {
+          const lines = [{ label: _('date'), value: params[0].axisValueLabel }];
           if (props.type === 'pool') {
-            return `${_('date')}: ${params[0].axisValueLabel} <br />TVL: ${
-              params[0].value[1]
-            } BSV<br />`;
+            lines.push({ label: 'TVL', value: `${params[0].value[1]} BSV` });
           } else {
-            return `${_('date')}: ${params[0].axisValueLabel} <br />${_(
-              'volume',
-            )}: ${params[1].value[1]} BSV<br />${_('price')}: ${
-              params[0].value[1]
-            } ${currentPair === USDT_PAIR ? 'USDT' : 'BSV'}`;
+            lines.push({
+              label: _('volume'),
+              value: `${params[1].value[1]} BSV`,
+            });
+            lines.push({
+              label: _('price'),
+              value: `${params[0].value[1]} ${
+                currentPair === USDT_PAIR ? 'USDT' : 'BSV'
+              }`,
+            });
           }
+          return lines
+            .map((line) => `<span>${line.label}</span> ${line.value}`)
+            .join('<br />');
         },
       },
       series: [
