@@ -86,6 +86,9 @@ export default class Chart extends Component {
             color: COLOR1,
             width: 2,
           },
+          itemStyle: {
+            color: COLOR1,
+          },
           emphasis: {
             lineStyle: {
               color: COLOR1,
@@ -101,6 +104,9 @@ export default class Chart extends Component {
           lineStyle: {
             color: COLOR2,
             width: 2,
+          },
+          itemStyle: {
+            color: COLOR2,
           },
           emphasis: {
             lineStyle: {
