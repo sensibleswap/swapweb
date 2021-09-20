@@ -9,6 +9,7 @@ export default function chartTitle(props) {
   const { symbol1, symbol2, type } = props;
   return (
     <Dropdown
+      trigger={['click']}
       overlay={<TokenList size="small" />}
       overlayClassName={styles.drop_menu}
     >
@@ -24,7 +25,7 @@ export default function chartTitle(props) {
         )}
         <CustomIcon
           type="iconDropdown"
-          style={{ fontSize: 20, marginLeft: 40 }}
+          style={{ fontSize: 20, marginLeft: 15 }}
         />
       </span>
     </Dropdown>
