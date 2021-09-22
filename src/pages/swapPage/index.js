@@ -100,6 +100,7 @@ export default class SwapPage extends Component {
               {this.renderContent()}
               <Button
                 type="primary"
+                shape="round"
                 className={styles.app_start_btn}
                 onClick={this.showPannel}
               >

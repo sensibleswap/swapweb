@@ -135,16 +135,22 @@ export default class WebWallet extends Component {
                 />
               </FormItem>
               {isLogin ? (
-                <Button type="primary" className={styles.btn} htmlType="submit">
+                <Button
+                  className={styles.btn}
+                  type="primary"
+                  shape="round"
+                  htmlType="submit"
+                >
                   {_('withdraw')}
                 </Button>
               ) : (
                 <Button
-                  type="primary"
                   className={styles.btn}
+                  type="primary"
+                  shape="round"
                   onClick={this.login}
                 >
-                  {_('login')}
+                  {_('connect_wallet')}
                 </Button>
               )}
             </Form>

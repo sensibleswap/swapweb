@@ -161,6 +161,7 @@ export default class Home extends Component {
                 <Button
                   type="primary"
                   className={styles.cta}
+                  shape="round"
                   onClick={() => {
                     this.props.history.push('swap');
                   }}
@@ -173,7 +174,7 @@ export default class Home extends Component {
           </nav>
           <section className={styles.main}>
             <div className={styles.logo}>
-              <CustomIcon type="iconTS_Logo" style={{ fontSize: 70 }} />
+              <CustomIcon type="iconTS_Logo" style={{ fontSize: 80 }} />
             </div>
             <div className={styles.main_title}>{_('tokenswap')}</div>
             <div className={styles.main_desc}>{_('tokenswap_desc')}</div>
@@ -181,7 +182,8 @@ export default class Home extends Component {
               <Button
                 type="primary"
                 className={styles.btn}
-                style={{ marginRight: 30 }}
+                shape="round"
+                style={{ marginRight: 20 }}
                 onClick={() => {
                   this.props.history.push('swap');
                 }}
@@ -190,6 +192,7 @@ export default class Home extends Component {
               </Button>
               <Button
                 className={styles.btn}
+                shape="round"
                 onClick={() => {
                   window.location.href = isZh
                     ? 'https://tokenswap.gitbook.io/tokenswap/v/zhong-wen/'

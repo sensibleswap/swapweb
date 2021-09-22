@@ -140,7 +140,7 @@ const texts = {
 
   use_tokenswap: 'Use TokenSwap',
   tokenswap: 'TokenSwap',
-  tokenswap_desc: 'Your Onchain DEX built on original Bitcoin protocol',
+  tokenswap_desc: 'Your onchain DEX built on the original Bitcoin protocol',
   documentation: 'Documentation',
   comparisons: 'Comparisons',
   comp_ts: 'Comparing TokenSwap',

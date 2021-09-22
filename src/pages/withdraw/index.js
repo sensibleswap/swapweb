@@ -303,20 +303,29 @@ export default class Withdraw extends Component {
     if (!isLogin) {
       // 未登录
       return (
-        <Button className={styles.btn_wait} onClick={this.login}>
-          {_('login')}
+        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
+          {_('connect_wallet')}
         </Button>
       );
     } else if (addLP <= 0) {
       // 不存在的交易对
-      return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+      return (
+        <Button className={styles.btn_wait} shape="round">
+          {_('enter_amount')}
+        </Button>
+      );
     } else if (addLP > lockedTokenAmount) {
-      return <Button className={styles.btn_wait}>{_('lac_balance')}</Button>;
+      return (
+        <Button className={styles.btn_wait} shape="round">
+          {_('lac_balance')}
+        </Button>
+      );
     } else {
       return (
         <Button
           className={styles.btn}
           type="primary"
+          shape="round"
           onClick={this.handleSubmit}
         >
           {_('withdraw')}
@@ -352,6 +361,7 @@ export default class Withdraw extends Component {
 
         <Button
           type="primary"
+          shape="round"
           className={styles.done_btn}
           onClick={() => {
             this.setState({

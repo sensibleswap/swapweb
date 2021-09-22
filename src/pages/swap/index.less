@@ -1,7 +1,7 @@
 .container {
   background-color: #fff;
   width: 375px;
-  border-radius: 8px;
+  border-radius: 12px;
   -webkit-box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
   box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
 }
@@ -137,7 +137,6 @@
 .btn_warn,
 .btn_wait {
   border: none;
-  border-radius: 8px;
   height: 60px;
   line-height: 52px;
   font-weight: 500;
@@ -162,7 +161,7 @@
 
 .input {
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 150px;
   height: 50px;
   line-height: 50px;
@@ -232,7 +231,6 @@
   font-weight: 500;
   width: 100%;
   margin-top: 20px;
-  border-radius: 8px;
 }
 
 .detail_title {
@@ -273,12 +271,14 @@
   position: absolute;
   top: 0;
   left: 0;
+  bottom: 0;
 }
 
 @media only screen and (max-width: 767.99px) {
   .container {
     min-height: calc(~'100vh - 50px');
     width: 100%;
+    border-radius: 0;
   }
   .content {
     padding: 20px;

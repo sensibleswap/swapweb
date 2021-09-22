@@ -124,8 +124,14 @@ export default class RemovePage extends Component {
   }
 
   renderContent() {
-    const { currentPair, pairData, loading, userBalance, lptoken, allPairs } =
-      this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      userBalance,
+      lptoken,
+      allPairs,
+    } = this.props;
     const LP = userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
@@ -219,8 +225,14 @@ export default class RemovePage extends Component {
   };
 
   renderForm() {
-    const { currentPair, loading, submiting, userBalance, pairData, allPairs } =
-      this.props;
+    const {
+      currentPair,
+      loading,
+      submiting,
+      userBalance,
+      pairData,
+      allPairs,
+    } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
     const { removeRate, removeLP, symbol1, symbol2 } = this.state;
@@ -427,20 +439,29 @@ export default class RemovePage extends Component {
     if (!isLogin) {
       // 未登录
       return (
-        <Button className={styles.btn_wait} onClick={this.login}>
-          {_('login')}
+        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
+          {_('connect_wallet')}
         </Button>
       );
     } else if (!pairData) {
       // 不存在的交易对
-      return <Button className={styles.btn_wait}>{_('no_pair')}</Button>;
+      return (
+        <Button className={styles.btn_wait} shape="round">
+          {_('no_pair')}
+        </Button>
+      );
     } else if (!LP || LP === '0') {
-      return <Button className={styles.btn_wait}>{_('cant_remove')}</Button>;
+      return (
+        <Button className={styles.btn_wait} shape="round">
+          {_('cant_remove')}
+        </Button>
+      );
     } else {
       return (
         <Button
           className={styles.btn}
           type="primary"
+          shape="round"
           onClick={this.handleSubmit}
         >
           {_('remove')}
@@ -470,8 +491,13 @@ export default class RemovePage extends Component {
 
   renderResult() {
     // const LP = userBalance[lptoken.tokenID];
-    const { symbol1, symbol2, final_lp, receive_token1, receive_token2 } =
-      this.state;
+    const {
+      symbol1,
+      symbol2,
+      final_lp,
+      receive_token1,
+      receive_token2,
+    } = this.state;
     return (
       <div className={styles.remove_content}>
         <div className={styles.finish_logo}>
@@ -526,6 +552,7 @@ export default class RemovePage extends Component {
         </div>
         <Button
           type="primary"
+          shape="round"
           className={styles.done_btn}
           onClick={() => {
             this.setState({

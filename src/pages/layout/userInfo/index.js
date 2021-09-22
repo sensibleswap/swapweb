@@ -290,6 +290,7 @@ export default class UserInfo extends Component {
         <div className={styles.ft}>
           <Button
             className={styles.btn}
+            shape="round"
             style={{ width: '100%' }}
             onClick={this.disConnect}
           >
@@ -374,11 +375,11 @@ export default class UserInfo extends Component {
               <li
                 onClick={() => this.connectWebWallet(isApp ? 3 : 2, 'mainnet')}
               >
-                Volt {_('web_wallet')}
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
-                  style={{ fontSize: 35 }}
+                  style={{ fontSize: 30 }}
                 />
+                <div className={styles.label}>Volt {_('web_wallet')}</div>
               </li>
 
               {query.env === 'local' && (
@@ -387,8 +388,8 @@ export default class UserInfo extends Component {
                     this.connectWebWallet(isApp ? 3 : 2, 'testnet')
                   }
                 >
-                  BSV Testnet
-                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 35 }} />
+                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 30 }} />
+                  <div className={styles.label}>BSV Testnet</div>
                 </li>
               )}
               {!isApp && (
@@ -396,8 +397,13 @@ export default class UserInfo extends Component {
                   onClick={() => this.connectWebWallet(1)}
                   style={{ fontSize: 15 }}
                 >
-                  TS {_('web_wallet')}
-                  {_('test_only')}
+                  <div className={styles.ts_icon}>
+                    <CustomIcon type="iconTS_Logo" style={{ fontSize: 20 }} />
+                  </div>
+                  <div className={styles.label}>
+                    TS {_('web_wallet')}
+                    <div className={styles.sub}>{_('test_only')}</div>
+                  </div>
                 </li>
               )}
               {/*process.env.NODE_ENV === 'development' && (

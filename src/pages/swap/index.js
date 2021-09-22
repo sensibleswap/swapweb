@@ -470,27 +470,35 @@ export default class Swap extends Component {
     if (!isLogin) {
       // 未登录
       return (
-        <Button className={styles.btn_wait} onClick={this.login}>
-          {_('login')}
+        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
+          {_('connect_wallet')}
         </Button>
       );
     } else if (swapToken1Amount === '0' || swapToken2Amount === '0') {
       // 交易对没有数量，不能交易
-      return <Button className={styles.btn_wait}>{_('pair_init')}</Button>;
+      return (
+        <Button className={styles.btn_wait} shape="round">
+          {_('pair_init')}
+        </Button>
+      );
     } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
       // 未输入数量
-      return <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+      return (
+        <Button className={styles.btn_wait} shape="round">
+          {_('enter_amount')}
+        </Button>
+      );
     } else if (parseFloat(origin_amount) <= formatSat(MINAMOUNT)) {
       // 数额太小
       return (
-        <Button className={styles.btn_wait}>
+        <Button className={styles.btn_wait} shape="round">
           {_('lower_amount', MINAMOUNT)}
         </Button>
       );
     } else if (parseFloat(origin_amount) > parseFloat(balance || 0)) {
       // 余额不足
       return (
-        <Button className={styles.btn_wait}>
+        <Button className={styles.btn_wait} shape="round">
           {_('lac_token_balance', origin_token.symbol.toUpperCase())}
         </Button>
       );
@@ -503,14 +511,18 @@ export default class Swap extends Component {
     ) {
       // 池中币不足
       return (
-        <Button className={styles.btn_wait}>
+        <Button className={styles.btn_wait} shape="round">
           {_('not_enough', token2.symbol.toUpperCase())}
         </Button>
       );
     } else if (beyond) {
       // 超出容忍度
       return (
-        <Button className={styles.btn_warn} onClick={this.handleSubmit}>
+        <Button
+          className={styles.btn_warn}
+          shape="round"
+          onClick={this.handleSubmit}
+        >
           {_('swap_anyway')}
         </Button>
       );
@@ -519,6 +531,7 @@ export default class Swap extends Component {
         <Button
           className={styles.btn}
           type="primary"
+          shape="round"
           onClick={this.handleSubmit}
         >
           {_('swap')}
@@ -725,7 +738,7 @@ export default class Swap extends Component {
             <div className={styles.item_value}>{txid}</div>
           </div>
         </div>
-        <Button className={styles.done_btn} onClick={this.finish}>
+        <Button className={styles.done_btn} shape="round" onClick={this.finish}>
           {_('done')}
         </Button>
       </div>

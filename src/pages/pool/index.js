@@ -96,6 +96,7 @@ export default class Pool extends Component {
               {this.renderContent()}
               <Button
                 type="primary"
+                shape="round"
                 className={styles.app_start_btn}
                 onClick={this.showPannel}
               >

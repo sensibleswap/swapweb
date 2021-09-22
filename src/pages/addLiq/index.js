@@ -411,8 +411,8 @@ export default class Liquidity extends Component {
     if (!isLogin) {
       // 未登录
       btn = (
-        <Button className={styles.btn_wait} onClick={this.login}>
-          {_('login')}
+        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
+          {_('connect_wallet')}
         </Button>
       );
     }
@@ -422,16 +422,22 @@ export default class Liquidity extends Component {
     // }
     else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
       // 未输入数量
-      btn = <Button className={styles.btn_wait}>{_('enter_amount')}</Button>;
+      btn = (
+        <Button className={styles.btn_wait} shape="round">
+          {_('enter_amount')}
+        </Button>
+      );
     } else if (parseFloat(origin_amount) <= formatSat(1000)) {
       // 数额太小
       btn = (
-        <Button className={styles.btn_wait}>{_('lower_amount', 1000)}</Button>
+        <Button className={styles.btn_wait} shape="round">
+          {_('lower_amount', 1000)}
+        </Button>
       );
     } else if (parseFloat(origin_amount) > parseFloat(userBalance.BSV || 0)) {
       // 余额不足
       btn = (
-        <Button className={styles.btn_wait}>
+        <Button className={styles.btn_wait} shape="round">
           {_('lac_token_balance', token1.symbol.toUpperCase())}
         </Button>
       );
@@ -440,7 +446,7 @@ export default class Liquidity extends Component {
     ) {
       // 余额不足
       btn = (
-        <Button className={styles.btn_wait}>
+        <Button className={styles.btn_wait} shape="round">
           {_('lac_token_balance', token2.symbol.toUpperCase())}
         </Button>
       );
@@ -449,6 +455,7 @@ export default class Liquidity extends Component {
         <Button
           className={styles.btn}
           type="primary"
+          shape="round"
           onClick={this.preHandleSubmit}
         >
           {_('supply_liq')}
@@ -506,8 +513,14 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token1,
+      token2,
+      userBalance,
+    } = this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -634,8 +647,13 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const { token2, currentPair, dispatch, rabinApis, changeAddress } =
-      this.props;
+    const {
+      token2,
+      currentPair,
+      dispatch,
+      rabinApis,
+      changeAddress,
+    } = this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
@@ -753,6 +771,7 @@ export default class Liquidity extends Component {
         {/*this.renderResultInfo()*/}
         <Button
           className={styles.done_btn}
+          shape="round"
           onClick={() => {
             history.push('/swap');
           }}
