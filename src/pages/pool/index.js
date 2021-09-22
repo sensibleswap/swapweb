@@ -101,7 +101,7 @@ export default class Pool extends Component {
                   className={styles.small_btn}
                   onClick={() => this.showPannel('add')}
                 >
-                  {_('add_liq_short')}
+                  {_('add_liq')}
                 </Button>
                 <Button
                   type="primary"
