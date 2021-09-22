@@ -222,7 +222,7 @@ const texts = {
   notice720:
     'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
   cant_remove: 'You have no liquidity to remove',
-  test_only: '(Recommended for test only)',
+  test_only: 'Recommended for test only',
   swap_success: 'Swap success',
   lp_balance: 'Available to withdraw',
   added: 'Added',
