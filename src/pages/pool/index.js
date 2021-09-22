@@ -1,9 +1,10 @@
 'use strict';
 import React, { Component } from 'react';
 import { withRouter, connect } from 'umi';
-import { Button, Alert } from 'antd';
+import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
+import { TSWAP_POOL_SHOW_OP } from 'common/const';
 import Pair from 'components/pair';
 import Chart from 'components/chart/poolChart';
 import Loading from 'components/loading';
@@ -25,31 +26,31 @@ import _ from 'i18n';
 export default class Pool extends Component {
   constructor(props) {
     super(props);
+    const flag = sessionStorage.getItem(TSWAP_POOL_SHOW_OP);
     this.state = {
-      app_pannel: false,
+      app_pannel: flag === 'true',
     };
   }
 
-  showPannel = () => {
+  showPannel = (type) => {
+    const { history, currentPair } = this.props;
+    history.push(`/pool/${currentPair}/${type}`);
+    sessionStorage.setItem(TSWAP_POOL_SHOW_OP, 'true');
     this.setState({
       app_pannel: true,
     });
   };
 
   hidePannel = () => {
+    sessionStorage.setItem(TSWAP_POOL_SHOW_OP, 'false');
     this.setState({
       app_pannel: false,
     });
   };
 
   renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      allPairs,
-      userBalance,
-    } = this.props;
+    const { currentPair, pairData, loading, allPairs, userBalance } =
+      this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];
@@ -94,13 +95,22 @@ export default class Pool extends Component {
             <div className={styles.left_inner}>
               <Header />
               {this.renderContent()}
-              <Button
-                type="primary"
-                className={styles.app_start_btn}
-                onClick={this.showPannel}
-              >
-                {_('start_pooling')}
-              </Button>
+              <div className={styles.app_start_btn_wrap}>
+                <Button
+                  type="primary"
+                  className={styles.small_btn}
+                  onClick={() => this.showPannel('add')}
+                >
+                  {_('add_liq_short')}
+                </Button>
+                <Button
+                  type="primary"
+                  className={styles.small_btn}
+                  onClick={() => this.showPannel('remove')}
+                >
+                  {_('remove_liq')}
+                </Button>
+              </div>
             </div>
           </section>
           <section className={styles.right}>

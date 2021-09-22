@@ -97,13 +97,15 @@ export default class SwapPage extends Component {
             <div className={styles.left_inner}>
               <Header />
               {this.renderContent()}
-              <Button
-                type="primary"
-                className={styles.app_start_btn}
-                onClick={this.showPannel}
-              >
-                {_('start_swapping')}
-              </Button>
+              <div className={styles.app_start_btn_wrap}>
+                <Button
+                  type="primary"
+                  className={styles.big_btn}
+                  onClick={this.showPannel}
+                >
+                  {_('start_swapping')}
+                </Button>
+              </div>
             </div>
           </section>
           <section className={styles.right}>

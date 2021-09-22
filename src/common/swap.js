@@ -21,7 +21,6 @@ swapAlgo.countLpAddAmount = function (
   } else {
     lpMinted = token1AddAmount;
   }
-  // console.log(token1AddAmount, token2AddAmount, swapToken1Amount, swapToken2Amount);
   return [lpMinted, token2AddAmount];
 };
 
@@ -44,7 +43,6 @@ swapAlgo.countLpAddAmountWithToken2 = function (
   } else {
     lpMinted = 0;
   }
-  // console.log(token1AddAmount, token2AddAmount, swapToken1Amount, swapToken2Amount);
   return [lpMinted, token1AddAmount];
 };
 

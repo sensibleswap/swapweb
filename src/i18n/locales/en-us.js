@@ -156,8 +156,7 @@ const texts = {
   lb_5: '0 withdrawal fee',
   lb_6: 'Unlimited TPS (compared with ETH)',
   lb_7: 'Free from exchange hacks because of account information leakage',
-  lb_8:
-    'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
+  lb_8: 'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
   lb_9: 'No front-running, which happens on ETH DEXs that causes loss to users',
   lb_10:
     'Instant matching between users or user-pool with low fees, instant settlement',
@@ -243,6 +242,7 @@ const texts = {
   deposited: 'deposited',
   deposit_earn: 'Deposit & Earn',
   start_deposit: 'Start Deposit',
+  start_withdraw: 'Start Withdraw',
   farm_withdraw: 'Withdraw',
   farm_withdraw_success: 'Withdraw successful',
   withdrew: 'Withdrew',

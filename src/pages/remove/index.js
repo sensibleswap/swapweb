@@ -576,7 +576,8 @@ export default class RemovePage extends Component {
                 className={styles.menu_item}
                 key="add_liq"
                 onClick={() => {
-                  this.props.history.push('/pool/add');
+                  const { currentPair, history } = this.props;
+                  history.push(`/pool/${currentPair}/add`);
                 }}
               >
                 {_('add_liq')}

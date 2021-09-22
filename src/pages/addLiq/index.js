@@ -783,7 +783,8 @@ export default class Liquidity extends Component {
               className={styles.menu_item}
               key="remove_liq"
               onClick={() => {
-                this.props.history.push('remove');
+                const { currentPair, history } = this.props;
+                history.push(`/pool/${currentPair}/remove`);
               }}
             >
               {_('remove_liq_short')}
@@ -805,7 +806,8 @@ export default class Liquidity extends Component {
       lastMod: '',
     });
 
-    this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
+    this.formRef.current &&
+      this.formRef.current.setFieldsValue({ origin_amount: 0, aim_amount: 0 });
   };
 
   render() {
