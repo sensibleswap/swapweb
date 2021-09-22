@@ -1,12 +1,17 @@
 .chart_container {
   background-color: #f6f7f9;
   border-radius: 8px;
-  padding-top: 20px;
+  padding: 20px;
+}
+
+.chart_heading {
+  display: flex;
+  justify-content: space-between;
 }
 
 .chart_title {
   font-size: 24px;
-  margin-left: 20px;
+  cursor: pointer;
   span {
     font-weight: 700;
   }
@@ -16,6 +21,35 @@
   border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(99, 99, 99, 0.25);
 }
+
+.time_picker_bottom {
+  margin-top: 20px;
+}
+
+.time_range_picker {
+  display: flex;
+
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 36px;
+    font-size: 14;
+    border-radius: 20px;
+    cursor: pointer;
+
+    &:not(:last-of-type) {
+      margin-right: 10px;
+    }
+  }
+
+  .active {
+    background-color: #fff;
+    font-weight: 700;
+  }
+}
+
 .chart {
   max-width: 548px;
   width: 100%;
@@ -45,8 +79,15 @@
 }
 
 .data_info {
-  font-size: 14px;
-  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 5px;
+
+  > div:not(:last-of-type) {
+    margin-right: 15px;
+  }
 }
 
 .dot {
@@ -58,8 +99,25 @@
   margin-right: 5px;
 }
 
+.tooltip {
+  font-family: 'Roboto', 'Noto Sans SC', sans-serif !important;
+  font-size: 12px !important;
+  color: #1d1d1d !important;
+  span {
+    display: inline-block;
+    font-weight: 500;
+    width: 45px;
+  }
+}
+
 @media only screen and (max-width: 767.99px) {
-  .chart {
-    width: 335px;
+  .time_picker_top {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .time_picker_bottom {
+    display: none;
   }
 }

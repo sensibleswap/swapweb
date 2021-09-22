@@ -6,6 +6,7 @@ import { connect } from 'umi';
 import { Spin } from 'antd';
 import EventBus from 'common/eventBus';
 import { USDT_PAIR, COLOR1, COLOR2 } from 'common/const';
+import TimeRangeTabs from './timeRangeTabs';
 import styles from './index.less';
 import _ from 'i18n';
 
@@ -29,39 +30,51 @@ export default class Chart extends Component {
     };
     this.option = {
       grid: {
-        bottom: 30,
-        left: 20,
-        right: 20,
+        top: 10,
+        bottom: 10,
+        left: 0,
+        right: 0,
       },
       xAxis: {
-        type: 'category',
-        data: [],
+        type: 'time',
         show: false,
       },
       yAxis: [
         {
-          type: 'value',
+          type: 'log',
           show: false,
+          min: (v) => v.min * 0.5,
+          max: (v) => v.max * 1.5,
         },
         {
           type: 'value',
           show: false,
+          max: (v) => v.max * 2,
         },
       ],
       tooltip: {
         trigger: 'axis',
+        className: styles.tooltip,
+        renderMode: 'html',
         formatter: function (params) {
+          const lines = [{ label: _('date'), value: params[0].axisValueLabel }];
           if (props.type === 'pool') {
-            return `${_('date')}: ${params[0].name} <br />TVL: ${
-              params[0].data
-            } BSV<br />`;
+            lines.push({ label: 'TVL', value: `${params[0].value[1]} BSV` });
           } else {
-            return `${_('date')}: ${params[0].name} <br />${_('volume')}: ${
-              params[1].data
-            } BSV<br />${_('price')}: ${params[0].data} ${
-              currentPair === USDT_PAIR ? 'USDT' : 'BSV'
-            }`;
+            lines.push({
+              label: _('volume'),
+              value: `${params[1].value[1]} BSV`,
+            });
+            lines.push({
+              label: _('price'),
+              value: `${params[0].value[1]} ${
+                currentPair === USDT_PAIR ? 'USDT' : 'BSV'
+              }`,
+            });
           }
+          return lines
+            .map((line) => `<span>${line.label}</span> ${line.value}`)
+            .join('<br />');
         },
       },
       series: [
@@ -69,14 +82,18 @@ export default class Chart extends Component {
           data: [],
           type: 'line',
           showSymbol: false,
-          encode: {
-            x: 'type',
-            y: 'data',
-            tooltip: ['Income'],
-          },
           lineStyle: {
             color: COLOR1,
-            width: 1.5,
+            width: 2,
+          },
+          itemStyle: {
+            color: COLOR1,
+          },
+          emphasis: {
+            lineStyle: {
+              color: COLOR1,
+              width: 2,
+            },
           },
           yAxisIndex: 0,
         },
@@ -84,14 +101,18 @@ export default class Chart extends Component {
           data: [],
           type: 'line',
           showSymbol: false,
-          encode: {
-            x: 'type',
-            y: 'data',
-            tooltip: ['Income'],
-          },
           lineStyle: {
             color: COLOR2,
-            width: 1.5,
+            width: 2,
+          },
+          itemStyle: {
+            color: COLOR2,
+          },
+          emphasis: {
+            lineStyle: {
+              color: COLOR2,
+              width: 2,
+            },
           },
           yAxisIndex: 1,
         },
@@ -114,13 +135,20 @@ export default class Chart extends Component {
     if (type !== this.props.type) return;
     const chartData = await this.getChartData(type);
     if (chartData.length > 1) {
-      const [price, amount, volumn, time] = chartData;
-      this.option.xAxis.data = time;
       if (type === 'pool') {
-        this.option.series[0].data = amount;
+        this.option.series[0].data = chartData.map((d) => ({
+          name: d.timestamp,
+          value: [d.formattedTime, d.amount],
+        }));
       } else {
-        this.option.series[0].data = price;
-        this.option.series[1].data = volumn;
+        this.option.series[0].data = chartData.map((d) => ({
+          name: d.timestamp,
+          value: [d.formattedTime, d.price],
+        }));
+        this.option.series[1].data = chartData.map((d) => ({
+          name: d.timestamp,
+          value: [d.formattedTime, d.volumn],
+        }));
       }
     } else {
       this.option.series[0].data = [];
@@ -153,11 +181,15 @@ export default class Chart extends Component {
   }
 
   render() {
-    const { loading } = this.props;
+    const { loading, type } = this.props;
     const { chartData } = this.state;
     return (
       <Spin spinning={chartData.length < 1 && loading}>
         <div id="J_Chart" className={styles.chart}></div>
+
+        <div className={styles.time_picker_bottom}>
+          <TimeRangeTabs type={type} />
+        </div>
       </Spin>
     );
   }

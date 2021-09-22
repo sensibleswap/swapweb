@@ -22,6 +22,17 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
   return moment(date).format(format);
 }
 
+export function getTimeAgo(timeAgo) {
+  const timeRangeMap = {
+    '4h': 60 * 60 * 4,
+    '1d': 60 * 60 * 24,
+    '1w': 60 * 60 * 24 * 7,
+    '1m': 60 * 60 * 24 * 30,
+  };
+
+  return new Date().getTime() / 1000 - timeRangeMap[timeAgo];
+}
+
 // 将时间戳转换成日期格式
 export function formatTime(time, fmt = 'yyyy-MM-dd hh:mm:ss') {
   if (!time) return '';
