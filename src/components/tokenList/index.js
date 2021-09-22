@@ -6,12 +6,13 @@ import querystring from 'querystringify';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
 import TokenPair from 'components/tokenPair';
-import { connect } from 'umi';
+import { withRouter, connect } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
 
 const query = querystring.parse(window.location.search);
 const { Search } = Input;
+@withRouter
 @connect(({ pair }) => {
   return {
     ...pair,
@@ -35,10 +36,36 @@ export default class TokenList extends Component {
       showList: _showList,
       allPairs: _allPairs,
     };
+
+    window.addEventListener('hashchange', (event) => {
+      const { newURL, oldURL } = event;
+      if (newURL !== oldURL) {
+        let newHash = newURL.substr(newURL.indexOf('#'));
+        let oldHash = oldURL.substr(oldURL.indexOf('#'));
+        newHash = newHash.split('/');
+        oldHash = oldHash.split('/');
+        if (
+          newHash[1] === oldHash[1] &&
+          newHash[2] &&
+          newHash[2] !== oldHash[2]
+        ) {
+          this.select(newHash[2].toLowerCase());
+        }
+      }
+    });
   }
 
   select = async (currentPair) => {
     if (currentPair && currentPair !== this.props.currentPair) {
+      let { hash } = location;
+      if (hash.indexOf('swap') > -1) {
+        this.props.history.push(`/swap/${currentPair}`);
+      } else if (hash.indexOf('add') > -1) {
+        this.props.history.push(`/pool/${currentPair}/add`);
+      } else if (hash.indexOf('remove') > -1) {
+        this.props.history.push(`/pool/${currentPair}/remove`);
+      }
+
       window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
 
       await this.props.dispatch({
@@ -48,7 +75,6 @@ export default class TokenList extends Component {
         },
       });
       const { finish } = this.props;
-      const { hash } = location;
       if (hash.indexOf('swap') > -1) {
         EventBus.emit('reloadChart', 'swap');
       } else if (hash.indexOf('pool') > -1) {

@@ -1,5 +1,6 @@
 import pairApi from '../api/pair';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
+import { parseUrl } from 'common/utils';
 import debug from 'debug';
 const log = debug('pair');
 
@@ -31,8 +32,10 @@ export default {
         console.log(res.msg);
         return res;
       }
+      const urlPair = parseUrl(data);
+
       let currentPair =
-        localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+        urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
       if (!currentPair || !data[currentPair]) {
         Object.keys(data).forEach((item) => {
           if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {

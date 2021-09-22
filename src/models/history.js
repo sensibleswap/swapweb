@@ -1,7 +1,6 @@
 import historyApi from '../api/history';
 import { USDT_PAIR } from 'common/const';
-import { message } from 'antd';
-import { formatTime, formatAmount } from 'common/utils';
+import { formatTime, formatAmount, parseUrl } from 'common/utils';
 import debug from 'debug';
 const log = debug('history');
 
@@ -18,11 +17,20 @@ export default {
 
   effects: {
     *query({ payload }, { call, put, select }) {
-      const currentPair = yield select((state) => state.pair.currentPair);
+      const allPairs = yield select((state) => state.pair.allPairs);
+
+      const urlPair = parseUrl(allPairs);
+
+      let currentPair;
+      if (urlPair) {
+        currentPair = urlPair;
+      } else {
+        currentPair = yield select((state) => state.pair.currentPair);
+      }
+
       if (!currentPair) {
         return [];
       }
-      const allPairs = yield select((state) => state.pair.allPairs);
       const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
 
       const { type } = payload;

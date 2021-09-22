@@ -45,6 +45,28 @@ export default class FarmC extends Component {
       current_item: 0,
       currentMenuIndex: 0,
     };
+    window.addEventListener('hashchange', (event) => {
+      const { newURL, oldURL } = event;
+      if (newURL !== oldURL) {
+        let newHash = newURL.substr(newURL.indexOf('#'));
+        let oldHash = oldURL.substr(oldURL.indexOf('#'));
+        newHash = newHash.split('/');
+        oldHash = oldHash.split('/');
+        if (
+          newHash[1] === oldHash[1] &&
+          newHash[2] &&
+          newHash[2] !== oldHash[2] &&
+          props.allPairs[newHash[2]]
+        ) {
+          props.dispatch({
+            type: 'farm/saveFarm',
+            payload: {
+              currentPair: newHash[2],
+            },
+          });
+        }
+      }
+    });
   }
 
   componentDidMount() {
@@ -76,6 +98,11 @@ export default class FarmC extends Component {
 
   changeCurrentFarm = async (currentPair) => {
     const { allPairs, dispatch } = this.props;
+
+    let { hash } = location;
+    if (hash.indexOf('farm') > -1) {
+      this.props.history.push(`/farm/${currentPair}`);
+    }
     dispatch({
       type: 'farm/saveFarm',
       payload: {

@@ -220,3 +220,14 @@ export function isTestNet() {
   const net = window.localStorage.getItem(TSWAP_NETWORK) || DEFAULT_NET;
   return net === 'testnet';
 }
+
+export function parseUrl(data) {
+  let [, hash1, hash2, hash3] = location.hash.split('/');
+  if (hash2) hash2 = hash2.toLocaleLowerCase();
+  if (hash3) hash3 = hash3.toLocaleLowerCase();
+  let currentPair;
+  if (['swap', 'pool', 'farm'].indexOf(hash1) > -1 && data[hash2]) {
+    currentPair = hash2;
+  }
+  return currentPair;
+}
