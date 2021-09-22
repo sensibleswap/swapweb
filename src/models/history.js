@@ -47,10 +47,8 @@ export default {
       if (newData.length > 0) {
         if (type === 'pool') {
           newData.forEach((item, index) => {
-            const { outToken1Amount, timestamp } = item;
-            amount.push(
-              formatAmount((outToken1Amount / Math.pow(10, 8)) * 2, 8),
-            );
+            const { closeAmount, timestamp } = item;
+            amount.push(formatAmount((closeAmount / Math.pow(10, 8)) * 2, 8));
             time.push(formatTime(timestamp * 1000));
           });
         } else {

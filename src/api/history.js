@@ -24,7 +24,7 @@ class History extends BaseAPI {
   query(params) {
     const { codeHash, genesisHash, type, currentPair } = params;
     if (type === 'pool') {
-      return this._request(`swap-data/${codeHash}/${genesisHash}`, {
+      return this._request(`swap-aggregate-amount/${codeHash}/${genesisHash}`, {
         start: 690000,
         size: 100,
       });

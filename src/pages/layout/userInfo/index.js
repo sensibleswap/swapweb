@@ -65,13 +65,8 @@ export default class UserInfo extends Component {
         while (this.polling) {
           await sleep(20 * 1e3);
           i++;
-          const {
-            dispatch,
-            busy,
-            isLogin,
-            userAddress,
-            currentPair,
-          } = _self.props;
+          const { dispatch, busy, isLogin, userAddress, currentPair } =
+            _self.props;
           if (busy) return;
           dispatch({
             type: 'pair/updatePairData',
@@ -374,7 +369,7 @@ export default class UserInfo extends Component {
               <li
                 onClick={() => this.connectWebWallet(isApp ? 3 : 2, 'mainnet')}
               >
-                Volt {_('web_wallet')}
+                Volt {_('wallet')}
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
                   style={{ fontSize: 35 }}
@@ -396,7 +391,7 @@ export default class UserInfo extends Component {
                   onClick={() => this.connectWebWallet(1)}
                   style={{ fontSize: 15 }}
                 >
-                  TS {_('web_wallet')}
+                  TS {_('wallet')}
                   {_('test_only')}
                 </li>
               )}

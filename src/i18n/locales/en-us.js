@@ -1,4 +1,5 @@
 const texts = {
+  wallet: 'Wallet',
   swap: 'Swap',
   pool: 'Pool',
   explore: 'Explore',
