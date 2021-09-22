@@ -20,12 +20,15 @@ interface CssExports {
   dot: string;
   ft: string;
   hd: string;
+  label: string;
   line: string;
   login_dialog: string;
   persission_title: string;
   qr_icon: string;
+  sub: string;
   tips: string;
   title: string;
+  ts_icon: string;
   user_pop: string;
   website: string;
 }

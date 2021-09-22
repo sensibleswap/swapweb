@@ -25,7 +25,6 @@
     height: 40px;
     font-size: 16px;
     font-weight: 500;
-    border-radius: @button_radius;
   }
 }
 
@@ -59,11 +58,10 @@
     margin-top: 40px;
 
     .btn {
-      width: 160px;
       height: 50px;
       font-size: 18px;
       font-weight: 700;
-      border-radius: @button_radius;
+      padding: 0 25px;
     }
   }
 }
@@ -85,7 +83,7 @@
   height: 95px;
   text-align: center;
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 20px 0;
 
   .label {
@@ -131,7 +129,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 12px;
 
   > :not(:first-of-type) {
     width: 160px;
@@ -145,7 +143,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 18px;
   font-weight: 400;
 
   .col_1 {
@@ -207,7 +204,7 @@
   }
 
   .main {
-    padding: 30px 0;
+    padding: 30px 20px;
 
     .logo {
       display: block;
@@ -221,11 +218,16 @@
 
     .main_desc {
       font-size: 18px;
-      line-height: 30px;
+      line-height: 25px;
     }
 
     .btns {
       margin-top: 30px;
+
+      .btn {
+        font-size: 16px;
+        padding: 0 20px;
+      }
     }
   }
 

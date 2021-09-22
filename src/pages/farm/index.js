@@ -250,6 +250,7 @@ export default class FarmC extends Component {
     }
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');
     const {
+      token,
       lockedTokenAmount,
       poolTokenAmount,
       rewardAmountPerBlock,
@@ -322,7 +323,8 @@ export default class FarmC extends Component {
             </div>
           </div>
           <div className={styles.lp_amount}>
-            {_('your_deposited_lp')}: {formatSat(lockedTokenAmount, decimal)}
+            {_('your_deposited_lp')}:{' '}
+            {formatSat(lockedTokenAmount, token.decimal)}
           </div>
         </div>
 
@@ -405,8 +407,9 @@ export default class FarmC extends Component {
 
           <div className={styles.item_detail_line_2}>
             <Button
-              type="primary"
               className={styles.btn}
+              type="primary"
+              shape="round"
               disabled={rewardTokenAmount <= 0}
               onClick={() => this.harvest(pairName, data)}
             >
@@ -449,6 +452,7 @@ export default class FarmC extends Component {
               <div className={styles.app_start_btn_wrap}>
                 <Button
                   type="primary"
+                  shape="round"
                   className={styles.small_btn}
                   onClick={() => this.showPannel(0)}
                 >
@@ -456,6 +460,7 @@ export default class FarmC extends Component {
                 </Button>
                 <Button
                   type="primary"
+                  shape="round"
                   className={styles.small_btn}
                   onClick={() => this.showPannel(1)}
                 >

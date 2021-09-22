@@ -141,7 +141,7 @@ const texts = {
 
   use_tokenswap: 'Use TokenSwap',
   tokenswap: 'TokenSwap',
-  tokenswap_desc: 'Your Onchain DEX built on original Bitcoin protocol',
+  tokenswap_desc: 'Your onchain DEX built on the original Bitcoin protocol',
   documentation: 'Documentation',
   comparisons: 'Comparisons',
   comp_ts: 'Comparing TokenSwap',
@@ -156,7 +156,8 @@ const texts = {
   lb_5: '0 withdrawal fee',
   lb_6: 'Unlimited TPS (compared with ETH)',
   lb_7: 'Free from exchange hacks because of account information leakage',
-  lb_8: 'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
+  lb_8:
+    'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
   lb_9: 'No front-running, which happens on ETH DEXs that causes loss to users',
   lb_10:
     'Instant matching between users or user-pool with low fees, instant settlement',
@@ -221,7 +222,7 @@ const texts = {
   notice720:
     'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
   cant_remove: 'You have no liquidity to remove',
-  test_only: '(Recommended for test only)',
+  test_only: 'Recommended for test only',
   swap_success: 'Swap success',
   lp_balance: 'Available to withdraw',
   added: 'Added',

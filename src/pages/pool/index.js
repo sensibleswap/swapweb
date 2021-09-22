@@ -49,8 +49,13 @@ export default class Pool extends Component {
   };
 
   renderContent() {
-    const { currentPair, pairData, loading, allPairs, userBalance } =
-      this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      allPairs,
+      userBalance,
+    } = this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];
@@ -98,6 +103,7 @@ export default class Pool extends Component {
               <div className={styles.app_start_btn_wrap}>
                 <Button
                   type="primary"
+                  shape="round"
                   className={styles.small_btn}
                   onClick={() => this.showPannel('add')}
                 >
@@ -105,6 +111,7 @@ export default class Pool extends Component {
                 </Button>
                 <Button
                   type="primary"
+                  shape="round"
                   className={styles.small_btn}
                   onClick={() => this.showPannel('remove')}
                 >
