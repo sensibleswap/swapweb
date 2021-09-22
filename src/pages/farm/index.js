@@ -84,9 +84,10 @@ export default class FarmC extends Component {
     });
   };
 
-  showPannel = () => {
+  showPannel = (index) => {
     this.setState({
       app_pannel: true,
+      currentMenuIndex: index,
     });
   };
 
@@ -448,14 +449,24 @@ export default class FarmC extends Component {
             <div className={styles.left_inner}>
               <Header />
               {this.renderContent()}
-              <Button
-                type="primary"
-                shape="round"
-                className={styles.app_start_btn}
-                onClick={this.showPannel}
-              >
-                {_('start_deposit')}
-              </Button>
+              <div className={styles.app_start_btn_wrap}>
+                <Button
+                  type="primary"
+                  shape="round"
+                  className={styles.small_btn}
+                  onClick={() => this.showPannel(0)}
+                >
+                  {_('start_deposit')}
+                </Button>
+                <Button
+                  type="primary"
+                  shape="round"
+                  className={styles.small_btn}
+                  onClick={() => this.showPannel(1)}
+                >
+                  {_('start_withdraw')}
+                </Button>
+              </div>
             </div>
           </section>
           <section className={styles.right}>

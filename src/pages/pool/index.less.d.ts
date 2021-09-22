@@ -2,8 +2,9 @@
 // Please do not change this file!
 interface CssExports {
   app_hide: string;
-  app_start_btn: string;
+  app_start_btn_wrap: string;
   app_title: string;
+  big_btn: string;
   box: string;
   close: string;
   container: string;
@@ -23,6 +24,7 @@ interface CssExports {
   name: string;
   right: string;
   sidebar: string;
+  small_btn: string;
   strong: string;
   subtitle: string;
   title: string;

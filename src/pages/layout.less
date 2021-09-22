@@ -100,7 +100,7 @@ p.desc {
   box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
 }
 
-.app_start_btn {
+.app_start_btn_wrap {
   width: calc(~'100% - 40px');
   height: 60px;
   font-weight: 500;
@@ -108,7 +108,24 @@ p.desc {
   bottom: 15px;
   left: 20px;
   display: none;
-  font-size: 18px;
+  justify-content: space-between;
+  z-index: 99;
+
+  .big_btn,
+  .small_btn {
+    font-size: 18px;
+    height: 60px;
+    line-height: 52px;
+    border-radius: 8px;
+  }
+
+  .big_btn {
+    width: 100%;
+  }
+
+  .small_btn {
+    width: 47%;
+  }
 }
 
 .app_title {
@@ -131,11 +148,13 @@ p.desc {
       margin-top: 40px;
       width: 100%;
       text-align: center;
+
       .ant-btn {
         width: 45%;
         height: 40px;
         border-radius: 12px;
       }
+
       .ant-btn + .ant-btn {
         margin-left: 20px;
       }
@@ -174,8 +193,8 @@ p.desc {
     padding-top: 0;
   }
 
-  .app_start_btn {
-    display: block;
+  .app_start_btn_wrap {
+    display: flex;
   }
 
   .app_title {

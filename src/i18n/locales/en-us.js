@@ -243,6 +243,7 @@ const texts = {
   deposited: 'deposited',
   deposit_earn: 'Deposit & Earn',
   start_deposit: 'Start Deposit',
+  start_withdraw: 'Start Withdraw',
   farm_withdraw: 'Withdraw',
   farm_withdraw_success: 'Withdraw successful',
   withdrew: 'Withdrew',
