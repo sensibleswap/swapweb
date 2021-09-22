@@ -6,7 +6,6 @@ import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Modal } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
-import { TSWAP_CURRENT_PAIR } from 'common/const';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';

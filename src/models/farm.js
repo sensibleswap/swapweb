@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
 import pairApi from '../api/pair';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR, USDT_PAIR } from 'common/const';
-import { formatSat } from 'common/utils';
+import { formatSat, parseUrl } from 'common/utils';
 import debug from 'debug';
 const log = debug('farm');
 
@@ -36,8 +36,9 @@ export default {
         console.log(res.msg);
         return res;
       }
+      const urlPair = parseUrl(data);
       let currentPair =
-        localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+        urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
       if (!currentPair || !data[currentPair]) {
         Object.keys(data).forEach((item) => {
           if (
@@ -164,7 +165,7 @@ export default {
       return { ...state, ...action.payload };
     },
     saveFarm(state, action) {
-      const { allPairs } = action.payload;
+      let { allPairs } = action.payload;
       let { currentPair } = action.payload;
       if (!currentPair) currentPair = state.currentPair;
       if (!currentPair) {
@@ -176,6 +177,9 @@ export default {
       let token = {},
         lockedTokenAmount = 0,
         rewardToken = {};
+      if (!allPairs) {
+        allPairs = state.allPairs;
+      }
       if (allPairs[currentPair]) {
         const currentPairObj = allPairs[currentPair];
         token = currentPairObj.token;

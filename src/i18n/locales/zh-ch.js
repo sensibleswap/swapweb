@@ -1,4 +1,5 @@
 const texts = {
+  wallet: '钱包',
   swap: '交易',
   pool: '流动池',
   explore: '浏览',

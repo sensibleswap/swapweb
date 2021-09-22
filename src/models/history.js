@@ -1,7 +1,6 @@
 import historyApi from '../api/history';
 import { USDT_PAIR } from 'common/const';
-import { message } from 'antd';
-import { formatTime, formatAmount, getTimeAgo } from 'common/utils';
+import { formatTime, formatAmount, parseUrl, getTimeAgo } from 'common/utils';
 import debug from 'debug';
 const log = debug('history');
 
@@ -18,13 +17,21 @@ export default {
 
   effects: {
     *query({ payload }, { call, put, select }) {
-      const currentPair = yield select((state) => state.pair.currentPair);
-      const timeRange = yield select((state) => state.history.timeRange);
+      const allPairs = yield select((state) => state.pair.allPairs);
+
+      const urlPair = parseUrl(allPairs);
+
+      let currentPair;
+      if (urlPair) {
+        currentPair = urlPair;
+      } else {
+        currentPair = yield select((state) => state.pair.currentPair);
+      }
 
       if (!currentPair) {
         return [];
       }
-      const allPairs = yield select((state) => state.pair.allPairs);
+      const timeRange = yield select((state) => state.history.timeRange);
       const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
 
       const { type } = payload;
@@ -48,15 +55,12 @@ export default {
 
         if (type === 'pool') {
           newData.forEach((item, i) => {
-            const { outToken1Amount, timestamp } = item;
+            const { closeAmount, timestamp } = item;
             if (i > 0 && (!startTimestamp || timestamp > startTimestamp)) {
               dataTimeline.push({
                 timestamp: timestamp * 1000,
                 formattedTime: formatTime(timestamp * 1000),
-                amount: formatAmount(
-                  (outToken1Amount / Math.pow(10, 8)) * 2,
-                  8,
-                ),
+                amount: formatAmount((closeAmount / Math.pow(10, 8)) * 2, 8),
               });
             }
           });

@@ -65,13 +65,7 @@ export default class UserInfo extends Component {
         while (this.polling) {
           await sleep(20 * 1e3);
           i++;
-          const {
-            dispatch,
-            busy,
-            isLogin,
-            userAddress,
-            currentPair,
-          } = _self.props;
+          const { dispatch, busy, isLogin, userAddress } = _self.props;
           if (busy) return;
           dispatch({
             type: 'pair/updatePairData',
@@ -379,7 +373,7 @@ export default class UserInfo extends Component {
                   type="iconicon-volt-tokenswap-circle"
                   style={{ fontSize: 30 }}
                 />
-                <div className={styles.label}>Volt {_('web_wallet')}</div>
+                <div className={styles.label}>Volt {_('wallet')}</div>
               </li>
 
               {query.env === 'local' && (
@@ -401,7 +395,7 @@ export default class UserInfo extends Component {
                     <CustomIcon type="iconTS_Logo" style={{ fontSize: 20 }} />
                   </div>
                   <div className={styles.label}>
-                    TS {_('web_wallet')}
+                    TS {_('wallet')}
                     <div className={styles.sub}>{_('test_only')}</div>
                   </div>
                 </li>

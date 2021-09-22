@@ -203,6 +203,27 @@ export default class RemovePage extends Component {
         removeLP: 0,
       };
     }
+
+    // if (!LP) {
+    //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+    //   const { removeLP = 0 } = this.state;
+    //   console.log(removeLP);
+    //   const rate = BigNumber(removeLP).div(swapLpAmount);
+    //   const { token1, token2 } = allPairs[currentPair];
+    //   const removeToken1 = formatSat(
+    //     BigNumber(swapToken1Amount).multipliedBy(rate),
+    //     token1.decimal,
+    //   );
+    //   const removeToken2 = formatSat(
+    //     BigNumber(swapToken2Amount).multipliedBy(rate),
+    //     token2.decimal,
+    //   );
+    //   return {
+    //     removeToken1: formatAmount(removeToken1, token1.decimal),
+    //     removeToken2: formatAmount(removeToken2, token2.decimal),
+    //     removeLP: formatSat(removeLP, lptoken.decimal),
+    //   };
+    // }
     LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
     const { removeRate } = this.state;
