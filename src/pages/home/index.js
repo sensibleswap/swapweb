@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { history } from 'umi';
 import { Button } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { isMobile } from 'react-device-detect';
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';
 import Footer from '../layout/footer';
@@ -169,7 +170,7 @@ export default class Home extends Component {
                 >
                   {_('use_tokenswap')}
                 </Button>
-                <Lang />
+                {!isMobile && <Lang />}
               </div>
             </div>
           </nav>

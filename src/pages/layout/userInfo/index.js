@@ -19,6 +19,7 @@ import { sleep } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
+import { isMobile } from 'react-device-detect';
 
 const query = querystring.parse(window.location.search);
 const isApp = query.env === 'webview' && window._volt_javascript_bridge;
@@ -226,7 +227,7 @@ export default class UserInfo extends Component {
     const { userAddress, userAddressShort, walletType } = this.props;
     return (
       <div className={styles.user_pop}>
-        <div className={styles.app_title}>
+        <div className={styles.app_title} onClick={this.closePop}>
           <Lang />
           {_('wallet_connected')}
           <CloseOutlined />
@@ -322,10 +323,16 @@ export default class UserInfo extends Component {
             onVisibleChange={this.handleVisibleChange}
             placement="bottomRight"
           >
-            <div className={styles.account_trigger}>
-              <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
-              {this.renderWalletIcon()}
-            </div>
+            {!isMobile ? (
+              <div className={styles.account_trigger}>
+                <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
+                {this.renderWalletIcon()}
+              </div>
+            ) : (
+              <div className={styles.connect_app}>
+                <UserOutlined />
+              </div>
+            )}
           </Popover>
         ) : (
           <>

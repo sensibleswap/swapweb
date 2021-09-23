@@ -1,5 +1,6 @@
 'use strict';
 import React from 'react';
+import { isMobile } from 'react-device-detect';
 import styles from './index.less';
 import _ from 'i18n';
 import Nav from '../nav';
@@ -12,7 +13,7 @@ export default function Header() {
       <Nav />
       <div className={styles.user_info}>
         <UserInfo />
-        <Lang />
+        {!isMobile && <Lang />}
       </div>
     </header>
   );
