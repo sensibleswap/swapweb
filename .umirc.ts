@@ -99,7 +99,7 @@ export default {
             },
             vendors: {
               name: 'vendors',
-              test: /[\\/]node_modules[\\/](?!umi|ant|echarts|react|react-dom|moment).*$/,
+              test: /[\\/]node_modules[\\/](?!umi|echarts|react|react-dom|moment).*$/,
               priority: 11,
               enforce: true,
             },
