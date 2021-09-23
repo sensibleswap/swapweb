@@ -122,6 +122,7 @@ export default class Chart extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.init();
   }
 
@@ -132,7 +133,7 @@ export default class Chart extends Component {
   }
 
   handleData = async (type) => {
-    if (type !== this.props.type) return;
+    if (type !== this.props.type || !this._isMounted) return;
     const chartData = await this.getChartData(type);
     if (chartData.length > 1) {
       if (type === 'pool') {
@@ -177,6 +178,7 @@ export default class Chart extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.myChart.dispose();
   }
 
