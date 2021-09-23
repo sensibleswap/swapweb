@@ -72,7 +72,7 @@ export default class Liquidity extends Component {
       await dispatch({
         type: 'pair/getPairData',
         payload: {
-          currentPair,
+          // currentPair,
         },
       });
     }
@@ -512,14 +512,8 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const {
-      dispatch,
-      currentPair,
-      userAddress,
-      token1,
-      token2,
-      userBalance,
-    } = this.props;
+    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
+      this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -646,13 +640,8 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const {
-      token2,
-      currentPair,
-      dispatch,
-      rabinApis,
-      changeAddress,
-    } = this.props;
+    const { token2, currentPair, dispatch, rabinApis, changeAddress } =
+      this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
@@ -723,10 +712,11 @@ export default class Liquidity extends Component {
 
   updateData() {
     const { dispatch, currentPair } = this.props;
+
     dispatch({
       type: 'pair/getPairData',
       payload: {
-        currentPair,
+        // currentPair,
       },
     });
     EventBus.emit('reloadChart', 'pool');

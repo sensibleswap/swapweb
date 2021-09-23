@@ -454,14 +454,8 @@ export default class Swap extends Component {
   renderButton() {
     const { isLogin, pairData, token1, token2, userBalance } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const {
-      slip,
-      lastMod,
-      origin_amount,
-      aim_amount,
-      dirForward,
-      tol,
-    } = this.state;
+    const { slip, lastMod, origin_amount, aim_amount, dirForward, tol } =
+      this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const balance = userBalance[origin_token.tokenID || 'BSV'];
@@ -683,10 +677,11 @@ export default class Swap extends Component {
 
   async updateData() {
     const { dispatch, currentPair } = this.props;
+
     await dispatch({
       type: 'pair/getPairData',
       payload: {
-        currentPair,
+        // currentPair,
       },
     });
     EventBus.emit('reloadChart', 'swap');

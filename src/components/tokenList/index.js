@@ -10,6 +10,7 @@ import { withRouter, connect } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
 
+let i = 0;
 const query = querystring.parse(window.location.search);
 const { Search } = Input;
 @withRouter
@@ -49,13 +50,13 @@ export default class TokenList extends Component {
           newHash[2] &&
           newHash[2] !== oldHash[2]
         ) {
-          this.select(newHash[2].toLowerCase());
+          this.changeToken(newHash[2].toLowerCase());
         }
       }
     });
   }
 
-  select = async (currentPair) => {
+  select = (currentPair) => {
     if (currentPair && currentPair !== this.props.currentPair) {
       let { hash } = location;
       if (hash.indexOf('swap') > -1) {
@@ -65,23 +66,26 @@ export default class TokenList extends Component {
       } else if (hash.indexOf('remove') > -1) {
         this.props.history.push(`/pool/${currentPair}/remove`);
       }
-
-      window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-
-      await this.props.dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          currentPair,
-        },
-      });
-      const { finish } = this.props;
-      if (hash.indexOf('swap') > -1) {
-        EventBus.emit('reloadChart', 'swap');
-      } else if (hash.indexOf('pool') > -1) {
-        EventBus.emit('reloadChart', 'pool');
-      }
-      finish && finish(currentPair);
     }
+  };
+
+  changeToken = async (currentPair) => {
+    window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
+
+    await this.props.dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        currentPair,
+      },
+    });
+    const { finish } = this.props;
+    let { hash } = location;
+    if (hash.indexOf('swap') > -1) {
+      EventBus.emit('reloadChart', 'swap');
+    } else if (hash.indexOf('pool') > -1) {
+      EventBus.emit('reloadChart', 'pool');
+    }
+    finish && finish(currentPair);
   };
 
   escapeRegExpWildcards(searchStr) {

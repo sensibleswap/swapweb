@@ -59,7 +59,7 @@ export default class SwapPage extends Component {
       await dispatch({
         type: 'pair/getPairData',
         payload: {
-          currentPair,
+          // currentPair,
         },
       });
 

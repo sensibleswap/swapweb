@@ -36,6 +36,7 @@ export default {
 
       let currentPair =
         urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+
       if (!currentPair || !data[currentPair]) {
         Object.keys(data).forEach((item) => {
           if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
@@ -50,14 +51,18 @@ export default {
         payload: {
           allPairs: data,
           currentPair,
-          mode: 'init',
+          // mode: 'init',
         },
       });
       return data;
     },
 
-    *getPairData({ payload }, { call, put }) {
+    *getPairData({ payload }, { call, put, select }) {
       let { currentPair } = payload;
+
+      if (!currentPair)
+        currentPair = yield select((state) => state.pair.currentPair);
+
       const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
       log('init-pairData:', currentPair, res);
       const { code, msg, data } = res;
@@ -149,6 +154,7 @@ export default {
         log('no currentPair');
         return { ...state, allPairs, currentPair };
       }
+
       if (mode === 'init' && state.currentPair && allPairs[state.currentPair]) {
         currentPair = state.currentPair;
       }
