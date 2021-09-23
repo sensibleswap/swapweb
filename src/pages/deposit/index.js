@@ -35,12 +35,13 @@ const datas = [
 ];
 
 @withRouter
-@connect(({ user, farm, loading }) => {
+@connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
   return {
+    ...pair,
     ...user,
     ...farm,
-    loading: effects['farm/getAllPairs'],
+    loading: effects['farm/getAllPairs'] || effects['pair/getAllPairs'],
     submiting:
       effects['farm/reqSwap'] ||
       effects['farm/deposit'] ||
@@ -115,7 +116,7 @@ export default class Deposit extends Component {
       rewardToken,
       pairYields,
       pairsData,
-      allPairs,
+      allPairs = {},
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
@@ -123,7 +124,10 @@ export default class Deposit extends Component {
     const currentPairData = pairsData[currentPair];
     const { swapToken1Amount, swapToken2Amount } = currentPairData;
     const bsv_amount = formatSat(swapToken1Amount);
-    const { decimal } = allPairs ? allPairs[currentPair].token2 : 8;
+
+    const { decimal } = allPairs[currentPair]
+      ? allPairs[currentPair].token2
+      : 8;
     const token_amount = formatSat(swapToken2Amount, decimal);
     const price = formatAmount(token_amount / bsv_amount, decimal);
     return (
@@ -179,7 +183,7 @@ export default class Deposit extends Component {
           >
             <div className={styles.pair_left}>
               <div className={styles.icon} style={{ marginRight: 10 }}>
-                <TokenLogo name={symbol2} size={25} />
+                <TokenLogo name={rewardToken.symbol} size={25} />
               </div>
               <div className={styles.name} style={{ fontSize: 22 }}>
                 {rewardToken.symbol}

@@ -251,5 +251,7 @@ const texts = {
   volume: '交易量',
   payout: '奖励',
   payout_tips: '每个区块的奖励',
+  deposit_lp: '锁仓LP',
+  withdraw_lp: '提取LP',
 };
 module.exports = texts;

@@ -24,12 +24,13 @@ import _ from 'i18n';
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
   return {
+    ...pair,
     ...user,
     ...farm,
     loading:
       effects['farm/getAllPairs'] ||
       effects['farm/getPairData'] ||
-      effects['pairs/getAllPairs'] ||
+      effects['pair/getAllPairs'] ||
       false,
     submiting:
       effects['farm/reqSwap'] ||
@@ -86,12 +87,10 @@ export default class FarmC extends Component {
         address: userAddress,
       },
     });
-    const res = await dispatch({
+    dispatch({
       type: 'pair/getAllPairs',
       payload: {},
     });
-
-    this.setState({ allPairs: res });
   };
 
   showPannel = (index) => {
@@ -475,7 +474,7 @@ export default class FarmC extends Component {
                   className={styles.small_btn}
                   onClick={() => this.showPannel(0)}
                 >
-                  {_('start_deposit')}
+                  {_('deposit_lp')}
                 </Button>
                 <Button
                   type="primary"
@@ -483,7 +482,7 @@ export default class FarmC extends Component {
                   className={styles.small_btn}
                   onClick={() => this.showPannel(1)}
                 >
-                  {_('start_withdraw')}
+                  {_('withdraw_lp')}
                 </Button>
               </div>
             </div>
@@ -525,7 +524,7 @@ export default class FarmC extends Component {
                     ))}
                   </div>
                 </div>
-                {currentMenuIndex === 0 && <Deposit allPairs={allPairs} />}
+                {currentMenuIndex === 0 && <Deposit />}
                 {currentMenuIndex === 1 && <Withdraw />}
               </div>
             </div>

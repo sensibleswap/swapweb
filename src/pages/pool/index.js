@@ -49,13 +49,8 @@ export default class Pool extends Component {
   };
 
   renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      allPairs,
-      userBalance,
-    } = this.props;
+    const { currentPair, pairData, loading, allPairs, userBalance } =
+      this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];
@@ -115,7 +110,7 @@ export default class Pool extends Component {
                   className={styles.small_btn}
                   onClick={() => this.showPannel('remove')}
                 >
-                  {_('remove_liq')}
+                  {_('remove')}
                 </Button>
               </div>
             </div>
