@@ -38,7 +38,7 @@ export default class TimeRangeTabs extends Component {
         {timeRangeOptions.map(({ label, value }) => (
           <div
             key={value}
-            className={timeRange === value && styles.active}
+            className={timeRange === value ? styles.active : ''}
             onClick={() => this.changeTimeRange(value)}
           >
             {label}

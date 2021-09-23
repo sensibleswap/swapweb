@@ -88,7 +88,7 @@ export default class RemovePage extends Component {
       const pairData = await dispatch({
         type: 'pair/getPairData',
         payload: {
-          currentPair,
+          // currentPair,
         },
       });
       const { swapToken1Amount, swapToken2Amount } = pairData;
@@ -113,7 +113,7 @@ export default class RemovePage extends Component {
     dispatch({
       type: 'pair/getPairData',
       payload: {
-        currentPair,
+        // currentPair,
       },
     });
     EventBus.emit('reloadChart', type);
@@ -124,14 +124,8 @@ export default class RemovePage extends Component {
   }
 
   renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      userBalance,
-      lptoken,
-      allPairs,
-    } = this.props;
+    const { currentPair, pairData, loading, userBalance, lptoken, allPairs } =
+      this.props;
     const LP = userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
@@ -246,14 +240,8 @@ export default class RemovePage extends Component {
   };
 
   renderForm() {
-    const {
-      currentPair,
-      loading,
-      submiting,
-      userBalance,
-      pairData,
-      allPairs,
-    } = this.props;
+    const { currentPair, loading, submiting, userBalance, pairData, allPairs } =
+      this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
     const { removeRate, removeLP, symbol1, symbol2 } = this.state;
@@ -512,13 +500,8 @@ export default class RemovePage extends Component {
 
   renderResult() {
     // const LP = userBalance[lptoken.tokenID];
-    const {
-      symbol1,
-      symbol2,
-      final_lp,
-      receive_token1,
-      receive_token2,
-    } = this.state;
+    const { symbol1, symbol2, final_lp, receive_token1, receive_token2 } =
+      this.state;
     return (
       <div className={styles.remove_content}>
         <div className={styles.finish_logo}>
