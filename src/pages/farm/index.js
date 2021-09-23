@@ -5,7 +5,7 @@ import { Button, Tooltip, message, Spin, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
-import pairApi from '../../api/pair';
+// import pairApi from '../../api/pair';
 import { jc, formatSat, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
@@ -21,13 +21,16 @@ import _ from 'i18n';
 // const log = debug('farm');
 
 @withRouter
-@connect(({ user, farm, loading }) => {
+@connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
   return {
     ...user,
     ...farm,
     loading:
-      effects['farm/getAllPairs'] || effects['farm/getPairData'] || false,
+      effects['farm/getAllPairs'] ||
+      effects['farm/getPairData'] ||
+      effects['pairs/getAllPairs'] ||
+      false,
     submiting:
       effects['farm/reqSwap'] ||
       effects['farm/harvest'] ||
@@ -44,6 +47,7 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
+      allPairs: {},
     };
     window.addEventListener('hashchange', (event) => {
       const { newURL, oldURL } = event;
@@ -56,7 +60,7 @@ export default class FarmC extends Component {
           newHash[1] === oldHash[1] &&
           newHash[2] &&
           newHash[2] !== oldHash[2] &&
-          props.allPairs[newHash[2]]
+          props.allFarmPairs[newHash[2]]
         ) {
           props.dispatch({
             type: 'farm/saveFarm',
@@ -76,12 +80,18 @@ export default class FarmC extends Component {
 
   fetch = async () => {
     const { dispatch, userAddress } = this.props;
-    await dispatch({
+    dispatch({
       type: 'farm/getAllPairs',
       payload: {
         address: userAddress,
       },
     });
+    const res = await dispatch({
+      type: 'pair/getAllPairs',
+      payload: {},
+    });
+
+    this.setState({ allPairs: res });
   };
 
   showPannel = (index) => {
@@ -98,7 +108,7 @@ export default class FarmC extends Component {
   };
 
   changeCurrentFarm = async (currentPair) => {
-    const { allPairs, dispatch } = this.props;
+    const { allFarmPairs, dispatch } = this.props;
 
     let { hash } = location;
     if (hash.indexOf('farm') > -1) {
@@ -108,7 +118,7 @@ export default class FarmC extends Component {
       type: 'farm/saveFarm',
       payload: {
         currentPair,
-        allPairs,
+        allFarmPairs,
       },
     });
   };
@@ -258,19 +268,28 @@ export default class FarmC extends Component {
       rewardToken,
     } = data;
 
-    const { decimal } = rewardToken;
+    const { decimal, symbol } = rewardToken;
     const {
       swapLpAmount = 0,
       swapToken1Amount = 0,
-      swapToken2Amount = 0,
+      // swapToken2Amount = 0,
     } = pairsData[pairName];
     //swapLpAmount和poolTokenAmount是lp的数量，是不带精度的！
     const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
     const bsv_amount = formatSat(swapToken1Amount);
-    const token_amount = formatSat(swapToken2Amount, decimal);
+    // const token_amount = formatSat(swapToken2Amount, decimal);
     // const lp_amount = formatSat(swapLpAmount, decimal);
     const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
-    const token_price = BigNumber(bsv_amount).div(token_amount);
+
+    const reward_symbol = `bsv-${symbol.toLowerCase()}`;
+    const reward_token = pairsData[reward_symbol];
+    const reward_bsv_amount = formatSat(reward_token.swapToken1Amount);
+    const reward_token_amount = formatSat(
+      reward_token.swapToken2Amount,
+      decimal,
+    );
+    const token_price = BigNumber(reward_bsv_amount).div(reward_token_amount);
+
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
     let _total = BigNumber(poolTokenAmount)
       .multipliedBy(lp_price)
@@ -422,13 +441,13 @@ export default class FarmC extends Component {
   }
 
   renderContent() {
-    const { allPairs } = this.props;
+    const { allFarmPairs } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
         <div className={styles.items}>
-          {Object.keys(allPairs).map((item, index) => {
-            return this.renderItem(item, allPairs[item], index);
+          {Object.keys(allFarmPairs).map((item, index) => {
+            return this.renderItem(item, allFarmPairs[item], index);
           })}
         </div>
       </div>
@@ -436,7 +455,7 @@ export default class FarmC extends Component {
   }
 
   render() {
-    const { app_pannel, currentMenuIndex } = this.state;
+    const { app_pannel, currentMenuIndex, allPairs } = this.state;
 
     return (
       <Spin spinning={this.props.submiting}>
@@ -506,7 +525,7 @@ export default class FarmC extends Component {
                     ))}
                   </div>
                 </div>
-                {currentMenuIndex === 0 && <Deposit />}
+                {currentMenuIndex === 0 && <Deposit allPairs={allPairs} />}
                 {currentMenuIndex === 1 && <Withdraw />}
               </div>
             </div>

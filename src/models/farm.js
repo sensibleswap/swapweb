@@ -10,7 +10,7 @@ export default {
   namespace: 'farm',
 
   state: {
-    allPairs: [],
+    allFarmPairs: [],
     currentPair: '',
     lockedTokenAmount: 0,
     symbol1: '',
@@ -79,7 +79,7 @@ export default {
       yield put({
         type: 'saveFarm',
         payload: {
-          allPairs: data,
+          allFarmPairs: data,
           currentPair,
           bsvPrice,
           pairsData,
@@ -113,7 +113,7 @@ export default {
       yield put({
         type: 'saveFarm',
         payload: {
-          allPairs: data,
+          allFarmPairs: data,
           bsvPrice,
         },
       });
@@ -165,7 +165,7 @@ export default {
       return { ...state, ...action.payload };
     },
     saveFarm(state, action) {
-      let { allPairs } = action.payload;
+      let { allFarmPairs } = action.payload;
       let { currentPair } = action.payload;
       if (!currentPair) currentPair = state.currentPair;
       if (!currentPair) {
@@ -177,11 +177,11 @@ export default {
       let token = {},
         lockedTokenAmount = 0,
         rewardToken = {};
-      if (!allPairs) {
-        allPairs = state.allPairs;
+      if (!allFarmPairs) {
+        allFarmPairs = state.allFarmPairs;
       }
-      if (allPairs[currentPair]) {
-        const currentPairObj = allPairs[currentPair];
+      if (allFarmPairs[currentPair]) {
+        const currentPairObj = allFarmPairs[currentPair];
         token = currentPairObj.token;
         lockedTokenAmount = currentPairObj.lockedTokenAmount;
         rewardToken = currentPairObj.rewardToken;

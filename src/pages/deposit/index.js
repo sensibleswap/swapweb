@@ -76,7 +76,7 @@ export default class Deposit extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, allPairs, currentPair, lptoken } = this.props;
+      const { userBalance, lptoken } = this.props;
       const LP = userBalance[lptoken.tokenID] || 0;
       const _addLp = e.target.value;
       if (_addLp <= 0) {
@@ -115,6 +115,7 @@ export default class Deposit extends Component {
       rewardToken,
       pairYields,
       pairsData,
+      allPairs,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
@@ -122,7 +123,7 @@ export default class Deposit extends Component {
     const currentPairData = pairsData[currentPair];
     const { swapToken1Amount, swapToken2Amount } = currentPairData;
     const bsv_amount = formatSat(swapToken1Amount);
-    const { decimal } = rewardToken;
+    const { decimal } = allPairs ? allPairs[currentPair].token2 : 8;
     const token_amount = formatSat(swapToken2Amount, decimal);
     const price = formatAmount(token_amount / bsv_amount, decimal);
     return (
