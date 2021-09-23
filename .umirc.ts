@@ -1,7 +1,7 @@
 import { defineConfig } from 'umi';
 import routes from './config/routes';
 
-export default defineConfig({
+export default {
   publicPath: './',
   history: {
     type: 'hash',
@@ -21,10 +21,27 @@ export default defineConfig({
     common: '@/common',
     api: '@/api',
   },
-  // proxy: {
-  //     context: ['/allpairs', '/swapinfo', '/reqswapargs', '/token1totoken2', '/token2totoken1', '/addliq', '/removeliq'],
-  //     target: 'https://api.tswap.io',
+  analyze: {
+    analyzerMode: 'server',
+    analyzerPort: 8888,
+    openAnalyzer: true,
+    // generate stats file while ANALYZE_DUMP exist
+    generateStatsFile: false,
+    statsFilename: 'stats.json',
+    logLevel: 'info',
+    defaultSizes: 'parsed', // stat  // gzip
+  },
+  // externals: {
+  //   'react': 'window.React',
+  //   'react-dom': 'window.ReactDOM',
   // },
+  // scripts: process.env.NODE_ENV === 'development' ? [
+  //   'https://gw.alipayobjects.com/os/lib/react/16.13.1/umd/react.development.js',
+  //   'https://gw.alipayobjects.com/os/lib/react-dom/16.13.1/umd/react-dom.development.js',
+  // ] : [
+  //   'https://gw.alipayobjects.com/os/lib/react/16.13.1/umd/react.production.min.js',
+  //   'https://gw.alipayobjects.com/os/lib/react-dom/16.13.1/umd/react-dom.production.min.js',
+  // ],
   copy: [
     {
       from: 'public/assets/',
@@ -38,63 +55,57 @@ export default defineConfig({
       crossOrigin: true,
     },
     {
-      // Google fonts hosting supported in China
-      // Website: http://googlefonts.cn/
-      // Add other font styles by choosing font styles on the official site.
-      // Only normal, semi-bold and bold selected at the current stage
       href: 'https://fonts.font.im/css?family=Roboto:400,500,700&display=swap',
       rel: 'stylesheet',
     },
     {
-      href:
-        'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
+      href: 'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
       rel: 'stylesheet',
     },
   ],
-  // chunks: ['vendors', 'umi', 'react'],
-  // chainWebpack: function (config, { webpack }) {
-  //   config.merge({
-  //     optimization: {
-  //       splitChunks: {
-  //         chunks: 'all',
-  //         minSize: 30000,
-  //         minChunks: 3,
-  //         automaticNameDelimiter: '.',
-  //         cacheGroups: {
-
-  //           // voltsdk: {
-  //           //   name: "voltsdk",
-  //           //   test: /[\\/]node_modules[\\/](voltsdk)[\\/]/,
-  //           //   priority: 10,
-  //           //   enforce: true,
-  //           // },
-  //           umi: {
-  //             name: "umi",
-  //             test: /[\\/]node_modules[\\/](umi)[\\/]/,
-  //             priority: 10,
-  //             enforce: true,
-  //           },
-  //           // echarts: {
-  //           //   name: "echarts",
-  //           //   test: /[\\/]node_modules[\\/](echarts)[\\/]/,
-  //           //   priority: 10,
-  //           //   enforce: true,
-  //           // },
-  //           react: {
-  //             name: "react",
-  //             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-  //             priority: 10,
-  //             enforce: true,
-  //           },
-  //           vendors: {
-  //             name: "vendors",
-  //             test: /[\\/]node_modules[\\/](?!voltsdk|umi|echarts|msgpack5|react|react-dom).*$/,
-  //             priority: 11,
-  //             enforce: true,
-  //           },
-  //         },
-  //       },
-  //     }
-  //   });
-  // },
-});
+  chunks: ['umi', 'react', 'echarts', 'moment', 'vendors'],
+  chainWebpack: function (config: any) {
+    config.merge({
+      optimization: {
+        splitChunks: {
+          chunks: 'all',
+          minSize: 30000,
+          minChunks: 3,
+          automaticNameDelimiter: '.',
+          cacheGroups: {
+            umi: {
+              name: 'umi',
+              test: /[\\/]node_modules[\\/](umi)[\\/]/,
+              priority: 10,
+              enforce: true,
+            },
+            echarts: {
+              name: 'echarts',
+              test: /[\\/]node_modules[\\/](echarts)[\\/]/,
+              priority: 10,
+              enforce: true,
+            },
+            react: {
+              name: 'react',
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              priority: 10,
+              enforce: true,
+            },
+            moment: {
+              name: 'moment',
+              test: /[\\/]node_modules[\\/](moment)[\\/]/,
+              priority: 10,
+              enforce: true,
+            },
+            vendors: {
+              name: 'vendors',
+              test: /[\\/]node_modules[\\/](?!umi|ant|echarts|react|react-dom|moment).*$/,
+              priority: 11,
+              enforce: true,
+            },
+          },
+        },
+      },
+    });
+  },
+};
