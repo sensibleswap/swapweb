@@ -12,6 +12,7 @@ import {
   DollarOutlined,
 } from '@ant-design/icons';
 import QRCode from 'qrcode.react';
+import { isMobile } from 'react-device-detect';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
@@ -19,7 +20,6 @@ import { sleep } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
-import { isMobile } from 'react-device-detect';
 
 const query = querystring.parse(window.location.search);
 const isApp = query.env === 'webview' && window._volt_javascript_bridge;
