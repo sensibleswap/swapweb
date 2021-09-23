@@ -15,7 +15,7 @@ import styles from './index.less';
 import _ from 'i18n';
 
 // import Header from '../layout/header';
-import { withRouter } from 'umi';
+import { history } from 'umi';
 import BigNumber from 'bignumber.js';
 
 const type = 'pool';
@@ -39,7 +39,6 @@ const datas = [
   },
 ];
 
-@withRouter
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
   return {
@@ -586,7 +585,7 @@ export default class RemovePage extends Component {
                 className={styles.menu_item}
                 key="add_liq"
                 onClick={() => {
-                  const { currentPair, history } = this.props;
+                  const { currentPair } = this.props;
                   history.push(`/pool/${currentPair}/add`);
                 }}
               >

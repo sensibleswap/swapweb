@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { withRouter, connect } from 'umi';
+import { history, connect } from 'umi';
 import BigNumber from 'bignumber.js';
 import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Modal } from 'antd';
@@ -20,7 +20,7 @@ import _ from 'i18n';
 const type = 'pool';
 // let _poolTimer = 0;
 const FormItem = Form.Item;
-@withRouter
+
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
   return {
@@ -727,7 +727,7 @@ export default class Liquidity extends Component {
   }
 
   renderResult() {
-    const { token1, token2, history, allPairs, currentPair } = this.props;
+    const { token1, token2, allPairs, currentPair } = this.props;
     const { _origin_amount, _aim_amount, lpAddAmount } = this.state;
     const { lptoken = {} } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
@@ -792,7 +792,7 @@ export default class Liquidity extends Component {
               className={styles.menu_item}
               key="remove_liq"
               onClick={() => {
-                const { currentPair, history } = this.props;
+                const { currentPair } = this.props;
                 history.push(`/pool/${currentPair}/remove`);
               }}
             >

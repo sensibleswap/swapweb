@@ -4,7 +4,7 @@ import { jc } from 'common/utils';
 import CustomIcon from 'components/icon';
 import styles from './index.less';
 import _ from 'i18n';
-import { withRouter, Link } from 'umi';
+import { Link, history } from 'umi';
 
 const menu = [
   {
@@ -27,7 +27,6 @@ const menu = [
   //     label: _('explore')
   // },
 ];
-@withRouter
 export default class Head extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +43,7 @@ export default class Head extends Component {
   }
 
   gotoPage = (anchor) => {
-    this.props.history.push(`/${anchor}`);
+    history.push(`/${anchor}`);
     // this.scrollto(anchor)
   };
 

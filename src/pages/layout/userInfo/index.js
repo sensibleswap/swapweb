@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { withRouter, connect } from 'umi';
+import { history, connect } from 'umi';
 import querystring from 'querystringify';
 import { Button, Popover, Modal, message, Tooltip } from 'antd';
 import {
@@ -24,7 +24,7 @@ const query = querystring.parse(window.location.search);
 const isApp = query.env === 'webview' && window._volt_javascript_bridge;
 
 let _timer = 0;
-@withRouter
+
 @connect(({ pair, user, loading }) => {
   const effects = loading.effects;
   return {
@@ -270,7 +270,7 @@ export default class UserInfo extends Component {
             <div
               className={styles.line}
               onClick={() => {
-                this.props.history.push('/webwallet');
+                history.push('/webwallet');
                 this.closePop();
               }}
             >

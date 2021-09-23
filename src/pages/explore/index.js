@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import { history } from 'umi';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import styles from './index.less';
@@ -34,7 +35,7 @@ export default class Explore extends Component {
   }
 
   gotoPage = () => {
-    this.props.history.push('swap');
+    history.push('swap');
   };
 
   renderList() {

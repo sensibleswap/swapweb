@@ -6,14 +6,14 @@ import querystring from 'querystringify';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
 import TokenPair from 'components/tokenPair';
-import { withRouter, connect } from 'umi';
+import { history, connect } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
 
 let i = 0;
 const query = querystring.parse(window.location.search);
 const { Search } = Input;
-@withRouter
+
 @connect(({ pair }) => {
   return {
     ...pair,
@@ -60,11 +60,11 @@ export default class TokenList extends Component {
     if (currentPair && currentPair !== this.props.currentPair) {
       let { hash } = location;
       if (hash.indexOf('swap') > -1) {
-        this.props.history.push(`/swap/${currentPair}`);
+        history.push(`/swap/${currentPair}`);
       } else if (hash.indexOf('add') > -1) {
-        this.props.history.push(`/pool/${currentPair}/add`);
+        history.push(`/pool/${currentPair}/add`);
       } else if (hash.indexOf('remove') > -1) {
-        this.props.history.push(`/pool/${currentPair}/remove`);
+        history.push(`/pool/${currentPair}/remove`);
       }
     }
   };

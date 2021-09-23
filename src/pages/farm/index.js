@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { withRouter, connect } from 'umi';
+import { connect, history } from 'umi';
 import { Button, Tooltip, message, Spin, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { gzip } from 'node-gzip';
@@ -14,13 +14,11 @@ import CustomIcon from 'components/icon';
 import Header from '../layout/header';
 import Deposit from '../deposit';
 import Withdraw from '../withdraw';
-import Loading from 'components/loading';
 // import debug from 'debug';
 import styles from './index.less';
 import _ from 'i18n';
 // const log = debug('farm');
 
-@withRouter
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
   return {
@@ -111,7 +109,7 @@ export default class FarmC extends Component {
 
     let { hash } = location;
     if (hash.indexOf('farm') > -1) {
-      this.props.history.push(`/farm/${currentPair}`);
+      history.push(`/farm/${currentPair}`);
     }
     dispatch({
       type: 'farm/saveFarm',

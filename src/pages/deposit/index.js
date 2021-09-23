@@ -12,7 +12,6 @@ import TokenLogo from 'components/tokenicon';
 import styles from './index.less';
 import _ from 'i18n';
 
-import { withRouter } from 'umi';
 import BigNumber from 'bignumber.js';
 
 const datas = [
@@ -34,7 +33,6 @@ const datas = [
   },
 ];
 
-@withRouter
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
   return {

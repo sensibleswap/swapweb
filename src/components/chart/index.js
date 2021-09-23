@@ -10,12 +10,12 @@ import TimeRangeTabs from './timeRangeTabs';
 import styles from './index.less';
 import _ from 'i18n';
 
-@connect(({ pair, history, loading }) => {
+@connect(({ pair, records, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
-    ...history,
-    loading: effects['pair/getAllPairs'] || effects['history/query'],
+    ...records,
+    loading: effects['pair/getAllPairs'] || effects['records/query'],
   };
 })
 export default class Chart extends Component {
@@ -164,7 +164,7 @@ export default class Chart extends Component {
   async getChartData(type) {
     const { dispatch } = this.props;
     const res = await dispatch({
-      type: 'history/query',
+      type: 'records/query',
       payload: {
         type,
       },

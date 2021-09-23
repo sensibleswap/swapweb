@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { withRouter, connect } from 'umi';
+import { history, connect } from 'umi';
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
@@ -14,7 +14,6 @@ import Header from '../layout/header';
 import styles from './index.less';
 import _ from 'i18n';
 
-@withRouter
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
   return {
@@ -33,7 +32,7 @@ export default class Pool extends Component {
   }
 
   showPannel = (type) => {
-    const { history, currentPair } = this.props;
+    const { currentPair } = this.props;
     history.push(`/pool/${currentPair}/${type}`);
     sessionStorage.setItem(TSWAP_POOL_SHOW_OP, 'true');
     this.setState({
