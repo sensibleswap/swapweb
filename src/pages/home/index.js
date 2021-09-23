@@ -1,6 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
-import { Button, Alert } from 'antd';
+import { history } from 'umi';
+import { Button } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';
@@ -163,7 +164,7 @@ export default class Home extends Component {
                   className={styles.cta}
                   shape="round"
                   onClick={() => {
-                    this.props.history.push('swap');
+                    history.push('swap');
                   }}
                 >
                   {_('use_tokenswap')}
@@ -185,7 +186,7 @@ export default class Home extends Component {
                 shape="round"
                 style={{ marginRight: 20 }}
                 onClick={() => {
-                  this.props.history.push('swap');
+                  history.push('swap');
                 }}
               >
                 {_('use_tokenswap')}

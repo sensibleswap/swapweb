@@ -1,11 +1,11 @@
-import historyApi from '../api/history';
+import recordsApi from '../api/records';
 import { USDT_PAIR } from 'common/const';
 import { formatTime, formatAmount, parseUrl, getTimeAgo } from 'common/utils';
 import debug from 'debug';
-const log = debug('history');
+const log = debug('records');
 
 export default {
-  namespace: 'history',
+  namespace: 'records',
 
   state: {
     timeRange: '1w', // '4h' | '1d' | '1w' | '1m' | 'all'
@@ -31,11 +31,11 @@ export default {
       if (!currentPair) {
         return [];
       }
-      const timeRange = yield select((state) => state.history.timeRange);
+      const timeRange = yield select((state) => state.records.timeRange);
       const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
 
       const { type } = payload;
-      const res = yield historyApi.query.call(historyApi, {
+      const res = yield recordsApi.query.call(recordsApi, {
         codeHash: swapCodeHash,
         genesisHash: swapID,
         currentPair,
@@ -97,17 +97,5 @@ export default {
     save(state, action) {
       return { ...state, ...action.payload };
     },
-    // saveData(state, action) {
-    //   const { currentPair, data, type } = action.payload;
-    //   let { history } = state;
-    //   if (!history[currentPair]) {
-    //     history[currentPair] = [];
-    //   }
-    //   history[currentPair][type] = data;
-    //   return {
-    //     ...state,
-    //     history,
-    //   };
-    // },
   },
 };

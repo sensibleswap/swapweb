@@ -63,7 +63,7 @@ export default {
       rel: 'stylesheet',
     },
   ],
-  chunks: ['umi', 'react', 'echarts', 'moment', 'vendors'],
+  chunks: ['react', 'antd', 'umi', 'echarts', 'moment', 'vendors'],
   chainWebpack: function (config: any) {
     config.merge({
       optimization: {
@@ -76,6 +76,12 @@ export default {
             umi: {
               name: 'umi',
               test: /[\\/]node_modules[\\/](umi)[\\/]/,
+              priority: 10,
+              enforce: true,
+            },
+            antd: {
+              name: 'antd',
+              test: /[\\/]node_modules[\\/](@ant-design|antd)[\\/]/,
               priority: 10,
               enforce: true,
             },
@@ -99,7 +105,7 @@ export default {
             },
             vendors: {
               name: 'vendors',
-              test: /[\\/]node_modules[\\/](?!umi|echarts|react|react-dom|moment).*$/,
+              test: /[\\/]node_modules[\\/](?!umi|@ant-design|antd|echarts|react|react-dom|moment).*$/,
               priority: 11,
               enforce: true,
             },

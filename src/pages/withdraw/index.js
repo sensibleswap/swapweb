@@ -8,11 +8,9 @@ import { formatAmount } from 'common/utils';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
-import TokenLogo from 'components/tokenicon';
 import styles from '../deposit/index.less';
 import _ from 'i18n';
 
-import { withRouter } from 'umi';
 import BigNumber from 'bignumber.js';
 
 const datas = [
@@ -34,7 +32,6 @@ const datas = [
   },
 ];
 
-@withRouter
 @connect(({ user, farm, loading }) => {
   const { effects } = loading;
   return {

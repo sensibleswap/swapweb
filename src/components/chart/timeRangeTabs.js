@@ -13,16 +13,16 @@ const timeRangeOptions = [
   { label: 'ALL', value: 'all' },
 ];
 
-@connect(({ history }) => {
+@connect(({ records }) => {
   return {
-    ...history,
+    ...records,
   };
 })
 export default class TimeRangeTabs extends Component {
   async changeTimeRange(timeRange) {
     const { dispatch, type } = this.props;
     await dispatch({
-      type: 'history/save',
+      type: 'records/save',
       payload: {
         timeRange,
       },

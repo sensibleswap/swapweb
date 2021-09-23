@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Input, Spin, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import { connect } from 'umi';
+import { connect, history } from 'umi';
 import QRCode from 'qrcode.react';
 import styles from './index.less';
 import _ from 'i18n';
@@ -29,7 +29,7 @@ export default class WebWallet extends Component {
     this.formRef = React.createRef();
   }
   back = () => {
-    this.props.history.goBack();
+    history.goBack();
   };
   login = async () => {
     const { dispatch } = this.props;
