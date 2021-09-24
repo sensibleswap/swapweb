@@ -273,7 +273,7 @@ export default class UserInfo extends Component {
             <div className={styles.balance}>
               {formatNumberForDisplay({
                 value: userBalance.BSV,
-                suffix: 'BSV',
+                suffix: ' BSV',
               })}
             </div>
           </div>
