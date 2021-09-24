@@ -33,7 +33,6 @@
     "qrcode.react": "^1.0.1",
     "querystringify": "^2.2.0",
     "react-clipboard.js": "^2.0.16",
-    "react-device-detect": "^1.17.0",
     "umi": "^3.4.6"
   },
   "devDependencies": {

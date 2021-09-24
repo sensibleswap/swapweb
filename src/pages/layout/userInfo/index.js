@@ -12,7 +12,6 @@ import {
   DollarOutlined,
 } from '@ant-design/icons';
 import QRCode from 'qrcode.react';
-import { isMobile } from 'react-device-detect';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
@@ -323,16 +322,13 @@ export default class UserInfo extends Component {
             onVisibleChange={this.handleVisibleChange}
             placement="bottomRight"
           >
-            {!isMobile ? (
-              <div className={styles.account_trigger}>
-                <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
-                {this.renderWalletIcon()}
-              </div>
-            ) : (
-              <div className={styles.connect_app}>
-                <UserOutlined />
-              </div>
-            )}
+            <div className={styles.account_trigger}>
+              <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
+              {this.renderWalletIcon()}
+            </div>
+            <div className={styles.connect_app}>
+              <UserOutlined />
+            </div>
           </Popover>
         ) : (
           <>
