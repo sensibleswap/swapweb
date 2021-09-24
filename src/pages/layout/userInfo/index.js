@@ -226,7 +226,7 @@ export default class UserInfo extends Component {
     const { userAddress, userAddressShort, walletType } = this.props;
     return (
       <div className={styles.user_pop}>
-        <div className={styles.app_title}>
+        <div className={styles.app_title} onClick={this.closePop}>
           <Lang />
           {_('wallet_connected')}
           <CloseOutlined />
@@ -325,6 +325,9 @@ export default class UserInfo extends Component {
             <div className={styles.account_trigger}>
               <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
               {this.renderWalletIcon()}
+            </div>
+            <div className={styles.connect_app}>
+              <UserOutlined />
             </div>
           </Popover>
         ) : (

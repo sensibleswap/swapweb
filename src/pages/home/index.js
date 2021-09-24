@@ -169,7 +169,9 @@ export default class Home extends Component {
                 >
                   {_('use_tokenswap')}
                 </Button>
-                <Lang />
+                <div className={styles.hidden_mobile}>
+                  <Lang />
+                </div>
               </div>
             </div>
           </nav>

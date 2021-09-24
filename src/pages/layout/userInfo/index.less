@@ -26,6 +26,7 @@
 
 .connect_app {
   display: none;
+  line-height: 1;
 
   :global(.anticon) {
     font-size: 24px;
@@ -39,10 +40,9 @@
   justify-content: flex-end;
   align-items: center;
   height: 40px;
-  line-height: 40px;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 70px;
+  border-radius: 40px;
   padding: 0 5px 0 10px;
   background-color: #fff;
   box-shadow: 0px 4px 20px rgba(213, 213, 223, 0.5);
@@ -59,7 +59,7 @@
 }
 
 .user_pop {
-  width: 275px;
+  width: 310px;
   background-color: #f6f6f9;
   border-radius: 0 0 8px 8px;
 
@@ -71,7 +71,7 @@
     align-items: center;
     font-size: 16px;
     font-weight: 700;
-    margin: 0 20px;
+    margin: 0 20px 0 10px;
   }
 
   .hd {
@@ -80,7 +80,7 @@
     background-color: #fff;
     padding: 15px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     border-radius: 8px 8px 0 0;
   }
 
@@ -336,6 +336,10 @@
 }
 
 @media only screen and (max-width: 767.99px) {
+  .account_trigger {
+    display: none;
+  }
+
   .connect {
     display: none;
   }
@@ -349,6 +353,13 @@
 
     .app_title {
       display: flex;
+    }
+  }
+
+  :global {
+    .ant-popover-inner {
+      margin-top: -60px;
+      margin-right: -20px;
     }
   }
 }
