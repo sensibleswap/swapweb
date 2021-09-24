@@ -351,7 +351,7 @@ export default class UserInfo extends Component {
                 className={styles.connect_app}
                 onClick={this.chooseLoginWallet}
               >
-                <UserOutlined />
+                <CustomIcon type="iconicon-me" style={{ fontSize: 24 }} />
               </div>
             )}
           </>
