@@ -24,6 +24,8 @@ const texts = {
 
   connect_wallet: '连接钱包',
   connected_account: '已连接的钱包',
+  show_qr_code: '账户地址二维码',
+  qr_code: '账户地址二维码',
   copy_account: '复制账户地址',
   switch_wallet: '切换钱包',
   go_to_infopage: '账户页面',

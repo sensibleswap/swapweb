@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import Clipboard from 'react-clipboard.js';
 import { message } from 'antd';
-import CustomIcon from 'components/icon';
 import _ from 'i18n';
 import styles from './index.less';
 
@@ -12,17 +11,18 @@ export default class CustomClipboard extends Component {
   }
 
   render() {
-    const { label, style } = this.props;
-    const _label = label ? label : <CustomIcon type="iconcopy" />;
+    const { children, className, style } = this.props;
     return (
       <Clipboard
         component="span"
         onSuccess={::this.onCopySuccess}
         data-clipboard-text={this.props.text}
-        className={styles.clipboard}
+        className={
+          className ? [styles.clipboard, className].join(' ') : styles.clipboard
+        }
         style={style}
       >
-        {_label}
+        {children}
       </Clipboard>
     );
   }

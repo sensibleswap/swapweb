@@ -4,7 +4,7 @@ import { history, connect } from 'umi';
 import querystring from 'querystringify';
 import { Button, Popover, Modal, message, Tooltip } from 'antd';
 import {
-  UpOutlined,
+  ArrowLeftOutlined,
   SwapOutlined,
   UserOutlined,
   LoadingOutlined,
@@ -15,7 +15,7 @@ import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
 import CustomIcon from 'components/icon';
-import { sleep } from 'common/utils';
+import { formatNumberForDisplay, sleep } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
@@ -40,6 +40,7 @@ export default class UserInfo extends Component {
     super(props);
     this.state = {
       pop_visible: false,
+      qr_code_visible: false,
       dialog_visible: false,
       login_visible: false,
       chooseLogin_visible: false,
@@ -101,9 +102,16 @@ export default class UserInfo extends Component {
     }
   };
 
+  toggleQrCode = (new_visibility) => {
+    this.setState({
+      qr_code_visible: new_visibility,
+    });
+  };
+
   closePop = () => {
     this.setState({
       pop_visible: false,
+      qr_code_visible: false,
     });
   };
 
@@ -111,6 +119,7 @@ export default class UserInfo extends Component {
   showDialog = async () => {
     this.setState({
       pop_visible: false,
+      qr_code_visible: false,
       dialog_visible: true,
       walletList_loading: true,
     });
@@ -137,7 +146,7 @@ export default class UserInfo extends Component {
   };
 
   handleVisibleChange = (visible) => {
-    this.setState({ pop_visible: visible });
+    this.setState({ pop_visible: visible, qr_code_visible: false });
   };
 
   connectWebWallet = async (type, network) => {
@@ -186,6 +195,7 @@ export default class UserInfo extends Component {
     if (this.state.pop_visible) {
       this.setState({
         pop_visible: false,
+        qr_code_visible: false,
       });
     }
   };
@@ -223,7 +233,14 @@ export default class UserInfo extends Component {
   };
 
   renderPop() {
-    const { userAddress, userAddressShort, walletType } = this.props;
+    const {
+      userAddress,
+      userAddressShort,
+      walletType,
+      userBalance,
+    } = this.props;
+    const { qr_code_visible } = this.state;
+
     return (
       <div className={styles.user_pop}>
         <div className={styles.app_title} onClick={this.closePop}>
@@ -231,38 +248,52 @@ export default class UserInfo extends Component {
           {_('wallet_connected')}
           <CloseOutlined />
         </div>
-        <div className={styles.hd}>
-          <div className={styles.left}>
-            <Tooltip
-              overlayClassName={styles.address_qrcode}
-              title={
-                <div style={{ backgroundColor: '#fff', padding: 5 }}>
-                  <QRCode
-                    value={userAddress}
-                    style={{ width: '145px', height: '145px' }}
+        <div className={styles.user_pop_content}>
+          {qr_code_visible && (
+            <div className={styles.qr_code}>
+              <div className={styles.qr_code_title}>
+                <div className={styles.back}>
+                  <ArrowLeftOutlined
+                    onClick={() => this.toggleQrCode(false)}
+                    style={{ fontSize: 20, color: '#2F80ED', fontWeight: 700 }}
                   />
                 </div>
-              }
-              placement="bottomRight"
-              trigger="hover"
-            >
-              <div className={styles.account_name}>
-                <div className={styles.qr_icon}>
-                  <img src="assets/qr1.png" style={{ width: 22, height: 22 }} />
-                </div>
-                <Clipboard text={userAddress} label={userAddressShort} />
-                {this.renderWalletIcon()}
+                {_('qr_code')}
               </div>
-            </Tooltip>
+              <div className={styles.qr_code_content}>
+                <QRCode
+                  value={userAddress}
+                  style={{ width: 200, height: 200 }}
+                />
+              </div>
+            </div>
+          )}
+          <div className={styles.hd}>
+            <div className={styles.hd_title}>{_('your_balance')}</div>
+            <div className={styles.balance}>
+              {formatNumberForDisplay({
+                value: userBalance.BSV,
+                suffix: 'BSV',
+              })}
+            </div>
           </div>
-          <div className={styles.account_icon} onClick={this.closePop}>
-            <UpOutlined />
+          <div className={styles.line} onClick={() => this.toggleQrCode(true)}>
+            <CustomIcon
+              type="iconqr-code"
+              style={{ fontSize: 20, marginRight: 12 }}
+            />
+            <span className={styles.name}>{_('show_qr_code')}</span>
           </div>
-        </div>
-        <div className={styles.bd}>
+          <Clipboard text={userAddress} className={styles.line}>
+            <CustomIcon
+              type="iconcopy"
+              style={{ fontSize: 20, marginRight: 12 }}
+            />
+            {_('copy_account')}
+          </Clipboard>
           <div className={styles.line} onClick={this.chooseLoginWallet}>
             <SwapOutlined
-              style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }}
+              style={{ fontSize: 20, color: '#2F80ED', marginRight: 12 }}
             />
             <span className={styles.name}>{_('switch_wallet')}</span>
           </div>
@@ -275,21 +306,21 @@ export default class UserInfo extends Component {
               }}
             >
               <DollarOutlined
-                style={{ fontSize: 18, color: '#2F80ED', marginRight: 15 }}
+                style={{ fontSize: 20, color: '#2F80ED', marginRight: 12 }}
               />
               <span className={styles.name}>{_('withdraw')}</span>
             </div>
           )}
-        </div>
-        <div className={styles.ft}>
-          <Button
-            className={styles.btn}
-            shape="round"
-            style={{ width: '100%' }}
-            onClick={this.disConnect}
-          >
+          <div className={styles.line} onClick={this.disConnect}>
+            <CustomIcon
+              type="icondisconnect"
+              style={{ fontSize: 20, marginRight: 12 }}
+            />
             {_('disconnect_account')}
-          </Button>
+          </div>
+          <div className={styles.ft}>
+            {_('connected_account')}: {userAddressShort}
+          </div>
         </div>
       </div>
     );
@@ -302,7 +333,7 @@ export default class UserInfo extends Component {
       return (
         <CustomIcon
           type="iconicon-volt-tokenswap-circle"
-          style={{ fontSize: 30, marginLeft: 10 }}
+          style={{ fontSize: 30, marginRight: 10 }}
         />
       );
     }
@@ -310,7 +341,7 @@ export default class UserInfo extends Component {
 
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
-    const { userAddressShort, userAddress, connecting, isLogin } = this.props;
+    const { userAddressShort, connecting, isLogin } = this.props;
 
     return (
       <>
@@ -320,11 +351,20 @@ export default class UserInfo extends Component {
             trigger="click"
             visible={pop_visible}
             onVisibleChange={this.handleVisibleChange}
-            placement="bottomRight"
+            placement="bottom"
           >
             <div className={styles.account_trigger}>
-              <span style={{ marginLeft: 5 }}>{userAddressShort} </span>
               {this.renderWalletIcon()}
+              <span style={{ marginRight: 5 }}>{userAddressShort}</span>
+              <CustomIcon
+                type="iconDropdown"
+                style={{
+                  fontSize: 16,
+                  marginLeft: 'auto',
+                  transition: 'transform 0.2s ease',
+                  transform: `rotate(${pop_visible ? 180 : 0}deg)`,
+                }}
+              />
             </div>
             <div className={styles.connect_app}>
               <UserOutlined />
