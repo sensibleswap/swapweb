@@ -42,7 +42,7 @@ export default class Chart extends Component {
       },
       yAxis: [
         {
-          type: 'log',
+          type: 'value',
           show: false,
           min: (v) => v.min * 0.5,
           max: (v) => v.max * 1.5,
