@@ -6,7 +6,6 @@ import EventBus from 'common/eventBus';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin, Modal } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
 import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import CustomIcon from 'components/icon';
@@ -172,7 +171,7 @@ export default class Swap extends Component {
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <TokenLogo name={symbol1} />
           <div className={styles.name}>{symbol1}</div>
-          <DownOutlined />
+          <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
         </div>
         <FormItem name="origin_amount">
           <Input
@@ -198,7 +197,7 @@ export default class Swap extends Component {
             {symbol2 && <TokenLogo name={symbol2} />}
           </div>
           <div className={styles.name}>{symbol2 || _('select')}</div>
-          <DownOutlined />
+          <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
         </div>
         <FormItem name="aim_amount">
           <Input
@@ -454,8 +453,14 @@ export default class Swap extends Component {
   renderButton() {
     const { isLogin, pairData, token1, token2, userBalance } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { slip, lastMod, origin_amount, aim_amount, dirForward, tol } =
-      this.state;
+    const {
+      slip,
+      lastMod,
+      origin_amount,
+      aim_amount,
+      dirForward,
+      tol,
+    } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const balance = userBalance[origin_token.tokenID || 'BSV'];

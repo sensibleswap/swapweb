@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import EventBus from 'common/eventBus';
 import { Button } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
+import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
 import Chart from 'components/chart/swapChart';
@@ -120,7 +120,7 @@ export default class SwapPage extends Component {
               <div className={styles.app_title}>
                 {_('swap')}
                 <div className={styles.close} onClick={this.hidePannel}>
-                  <CloseOutlined />
+                  <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
                 </div>
               </div>
               <Swap />

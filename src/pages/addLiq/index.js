@@ -4,7 +4,7 @@ import { history, connect } from 'umi';
 import BigNumber from 'bignumber.js';
 import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Modal } from 'antd';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
@@ -346,7 +346,7 @@ export default class Liquidity extends Component {
               >
                 <TokenLogo name={symbol1} />
                 <div className={styles.name}>{symbol1}</div>
-                <DownOutlined />
+                <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
               </div>
               <FormItem name={'origin_amount'}>
                 <Input
@@ -381,7 +381,7 @@ export default class Liquidity extends Component {
                   <TokenLogo name={symbol2} />
                 </div>
                 <div className={styles.name}>{symbol2 || _('select')}</div>
-                <DownOutlined />
+                <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
               </div>
               <FormItem name={'aim_amount'}>
                 <Input
@@ -512,8 +512,14 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const { dispatch, currentPair, userAddress, token1, token2, userBalance } =
-      this.props;
+    const {
+      dispatch,
+      currentPair,
+      userAddress,
+      token1,
+      token2,
+      userBalance,
+    } = this.props;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -640,8 +646,13 @@ export default class Liquidity extends Component {
   handleSubmit = async (data, _origin_amount, _aim_amount) => {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
-    const { token2, currentPair, dispatch, rabinApis, changeAddress } =
-      this.props;
+    const {
+      token2,
+      currentPair,
+      dispatch,
+      rabinApis,
+      changeAddress,
+    } = this.props;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
