@@ -5,10 +5,11 @@ import debug from 'debug';
 import EventBus from 'common/eventBus';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
-import { Button, Form, Input, message, Spin, Modal } from 'antd';
+import { Button, Form, Input, message, Spin } from 'antd';
 import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import CustomIcon from 'components/icon';
+import FormatNumber from 'components/formatNumber';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import SelectToken from '../selectToken';
@@ -372,7 +373,10 @@ export default class Swap extends Component {
               >
                 {_('your_balance')}:{' '}
                 <span>
-                  {userBalance[origin_token.tokenID || 'BSV'] || 0} {symbol1}
+                  <FormatNumber
+                    value={userBalance[origin_token.tokenID || 'BSV'] || 0}
+                    suffix={symbol1}
+                  />
                 </span>
               </div>
             </div>
@@ -390,7 +394,10 @@ export default class Swap extends Component {
               <div className={styles.balance} style={{ cursor: 'default' }}>
                 {_('your_balance')}:{' '}
                 <span>
-                  {userBalance[aim_token.tokenID || 'BSV'] || 0} {symbol2}
+                  <FormatNumber
+                    value={userBalance[aim_token.tokenID || 'BSV'] || 0}
+                    suffix={symbol2}
+                  />
                 </span>
               </div>
             </div>
@@ -401,7 +408,7 @@ export default class Swap extends Component {
               <div className={styles.key_value}>
                 <div className={styles.key}>{_('price')}</div>
                 <div className={styles.value}>
-                  1 {symbol1} = {price} {symbol2}
+                  1 {symbol1} = <FormatNumber value={price} suffix={symbol2} />
                 </div>
               </div>
               <div className={styles.key_value}>
@@ -427,7 +434,7 @@ export default class Swap extends Component {
               <div className={styles.key_value}>
                 <div className={styles.key}>{_('fee')}</div>
                 <div className={styles.value}>
-                  {fee} {symbol1}
+                  <FormatNumber value={fee} suffix={symbol1} />
                 </div>
               </div>
             </div>
@@ -719,19 +726,21 @@ export default class Swap extends Component {
             <div className={styles.detail_item}>
               <div className={styles.item_label}>{_('paid')}</div>
               <div className={styles.item_value}>
-                {origin_amount} {symbol1}
+                <FormatNumber value={origin_amount} suffix={symbol1} />
               </div>
             </div>
             <div className={styles.detail_item} style={{ textAlign: 'right' }}>
               <div className={styles.item_label}>{_('received')}</div>
               <div className={styles.item_value}>
-                {aim_amount} {symbol2}
+                <FormatNumber value={aim_amount} suffix={symbol2} />
               </div>
             </div>
           </div>
           <div className={styles.detail_item}>
             <div className={styles.item_label}>{_('swap_fee')}</div>
-            <div className={styles.item_value}>{formatSat(txFee)} BSV</div>
+            <div className={styles.item_value}>
+              <FormatNumber value={formatSat(txFee)} suffix="BSV" />
+            </div>
           </div>
           <div className={styles.detail_item}>
             <div className={styles.item_label}>{_('onchain_tx')}</div>

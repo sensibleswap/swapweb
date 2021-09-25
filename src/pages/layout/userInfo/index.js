@@ -271,7 +271,7 @@ export default class UserInfo extends Component {
           <div className={styles.hd}>
             <div className={styles.hd_title}>{_('your_balance')}</div>
             <div className={styles.balance}>
-              <FormatNumber value={userBalance.BSV} suffix=" BSV" />
+              <FormatNumber value={userBalance.BSV} /> BSV
             </div>
           </div>
           <div className={styles.line} onClick={() => this.toggleQrCode(true)}>

@@ -9,6 +9,7 @@ import EventBus from 'common/eventBus';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
+import FormatNumber from 'components/formatNumber';
 import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
@@ -247,15 +248,14 @@ export default class Liquidity extends Component {
     const { token1, token2 } = this.props;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
-    let _price = price_dir
-      ? `1 ${symbol1} = ${formatAmount(
-          total_aim_amount / total_origin_amount,
-          token2.decimal,
-        )} ${symbol2}`
-      : `1 ${symbol2} = ${formatAmount(
-          total_origin_amount / total_aim_amount,
-          token1.decimal,
-        )} ${symbol1}`;
+    const price1 = formatAmount(
+      total_aim_amount / total_origin_amount,
+      token2.decimal,
+    );
+    const price2 = formatAmount(
+      total_origin_amount / total_aim_amount,
+      token1.decimal,
+    );
     return (
       <div className={styles.my_pair_info}>
         <div className={styles.info_item}>
@@ -265,7 +265,11 @@ export default class Liquidity extends Component {
             onClick={this.switchPriceDir}
             style={{ cursor: 'pointer' }}
           >
-            {_price}{' '}
+            1 {price_dir ? symbol1 : symbol2} ={' '}
+            <FormatNumber
+              value={price_dir ? price1 : price2}
+              suffix={price_dir ? symbol2 : symbol1}
+            />{' '}
             <CustomIcon
               type="iconSwitch"
               style={{
@@ -335,7 +339,7 @@ export default class Liquidity extends Component {
               <div className={styles.balance} onClick={this.setOriginBalance}>
                 {_('your_balance')}:{' '}
                 <span>
-                  {userBalance.BSV || 0} {symbol1}
+                  <FormatNumber value={userBalance.BSV || 0} suffix={symbol1} />
                 </span>
               </div>
             </div>
@@ -367,7 +371,10 @@ export default class Liquidity extends Component {
               <div className={styles.balance} onClick={this.setAimBalance}>
                 {_('balance')}:{' '}
                 <span>
-                  {userBalance[token2.tokenID] || 0} {symbol2 || ''}
+                  <FormatNumber
+                    value={userBalance[token2.tokenID] || 0}
+                    suffix={symbol2}
+                  />
                 </span>
               </div>
             </div>

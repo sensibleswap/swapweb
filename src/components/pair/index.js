@@ -1,6 +1,7 @@
 import React from 'react';
 // import CustomIcon from 'components/icon';
 // import { QuestionCircleOutlined } from '@ant-design/icons';
+import FormatNumber from 'components/formatNumber';
 import { formatSat, formatAmount } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
@@ -32,29 +33,37 @@ export default function Pair(props) {
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{_('pooled', symbol1)}</div>
-          <div className={styles.info_value}>{_token1}</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={_token1} />
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{_('pooled', symbol2)}</div>
-          <div className={styles.info_value}>{_token2}</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={_token2} />
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>
             {_('your_lp', `${symbol1}/${symbol2}`)}
           </div>
-          <div className={styles.info_value}>{LP}</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={LP} />
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>
             {_('total_lp', `${symbol1}/${symbol2}`)}
           </div>
           <div className={styles.info_value}>
-            {formatSat(swapLpAmount, lptoken.decimal)}
+            <FormatNumber value={formatSat(swapLpAmount, lptoken.decimal)} />
           </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{_('your_share')}</div>
-          <div className={styles.info_value}>{_rate}%</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={_rate} />%
+          </div>
         </div>
       </div>
     </div>

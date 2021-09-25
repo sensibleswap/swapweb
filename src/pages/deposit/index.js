@@ -6,6 +6,7 @@ import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatAmount, formatSat } from 'common/utils';
 import CustomIcon from 'components/icon';
+import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
@@ -146,7 +147,10 @@ export default class Deposit extends Component {
             ))}
           </div>
           <div className={styles.balance} onClick={() => this.changeData(100)}>
-            {_('balance')}: <span>{balance}</span>
+            {_('balance')}:{' '}
+            <span>
+              <FormatNumber value={balance} />
+            </span>
           </div>
 
           <div className={styles.pair_box}>
@@ -188,12 +192,12 @@ export default class Deposit extends Component {
               </div>
             </div>
             <div className={styles.pair_right}>
-              {pairYields[currentPair]}% {_('apy')}
+              <FormatNumber value={pairYields[currentPair]} />% {_('apy')}
             </div>
           </div>
 
           <div className={styles.price}>
-            1 {symbol1} = {price} {symbol2}
+            1 {symbol1} = <FormatNumber value={price} suffix={symbol2} />
           </div>
 
           {this.renderButton()}
@@ -359,7 +363,9 @@ export default class Deposit extends Component {
         <div className={styles.small_title}>{_('deposited')}</div>
 
         <div className={styles.pair_data}>
-          <div className={styles.pair_left}>{addLP}</div>
+          <div className={styles.pair_left}>
+            <FormatNumber value={addLP} />
+          </div>
           <div className={styles.pair_right}>
             <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />{' '}
             {symbol1}/{symbol2}-LP
