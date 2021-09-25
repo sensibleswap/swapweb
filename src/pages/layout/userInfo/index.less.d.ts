@@ -5,10 +5,11 @@ interface CssExports {
   acc_list_box: string;
   account: string;
   account_icon: string;
-  account_name: string;
   account_trigger: string;
   address_qrcode: string;
   app_title: string;
+  back: string;
+  balance: string;
   btn: string;
   btns: string;
   cancel: string;
@@ -20,16 +21,21 @@ interface CssExports {
   dot: string;
   ft: string;
   hd: string;
+  hd_title: string;
   label: string;
   line: string;
   login_dialog: string;
   persission_title: string;
-  qr_icon: string;
+  popover: string;
+  qr_code: string;
+  qr_code_content: string;
+  qr_code_title: string;
   sub: string;
   tips: string;
   title: string;
   ts_icon: string;
   user_pop: string;
+  user_pop_content: string;
   website: string;
 }
 export const cssExports: CssExports;

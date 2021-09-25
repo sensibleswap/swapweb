@@ -3,6 +3,7 @@
 import bytes from 'bytes';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
+import format from 'format-number';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
 import debug from 'debug';
 const log = debug('utils');
@@ -217,6 +218,54 @@ export const formatAmount = (value, n = 4) => {
   }
   if (typeof value === 'object') return value.toFixed(n);
   return value;
+};
+
+function roundNumber({ value, round }) {
+  if (!value) {
+    return 0;
+  }
+  const roundTimes = Math.pow(10, round);
+  return Math.round(value * roundTimes) / roundTimes;
+}
+
+function roundCoinPrice({ value, round = 2 }) {
+  if (!value) {
+    return 0;
+  }
+  if (value < 1) {
+    round = 4;
+  }
+  if (value < 0.001) {
+    round = 6;
+  }
+  if (value < 0.00001) {
+    round = 8;
+  }
+  return roundNumber({ value, round });
+}
+
+export const formatNumberForDisplay = ({
+  value,
+  prefix,
+  suffix,
+  round = 2,
+  padRight,
+}) => {
+  if (!value) {
+    return 0;
+  }
+
+  const formatter = format({
+    prefix,
+    suffix,
+    truncate: 20,
+    padRight,
+  });
+
+  const numberValue = Number(value);
+  return numberValue <= Math.pow(10, 15)
+    ? formatter(roundCoinPrice({ value: numberValue, round }))
+    : '∞';
 };
 
 export function strAbbreviation(str, arr = [7, 5]) {

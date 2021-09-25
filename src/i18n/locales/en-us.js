@@ -24,6 +24,8 @@ const texts = {
 
   connect_wallet: 'Connect wallet',
   connected_account: 'Connected account',
+  show_qr_code: 'Show address QR code',
+  qr_code: 'Address QR',
   copy_account: 'Copy account address',
   switch_wallet: 'Switch wallet',
   go_to_infopage: 'Go to account page',
