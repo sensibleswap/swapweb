@@ -141,7 +141,7 @@ const texts = {
   download_app_1: '从',
   download_app_2: '或以下渠道下载',
 
-  use_tokenswap: '交易',
+  launch_app: '交易',
   tokenswap: 'TokenSwap',
   tokenswap_desc: '基于比特币协议的链上去中心化交易所',
   documentation: '文档',

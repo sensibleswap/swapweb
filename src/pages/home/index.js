@@ -166,7 +166,7 @@ export default class Home extends Component {
                     history.push('swap');
                   }}
                 >
-                  {_('use_tokenswap')}
+                  {_('launch_app')}
                 </Button>
                 <div className={styles.hidden_mobile}>
                   <Lang />
@@ -190,7 +190,7 @@ export default class Home extends Component {
                   history.push('swap');
                 }}
               >
-                {_('use_tokenswap')}
+                {_('launch_app')}
               </Button>
               <Button
                 className={styles.btn}
