@@ -26,6 +26,7 @@ interface CssExports {
   line: string;
   login_dialog: string;
   persission_title: string;
+  popover: string;
   qr_code: string;
   qr_code_content: string;
   qr_code_title: string;

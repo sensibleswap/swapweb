@@ -351,6 +351,7 @@ export default class UserInfo extends Component {
             trigger="click"
             visible={pop_visible}
             onVisibleChange={this.handleVisibleChange}
+            overlayClassName={styles.popover}
             placement="bottom"
           >
             <div className={styles.account_trigger}>
