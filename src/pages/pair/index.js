@@ -1,10 +1,10 @@
 import React from 'react';
 // import CustomIcon from 'components/icon';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import FormatNumber from 'components/formatNumber';
 import { formatSat, formatAmount } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
-import BigNumber from 'bignumber.js';
 
 export default function Pair(props) {
   const { pairData, curPair, userBalance } = props;
@@ -27,23 +27,31 @@ export default function Pair(props) {
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>LP {_('tokens')}</div>
-          <div className={styles.info_value}>{LP}</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={LP} />
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>
             {_('pooled')} {token1.symbol.toUpperCase()}
           </div>
-          <div className={styles.info_value}>{_token1}</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={_token1} />
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>
             {_('pooled')} {token2.symbol.toUpperCase()}
           </div>
-          <div className={styles.info_value}>{_token2}</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={_token2} />
+          </div>
         </div>
         <div className={styles.info_item}>
           <div className={styles.info_label}>{_('your_share')}</div>
-          <div className={styles.info_value}>{_rate}%</div>
+          <div className={styles.info_value}>
+            <FormatNumber value={_rate} />%
+          </div>
         </div>
       </div>
     </div>

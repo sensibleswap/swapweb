@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js';
 // import pairApi from '../../api/pair';
 import { jc, formatSat, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
+import FormatNumber from 'components/formatNumber';
 import TokenLogo from 'components/tokenicon';
 import TokenPair from 'components/tokenPair';
 import CustomIcon from 'components/icon';
@@ -232,7 +233,9 @@ export default class FarmC extends Component {
             />
           </div>
           <div className={styles.amount}>
-            <span style={{ marginRight: 30 }}>{amount}</span>
+            <span style={{ marginRight: 30 }}>
+              <FormatNumber value={amount} />
+            </span>
             <TokenLogo
               name={symbol}
               style={{ fontSize: 20, marginRight: 10 }}
@@ -292,15 +295,15 @@ export default class FarmC extends Component {
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
 
-    if (_total.isGreaterThan(1000000)) {
-      _total = formatAmount(_total.div(1000000), 2);
-      _total = _total + 'm';
-    } else if (_total.isGreaterThan(1000)) {
-      _total = formatAmount(_total.div(1000), 2);
-      _total = _total + 'k';
-    } else {
-      _total = formatAmount(_total, 2);
-    }
+    // if (_total.isGreaterThan(1000000)) {
+    //   _total = formatAmount(_total.div(1000000), 2);
+    //   _total = _total + 'm';
+    // } else if (_total.isGreaterThan(1000)) {
+    //   _total = formatAmount(_total.div(1000), 2);
+    //   _total = _total + 'k';
+    // } else {
+    //   _total = formatAmount(_total, 2);
+    // }
 
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
@@ -340,14 +343,16 @@ export default class FarmC extends Component {
           </div>
           <div className={styles.lp_amount}>
             {_('your_deposited_lp')}:{' '}
-            {formatSat(lockedTokenAmount, token.decimal)}
+            <FormatNumber value={formatSat(lockedTokenAmount, token.decimal)} />
           </div>
         </div>
 
         <div className={styles.item_data}>
           <div>
             <div className={styles.label}>{_('tvl')}</div>
-            <div className={styles.value}>{_total} USDT</div>
+            <div className={styles.value}>
+              <FormatNumber value={_total} useAbbr={true} suffix="USDT" />
+            </div>
           </div>
           <div>
             <Tooltip
@@ -378,7 +383,9 @@ export default class FarmC extends Component {
                 />
               </div>
             </Tooltip>
-            <div className={styles.value}>{_yield}%</div>
+            <div className={styles.value}>
+              <FormatNumber value={_yield} />%
+            </div>
           </div>
           <div>
             <Tooltip title={_('payout_tips')} placement="bottom">
@@ -400,7 +407,9 @@ export default class FarmC extends Component {
                 />
               </div>
             </Tooltip>
-            <div className={styles.value}>{reword_amount.toString()}</div>
+            <div className={styles.value}>
+              <FormatNumber value={reword_amount} />
+            </div>
           </div>
           <div className={styles.item_detail_line_2}>
             <div className={styles.label}>
@@ -416,7 +425,9 @@ export default class FarmC extends Component {
                 className={styles.value}
                 style={{ fontSize: 12, color: '#2F80ED' }}
               >
-                {formatAmount(_rewardTokenAmount, rewardToken.decimal)}
+                <FormatNumber
+                  value={formatAmount(_rewardTokenAmount, rewardToken.decimal)}
+                />
               </div>
             </Tooltip>
           </div>

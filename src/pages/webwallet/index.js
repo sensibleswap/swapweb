@@ -4,6 +4,7 @@ import { Form, Button, Input, Spin, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { connect, history } from 'umi';
 import QRCode from 'qrcode.react';
+import CustomIcon from 'components/icon';
 import styles from './index.less';
 import _ from 'i18n';
 import BigNumber from 'bignumber.js';
@@ -102,7 +103,13 @@ export default class WebWallet extends Component {
               />
             </div>
             <div className={styles.address}>
-              <Clipboard text={userAddress} label={userAddress} />
+              <Clipboard text={userAddress}>
+                <CustomIcon
+                  type="iconcopy"
+                  style={{ fontSize: 20, marginRight: 5 }}
+                />
+                {userAddress}
+              </Clipboard>
             </div>
           </div>
           <div className={styles.withdraw}>

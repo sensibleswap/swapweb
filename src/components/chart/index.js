@@ -4,6 +4,7 @@ import 'whatwg-fetch';
 import * as echarts from 'echarts';
 import { connect } from 'umi';
 import { Spin } from 'antd';
+import { formatNumberForDisplay } from 'common/utils';
 import EventBus from 'common/eventBus';
 import { USDT_PAIR, COLOR1, COLOR2 } from 'common/const';
 import TimeRangeTabs from './timeRangeTabs';
@@ -41,7 +42,7 @@ export default class Chart extends Component {
       },
       yAxis: [
         {
-          type: 'log',
+          type: 'value',
           show: false,
           min: (v) => v.min * 0.5,
           max: (v) => v.max * 1.5,
@@ -59,17 +60,27 @@ export default class Chart extends Component {
         formatter: function (params) {
           const lines = [{ label: _('date'), value: params[0].axisValueLabel }];
           if (props.type === 'pool') {
-            lines.push({ label: 'TVL', value: `${params[0].value[1]} BSV` });
+            lines.push({
+              label: 'TVL',
+              value: formatNumberForDisplay({
+                value: params[0].value[1],
+                suffix: 'BSV',
+              }),
+            });
           } else {
             lines.push({
               label: _('volume'),
-              value: `${params[1].value[1]} BSV`,
+              value: formatNumberForDisplay({
+                value: params[1].value[1],
+                suffix: 'BSV',
+              }),
             });
             lines.push({
               label: _('price'),
-              value: `${params[0].value[1]} ${
-                currentPair === USDT_PAIR ? 'USDT' : 'BSV'
-              }`,
+              value: formatNumberForDisplay({
+                value: params[0].value[1],
+                suffix: currentPair === USDT_PAIR ? 'USDT' : 'BSV',
+              }),
             });
           }
           return lines

@@ -6,6 +6,7 @@ import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
 import CustomIcon from 'components/icon';
+import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import styles from '../deposit/index.less';
@@ -76,8 +77,12 @@ export default class Withdraw extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, allFarmPairs, currentPair, lockedTokenAmount } =
-        this.props;
+      const {
+        userBalance,
+        allFarmPairs,
+        currentPair,
+        lockedTokenAmount,
+      } = this.props;
       const { lptoken = {} } = allFarmPairs[currentPair];
       // const LP = userBalance[lptoken.tokenID] || 0;
       const _addLp = e.target.value;
@@ -140,7 +145,10 @@ export default class Withdraw extends Component {
             ))}
           </div>
           <div className={styles.balance} onClick={() => this.changeData(100)}>
-            {_('balance')}: <span>{lockedTokenAmount}</span>
+            {_('balance')}:{' '}
+            <span>
+              <FormatNumber value={lockedTokenAmount} />
+            </span>
           </div>
 
           <div className={styles.pair_box}>
@@ -342,7 +350,9 @@ export default class Withdraw extends Component {
         <div className={styles.small_title}>{_('withdrew')}</div>
 
         <div className={styles.pair_data}>
-          <div className={styles.pair_left}>{addLP}</div>
+          <div className={styles.pair_left}>
+            <FormatNumber value={addLP} />
+          </div>
           <div className={styles.pair_right}>
             <div className={styles.icon} style={{ marginRight: 10 }}>
               <CustomIcon type="iconlogo-bitcoin" />

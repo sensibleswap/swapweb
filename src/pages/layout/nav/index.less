@@ -8,9 +8,9 @@
   display: flex;
   align-items: center;
   height: 40px;
+  margin-right: 50px;
   :global(.iconfont) {
     font-size: 40px;
-    margin-right: 50px;
     color: #1d1d1d;
   }
 }
@@ -47,16 +47,26 @@
 
 @media only screen and (max-width: 767.99px) {
   .logo {
-    display: none;
+    margin-right: 20px;
+    :global(.iconfont) {
+      font-size: 40px !important;
+    }
   }
   .menu {
     .menu_item {
-      padding: 0 15px;
+      font-size: 14px;
+      padding: 0 12px;
       margin-right: 0;
     }
 
     .menu_item_selected {
       padding: 0 20px;
     }
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  .logo {
+    display: none;
   }
 }

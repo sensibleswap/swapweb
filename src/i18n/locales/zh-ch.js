@@ -24,6 +24,8 @@ const texts = {
 
   connect_wallet: '连接钱包',
   connected_account: '已连接的钱包',
+  show_qr_code: '账户地址二维码',
+  qr_code: '账户地址二维码',
   copy_account: '复制账户地址',
   switch_wallet: '切换钱包',
   go_to_infopage: '账户页面',
@@ -139,7 +141,7 @@ const texts = {
   download_app_1: '从',
   download_app_2: '或以下渠道下载',
 
-  use_tokenswap: '交易',
+  launch_app: '交易',
   tokenswap: 'TokenSwap',
   tokenswap_desc: '基于比特币协议的链上去中心化交易所',
   documentation: '文档',

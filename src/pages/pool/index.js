@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import { history, connect } from 'umi';
 import { Button } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
 import { jc } from 'common/utils';
 import { TSWAP_POOL_SHOW_OP } from 'common/const';
 import Pair from 'components/pair';
 import Chart from 'components/chart/poolChart';
+import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import Notice from 'components/notice';
@@ -48,8 +48,13 @@ export default class Pool extends Component {
   };
 
   renderContent() {
-    const { currentPair, pairData, loading, allPairs, userBalance } =
-      this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      allPairs,
+      userBalance,
+    } = this.props;
     if (loading || !currentPair) return <Loading />;
 
     const { token1, token2 } = allPairs[currentPair];
@@ -125,7 +130,7 @@ export default class Pool extends Component {
               <div className={styles.app_title}>
                 {_('pool')}
                 <div className={styles.close} onClick={this.hidePannel}>
-                  <CloseOutlined />
+                  <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
                 </div>
               </div>
 

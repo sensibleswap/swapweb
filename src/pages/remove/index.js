@@ -7,6 +7,7 @@ import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, jc } from 'common/utils';
 import Pair from 'components/pair';
 import CustomIcon from 'components/icon';
+import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
@@ -123,8 +124,14 @@ export default class RemovePage extends Component {
   }
 
   renderContent() {
-    const { currentPair, pairData, loading, userBalance, lptoken, allPairs } =
-      this.props;
+    const {
+      currentPair,
+      pairData,
+      loading,
+      userBalance,
+      lptoken,
+      allPairs,
+    } = this.props;
     const LP = userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
@@ -239,8 +246,14 @@ export default class RemovePage extends Component {
   };
 
   renderForm() {
-    const { currentPair, loading, submiting, userBalance, pairData, allPairs } =
-      this.props;
+    const {
+      currentPair,
+      loading,
+      submiting,
+      userBalance,
+      pairData,
+      allPairs,
+    } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
     const { removeRate, removeLP, symbol1, symbol2 } = this.state;
@@ -268,7 +281,10 @@ export default class RemovePage extends Component {
             className={styles.lp_balance}
             onClick={() => this.changeData(100)}
           >
-            {_('lp_balance')}: <span>{LP}</span>
+            {_('lp_balance')}:{' '}
+            <span>
+              <FormatNumber value={LP} />
+            </span>
           </div>
           <div className={styles.s_box}>
             <div className={styles.coin}>
@@ -295,14 +311,6 @@ export default class RemovePage extends Component {
           <div className={styles.values}>
             <div className={styles.values_left}>
               <div className={styles.v_item}>
-                <div className={styles.value}>{removeToken1}</div>
-              </div>
-              <div className={styles.v_item}>
-                <div className={styles.value}>{removeToken2}</div>
-              </div>
-            </div>
-            <div className={styles.values_right}>
-              <div className={styles.v_item}>
                 <div className={styles.label}>
                   <TokenLogo name={symbol1} size={20} />
                   <div style={{ marginLeft: 5 }}>{symbol1}</div>
@@ -312,6 +320,18 @@ export default class RemovePage extends Component {
                 <div className={styles.label}>
                   <TokenLogo name={symbol2} size={20} />
                   <div style={{ marginLeft: 5 }}>{symbol2}</div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.values_right}>
+              <div className={styles.v_item}>
+                <div className={styles.value}>
+                  <FormatNumber value={removeToken1} />
+                </div>
+              </div>
+              <div className={styles.v_item}>
+                <div className={styles.value}>
+                  <FormatNumber value={removeToken2} />
                 </div>
               </div>
             </div>
@@ -499,8 +519,13 @@ export default class RemovePage extends Component {
 
   renderResult() {
     // const LP = userBalance[lptoken.tokenID];
-    const { symbol1, symbol2, final_lp, receive_token1, receive_token2 } =
-      this.state;
+    const {
+      symbol1,
+      symbol2,
+      final_lp,
+      receive_token1,
+      receive_token2,
+    } = this.state;
     return (
       <div className={styles.remove_content}>
         <div className={styles.finish_logo}>
@@ -522,7 +547,9 @@ export default class RemovePage extends Component {
                 {symbol2}/{symbol1}
               </div>
             </div>
-            <div className={styles.f_value}>{final_lp}</div>
+            <div className={styles.f_value}>
+              <FormatNumber value={final_lp} />
+            </div>
           </div>
         </div>
 
@@ -540,7 +567,7 @@ export default class RemovePage extends Component {
                 <TokenLogo name={symbol1} size={20} />
               </div>
               <div className={styles.name}>
-                {receive_token1} {symbol1}
+                <FormatNumber value={receive_token1} suffix={symbol1} />
               </div>
             </div>
             <div className={styles.f_value}>
@@ -548,7 +575,7 @@ export default class RemovePage extends Component {
                 <TokenLogo name={symbol2} size={20} />
               </div>
               <div className={styles.name}>
-                {receive_token2} {symbol2}
+                <FormatNumber value={receive_token2} suffix={symbol2} />
               </div>
             </div>
           </div>
