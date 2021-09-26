@@ -6,7 +6,6 @@ import { Button, Popover, Modal, message, Tooltip } from 'antd';
 import {
   UpOutlined,
   SwapOutlined,
-  UserOutlined,
   LoadingOutlined,
   CloseOutlined,
   DollarOutlined,
