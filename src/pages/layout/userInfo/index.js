@@ -6,7 +6,6 @@ import { Popover, Modal, message } from 'antd';
 import {
   ArrowLeftOutlined,
   SwapOutlined,
-  UserOutlined,
   LoadingOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
@@ -365,7 +364,7 @@ export default class UserInfo extends Component {
               />
             </div>
             <div className={styles.connect_app}>
-              <UserOutlined />
+              <CustomIcon type="iconicon-me" style={{ fontSize: 24 }} />
             </div>
           </Popover>
         ) : (
