@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   header: string;
+  hidden_mobile: string;
   user_info: string;
 }
 export const cssExports: CssExports;

@@ -6,6 +6,7 @@ import { Popover, Modal, message } from 'antd';
 import {
   ArrowLeftOutlined,
   SwapOutlined,
+  UserOutlined,
   LoadingOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
