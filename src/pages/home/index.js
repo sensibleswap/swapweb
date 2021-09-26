@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { history } from 'umi';
 import { Button } from 'antd';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';
 import Footer from '../layout/footer';
@@ -27,121 +26,121 @@ export default class Home extends Component {
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_1')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_2')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_3')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_4')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_5')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_6')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_7')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_8')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_9')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_10')}</div>
             <div className={styles.col_2}>
-              <CheckOutlined className={styles.green} />
+              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_3}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
             <div className={styles.col_4}>
-              <CloseOutlined className={styles.red} />
+              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
             </div>
           </div>
         </div>
@@ -167,7 +166,7 @@ export default class Home extends Component {
                     history.push('swap');
                   }}
                 >
-                  {_('use_tokenswap')}
+                  {_('launch_app')}
                 </Button>
                 <div className={styles.hidden_mobile}>
                   <Lang />
@@ -191,7 +190,7 @@ export default class Home extends Component {
                   history.push('swap');
                 }}
               >
-                {_('use_tokenswap')}
+                {_('launch_app')}
               </Button>
               <Button
                 className={styles.btn}

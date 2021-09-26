@@ -2,20 +2,20 @@
 import React, { Component } from 'react';
 import { history, connect } from 'umi';
 import querystring from 'querystringify';
-import { Button, Popover, Modal, message, Tooltip } from 'antd';
+import { Popover, Modal, message } from 'antd';
 import {
   ArrowLeftOutlined,
   SwapOutlined,
   UserOutlined,
   LoadingOutlined,
-  CloseOutlined,
   DollarOutlined,
 } from '@ant-design/icons';
 import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
 import Clipboard from 'components/clipboard';
+import FormatNumber from 'components/formatNumber';
 import CustomIcon from 'components/icon';
-import { formatNumberForDisplay, sleep } from 'common/utils';
+import { sleep } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
@@ -246,7 +246,7 @@ export default class UserInfo extends Component {
         <div className={styles.app_title} onClick={this.closePop}>
           <Lang />
           {_('wallet_connected')}
-          <CloseOutlined />
+          <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
         </div>
         <div className={styles.user_pop_content}>
           {qr_code_visible && (
@@ -271,10 +271,7 @@ export default class UserInfo extends Component {
           <div className={styles.hd}>
             <div className={styles.hd_title}>{_('your_balance')}</div>
             <div className={styles.balance}>
-              {formatNumberForDisplay({
-                value: userBalance.BSV,
-                suffix: ' BSV',
-              })}
+              <FormatNumber value={userBalance.BSV} /> BSV
             </div>
           </div>
           <div className={styles.line} onClick={() => this.toggleQrCode(true)}>

@@ -12,6 +12,7 @@ interface CssExports {
   head: string;
   head_inner: string;
   head_right: string;
+  hidden_mobile: string;
   label: string;
   list: string;
   list_container: string;

@@ -1,5 +1,6 @@
 'use strict';
 import React from 'react';
+import FormatNumber from 'components/formatNumber';
 import TokenLogo from 'components/tokenicon';
 import { formatSat } from 'common/utils';
 import styles from './index.less';
@@ -29,7 +30,7 @@ export default function PairStat(props) {
             size={30}
             style={{ marginRight: 10 }}
           />{' '}
-          {amount1} {token1.symbol.toUpperCase()}
+          <FormatNumber value={amount1} suffix={token1.symbol.toUpperCase()} />
         </div>
         <div className={styles.value2} key={token2.tokenid}>
           <TokenLogo
@@ -37,7 +38,7 @@ export default function PairStat(props) {
             size={30}
             style={{ marginRight: 10 }}
           />{' '}
-          {amount2} {token2.symbol.toUpperCase()}
+          <FormatNumber value={amount2} suffix={token2.symbol.toUpperCase()} />
         </div>
       </div>
     </div>

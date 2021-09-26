@@ -250,21 +250,53 @@ export const formatNumberForDisplay = ({
   suffix,
   round = 2,
   padRight,
+  useAbbr,
 }) => {
   if (!value) {
     return 0;
   }
 
+  const numberValue = Number(value);
+
+  if (numberValue < 0.00001) {
+    return value;
+  }
+
+  const valueOption = { value: numberValue };
+
+  if (useAbbr) {
+    if (value > Math.pow(10, 3)) {
+      valueOption.value = value / Math.pow(10, 3);
+      valueOption.valueSuffix = 'k';
+    }
+    if (value > Math.pow(10, 6)) {
+      valueOption.value = value / Math.pow(10, 6);
+      valueOption.valueSuffix = 'm';
+    }
+    if (value > Math.pow(10, 9)) {
+      valueOption.value = value / Math.pow(10, 9);
+      valueOption.valueSuffix = 'bn';
+    }
+    if (value > Math.pow(10, 12)) {
+      valueOption.value = value / Math.pow(10, 12);
+      valueOption.valueSuffix = 'tn';
+    }
+  }
+
+  const suffixes = [
+    valueOption.valueSuffix,
+    suffix ? ` ${suffix}` : undefined,
+  ].filter(Boolean);
+
   const formatter = format({
     prefix,
-    suffix,
+    suffix: suffixes.length ? suffixes.join('') : undefined,
     truncate: 20,
     padRight,
   });
 
-  const numberValue = Number(value);
-  return numberValue <= Math.pow(10, 15)
-    ? formatter(roundCoinPrice({ value: numberValue, round }))
+  return valueOption.value <= Math.pow(10, 18)
+    ? formatter(roundCoinPrice({ value: valueOption.value, round }))
     : '∞';
 };
 

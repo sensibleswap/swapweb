@@ -141,7 +141,7 @@ const texts = {
   download_app_1: 'Download from',
   download_app_2: 'or the following app stores',
 
-  use_tokenswap: 'Use TokenSwap',
+  launch_app: 'Launch App',
   tokenswap: 'TokenSwap',
   tokenswap_desc: 'Your onchain DEX built on the original Bitcoin protocol',
   documentation: 'Documentation',
