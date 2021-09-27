@@ -11,7 +11,7 @@ export default function FormatNumber(props) {
         round,
         padRight,
         useAbbr,
-      })}
+      }).toString()}
     </>
   );
 }

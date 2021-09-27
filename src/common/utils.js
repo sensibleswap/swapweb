@@ -318,6 +318,10 @@ export function isTestNet() {
   return net === 'testnet';
 }
 
+export function tokenPre() {
+  return isTestNet() ? 'tbsv-' : 'bsv-';
+}
+
 export function parseUrl(data) {
   let [, hash1, hash2, hash3] = location.hash.split('/');
   if (hash2) hash2 = hash2.toLocaleLowerCase();

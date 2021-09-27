@@ -6,7 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 // import pairApi from '../../api/pair';
-import { jc, formatSat, formatAmount } from 'common/utils';
+import { jc, formatSat, formatAmount, tokenPre } from 'common/utils';
 import EventBus from 'common/eventBus';
 import FormatNumber from 'components/formatNumber';
 import TokenLogo from 'components/tokenicon';
@@ -281,8 +281,11 @@ export default class FarmC extends Component {
     // const lp_amount = formatSat(swapLpAmount, decimal);
     const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
 
-    const reward_symbol = `bsv-${symbol.toLowerCase()}`;
+    const reward_symbol = `${tokenPre()}${symbol.toLowerCase()}`;
     const reward_token = pairsData[reward_symbol];
+    if (!reward_token) {
+      return null;
+    }
     const reward_bsv_amount = formatSat(reward_token.swapToken1Amount);
     const reward_token_amount = formatSat(
       reward_token.swapToken2Amount,

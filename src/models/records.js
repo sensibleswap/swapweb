@@ -46,6 +46,7 @@ export default {
         console.log(res.msg);
         return [];
       }
+      log('chart data: ', res);
       const newData = [...res.data].reverse();
 
       const dataTimeline = [];
