@@ -552,6 +552,7 @@ export default class Swap extends Component {
       dispatch,
       currentPair,
       userAddress,
+      token1,
       token2,
       rabinApis,
       userBalance,
@@ -684,6 +685,9 @@ export default class Swap extends Component {
       formFinish: true,
       txid: swap_res.data.txid,
       txFee: txFee,
+      realSwapAmount: dirForward
+        ? formatSat(swap_res.data.token2Amount, token2.decimal)
+        : formatSat(swap_res.data.token1Amount, token1.decimal),
     });
   };
 
@@ -704,7 +708,14 @@ export default class Swap extends Component {
   }
 
   renderResult() {
-    const { origin_amount, aim_amount, txFee, dirForward, txid } = this.state;
+    const {
+      origin_amount,
+      aim_amount,
+      txFee,
+      dirForward,
+      txid,
+      realSwapAmount,
+    } = this.state;
     const { token1, token2 } = this.props;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
@@ -732,7 +743,7 @@ export default class Swap extends Component {
             <div className={styles.detail_item} style={{ textAlign: 'right' }}>
               <div className={styles.item_label}>{_('received')}</div>
               <div className={styles.item_value}>
-                <FormatNumber value={aim_amount} suffix={symbol2} />
+                <FormatNumber value={realSwapAmount} suffix={symbol2} />
               </div>
             </div>
           </div>
