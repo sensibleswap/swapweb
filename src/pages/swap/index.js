@@ -408,7 +408,7 @@ export default class Swap extends Component {
               <div className={styles.key_value}>
                 <div className={styles.key}>{_('price')}</div>
                 <div className={styles.value}>
-                  1 {symbol1} = <FormatNumber value={price} suffix={symbol2} />
+                  1 {symbol1} = {price} {symbol2}
                 </div>
               </div>
               <div className={styles.key_value}>
