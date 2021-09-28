@@ -197,7 +197,7 @@ export default class Deposit extends Component {
           </div>
 
           <div className={styles.price}>
-            1 {symbol1} = <FormatNumber value={price} suffix={symbol2} />
+            1 {symbol1} = {price} {symbol2}
           </div>
 
           {this.renderButton()}
