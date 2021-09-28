@@ -114,7 +114,6 @@ const getSensibleFtBalance = async (type = 1) => {
   }
   if (type === 2) {
     const res = await voltWallet.getSensibleFtBalance();
-    // console.log(res)
     const userBalance = {};
     res.forEach((item) => {
       userBalance[item.genesis] = formatSat(item.free, item.tokenDecimal);

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect, history } from 'umi';
 import { Button, Tooltip, message, Spin, Modal } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { gzip } from 'node-gzip';
+import { gzip, ungzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 // import pairApi from '../../api/pair';
 import { jc, formatSat, formatAmount, tokenPre } from 'common/utils';
@@ -121,6 +121,51 @@ export default class FarmC extends Component {
     });
   };
 
+  harvest2 = async (havest_data, currentPair, requestIndex) => {
+    const { dispatch, userAddress } = this.props;
+    const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
+    let sign_res = await dispatch({
+      type: 'user/signTx',
+      payload: {
+        datas: {
+          txHex,
+          scriptHex,
+          satoshis,
+          inputIndex,
+          address: userAddress,
+        },
+      },
+    });
+
+    if (sign_res.msg && !sign_res.sig) {
+      return message.error(sign_res);
+    }
+    if (sign_res[0]) {
+      sign_res = sign_res[0];
+    }
+    const { publicKey, sig } = sign_res;
+
+    const harvest2_res = await dispatch({
+      type: 'farm/harvest2',
+      payload: {
+        symbol: currentPair,
+        requestIndex,
+        pubKey: publicKey,
+        sig,
+      },
+    });
+    const { code, data, msg } = harvest2_res;
+    if (code === 99999) {
+      const raw = await ungzip(Buffer.from(data.other));
+      const newData = JSON.parse(raw.toString());
+      return this.harvest2(newData, currentPair, requestIndex);
+    }
+    if (harvest2_res.msg) {
+      return message.error(harvest2_res.msg);
+    }
+    return harvest2_res;
+  };
+
   harvest = async (currentPair, params) => {
     const { dispatch, userAddress, changeAddress } = this.props;
 
@@ -174,40 +219,11 @@ export default class FarmC extends Component {
     if (harvest_res.code) {
       return message.error(harvest_res.msg);
     }
-    const { txHex, scriptHex, satoshis, inputIndex } = harvest_res.data;
-    let sign_res = await dispatch({
-      type: 'user/signTx',
-      payload: {
-        datas: {
-          txHex,
-          scriptHex,
-          satoshis,
-          inputIndex,
-          address: userAddress,
-        },
-      },
-    });
-
-    if (sign_res.msg && !sign_res.sig) {
-      return message.error(sign_res);
-    }
-    if (sign_res[0]) {
-      sign_res = sign_res[0];
-    }
-    const { publicKey, sig } = sign_res;
-
-    const harvest2_res = await dispatch({
-      type: 'farm/harvest2',
-      payload: {
-        symbol: currentPair,
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      },
-    });
-    if (harvest2_res.msg) {
-      return message.error(harvest2_res.msg);
-    }
+    const harvest2_res = await this.harvest2(
+      harvest_res.data,
+      currentPair,
+      requestIndex,
+    );
     const { code, data, msg } = harvest2_res;
     const amount = formatSat(
       data.rewardTokenAmount,

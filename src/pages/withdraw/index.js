@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect } from 'umi';
-import { gzip } from 'node-gzip';
+import { gzip, ungzip } from 'node-gzip';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatAmount } from 'common/utils';
@@ -175,6 +175,55 @@ export default class Withdraw extends Component {
     );
   }
 
+  withdraw2 = async (withdraw_data, requestIndex) => {
+    const { txHex, scriptHex, satoshis, inputIndex } = withdraw_data;
+    const { addLP } = this.state;
+    const { dispatch, currentPair, userAddress } = this.props;
+
+    let sign_res = await dispatch({
+      type: 'user/signTx',
+      payload: {
+        datas: {
+          txHex,
+          scriptHex,
+          satoshis,
+          inputIndex,
+          address: userAddress,
+        },
+      },
+    });
+
+    if (sign_res.msg && !sign_res.sig) {
+      return message.error(sign_res);
+    }
+    if (sign_res[0]) {
+      sign_res = sign_res[0];
+    }
+
+    const { publicKey, sig } = sign_res;
+
+    const withdraw2_res = await dispatch({
+      type: 'farm/withdraw2',
+      payload: {
+        symbol: currentPair,
+        requestIndex,
+        pubKey: publicKey,
+        sig,
+      },
+    });
+    const { code, data, msg } = withdraw2_res;
+    if (code === 99999) {
+      const raw = await ungzip(Buffer.from(data.other));
+      const newData = JSON.parse(raw.toString());
+      return this.withdraw2(newData, requestIndex);
+    }
+
+    if (withdraw2_res.msg) {
+      return message.error(withdraw2_res.msg);
+    }
+    return withdraw2_res;
+  };
+
   handleSubmit = async () => {
     const { addLP } = this.state;
     const {
@@ -248,41 +297,12 @@ export default class Withdraw extends Component {
         data,
       },
     });
+
     if (withdraw_res.code) {
       return message.error(withdraw_res.msg);
     }
-    const { txHex, scriptHex, satoshis, inputIndex } = withdraw_res.data;
-    let sign_res = await dispatch({
-      type: 'user/signTx',
-      payload: {
-        datas: {
-          txHex,
-          scriptHex,
-          satoshis,
-          inputIndex,
-          address: userAddress,
-        },
-      },
-    });
+    const withdraw2_res = await this.withdraw2(withdraw_res.data, requestIndex);
 
-    if (sign_res.msg && !sign_res.sig) {
-      return message.error(sign_res);
-    }
-    if (sign_res[0]) {
-      sign_res = sign_res[0];
-    }
-
-    const { publicKey, sig } = sign_res;
-
-    const withdraw2_res = await dispatch({
-      type: 'farm/withdraw2',
-      payload: {
-        symbol: currentPair,
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      },
-    });
     if (!withdraw2_res.code && withdraw2_res.data.txid) {
       message.success('success');
       this.updateData();
