@@ -93,8 +93,8 @@ export default {
 
     *updatePairData({ payload }, { call, put, select }) {
       // let { currentPair } = payload;
-      const address = yield select((state) => state.user.userAddress);
-      const res = yield farmApi.queryAllPairs.call(farmApi, address);
+      const { userAddress } = yield select((state) => state.user.accountInfo);
+      const res = yield farmApi.queryAllPairs.call(farmApi, userAddress);
       const { code, msg, data } = res;
       if (code !== 0) {
         return res;

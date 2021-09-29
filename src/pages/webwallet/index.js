@@ -58,6 +58,7 @@ export default class WebWallet extends Component {
       payload: {
         address,
         amount,
+        note: 'tswap.io(withdraw)',
       },
     });
     //   console.log(ts_res);
@@ -74,7 +75,7 @@ export default class WebWallet extends Component {
     });
   };
   setMaxAmount = () => {
-    const { userBalance } = this.props;
+    const { userBalance } = this.props.accountInfo;
     this.formRef.current.setFieldsValue({
       amount: userBalance.BSV,
     });
@@ -83,7 +84,8 @@ export default class WebWallet extends Component {
     });
   };
   render() {
-    const { userAddress, userBalance, isLogin } = this.props;
+    const { accountInfo, isLogin } = this.props;
+    const { userAddress, userBalance } = accountInfo;
     return (
       <div className={styles.container}>
         <div className={styles.page_title}>

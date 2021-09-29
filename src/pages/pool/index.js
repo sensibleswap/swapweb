@@ -53,7 +53,7 @@ export default class Pool extends Component {
       pairData,
       loading,
       allPairs,
-      userBalance,
+      accountInfo,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
 
@@ -78,7 +78,7 @@ export default class Pool extends Component {
         <Pair
           pairData={pairData}
           curPair={allPairs[currentPair]}
-          userBalance={userBalance}
+          userBalance={accountInfo.userBalance}
         />
       </div>
     );

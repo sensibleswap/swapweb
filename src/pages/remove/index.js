@@ -128,11 +128,11 @@ export default class RemovePage extends Component {
       currentPair,
       pairData,
       loading,
-      userBalance,
+      accountInfo,
       lptoken,
       allPairs,
     } = this.props;
-    const LP = userBalance[lptoken.tokenID];
+    const LP = accountInfo.userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
     const { symbol1, symbol2 } = this.state;
     return (
@@ -158,9 +158,9 @@ export default class RemovePage extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, allPairs, currentPair } = this.props;
+      const { accountInfo, allPairs, currentPair } = this.props;
       const { lptoken = {} } = allPairs[currentPair];
-      const LP = userBalance[lptoken.tokenID] || 0;
+      const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
       const _removeLp = e.target.value;
       if (_removeLp <= 0) {
         value = 0;
@@ -178,7 +178,8 @@ export default class RemovePage extends Component {
   };
 
   slideData = (value) => {
-    const { userBalance, allPairs, currentPair } = this.props;
+    const { accountInfo, allPairs, currentPair } = this.props;
+    const { userBalance } = accountInfo;
     const { lptoken = {} } = allPairs[currentPair];
     const LP = userBalance[lptoken.tokenID] || 0;
     this.setState({
@@ -192,10 +193,10 @@ export default class RemovePage extends Component {
       pairData,
       lptoken = {},
       allPairs,
-      userBalance,
+      accountInfo,
       loading,
     } = this.props;
-    let LP = userBalance[lptoken.tokenID];
+    let LP = accountInfo.userBalance[lptoken.tokenID];
     if (loading || !LP) {
       return {
         removeToken1: 0,
@@ -250,14 +251,14 @@ export default class RemovePage extends Component {
       currentPair,
       loading,
       submiting,
-      userBalance,
-      pairData,
+      accountInfo,
+      // pairData,
       allPairs,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
     const { removeRate, removeLP, symbol1, symbol2 } = this.state;
-    const LP = userBalance[lptoken.tokenID] || 0;
+    const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     const { removeToken1, removeToken2 } = this.calc();
     return (
       <div className={styles.remove_content}>
@@ -348,14 +349,13 @@ export default class RemovePage extends Component {
     const {
       dispatch,
       currentPair,
-      userAddress,
       token1,
       token2,
-      userBalance,
       lptoken,
       rabinApis,
-      changeAddress,
+      accountInfo,
     } = this.props;
+    const { userBalance, userAddress, changeAddress } = accountInfo;
     const LP = userBalance[lptoken.tokenID];
 
     let res = await dispatch({
@@ -394,7 +394,7 @@ export default class RemovePage extends Component {
             address: bsvToAddress,
             amount: txFee,
             changeAddress,
-            noBroadcast: true,
+            note: 'tswap.io(remove liquidity)',
           },
           {
             type: 'sensibleFt',
@@ -404,9 +404,10 @@ export default class RemovePage extends Component {
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis,
-            noBroadcast: true,
+            note: 'tswap.io(remove liquidity)',
           },
         ],
+        noBroadcast: true,
       },
     });
     if (tx_res.msg) {
@@ -462,8 +463,8 @@ export default class RemovePage extends Component {
   }
 
   renderButton() {
-    const { isLogin, pairData, userBalance, lptoken } = this.props;
-    const LP = userBalance[lptoken.tokenID];
+    const { isLogin, pairData, accountInfo, lptoken } = this.props;
+    const LP = accountInfo.userBalance[lptoken.tokenID];
     if (!isLogin) {
       // 未登录
       return (

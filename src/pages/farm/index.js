@@ -79,7 +79,8 @@ export default class FarmC extends Component {
   }
 
   fetch = async () => {
-    const { dispatch, userAddress } = this.props;
+    const { dispatch, accountInfo } = this.props;
+    const { userAddress } = accountInfo;
     dispatch({
       type: 'farm/getAllPairs',
       payload: {
@@ -122,7 +123,7 @@ export default class FarmC extends Component {
   };
 
   harvest2 = async (havest_data, currentPair, requestIndex) => {
-    const { dispatch, userAddress } = this.props;
+    const { dispatch, accountInfo } = this.props;
     const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
     let sign_res = await dispatch({
       type: 'user/signTx',
@@ -132,7 +133,7 @@ export default class FarmC extends Component {
           scriptHex,
           satoshis,
           inputIndex,
-          address: userAddress,
+          address: accountInfo.userAddress,
         },
       },
     });
@@ -167,7 +168,8 @@ export default class FarmC extends Component {
   };
 
   harvest = async (currentPair, params) => {
-    const { dispatch, userAddress, changeAddress } = this.props;
+    const { dispatch, accountInfo } = this.props;
+    const { userAddress, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -189,6 +191,7 @@ export default class FarmC extends Component {
         address: bsvToAddress,
         amount: txFee,
         changeAddress,
+        note: 'tswap.io(farm harvest)',
         noBroadcast: true,
       },
     });

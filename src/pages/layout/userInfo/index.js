@@ -65,7 +65,7 @@ export default class UserInfo extends Component {
         while (this.polling) {
           await sleep(20 * 1e3);
           i++;
-          const { dispatch, busy, isLogin, userAddress } = _self.props;
+          const { dispatch, busy, isLogin, accountInfo } = _self.props;
           if (busy) return;
           dispatch({
             type: 'pair/updatePairData',
@@ -74,7 +74,7 @@ export default class UserInfo extends Component {
           dispatch({
             type: 'farm/updatePairData',
             payload: {
-              address: userAddress,
+              address: accountInfo.userAddress,
             },
           });
 
@@ -167,7 +167,7 @@ export default class UserInfo extends Component {
         network,
       },
     });
-
+    console.log(con_res);
     if (con_res.msg) {
       this.busy = false;
       return message.error(con_res.msg);
@@ -232,12 +232,8 @@ export default class UserInfo extends Component {
   };
 
   renderPop() {
-    const {
-      userAddress,
-      userAddressShort,
-      walletType,
-      userBalance,
-    } = this.props;
+    const { walletType, accountInfo } = this.props;
+    const { userAddress, userAddressShort, userBalance } = accountInfo;
     const { qr_code_visible } = this.state;
 
     return (
@@ -337,7 +333,8 @@ export default class UserInfo extends Component {
 
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
-    const { userAddressShort, connecting, isLogin } = this.props;
+    const { accountInfo, connecting, isLogin } = this.props;
+    const DEFAULT_VOLT_WALLET_INDEX = isApp ? 3 : 2;
 
     return (
       <>
@@ -352,7 +349,9 @@ export default class UserInfo extends Component {
           >
             <div className={styles.account_trigger}>
               {this.renderWalletIcon()}
-              <span style={{ marginRight: 5 }}>{userAddressShort}</span>
+              <span style={{ marginRight: 5 }}>
+                {accountInfo.userAddressShort}
+              </span>
               <CustomIcon
                 type="iconDropdown"
                 style={{
@@ -407,7 +406,9 @@ export default class UserInfo extends Component {
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
               <li
-                onClick={() => this.connectWebWallet(isApp ? 3 : 2, 'mainnet')}
+                onClick={() =>
+                  this.connectWebWallet(DEFAULT_VOLT_WALLET_INDEX, 'mainnet')
+                }
               >
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
@@ -419,7 +420,7 @@ export default class UserInfo extends Component {
               {query.env === 'local' && (
                 <li
                   onClick={() =>
-                    this.connectWebWallet(isApp ? 3 : 2, 'testnet')
+                    this.connectWebWallet(DEFAULT_VOLT_WALLET_INDEX, 'testnet')
                   }
                 >
                   <CustomIcon type="iconBSVtestnet" style={{ fontSize: 30 }} />

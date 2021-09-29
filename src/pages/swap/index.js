@@ -212,7 +212,8 @@ export default class Swap extends Component {
   }
 
   setOriginBalance = () => {
-    const { userBalance, token1, token2, pairData } = this.props;
+    const { accountInfo, token1, token2, pairData } = this.props;
+    const { userBalance } = accountInfo;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward } = this.state;
     const decimal = dirForward ? token1.decimal : token2.decimal;
@@ -345,7 +346,8 @@ export default class Swap extends Component {
   };
 
   renderForm = () => {
-    const { token1, token2, pairData, userBalance, submiting } = this.props;
+    const { token1, token2, pairData, accountInfo, submiting } = this.props;
+    const { userBalance } = accountInfo;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward, tol } = this.state;
     const origin_token = dirForward ? token1 : token2;
@@ -458,7 +460,8 @@ export default class Swap extends Component {
   }
 
   renderButton() {
-    const { isLogin, pairData, token1, token2, userBalance } = this.props;
+    const { isLogin, pairData, token1, token2, accountInfo } = this.props;
+    const { userBalance } = accountInfo;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const {
       slip,
@@ -551,13 +554,12 @@ export default class Swap extends Component {
     const {
       dispatch,
       currentPair,
-      userAddress,
       token1,
       token2,
       rabinApis,
-      userBalance,
-      changeAddress,
+      accountInfo,
     } = this.props;
+    const { userBalance, changeAddress, userAddress } = accountInfo;
 
     const res = await dispatch({
       type: 'pair/reqSwap',
@@ -596,6 +598,7 @@ export default class Swap extends Component {
           address: bsvToAddress,
           amount: total.toString(),
           changeAddress,
+          note: 'tswap.io(swap)',
           noBroadcast: true,
         },
       });
@@ -628,7 +631,7 @@ export default class Swap extends Component {
               address: bsvToAddress,
               amount: txFee,
               changeAddress,
-              noBroadcast: true,
+              note: 'tswap.io(swap)',
             },
             {
               type: 'sensibleFt',
@@ -638,9 +641,10 @@ export default class Swap extends Component {
               codehash: token2.codeHash,
               genesis: token2.tokenID,
               rabinApis,
-              noBroadcast: true,
+              note: 'tswap.io(swap)',
             },
           ],
+          noBroadcast: true,
         },
       });
       if (!tx_res) {
@@ -692,7 +696,7 @@ export default class Swap extends Component {
   };
 
   async updateData() {
-    const { dispatch, currentPair } = this.props;
+    const { dispatch } = this.props;
 
     await dispatch({
       type: 'pair/getPairData',
@@ -710,7 +714,6 @@ export default class Swap extends Component {
   renderResult() {
     const {
       origin_amount,
-      aim_amount,
       txFee,
       dirForward,
       txid,

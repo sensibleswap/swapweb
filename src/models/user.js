@@ -1,8 +1,7 @@
-import bsv from 'common/walletFun';
+// import bsv from 'common/walletFun';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
-import { strAbbreviation } from 'common/utils';
+import Wallet from '../lib/main';
 import debug from 'debug';
-// import 'common/vconsole';
 const log = debug('user');
 const { localStorage } = window;
 
@@ -11,10 +10,9 @@ export default {
 
   state: {
     isLogin: false,
-    accountInfo: {},
-    userBalance: {},
-    userAddress: '',
-    changeAddress: '',
+    accountInfo: {
+      userBalance: {},
+    },
     walletType: 1,
   },
 
@@ -27,44 +25,17 @@ export default {
         type = yield select((state) => state.user.walletType) || 1;
       }
       try {
-        const accountInfo = yield bsv.getAccountInfo(type);
-        const bsvBalance = yield bsv.getBsvBalance(type);
-        const userAddress = yield bsv.getAddress(type);
-        const changeAddress = yield bsv.getChangeAddress(type);
-        const tokenBalance = yield bsv.getSensibleFtBalance(type);
-        if (type === 3) {
-          accountInfo.network =
-            parseInt(accountInfo.token_map_id) === 1 ? 'mainnet' : 'testnet';
-        }
-        const network =
-          type === 2 ? yield bsv.getNetwork(type) : accountInfo.network;
+        const _wallet = Wallet({ type });
+        const accountInfo = yield _wallet.info();
 
-        localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
+        localStorage.setItem(TSWAP_NETWORK, accountInfo.network || DEFAULT_NET);
 
-        const paymail = yield bsv.getPaymail();
-
-        const userBalance = {
-          BSV: bsvBalance,
-          ...tokenBalance,
-        };
-        log(
-          'userData:',
-          accountInfo,
-          network,
-          tokenBalance,
-          userBalance,
-          userAddress,
-          changeAddress,
-        );
+        log('userData:', accountInfo);
 
         yield put({
           type: 'save',
           payload: {
             accountInfo,
-            userBalance,
-            userAddress: paymail || userAddress,
-            userAddressShort: paymail || strAbbreviation(userAddress, [7, 7]),
-            changeAddress,
             isLogin: true,
             walletType: type || 1,
           },
@@ -76,34 +47,18 @@ export default {
 
       return {};
     },
+
     *updateUserData({ payload }, { call, put, select }) {
       const type = yield select((state) => state.user.walletType);
       try {
-        const accountInfo = yield bsv.getAccountInfo(type);
-        const bsvBalance = yield bsv.getBsvBalance(type);
-        const userAddress = yield bsv.getAddress(type);
-        const changeAddress =
-          type === 3 ? yield bsv.getChangeAddress(type) : '';
-        const tokenBalance = yield bsv.getSensibleFtBalance(type);
-        const network =
-          type === 1 ? accountInfo.network : yield bsv.getNetwork(type);
-
-        const paymail = type === 3 ? accountInfo.email : yield bsv.getPaymail();
-        localStorage.setItem(TSWAP_NETWORK, network || DEFAULT_NET);
-
-        const userBalance = {
-          BSV: bsvBalance,
-          ...tokenBalance,
-        };
+        const _wallet = Wallet({ type });
+        const accountInfo = yield _wallet.info();
+        localStorage.setItem(TSWAP_NETWORK, accountInfo.network || DEFAULT_NET);
 
         yield put({
           type: 'save',
           payload: {
             accountInfo,
-            userBalance,
-            userAddress,
-            userAddressShort: paymail || strAbbreviation(userAddress, [7, 7]),
-            changeAddress,
             isLogin: true,
           },
         });
@@ -114,47 +69,50 @@ export default {
 
       return {};
     },
+
     *disconnectWebWallet({ payload }, { call, put, select }) {
-      // console.log(bsv.exitAccount)
+      const type = yield select((state) => state.user.walletType);
       try {
-        yield bsv.exitAccount();
+        const _wallet = Wallet({ type });
+        yield _wallet.exitAccount();
       } catch (error) {
-        // console.log(error);
-        return { msg: error.message || error.toString() };
+        console.log(error);
+        // return { msg: error.message || error.toString() };
       }
 
       yield put({
         type: 'save',
         payload: {
-          accountInfo: {},
-          userBalance: {},
-          userAddress: '',
+          accountInfo: {
+            userBalance: {},
+          },
           isLogin: false,
         },
       });
     },
+
     *connectWebWallet({ payload }, { call, put }) {
       const { type, network } = payload;
       let res;
       try {
-        res = yield bsv.connectWallet(type, network);
+        const _wallet = Wallet({ type });
+        res = yield _wallet.connectAccount(network);
+        // console.log(res);
       } catch (error) {
+        console.log(error);
         return { msg: error.message || error.toString() };
       }
       return {};
     },
 
     *transferBsv({ payload }, { call, put, select }) {
-      const { address, amount, note, changeAddress, noBroadcast } = payload;
+      // const { address, amount, note, changeAddress, noBroadcast } = payload;
       const type = yield select((state) => state.user.walletType);
 
       log('transferBsv:', payload);
       try {
-        const res = yield bsv.transferBsv(
-          type,
-          { address, amount, note, changeAddress },
-          noBroadcast,
-        );
+        const _wallet = Wallet({ type });
+        const res = yield _wallet.transferBsv(payload);
         log(res);
         return res;
       } catch (error) {
@@ -163,40 +121,14 @@ export default {
       }
     },
 
-    *transferFtTres({ payload }, { call, put, select }) {
-      const { address, amount, codehash, genesishash } = payload;
-      const type = yield select((state) => state.user.walletType);
-      log('transferFtTres:', {
-        receivers: [
-          {
-            address,
-            amount,
-          },
-        ],
-        codehash,
-        genesis: genesishash,
-      });
-      try {
-        const res = yield bsv.transferSensibleFt(type, {
-          address,
-          amount,
-          codehash,
-          genesis: genesishash,
-        });
-        log(res);
-        return res;
-      } catch (error) {
-        // console.log(error);
-        return { msg: error.message || error.toString(), txid: '' };
-      }
-    },
-
     *transferAll({ payload }, { call, put, select }) {
-      const { datas } = payload;
+      // const { datas } = payload;
       const type = yield select((state) => state.user.walletType);
       // console.log(...datas)
       try {
-        const res = yield bsv.transferAll(type, datas);
+        const _wallet = Wallet({ type });
+        const res = yield _wallet.transferAll(payload);
+        // const res = yield bsv.transferAll(type, datas);
         // console.log(res)
         log(res);
         return res;
@@ -208,7 +140,9 @@ export default {
     *signTx({ payload }, { call, put, select }) {
       const type = yield select((state) => state.user.walletType);
       try {
-        const res = yield bsv.signTx(type, payload.datas);
+        const _wallet = Wallet({ type });
+        const res = yield _wallet.signTx(payload.datas);
+        // const res = yield bsv.signTx(type, payload.datas);
         log(res);
         return res;
       } catch (error) {

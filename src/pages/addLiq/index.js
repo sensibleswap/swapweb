@@ -32,8 +32,6 @@ const FormItem = Form.Item;
     submiting:
       effects['pair/reqSwap'] ||
       effects['pair/addLiq'] ||
-      effects['user/transferBsv'] ||
-      // effects['user/transferFtTres'] ||
       effects['user/transferAll'] ||
       false,
   };
@@ -153,7 +151,8 @@ export default class Liquidity extends Component {
   };
 
   setOriginBalance = () => {
-    const { userBalance, pairData, token1, token2 } = this.props;
+    const { accountInfo, pairData, token1, token2 } = this.props;
+    const { userBalance } = accountInfo;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
     const origin_amount = userBalance.BSV || 0;
 
@@ -193,9 +192,9 @@ export default class Liquidity extends Component {
   };
 
   setAimBalance = () => {
-    const { userBalance, token1, token2, pairData } = this.props;
+    const { accountInfo, token1, token2, pairData } = this.props;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
-    const aim_amount = userBalance[token2.tokenID] || 0;
+    const aim_amount = accountInfo.userBalance[token2.tokenID] || 0;
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -287,7 +286,8 @@ export default class Liquidity extends Component {
   }
 
   renderFormInfo() {
-    const { token1, token2, pairData, userBalance, lptoken } = this.props;
+    const { token1, token2, pairData, accountInfo, lptoken } = this.props;
+    const { userBalance } = accountInfo;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
     const { origin_amount = 0, aim_amount = 0 } = this.state;
 
@@ -327,7 +327,8 @@ export default class Liquidity extends Component {
   }
 
   renderForm() {
-    const { token1, token2, userBalance, submiting } = this.props;
+    const { token1, token2, submiting, accountInfo } = this.props;
+    const { userBalance } = accountInfo;
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
     return (
@@ -411,7 +412,8 @@ export default class Liquidity extends Component {
   }
 
   renderButton = () => {
-    const { isLogin, token1, token2, userBalance } = this.props;
+    const { isLogin, token1, token2, accountInfo } = this.props;
+    const { userBalance } = accountInfo;
     const { origin_amount, aim_amount } = this.state;
     let btn;
     if (!isLogin) {
@@ -519,14 +521,8 @@ export default class Liquidity extends Component {
   };
 
   preHandleSubmit = async () => {
-    const {
-      dispatch,
-      currentPair,
-      userAddress,
-      token1,
-      token2,
-      userBalance,
-    } = this.props;
+    const { dispatch, currentPair, token1, token2, accountInfo } = this.props;
+    const { userAddress, userBalance } = accountInfo;
 
     let res = await dispatch({
       type: 'pair/reqSwap',
@@ -658,8 +654,9 @@ export default class Liquidity extends Component {
       currentPair,
       dispatch,
       rabinApis,
-      changeAddress,
+      accountInfo,
     } = this.props;
+    const { changeAddress } = accountInfo;
     const { reqSwapData } = this.state;
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
@@ -673,7 +670,7 @@ export default class Liquidity extends Component {
             address: bsvToAddress,
             amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
             changeAddress,
-            noBroadcast: true,
+            note: 'tswap.io(add liquidity)',
           },
           {
             type: 'sensibleFt',
@@ -683,9 +680,10 @@ export default class Liquidity extends Component {
             codehash: token2.codeHash,
             genesis: token2.tokenID,
             rabinApis,
-            noBroadcast: true,
+            note: 'tswap.io(add liquidity)',
           },
         ],
+        noBroadcast: true,
       },
     });
     if (tx_res.msg) {

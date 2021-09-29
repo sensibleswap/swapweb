@@ -59,7 +59,8 @@ export default class Deposit extends Component {
   }
 
   updateData() {
-    const { dispatch, userAddress } = this.props;
+    const { dispatch, accountInfo } = this.props;
+    const { userAddress } = accountInfo;
     dispatch({
       type: 'farm/getAllPairs',
       payload: {
@@ -76,8 +77,8 @@ export default class Deposit extends Component {
     let value;
     if (e.target) {
       //输入框变化值
-      const { userBalance, lptoken } = this.props;
-      const LP = userBalance[lptoken.tokenID] || 0;
+      const { accountInfo, lptoken } = this.props;
+      const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
       const _addLp = e.target.value;
       if (_addLp <= 0) {
         value = 0;
@@ -95,8 +96,8 @@ export default class Deposit extends Component {
   };
 
   slideData = (value) => {
-    const { userBalance, lptoken } = this.props;
-    const LP = userBalance[lptoken.tokenID] || 0;
+    const { accountInfo, lptoken } = this.props;
+    const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     this.setState({
       addLPRate: value,
       addLP: BigNumber(LP).multipliedBy(value).div(100).toString(),
@@ -108,7 +109,7 @@ export default class Deposit extends Component {
       currentPair,
       loading,
       submiting,
-      userBalance,
+      accountInfo,
       symbol1,
       symbol2,
       lptoken,
@@ -119,7 +120,7 @@ export default class Deposit extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
-    const balance = userBalance[lptoken.tokenID] || 0;
+    const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
     const currentPairData = pairsData[currentPair];
     const { swapToken1Amount, swapToken2Amount } = currentPairData;
     const bsv_amount = formatSat(swapToken1Amount);
@@ -208,14 +209,8 @@ export default class Deposit extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const {
-      dispatch,
-      currentPair,
-      userAddress,
-      userBalance,
-      lptoken,
-      changeAddress,
-    } = this.props;
+    const { dispatch, currentPair, lptoken, accountInfo } = this.props;
+    const { userAddress, userBalance, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -252,7 +247,7 @@ export default class Deposit extends Component {
             address: bsvToAddress,
             amount: txFee,
             changeAddress,
-            noBroadcast: true,
+            note: 'tswap.io(farm deposit)',
           },
           {
             type: 'sensibleFt',
@@ -262,9 +257,10 @@ export default class Deposit extends Component {
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
             rabinApis: lptoken.rabinApis,
-            noBroadcast: true,
+            note: 'tswap.io(farm deposit)',
           },
         ],
+        noBroadcast: true,
       },
     });
     if (tx_res.msg) {
@@ -311,9 +307,9 @@ export default class Deposit extends Component {
   }
 
   renderButton() {
-    const { isLogin, userBalance, lptoken } = this.props;
+    const { isLogin, accountInfo, lptoken } = this.props;
     const { addLP } = this.state;
-    const LP = userBalance[lptoken.tokenID];
+    const LP = accountInfo.userBalance[lptoken.tokenID];
     if (!isLogin) {
       // 未登录
       return (
