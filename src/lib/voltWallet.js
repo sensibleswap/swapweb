@@ -1,6 +1,6 @@
 import { Bsv } from '@volt-wallet/sdk';
 import { formatSat, strAbbreviation } from 'common/utils';
-import 'common/vconsole';
+// import 'common/vconsole';
 
 const bsv = new Bsv({
   iframeUrl: 'https://sdkpage.volt.id/iframe/',

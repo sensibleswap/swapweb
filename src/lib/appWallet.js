@@ -45,10 +45,10 @@ const getSensibleFtBalance = async () => {
   return userBalance;
 };
 
-const getPaymail = async () => {
-  const res = await callJavaScriptBridge('volt.bsv.getPaymail');
-  return res.paymail;
-};
+// const getPaymail = async () => {
+//   const res = await callJavaScriptBridge('volt.bsv.getPaymail');
+//   return res.paymail;
+// };
 
 export default {
   info: async () => {
