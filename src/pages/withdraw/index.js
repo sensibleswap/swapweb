@@ -59,6 +59,12 @@ export default class Withdraw extends Component {
     };
   }
 
+  componentDidMount() {
+    EventBus.on('changeFarmPair', () => {
+      this.changeData(0);
+    });
+  }
+
   updateData() {
     const { dispatch, accountInfo } = this.props;
     dispatch({

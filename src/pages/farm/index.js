@@ -59,9 +59,10 @@ export default class FarmC extends Component {
         if (
           newHash[1] === oldHash[1] &&
           newHash[2] &&
-          newHash[2] !== oldHash[2] &&
-          props.allFarmPairs[newHash[2]]
+          newHash[2] !== oldHash[2]
+          // && props.allFarmPairs[newHash[2]]
         ) {
+          EventBus.emit('changeFarmPair');
           props.dispatch({
             type: 'farm/saveFarm',
             payload: {

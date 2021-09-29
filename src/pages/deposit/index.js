@@ -58,6 +58,12 @@ export default class Deposit extends Component {
     };
   }
 
+  componentDidMount() {
+    EventBus.on('changeFarmPair', () => {
+      this.changeData(0);
+    });
+  }
+
   updateData() {
     const { dispatch, accountInfo } = this.props;
     const { userAddress } = accountInfo;
