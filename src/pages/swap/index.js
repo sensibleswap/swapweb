@@ -746,7 +746,7 @@ export default class Swap extends Component {
             <div className={styles.detail_item} style={{ textAlign: 'right' }}>
               <div className={styles.item_label}>{_('received')}</div>
               <div className={styles.item_value}>
-                <FormatNumber value={realSwapAmount} suffix={symbol2} />
+                {realSwapAmount} {symbol2}
               </div>
             </div>
           </div>
