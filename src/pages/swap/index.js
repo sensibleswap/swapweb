@@ -221,9 +221,10 @@ export default class Swap extends Component {
       return;
     }
 
-    const origin_amount = this.state.dirForward
-      ? userBalance.BSV || 0
-      : userBalance[token2.tokenID] || 0;
+    let origin_amount = this.state.dirForward
+      ? userBalance.BSV * 0.98 || 0
+      : userBalance[token2.tokenID] * 0.98 || 0;
+    origin_amount = formatAmount(origin_amount, decimal);
     this.formRef.current.setFieldsValue({
       origin_amount,
     });
@@ -265,7 +266,7 @@ export default class Swap extends Component {
       newAmount2 = BigNumber(amount2);
     let newOriginAddAmount, newAimAddAmount;
     if (originAddAmount > 0) {
-      _originAddAmount = BigInt(_originAddAmount.toString());
+      _originAddAmount = BigInt(_originAddAmount.toFixed(0));
       const addAmountWithFee =
         _originAddAmount * BigInt(FEE_FACTOR - swapFeeRate);
       newAmount1 = BigInt(amount1) + _originAddAmount;
