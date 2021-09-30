@@ -30,6 +30,7 @@ interface CssExports {
   qr_code: string;
   qr_code_content: string;
   qr_code_title: string;
+  sens_icon: string;
   sub: string;
   tips: string;
   title: string;

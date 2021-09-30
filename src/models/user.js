@@ -113,6 +113,7 @@ export default {
       try {
         const _wallet = Wallet({ type });
         const res = yield _wallet.transferBsv(payload);
+        console.log('transferBsv:', res);
         log(res);
         return res;
       } catch (error) {

@@ -1,7 +1,7 @@
 import tsWallet from './tsWallet';
 import voltWallet from './voltWallet';
 import appWallet from './appWallet';
-// import { formatSat } from 'common/utils';
+import sensiletWallet from './sensWallet';
 
 export default function wallet(props) {
   const { type } = props;
@@ -18,5 +18,9 @@ export default function wallet(props) {
   if (type === 3) {
     //app volt 钱包
     return appWallet;
+  }
+
+  if (type === 4) {
+    return sensiletWallet;
   }
 }

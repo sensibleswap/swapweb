@@ -18,6 +18,7 @@ import { sleep } from 'common/utils';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
+import sensiletIcon from '../../../../public/assets/sensilet.svg';
 
 const query = querystring.parse(window.location.search);
 const isApp = query.env === 'webview' && window._volt_javascript_bridge;
@@ -167,7 +168,7 @@ export default class UserInfo extends Component {
         network,
       },
     });
-    console.log(con_res);
+    // console.log(con_res);
     if (con_res.msg) {
       this.busy = false;
       return message.error(con_res.msg);
@@ -427,6 +428,14 @@ export default class UserInfo extends Component {
                   <div className={styles.label}>BSV Testnet</div>
                 </li>
               )}
+
+              <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
+                <div className={styles.sens_icon}>
+                  <img src={sensiletIcon} />
+                </div>
+                <div className={styles.label}>Sensilet</div>
+              </li>
+
               {!isApp && (
                 <li
                   onClick={() => this.connectWebWallet(1)}
