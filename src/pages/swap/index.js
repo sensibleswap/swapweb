@@ -223,7 +223,7 @@ export default class Swap extends Component {
 
     let origin_amount = this.state.dirForward
       ? userBalance.BSV * 0.98 || 0
-      : userBalance[token2.tokenID] * 0.98 || 0;
+      : userBalance[token2.tokenID] || 0;
     origin_amount = formatAmount(origin_amount, decimal);
     this.formRef.current.setFieldsValue({
       origin_amount,
