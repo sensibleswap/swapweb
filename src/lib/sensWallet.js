@@ -53,7 +53,7 @@ export default {
         userAddressShort: strAbbreviation(userAddress, [7, 7]),
         network,
       };
-      console.log('accountInfo:', accountInfo);
+      //   console.log('accountInfo:', accountInfo);
       return accountInfo;
     }
   },
