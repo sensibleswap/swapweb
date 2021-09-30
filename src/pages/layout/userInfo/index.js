@@ -429,26 +429,27 @@ export default class UserInfo extends Component {
                 </li>
               )}
 
-              <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
-                <div className={styles.sens_icon}>
-                  <img src={sensiletIcon} />
-                </div>
-                <div className={styles.label}>Sensilet</div>
-              </li>
-
               {!isApp && (
-                <li
-                  onClick={() => this.connectWebWallet(1)}
-                  style={{ fontSize: 15 }}
-                >
-                  <div className={styles.ts_icon}>
-                    <CustomIcon type="iconTS_Logo" style={{ fontSize: 20 }} />
-                  </div>
-                  <div className={styles.label}>
-                    TS {_('wallet')}
-                    <div className={styles.sub}>{_('test_only')}</div>
-                  </div>
-                </li>
+                <>
+                  <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
+                    <div className={styles.sens_icon}>
+                      <img src={sensiletIcon} />
+                    </div>
+                    <div className={styles.label}>Sensilet</div>
+                  </li>
+                  <li
+                    onClick={() => this.connectWebWallet(1)}
+                    style={{ fontSize: 15 }}
+                  >
+                    <div className={styles.ts_icon}>
+                      <CustomIcon type="iconTS_Logo" style={{ fontSize: 20 }} />
+                    </div>
+                    <div className={styles.label}>
+                      TS {_('wallet')}
+                      <div className={styles.sub}>{_('test_only')}</div>
+                    </div>
+                  </li>
+                </>
               )}
               {/*process.env.NODE_ENV === 'development' && (
                 <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>

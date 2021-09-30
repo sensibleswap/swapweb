@@ -24,10 +24,9 @@ const getBsvBalance = async () => {
 
 const getSensibleFtBalance = async () => {
   const res = await bsv.getSensibleFtBalance();
-  console.log(res);
   const userBalance = {};
   res.forEach((item) => {
-    userBalance[item.genesis] = formatSat(item.free, item.tokenDecimal);
+    userBalance[item.genesis] = formatSat(item.balance, item.decimal);
   });
   return userBalance;
 };
@@ -69,51 +68,47 @@ export default {
     return bsv.exitAccount();
   },
 
-  transferBsv: (params) => {
+  transferBsv: async (params) => {
     if (checkExtension()) {
       const { address, amount, noBroadcast } = params;
 
-      console.log({
+      const res = await bsv.transferBsv({
+        broadcast: !noBroadcast,
         receivers: [{ address, amount }],
       });
-      return bsv.transferBsv({
-        noBroadcast,
-        receivers: [{ address, amount }],
-      });
+      console.log(res);
+      return {
+        txHex: res,
+      };
     }
   },
 
-  transferAll: (params) => {
+  transferAll: async (params) => {
     if (checkExtension()) {
       let data = [];
       const { datas, noBroadcast } = params;
       datas.forEach((item) => {
-        const { address, amount, codehash, genesis } = item;
+        const { address, amount, codehash, genesis, rabinApis } = item;
         if (item.type === 'bsv') {
           data.push({
-            type: 'bsv',
-            data: {
-              amountExact: false,
-              receivers: [{ address, amount }],
-            },
+            broadcast: !noBroadcast,
+            receivers: [{ address, amount }],
           });
         } else if (item.type === 'sensibleFt') {
           data.push({
-            type: 'sensibleFt',
-            data: {
-              codehash,
-              genesis,
-              receivers: [{ address, amount }],
-            },
+            broadcast: !noBroadcast,
+            codehash,
+            genesis,
+            receivers: [{ address, amount }],
+            rabinApis,
           });
         }
       });
 
-      return bsv.transferAll({
-        noBroadcast,
-        errorBreak: true,
-        list: data,
-      });
+      console.log(data);
+      const res = await bsv.transferAll(data);
+      console.log(res);
+      return res;
     }
   },
 
