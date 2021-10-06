@@ -28,6 +28,13 @@ const icons = {
   tbsv: {
     type: 'iconlogo-bitcoin',
   },
+  bart: {
+    url:
+      'https://volt.oss-cn-hongkong.aliyuncs.com/coinlogo/777e4dd291059c9f7a0fd563f7204576dcceb791ac42d90b83291e9c83d25bfe654cf83e0042b5a7.jpg',
+  },
+  whst: {
+    url: 'assets/whst.jpeg',
+  },
 };
 
 export default function TokenIcon(props) {
