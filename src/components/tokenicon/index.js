@@ -39,7 +39,6 @@ const icons = {
 
 export default function TokenIcon(props) {
   const { icon, url, size = 40, style } = props;
-  let name = props.name.toLowerCase();
   if (icon) {
     return <CustomIcon type={icon} style={{ fontSize: size, ...style }} />;
   }
@@ -53,6 +52,8 @@ export default function TokenIcon(props) {
     );
   }
 
+  let name = props.name;
+  if (name) name = name.toLowerCase();
   const icons_name = icons[name];
   if (icons_name) {
     if (icons_name.type) {
