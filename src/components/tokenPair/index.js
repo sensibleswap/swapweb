@@ -9,7 +9,7 @@ export default function TokenIcons(props) {
       <TokenIcon
         name={symbol2}
         size={size}
-        style={{ size, marginLeft: `-${size / 2}px` }}
+        style={{ size, marginLeft: `-${size / 3}px` }}
       />
     </div>
   );
