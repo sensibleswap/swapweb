@@ -35,6 +35,13 @@ const icons = {
   whst: {
     url: 'assets/whst.jpeg',
   },
+  asc: {
+    url: 'assets/asc.png',
+  },
+  ceo: {
+    url:
+      'https://volt.oss-cn-hongkong.aliyuncs.com/coinlogo/777e4dd291059c9f7a0fd563f7204576dcceb791f460d392aea8ee18a0e315588ff22ab8ca1c84b6.jpg',
+  },
 };
 
 export default function TokenIcon(props) {
