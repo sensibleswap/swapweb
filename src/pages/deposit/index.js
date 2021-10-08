@@ -127,7 +127,7 @@ export default class Deposit extends Component {
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
     const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
-    const currentPairData = pairsData[currentPair];
+    const currentPairData = pairsData[currentPair] || {};
     const { swapToken1Amount, swapToken2Amount } = currentPairData;
     const bsv_amount = formatSat(swapToken1Amount);
 

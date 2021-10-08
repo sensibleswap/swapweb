@@ -28,11 +28,24 @@ const icons = {
   tbsv: {
     type: 'iconlogo-bitcoin',
   },
+  bart: {
+    url:
+      'https://volt.oss-cn-hongkong.aliyuncs.com/coinlogo/777e4dd291059c9f7a0fd563f7204576dcceb791ac42d90b83291e9c83d25bfe654cf83e0042b5a7.jpg',
+  },
+  whst: {
+    url: 'assets/whst.jpeg',
+  },
+  asc: {
+    url: 'assets/asc.png',
+  },
+  ceo: {
+    url:
+      'https://volt.oss-cn-hongkong.aliyuncs.com/coinlogo/777e4dd291059c9f7a0fd563f7204576dcceb791f460d392aea8ee18a0e315588ff22ab8ca1c84b6.jpg',
+  },
 };
 
 export default function TokenIcon(props) {
   const { icon, url, size = 40, style } = props;
-  let name = props.name.toLowerCase();
   if (icon) {
     return <CustomIcon type={icon} style={{ fontSize: size, ...style }} />;
   }
@@ -46,6 +59,8 @@ export default function TokenIcon(props) {
     );
   }
 
+  let name = props.name;
+  if (name) name = name.toLowerCase();
   const icons_name = icons[name];
   if (icons_name) {
     if (icons_name.type) {
