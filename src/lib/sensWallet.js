@@ -24,6 +24,7 @@ const getBsvBalance = async () => {
 
 const getSensibleFtBalance = async () => {
   const res = await bsv.getSensibleFtBalance();
+  // console.log('getSensibleFtBalance:',res);
   const userBalance = {};
   res.forEach((item) => {
     userBalance[item.genesis] = formatSat(item.balance, item.decimal);
@@ -76,10 +77,8 @@ export default {
         broadcast: !noBroadcast,
         receivers: [{ address, amount }],
       });
-      console.log(res);
-      return {
-        txHex: res,
-      };
+      // console.log(res);
+      return res;
     }
   },
 
@@ -105,14 +104,14 @@ export default {
         }
       });
 
-      console.log(data);
       const res = await bsv.transferAll(data);
-      console.log(res);
       return res;
     }
   },
 
-  signTx: (params) => {
-    return bsv.signTx(params);
+  signTx: async (params) => {
+    const res = await bsv.signTx({ list: [params] });
+    // console.log(res); debugger
+    return res.sigList[0];
   },
 };

@@ -419,24 +419,32 @@ export default class UserInfo extends Component {
               </li>
 
               {query.env === 'local' && (
-                <li
-                  onClick={() =>
-                    this.connectWebWallet(DEFAULT_VOLT_WALLET_INDEX, 'testnet')
-                  }
-                >
-                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 30 }} />
-                  <div className={styles.label}>BSV Testnet</div>
-                </li>
-              )}
-
-              {!isApp && (
                 <>
+                  <li
+                    onClick={() =>
+                      this.connectWebWallet(
+                        DEFAULT_VOLT_WALLET_INDEX,
+                        'testnet',
+                      )
+                    }
+                  >
+                    <CustomIcon
+                      type="iconBSVtestnet"
+                      style={{ fontSize: 30 }}
+                    />
+                    <div className={styles.label}>BSV Testnet</div>
+                  </li>
                   <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
                     <div className={styles.sens_icon}>
                       <img src={sensiletIcon} />
                     </div>
                     <div className={styles.label}>Sensilet</div>
                   </li>
+                </>
+              )}
+
+              {!isApp && (
+                <>
                   <li
                     onClick={() => this.connectWebWallet(1)}
                     style={{ fontSize: 15 }}

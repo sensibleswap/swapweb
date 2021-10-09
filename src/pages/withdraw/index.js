@@ -85,14 +85,15 @@ export default class Withdraw extends Component {
       //输入框变化值
       const {
         // accountInfo,
-        // allFarmPairs,
+        allFarmPairs,
         // currentPair,
         lockedTokenAmount,
       } = this.props;
       // const { userBalance, } = accountInfo;
-      // const { lptoken = {} } = allFarmPairs[currentPair];
+      const { lptoken = {} } = allFarmPairs[currentPair];
       // const LP = userBalance[lptoken.tokenID] || 0;
-      const _addLp = e.target.value;
+      let _addLp = e.target.value;
+      _addLp = formatAmount(_addLp, lptoken.decimal);
       if (_addLp <= 0) {
         value = 0;
       } else if (_addLp >= lockedTokenAmount) {
@@ -225,9 +226,6 @@ export default class Withdraw extends Component {
       return this.withdraw2(newData, requestIndex);
     }
 
-    if (withdraw2_res.msg) {
-      return message.error(withdraw2_res.msg);
-    }
     return withdraw2_res;
   };
 
@@ -280,7 +278,7 @@ export default class Withdraw extends Component {
       tx_res = tx_res.list[0];
     }
 
-    if (!tx_res.txid) {
+    if (!tx_res.txHex) {
       return message.error(_('txs_fail'));
     }
 
@@ -304,6 +302,9 @@ export default class Withdraw extends Component {
       return message.error(withdraw_res.msg);
     }
     const withdraw2_res = await this.withdraw2(withdraw_res.data, requestIndex);
+    if (withdraw2_res.code && withdraw2_res.msg) {
+      return message.error(withdraw2_res.msg);
+    }
 
     if (!withdraw2_res.code && withdraw2_res.data.txid) {
       message.success('success');

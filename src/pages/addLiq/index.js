@@ -79,9 +79,10 @@ export default class Liquidity extends Component {
   };
 
   changeOriginAmount = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
     const { pairData, token1, token2 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+    value = formatAmount(value, token1.decimal);
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -105,6 +106,7 @@ export default class Liquidity extends Component {
 
     const user_aim_amount = formatSat(token2AddAmount, token2.decimal);
     this.formRef.current.setFieldsValue({
+      origin_amount: value,
       aim_amount: user_aim_amount,
     });
     this.setState({
@@ -116,9 +118,10 @@ export default class Liquidity extends Component {
   };
 
   changeAimAmount = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
     const { pairData, token2, token1 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+    value = formatAmount(value, token2.decimal);
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -141,6 +144,7 @@ export default class Liquidity extends Component {
 
     this.formRef.current.setFieldsValue({
       origin_amount: user_origin_amount,
+      aim_amount: value,
     });
     this.setState({
       aim_amount: value || 0,
@@ -692,7 +696,7 @@ export default class Liquidity extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
       return message.error(_('txs_fail'));
     }
 
@@ -714,8 +718,8 @@ export default class Liquidity extends Component {
         data: liq_data,
       },
     });
-    // console.log(addliq_res)
-    if (addliq_res.code && !addliq_res.data.txid) {
+    console.log(addliq_res);
+    if (addliq_res.code && addliq_res.msg) {
       return message.error(addliq_res.msg);
     }
     message.success('success');
