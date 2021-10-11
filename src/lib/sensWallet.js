@@ -1,16 +1,13 @@
 import { formatSat, strAbbreviation } from 'common/utils';
+import _ from 'i18n';
 // import 'common/vconsole';
 
 const bsv = window.sensilet;
 
 function checkExtension() {
   if (!bsv) {
-    if (
-      confirm(
-        '请先安装Sensilet插件。如果已经安装，请刷新页面。点击确定下载插件。',
-      )
-    ) {
-      window.open('https://test.sensilet.com/sensilet.zip');
+    if (confirm(_('download_sensilet'))) {
+      window.open('https://sensilet.com/');
     }
     return false;
   }

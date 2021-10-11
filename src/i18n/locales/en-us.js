@@ -260,5 +260,7 @@ const texts = {
   payout_tips: 'Payout per BSV block',
   deposit_lp: 'Deposit LP',
   withdraw_lp: 'Withdraw LP',
+  download_sensilet:
+    'Install Sensilet extention. Refresh the page if you have installed.',
 };
 module.exports = texts;

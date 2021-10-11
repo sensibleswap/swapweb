@@ -255,5 +255,8 @@ const texts = {
   payout_tips: '每个区块的奖励',
   deposit_lp: '锁仓LP',
   withdraw_lp: '提取LP',
+
+  download_sensilet:
+    '请先安装Sensilet插件。如果已经安装，请刷新页面。点击确定下载插件。',
 };
 module.exports = texts;
