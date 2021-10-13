@@ -10,6 +10,9 @@ import TokenPair from 'components/tokenPair';
 import { history, connect, Link } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
+import Cookie from 'js-cookie';
+
+const lang = Cookie.get('lang') || navigator.language;
 
 let i = 0;
 const query = querystring.parse(window.location.search);
@@ -217,6 +220,7 @@ export default class TokenList extends Component {
   render() {
     const { showList, customShowList, currentMenuIndex, showDec } = this.state;
     const { size = 'big' } = this.props;
+    const isZh = lang.toLowerCase() === 'zh-cn';
     return (
       <div className={styles[size]}>
         <div className={styles.menu}>
@@ -281,7 +285,11 @@ export default class TokenList extends Component {
               <div className={styles.dec_title}>{_('risks_dis')}</div>
               <p className={styles.dec_desc}>{_('risks_desc')}</p>
               <a
-                href="https://app.gitbook.com/o/-MRwja99n-szigy6AT6z/s/-MS1k5-YXvZij6l03Xu9-887967055/risks-and-disclaimer/risks"
+                href={
+                  isZh
+                    ? 'https://app.gitbook.com/o/-MRwja99n-szigy6AT6z/s/-MS1k5-YXvZij6l03Xu9-1608594363/c/dKMhFoSVq0gQ8Dccc9HK/feng-xian-ti-shi'
+                    : 'https://app.gitbook.com/o/-MRwja99n-szigy6AT6z/s/-MS1k5-YXvZij6l03Xu9-887967055/risks-and-disclaimer/risks'
+                }
                 target="_blank"
                 className={styles.btn_link}
               >
