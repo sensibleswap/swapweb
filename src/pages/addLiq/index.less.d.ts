@@ -37,7 +37,6 @@ interface CssExports {
   result_data1: string;
   result_data2: string;
   selectToken_wrap: string;
-  steps: string;
   switch_icon: string;
   title: string;
   view_detail: string;

@@ -1,4 +1,5 @@
 import pairApi from '../api/pair';
+import customApi from '../api/custom';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
 import { parseUrl } from 'common/utils';
 import debug from 'debug';
@@ -11,7 +12,9 @@ export default {
 
   state: {
     allPairs: {},
+    pairList: {},
     currentPair: '',
+    customPair: false,
     pairData: {},
     token1: {},
     token2: {},
@@ -23,7 +26,12 @@ export default {
   },
 
   effects: {
-    *getAllPairs({ payload }, { call, put }) {
+    *getAllPairs({ payload }, { call, put, select }) {
+      let currentPair;
+      if (payload) {
+        currentPair = payload.currentPair;
+      }
+
       const res = yield pairApi.queryAllPairs.call(pairApi);
       log('allPairs:', res);
       const { data } = res;
@@ -32,29 +40,55 @@ export default {
         console.log(res.msg);
         return res;
       }
-      const urlPair = parseUrl(data);
+      let allPairs = { ...data };
 
-      let currentPair =
-        urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+      const urlPair = parseUrl();
+      let customPair; // = yield select((state) => state.pair.customPair);
+      if (!currentPair) {
+        currentPair =
+          urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+      }
 
-      if (!currentPair || !data[currentPair]) {
+      if (data[currentPair]) {
+        customPair = false;
+      } else {
+        const res1 = yield customApi.pairInfo.call(customApi, {
+          symbol: currentPair,
+        });
+        // console.log(res1);
+        if (!res1.code) {
+          res1.data.forEach((item) => {
+            allPairs[item.token2.tokenID] = item;
+          });
+          customPair = true;
+        } else {
+          customPair = false;
+          currentPair = '';
+        }
+      }
+
+      if (!currentPair || !allPairs[currentPair]) {
         Object.keys(data).forEach((item) => {
           if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
             currentPair = item;
-            localStorage.setItem(TSWAP_CURRENT_PAIR, item);
           }
         });
       }
 
+      localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
+      // console.log(allPairs, data, currentPair);
+
       yield put({
         type: 'savePair',
         payload: {
-          allPairs: data,
+          allPairs,
           currentPair,
+          pairList: { ...data },
+          customPair,
           // mode: 'init',
         },
       });
-      return data;
+      return allPairs;
     },
 
     *getPairData({ payload }, { call, put, select }) {
@@ -63,7 +97,9 @@ export default {
       if (!currentPair)
         currentPair = yield select((state) => state.pair.currentPair);
 
-      const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.querySwapInfo.call(api, currentPair);
       log('init-pairData:', currentPair, res);
       const { code, msg, data } = res;
       if (code !== 0) {
@@ -89,7 +125,9 @@ export default {
       // let { currentPair } = payload;
       const currentPair = yield select((state) => state.pair.currentPair);
       if (!currentPair) return;
-      const res = yield pairApi.querySwapInfo.call(pairApi, currentPair);
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.querySwapInfo.call(api, currentPair);
       const { code, msg, data } = res;
       if (code !== 0) {
         return res;
@@ -105,39 +143,51 @@ export default {
       return data;
     },
 
-    *reqSwap({ payload }, { call, put }) {
+    *reqSwap({ payload }, { call, put, select }) {
       payload.source = 'tswap.io';
-      const res = yield pairApi.reqSwap.call(pairApi, payload);
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.reqSwap.call(api, payload);
       log('reqSwap:', res);
       return res;
     },
 
-    *swap({ payload }, { call, put }) {
-      const res = yield pairApi.swap.call(pairApi, payload);
+    *swap({ payload }, { call, put, select }) {
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.swap.call(api, payload);
       log('swap:', payload, res);
       return res;
     },
 
-    *token1toToken2({ payload }, { call, put }) {
-      const res = yield pairApi.token1toToken2.call(pairApi, payload);
+    *token1toToken2({ payload }, { call, put, select }) {
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.token1toToken2.call(api, payload);
       log('swap:', payload, res);
       return res;
     },
 
-    *token2toToken1({ payload }, { call, put }) {
-      const res = yield pairApi.token2toToken1.call(pairApi, payload);
+    *token2toToken1({ payload }, { call, put, select }) {
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.token2toToken1.call(api, payload);
       log('swap:', payload, res);
       return res;
     },
 
-    *addLiq({ payload }, { call, put }) {
-      const res = yield pairApi.addLiq.call(pairApi, payload);
+    *addLiq({ payload }, { call, put, select }) {
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.addLiq.call(api, payload);
       log('addLiq:', payload, res);
       return res;
     },
 
-    *removeLiq({ payload }, { call, put }) {
-      const res = yield pairApi.removeLiq.call(pairApi, payload);
+    *removeLiq({ payload }, { call, put, select }) {
+      const customPair = yield select((state) => state.pair.customPair);
+      const api = customPair ? customApi : pairApi;
+      const res = yield api.removeLiq.call(api, payload);
       log('removeLiq:', payload, res);
       return res;
     },

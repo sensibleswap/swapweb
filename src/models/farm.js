@@ -1,7 +1,12 @@
 import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
 import pairApi from '../api/pair';
-import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR, USDT_PAIR } from 'common/const';
+import {
+  TSWAP_CURRENT_PAIR,
+  DEFAULT_PAIR,
+  USDT_PAIR,
+  TSWAP_SOURCE,
+} from 'common/const';
 import { formatSat, parseUrl } from 'common/utils';
 import debug from 'debug';
 const log = debug('farm');
@@ -36,7 +41,7 @@ export default {
         console.log(res.msg);
         return res;
       }
-      const urlPair = parseUrl(data);
+      const urlPair = parseUrl();
       let currentPair =
         urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
       if (!currentPair || !data[currentPair]) {
@@ -123,7 +128,7 @@ export default {
     },
 
     *reqSwap({ payload }, { call, put }) {
-      payload.source = 'tswap.io';
+      payload.source = TSWAP_SOURCE;
       const res = yield farmApi.reqSwap.call(farmApi, payload);
       log('reqSwap:', res);
       return res;

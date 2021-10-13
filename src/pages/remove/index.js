@@ -11,6 +11,7 @@ import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
+import PoolMenu from 'components/poolMenu';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
@@ -76,35 +77,35 @@ export default class RemovePage extends Component {
 
   async fetch() {
     const { dispatch } = this.props;
-    const allPairs = await dispatch({
+    await dispatch({
       type: 'pair/getAllPairs',
     });
-    // console.log(allPairs);
 
-    let { currentPair } = this.props;
-    // console.log(currentPair);
+    // if (currentPair) {
+    const pairData = await dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        // currentPair,
+      },
+    });
 
-    if (currentPair) {
-      const pairData = await dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          // currentPair,
-        },
-      });
-      const { swapToken1Amount, swapToken2Amount } = pairData;
-      const { token1, token2 } = allPairs[currentPair];
-      const symbol1 = token1.symbol.toUpperCase();
-      const symbol2 = token2.symbol.toUpperCase();
-      const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
-        formatSat(swapToken1Amount, token1.decimal),
-      );
-      this.setState({
-        symbol1,
-        symbol2,
-        price: formatAmount(price, token2.decimal),
-      });
-      EventBus.emit('reloadChart', type);
-    }
+    // }
+
+    const { currentPair, allPairs } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
+    const { token1, token2 } = allPairs[currentPair];
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
+    const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
+      formatSat(swapToken1Amount, token1.decimal),
+    );
+    this.setState({
+      symbol1,
+      symbol2,
+      price: formatAmount(price, token2.decimal),
+    });
+    EventBus.emit('reloadChart', type);
+    // }
     // console.log(pairData);
   }
 
@@ -601,32 +602,14 @@ export default class RemovePage extends Component {
 
   render() {
     const { page, formFinish } = this.state;
+    const { currentPair } = this.props;
     return (
       <Pool>
         <div
           className={styles.container}
           style={{ display: page === 'form' ? 'block' : 'none' }}
         >
-          <div className={styles.head}>
-            <div className={styles.menu}>
-              <span
-                className={styles.menu_item}
-                key="add_liq"
-                onClick={() => {
-                  const { currentPair } = this.props;
-                  history.push(`/pool/${currentPair}/add`);
-                }}
-              >
-                {_('add_liq')}
-              </span>
-              <span
-                className={jc(styles.menu_item, styles.menu_item_selected)}
-                key="remove_liq"
-              >
-                {_('remove_liq_short')}
-              </span>
-            </div>
-          </div>
+          <PoolMenu currentMenuIndex={1} currentPair={currentPair} />
           {formFinish ? this.renderResult() : this.renderForm()}
         </div>
       </Pool>

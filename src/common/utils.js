@@ -322,12 +322,18 @@ export function tokenPre() {
   return isTestNet() ? 'tbsv-' : 'bsv-';
 }
 
-export function parseUrl(data) {
-  let [, hash1, hash2, hash3] = location.hash.split('/');
+export function parseUrl() {
+  const { hash } = location;
+  let [, hash1, hash2, hash3] = hash.split('/');
   if (hash2) hash2 = hash2.toLocaleLowerCase();
   if (hash3) hash3 = hash3.toLocaleLowerCase();
   let currentPair;
-  if (['swap', 'pool', 'farm'].indexOf(hash1) > -1 && data[hash2]) {
+  if (
+    ['swap', 'pool', 'farm'].indexOf(hash1) > -1 &&
+    hash.indexOf('pool/add') < 0 &&
+    hash.indexOf('pool/remove') < 0 &&
+    hash.indexOf('pool/create') < 0
+  ) {
     currentPair = hash2;
   }
   return currentPair;

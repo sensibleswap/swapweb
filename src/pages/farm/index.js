@@ -47,7 +47,6 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
-      allPairs: {},
     };
     window.addEventListener('hashchange', (event) => {
       const { newURL, oldURL } = event;
@@ -486,7 +485,7 @@ export default class FarmC extends Component {
   }
 
   render() {
-    const { app_pannel, currentMenuIndex, allPairs } = this.state;
+    const { app_pannel, currentMenuIndex } = this.state;
 
     return (
       <Spin spinning={this.props.submiting}>

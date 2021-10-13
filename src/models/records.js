@@ -1,4 +1,4 @@
-import recordsApi from '../api/records';
+import recordsApi from '../api/sensiblequery';
 import { USDT_PAIR } from 'common/const';
 import { formatTime, formatAmount, parseUrl, getTimeAgo } from 'common/utils';
 import debug from 'debug';
@@ -19,7 +19,7 @@ export default {
     *query({ payload }, { call, put, select }) {
       const allPairs = yield select((state) => state.pair.allPairs);
 
-      const urlPair = parseUrl(allPairs);
+      const urlPair = parseUrl();
 
       let currentPair;
       if (urlPair) {
@@ -44,6 +44,9 @@ export default {
 
       if (!res || res.code) {
         console.log(res.msg);
+        return [];
+      }
+      if (res.data.length < 1) {
         return [];
       }
       // log('chart data: ', res);

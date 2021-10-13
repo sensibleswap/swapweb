@@ -10,22 +10,22 @@ interface CssExports {
   container: string;
   container_center: string;
   content: string;
+  content1: string;
   desc: string;
+  detail: string;
+  dot: string;
   first: string;
   first_title: string;
-  head: string;
   left: string;
   left_inner: string;
   link: string;
   main_title: string;
-  menu: string;
-  menu_item: string;
-  menu_item_selected: string;
   name: string;
   right: string;
   sidebar: string;
   small_btn: string;
   strong: string;
+  sub_title: string;
   subtitle: string;
   title: string;
 }

@@ -15,11 +15,14 @@ import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
 
-@connect(({ pair, loading }) => {
+@connect(({ pair, custom, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
-    loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
+    loading:
+      effects['pair/getAllPairs'] ||
+      effects['pair/getPairData'] ||
+      effects['custom/getPairData'],
   };
 })
 export default class SwapPage extends Component {
@@ -54,17 +57,16 @@ export default class SwapPage extends Component {
       type: 'pair/getAllPairs',
     });
 
-    let { currentPair } = this.props;
-    if (currentPair) {
-      await dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          // currentPair,
-        },
-      });
+    // if (currentPair) {
+    await dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        // currentPair,
+      },
+    });
 
-      EventBus.emit('reloadChart', 'swap');
-    }
+    // }
+    EventBus.emit('reloadChart', 'swap');
   };
 
   renderContent() {

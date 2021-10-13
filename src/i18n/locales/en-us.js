@@ -50,7 +50,7 @@ const texts = {
 
   select_token: 'Select a token',
 
-  search_token_holder: 'Search Tokenid, name or address',
+  search_token_holder: 'Search Tokenid or name',
   swapping_for: 'Swapping %1 for %2',
   time_left: 'Estimated %s time left',
   view_tx_detail: 'View transaction details',
@@ -255,10 +255,40 @@ const texts = {
   yield_tips: 'your withdrawable yield: %s',
   harvest_success: 'Yield Withdrawal successful',
   amount: 'Amount',
-  volume: 'Volume',
   payout: 'Payout',
   payout_tips: 'Payout per BSV block',
   deposit_lp: 'Deposit LP',
   withdraw_lp: 'Withdraw LP',
+
+  create_new_pair: 'Create pair',
+  create_newpair: 'Create new token pair',
+  newpair_title: 'TokenSwap requirements to create a new token pair',
+  newpair_desc1: 'Agree you’re not a scammer or rug puller',
+  newpair_desc2: '1,000 TSC to pay for the creating/list one pair',
+  newpair_desc3: 'Token Genesis ID of the new token',
+  newpair_desc4: 'Tokens to add to the genesis liquidity',
+  newpair_note1:
+    'Note: TokenSwap reserves the right to delist any pairs at any time',
+  newpair_note2: 'Learn more about possible reasons for delistings here',
+  add_details: 'Add details',
+  pay_fee: 'Pay fee',
+  finish: 'Finish',
+  enter_tokenid: 'Enter Token Genesis ID',
+  find_tokenid: 'Token Genesis IDs can be found on',
+  select_token_pair: 'Select and enter a token pair',
+  next_step: 'Next step',
+  pay_listing_fee: 'Pay listing fee',
+  confirm_and_pay: 'Confirm details and pay fee',
+  confirm_pair_desc:
+    'A single payment of 1000 TSC is required to create and list this token pair on TokenSwap',
+  edit: 'Edit',
+  create_success: 'Pair successfully created',
+  curated_tokens: 'Curated Tokens',
+  unverified_zone: 'Unverified Zone',
+  risks_dis: 'Risks and Disclaimers',
+  risks_desc:
+    'Please read, review and acknowledge the Risks and Disclaimers documentation before proceeding to use TokenSwap.',
+  acknowlege: 'Acknowlege',
+  not_acknowlege: 'Do not acknowledge',
 };
 module.exports = texts;
