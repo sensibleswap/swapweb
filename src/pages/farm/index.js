@@ -234,7 +234,12 @@ export default class FarmC extends Component {
     );
     if (!code && data.txid) {
       // message.success('success');
-      this.showModal(amount, data.txid, params.rewardToken.symbol);
+      this.showModal(
+        amount,
+        data.txid,
+        params.rewardToken.symbol,
+        params.rewardToken.genesisHash,
+      );
       this.fetch();
     } else {
       return message.error(msg);
@@ -272,7 +277,14 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { loading, dispatch, bsvPrice, currentPair, pairsData } = this.props;
+    const {
+      loading,
+      dispatch,
+      bsvPrice,
+      currentPair,
+      pairsData,
+      allPairs,
+    } = this.props;
 
     if (loading || !pairsData[pairName]) {
       return null;
@@ -305,6 +317,7 @@ export default class FarmC extends Component {
     if (!reward_token) {
       return null;
     }
+    const { tokenID } = allPairs[pairName].token2;
     const reward_bsv_amount = formatSat(reward_token.swapToken1Amount);
     const reward_token_amount = formatSat(
       reward_token.swapToken2Amount,
@@ -316,16 +329,6 @@ export default class FarmC extends Component {
     let _total = BigNumber(poolTokenAmount)
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
-
-    // if (_total.isGreaterThan(1000000)) {
-    //   _total = formatAmount(_total.div(1000000), 2);
-    //   _total = _total + 'm';
-    // } else if (_total.isGreaterThan(1000)) {
-    //   _total = formatAmount(_total.div(1000), 2);
-    //   _total = _total + 'k';
-    // } else {
-    //   _total = formatAmount(_total, 2);
-    // }
 
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
@@ -357,7 +360,13 @@ export default class FarmC extends Component {
         <div className={styles.item_header}>
           <div className={styles.item_title}>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol2} symbol2={symbol1} size={20} />
+              <TokenPair
+                symbol1={symbol2}
+                symbol2={symbol1}
+                size={20}
+                genesisID2="bsv"
+                genesisID1={tokenID}
+              />
             </div>
             <div className={styles.name}>
               {symbol2}/{symbol1}

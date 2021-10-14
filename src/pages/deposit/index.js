@@ -125,7 +125,7 @@ export default class Deposit extends Component {
       pairsData,
       allPairs = {},
     } = this.props;
-    if (loading || !currentPair) return <Loading />;
+    if (loading || !currentPair || !pairsData[currentPair]) return <Loading />;
     const { addLPRate, addLP } = this.state;
     const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
     const currentPairData = pairsData[currentPair] || {};
@@ -137,6 +137,7 @@ export default class Deposit extends Component {
       : 8;
     const token_amount = formatSat(swapToken2Amount, decimal);
     const price = formatAmount(token_amount / bsv_amount, decimal);
+    const { token2 } = allPairs[currentPair];
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -164,7 +165,13 @@ export default class Deposit extends Component {
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
               <div className={styles.icon}>
-                <TokenPair symbol1={symbol2} symbol2={symbol1} size={25} />
+                <TokenPair
+                  symbol1={symbol2}
+                  symbol2={symbol1}
+                  genesisID2="bsv"
+                  genesisID1={token2.tokenID}
+                  size={25}
+                />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}-LP
@@ -193,7 +200,11 @@ export default class Deposit extends Component {
           >
             <div className={styles.pair_left}>
               <div className={styles.icon} style={{ marginRight: 10 }}>
-                <TokenLogo name={rewardToken.symbol} size={25} />
+                <TokenLogo
+                  name={rewardToken.symbol}
+                  genesisID={rewardToken.tokenID}
+                  size={25}
+                />
               </div>
               <div className={styles.name} style={{ fontSize: 22 }}>
                 {rewardToken.symbol}
@@ -352,7 +363,8 @@ export default class Deposit extends Component {
   }
 
   renderResult() {
-    const { symbol1, symbol2 } = this.props;
+    const { symbol1, symbol2, allPairs, currentPair } = this.props;
+    const { token2 } = allPairs[currentPair];
     const { addLP } = this.state;
     return (
       <div className={styles.content}>
@@ -370,7 +382,13 @@ export default class Deposit extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />{' '}
+            <TokenPair
+              symbol1={symbol1}
+              symbol2={symbol2}
+              genesisID2="bsv"
+              genesisID1={token2.tokenID}
+              size={20}
+            />{' '}
             {symbol1}/{symbol2}-LP
           </div>
         </div>

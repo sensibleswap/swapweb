@@ -96,12 +96,16 @@ export default class RemovePage extends Component {
     const { token1, token2 } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
+    const genesisID1 = token1.tokenID || 'bsv';
+    const genesisID2 = token2.tokenID;
     const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
       formatSat(swapToken1Amount, token1.decimal),
     );
     this.setState({
       symbol1,
       symbol2,
+      genesisID1,
+      genesisID2,
       price: formatAmount(price, token2.decimal),
     });
     EventBus.emit('reloadChart', type);
@@ -135,13 +139,19 @@ export default class RemovePage extends Component {
     } = this.props;
     const LP = accountInfo.userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
-    const { symbol1, symbol2 } = this.state;
+    const { symbol1, symbol2, genesisID1, genesisID2 } = this.state;
     return (
       <div className={styles.content}>
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={40} />
+              <TokenPair
+                symbol1={symbol1}
+                symbol2={symbol2}
+                size={40}
+                genesisID1={genesisID1}
+                genesisID2={genesisID2}
+              />
             </div>
             <div className={styles.name}>
               {symbol2}/{symbol1}
@@ -259,7 +269,14 @@ export default class RemovePage extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
-    const { removeRate, removeLP, symbol1, symbol2 } = this.state;
+    const {
+      removeRate,
+      removeLP,
+      symbol1,
+      symbol2,
+      genesisID1,
+      genesisID2,
+    } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     const { removeToken1, removeToken2 } = this.calc();
     return (
@@ -291,7 +308,13 @@ export default class RemovePage extends Component {
           </div>
           <div className={styles.s_box}>
             <div className={styles.coin}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
+              <TokenPair
+                symbol1={symbol1}
+                symbol2={symbol2}
+                size={30}
+                genesisID1={genesisID1}
+                genesisID2={genesisID2}
+              />
             </div>
             <div className={styles.name}>
               {symbol1}/{symbol2}-LP
@@ -315,13 +338,13 @@ export default class RemovePage extends Component {
             <div className={styles.values_left}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol1} size={20} />
+                  <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
                   <div style={{ marginLeft: 5 }}>{symbol1}</div>
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol2} size={20} />
+                  <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
                   <div style={{ marginLeft: 5 }}>{symbol2}</div>
                 </div>
               </div>
@@ -525,6 +548,8 @@ export default class RemovePage extends Component {
     const {
       symbol1,
       symbol2,
+      genesisID1,
+      genesisID2,
       final_lp,
       receive_token1,
       receive_token2,
@@ -544,7 +569,13 @@ export default class RemovePage extends Component {
           <div className={styles.f_item}>
             <div className={styles.f_label}>
               <div className={styles.icon}>
-                <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />
+                <TokenPair
+                  symbol1={symbol1}
+                  symbol2={symbol2}
+                  size={20}
+                  genesisID1={genesisID1}
+                  genesisID2={genesisID2}
+                />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}
@@ -567,7 +598,7 @@ export default class RemovePage extends Component {
           <div className={styles.f_item}>
             <div className={styles.f_label}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={20} />
+                <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
               </div>
               <div className={styles.name}>
                 <FormatNumber value={receive_token1} suffix={symbol1} />
@@ -575,7 +606,7 @@ export default class RemovePage extends Component {
             </div>
             <div className={styles.f_value}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol2} size={20} />
+                <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
               </div>
               <div className={styles.name}>
                 <FormatNumber value={receive_token2} suffix={symbol2} />

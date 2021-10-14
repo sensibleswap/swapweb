@@ -179,7 +179,7 @@ export default class Swap extends Component {
     return (
       <div className={styles.box}>
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
-          <TokenLogo name={symbol1} />
+          <TokenLogo name={symbol1} genesisID={origin_token.tokenID || 'bsv'} />
           <div className={styles.name}>{symbol1}</div>
           <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
         </div>
@@ -204,7 +204,12 @@ export default class Swap extends Component {
       <div className={styles.box}>
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <div style={{ width: 40 }}>
-            {symbol2 && <TokenLogo name={symbol2} />}
+            {symbol2 && (
+              <TokenLogo
+                name={symbol2}
+                genesisID={aim_token.tokenID || 'bsv'}
+              />
+            )}
           </div>
           <div className={styles.name}>{symbol2 || _('select')}</div>
           <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />

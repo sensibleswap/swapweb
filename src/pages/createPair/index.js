@@ -84,7 +84,7 @@ export default class CreatePair extends Component {
         genesisHash: e.target.value,
       },
     });
-    if (res.code) {
+    if (!res || res.code) {
       return this.setState({
         token2: undefined,
       });
@@ -123,7 +123,7 @@ export default class CreatePair extends Component {
         <div className={styles.title}>{_('input')} A</div>
         <div className={styles.box}>
           <div className={styles.coin}>
-            <TokenLogo name={symbol1} />
+            <TokenLogo name={symbol1} genesisID="bsv" />
             <div className={styles.name}>{symbol1}</div>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default class CreatePair extends Component {
           {searching && <Spin />}
           {token2 && (
             <div className={styles.token_info}>
-              <TokenLogo name={token2.symbol} />
+              <TokenLogo name={token2.symbol} genesisID={token2.genesis} />
               <div className={styles.token_name}>
                 <div className={styles.symbol}>{token2.symbol}</div>
                 <div className={styles.full_name}>{token2.name}</div>
@@ -177,13 +177,13 @@ export default class CreatePair extends Component {
           </div>
           <div className={styles.line}>
             <div className={styles.coin}>
-              <TokenLogo name={symbol1} size={25} />
+              <TokenLogo name={symbol1} genesisID="bsv" size={25} />
               <div className={styles.name}>{symbol1}</div>
             </div>
           </div>
           <div className={styles.line}>
             <div className={styles.coin}>
-              <TokenLogo name={symbol} size={25} />
+              <TokenLogo name={symbol} genesisID={token2.genesis} size={25} />
               <div className={styles.name}>{symbol}</div>
             </div>
             <div className={styles.op}>

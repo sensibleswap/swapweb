@@ -33,11 +33,12 @@ const datas = [
   },
 ];
 
-@connect(({ user, farm, loading }) => {
+@connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
   return {
     ...user,
     ...farm,
+    ...pair,
     loading: effects['farm/getAllPairs'],
     submiting:
       effects['farm/reqSwap'] ||
@@ -125,6 +126,7 @@ export default class Withdraw extends Component {
 
   renderForm() {
     const {
+      allPairs,
       currentPair,
       loading,
       submiting,
@@ -135,6 +137,9 @@ export default class Withdraw extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
+    const { token2 } = allPairs[
+      `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
+    ];
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -162,7 +167,13 @@ export default class Withdraw extends Component {
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
               <div className={styles.icon}>
-                <TokenPair symbol1={symbol2} symbol2={symbol1} size={25} />
+                <TokenPair
+                  symbol1={symbol2}
+                  symbol2={symbol1}
+                  size={25}
+                  genesisID2="bsv"
+                  genesisID1={token2.tokenID}
+                />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}-LP

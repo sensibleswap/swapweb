@@ -60,13 +60,20 @@ export default class Pool extends Component {
     const { token1, token2 } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
+    const token = allPairs[currentPair].token2;
     return (
       <div className={styles.content}>
         <Chart symbol1={symbol1} symbol2={symbol2} />
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
+              <TokenPair
+                symbol1={symbol1}
+                symbol2={symbol2}
+                size={30}
+                genesisID1="bsv"
+                genesisID2={token.tokenID}
+              />
             </div>
             <div className={styles.name}>
               LP({symbol2}/{symbol1})

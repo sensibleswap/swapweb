@@ -73,6 +73,7 @@ export default {
         Object.keys(data).forEach((item) => {
           if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
             currentPair = item;
+            customPair = false;
           }
         });
       }

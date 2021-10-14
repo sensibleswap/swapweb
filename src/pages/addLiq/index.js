@@ -368,7 +368,7 @@ export default class Liquidity extends Component {
                 className={styles.coin}
                 onClick={() => this.showUI('selectToken')}
               >
-                <TokenLogo name={symbol1} />
+                <TokenLogo name={symbol1} genesisID="bsv" />
                 <div className={styles.name}>{symbol1}</div>
                 <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
               </div>
@@ -405,7 +405,7 @@ export default class Liquidity extends Component {
                 onClick={() => this.showUI('selectToken')}
               >
                 <div style={{ width: 40 }}>
-                  <TokenLogo name={symbol2} />
+                  <TokenLogo name={symbol2} genesisID={token2.tokenID} />
                 </div>
                 <div className={styles.name}>{symbol2 || _('select')}</div>
                 <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
@@ -785,6 +785,8 @@ export default class Liquidity extends Component {
           <TokenPair
             symbol1={symbol1}
             symbol2={symbol2}
+            genesisID1="bsv"
+            genesisID2={token2.tokenID}
             size={20}
             style={{ marginLeft: 10 }}
           />{' '}

@@ -180,6 +180,8 @@ export default class TokenList extends Component {
             <TokenPair
               symbol1={item.token1.symbol}
               symbol2={item.token2.symbol}
+              genesisID1="bsv"
+              genesisID2={item.token2.tokenID}
               size={25}
             />
           </div>
@@ -187,7 +189,7 @@ export default class TokenList extends Component {
         </div>
         {type === 'custom' && (
           <div className={styles.genesis_id}>
-            {strAbbreviation(item.token2.genesisHash)}
+            {strAbbreviation(item.token2.tokenID)}
           </div>
         )}
         <div className={styles.selected}>
