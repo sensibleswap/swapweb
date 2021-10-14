@@ -266,7 +266,7 @@ export default class CreatePair extends Component {
     }
 
     const payToken = payPair.token2;
-    genesisHash = payToken.genesisHash;
+    genesisHash = payToken.tokenID;
     codeHash = payToken.codeHash;
 
     let tx_res = await dispatch({
