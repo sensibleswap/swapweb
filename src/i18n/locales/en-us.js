@@ -50,7 +50,7 @@ const texts = {
 
   select_token: 'Select a token',
 
-  search_token_holder: 'Search Tokenid or name',
+  search_token_holder: 'Search Genesis ID or name',
   swapping_for: 'Swapping %1 for %2',
   time_left: 'Estimated %s time left',
   view_tx_detail: 'View transaction details',
