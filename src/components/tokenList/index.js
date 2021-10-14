@@ -67,13 +67,13 @@ export default class TokenList extends Component {
   select = async (currentPair, type) => {
     const { dispatch } = this.props;
     if (currentPair && currentPair !== this.props.currentPair) {
-      await dispatch({
-        type: 'pair/save',
-        payload: {
-          customPair: type === 'custom',
-          currentPair,
-        },
-      });
+      // await dispatch({
+      //   type: 'pair/save',
+      //   payload: {
+      //     customPair: type === 'custom',
+      //     currentPair,
+      //   },
+      // });
 
       const { hash } = location;
       if (hash.indexOf('swap') > -1) {
@@ -83,19 +83,13 @@ export default class TokenList extends Component {
       } else if (hash.indexOf('remove') > -1) {
         history.push(`/pool/${currentPair}/remove`);
       }
+
+      EventBus.emit('reloadPair');
     }
   };
 
   changeToken = async (currentPair) => {
     const { dispatch, finish } = this.props;
-    // if(currentPair.length === 40) {
-    //   await dispatch({
-    //     type: 'custom/getPairData',
-    //     payload: {
-    //       symbol: currentPair,
-    //     },
-    //   });
-    // } else {
     window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
     if (currentPair.length === 40) {
       await dispatch({

@@ -57,9 +57,11 @@ export default {
         });
         // console.log(res1);
         if (!res1.code) {
-          res1.data.forEach((item) => {
-            allPairs[item.token2.tokenID] = item;
-          });
+          res1.data &&
+            res1.data.length > 0 &&
+            res1.data.forEach((item) => {
+              allPairs[item.token2.tokenID] = item;
+            });
           customPair = true;
         } else {
           customPair = false;
