@@ -8,7 +8,7 @@ import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
-import { jc } from 'common/utils';
+import { jc, isTestNet } from 'common/utils';
 import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
@@ -19,6 +19,7 @@ const { Step } = Steps;
 const FormItem = Form.Item;
 const stepData = [_('select_pair'), _('pay_fee'), _('finish')];
 const bsvtsc = 'bsv-tsc';
+const bsvtest = 'tbsv-test';
 
 @connect(({ custom, user, pair, loading }) => {
   const { effects } = loading;
@@ -257,14 +258,16 @@ export default class CreatePair extends Component {
       requiredTscAmount,
     } = res;
     let genesisHash, codeHash;
-    if (!allPairs[bsvtsc]) {
-      genesisHash = '52e6021649be1d0621c52c9f61a54ef58c6d8dbe';
-      codeHash = '777e4dd291059c9f7a0fd563f7204576dcceb791';
+    let payPair;
+    if (isTestNet()) {
+      payPair = allPairs[bsvtest];
     } else {
-      const { token } = allPairs[bsvtsc];
-      genesisHash = token.genesisHash;
-      codeHash = token.codeHash;
+      payPair = allPairs[bsvtsc];
     }
+
+    const payToken = payPair.token2;
+    genesisHash = payToken.genesisHash;
+    codeHash = payToken.codeHash;
 
     let tx_res = await dispatch({
       type: 'user/transferAll',
