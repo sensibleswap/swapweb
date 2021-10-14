@@ -85,7 +85,8 @@ export default class Deposit extends Component {
       //输入框变化值
       const { accountInfo, lptoken } = this.props;
       const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      const _addLp = e.target.value;
+      let _addLp = e.target.value;
+      _addLp = formatAmount(_addLp, lptoken.decimal);
       if (_addLp <= 0) {
         value = 0;
       } else if (_addLp >= LP) {
@@ -276,7 +277,7 @@ export default class Deposit extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
       return message.error(_('txs_fail'));
     }
 

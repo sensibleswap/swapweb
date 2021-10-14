@@ -161,9 +161,6 @@ export default class FarmC extends Component {
       const newData = JSON.parse(raw.toString());
       return this.harvest2(newData, currentPair, requestIndex);
     }
-    if (harvest2_res.msg) {
-      return message.error(harvest2_res.msg);
-    }
     return harvest2_res;
   };
 
@@ -227,6 +224,9 @@ export default class FarmC extends Component {
       currentPair,
       requestIndex,
     );
+    if (harvest2_res.code && harvest2_res.msg) {
+      return message.error(harvest2_res.msg);
+    }
     const { code, data, msg } = harvest2_res;
     const amount = formatSat(
       data.rewardTokenAmount,

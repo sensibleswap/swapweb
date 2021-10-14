@@ -162,7 +162,8 @@ export default class RemovePage extends Component {
       const { accountInfo, allPairs, currentPair } = this.props;
       const { lptoken = {} } = allPairs[currentPair];
       const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      const _removeLp = e.target.value;
+      let _removeLp = e.target.value;
+      _removeLp = formatAmount(_removeLp, lptoken.decimal);
       if (_removeLp <= 0) {
         value = 0;
       } else if (_removeLp >= LP) {
@@ -418,7 +419,7 @@ export default class RemovePage extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
       return message.error(_('txs_fail'));
     }
 
@@ -440,7 +441,7 @@ export default class RemovePage extends Component {
       },
     });
 
-    if (removeliq_res.code && !removeliq_res.data.txid) {
+    if (removeliq_res.code && removeliq_res.msg) {
       return message.error(removeliq_res.msg);
     }
     message.success('success');

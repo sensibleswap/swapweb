@@ -290,5 +290,7 @@ const texts = {
     'Please read, review and acknowledge the Risks and Disclaimers documentation before proceeding to use TokenSwap.',
   acknowlege: 'Acknowlege',
   not_acknowlege: 'Do not acknowledge',
+  download_sensilet:
+    'Install Sensilet extention. Refresh the page if you have installed.',
 };
 module.exports = texts;
