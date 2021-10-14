@@ -46,7 +46,7 @@ export default {
         console.log(res.msg);
         return [];
       }
-      if (res.data.length < 1) {
+      if (res.data && res.data.length < 1) {
         return [];
       }
       // log('chart data: ', res);

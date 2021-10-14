@@ -105,6 +105,7 @@ export default class CreatePair extends Component {
   finish = () => {
     const { token2 } = this.state;
     history.push(`/pool/${token2.genesis}/add`);
+    EventBus.emit('reloadPair');
   };
 
   renderContent0() {
