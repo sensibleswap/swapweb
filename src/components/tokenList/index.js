@@ -5,7 +5,7 @@ import EventBus from 'common/eventBus';
 import querystring from 'querystringify';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
-import { jc } from 'common/utils';
+import { jc, strAbbreviation } from 'common/utils';
 import TokenPair from 'components/tokenPair';
 import { history, connect, Link } from 'umi';
 import styles from './index.less';
@@ -65,16 +65,7 @@ export default class TokenList extends Component {
   }
 
   select = async (currentPair, type) => {
-    const { dispatch } = this.props;
     if (currentPair && currentPair !== this.props.currentPair) {
-      // await dispatch({
-      //   type: 'pair/save',
-      //   payload: {
-      //     customPair: type === 'custom',
-      //     currentPair,
-      //   },
-      // });
-
       const { hash } = location;
       if (hash.indexOf('swap') > -1) {
         history.push(`/swap/${currentPair}`);
@@ -194,6 +185,11 @@ export default class TokenList extends Component {
           </div>
           <div className={styles.name}>{item.name.toUpperCase()}</div>
         </div>
+        {type === 'custom' && (
+          <div className={styles.genesis_id}>
+            {strAbbreviation(item.token2.genesisHash)}
+          </div>
+        )}
         <div className={styles.selected}>
           {((type === 'custom' &&
             customPair &&

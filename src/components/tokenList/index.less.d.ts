@@ -7,6 +7,7 @@ interface CssExports {
   dec_desc: string;
   dec_title: string;
   decla: string;
+  genesis_id: string;
   icon_name: string;
   item: string;
   menu: string;

@@ -258,16 +258,14 @@ export default class CreatePair extends Component {
       requiredTscAmount,
     } = res;
     let genesisHash, codeHash;
-    let payPair;
     if (isTestNet()) {
-      payPair = allPairs[bsvtest];
+      genesisHash = '52e6021649be1d0621c52c9f61a54ef58c6d8dbe';
+      codeHash = '777e4dd291059c9f7a0fd563f7204576dcceb791';
     } else {
-      payPair = allPairs[bsvtsc];
+      const payToken = allPairs[bsvtsc].token2;
+      genesisHash = payToken.tokenID;
+      codeHash = payToken.codeHash;
     }
-
-    const payToken = payPair.token2;
-    genesisHash = payToken.tokenID;
-    codeHash = payToken.codeHash;
 
     let tx_res = await dispatch({
       type: 'user/transferAll',
