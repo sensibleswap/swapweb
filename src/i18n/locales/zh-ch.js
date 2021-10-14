@@ -66,7 +66,7 @@ const texts = {
 
   pair_liq_pool: '资产对流动性池',
   add_liq: '提供流动性',
-  add_liq_short: '提供',
+  add_liq_short: '提供流动性',
   remove_liq: '移除流动性',
   remove_liq_short: '移除',
   create_pair: '创建交易对',

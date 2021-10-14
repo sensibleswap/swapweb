@@ -66,9 +66,9 @@ const texts = {
 
   pair_liq_pool: 'Pair Liquidity Pool',
   add_liq: 'Add Liquidity',
-  add_liq_short: 'Add',
+  add_liq_short: 'Deposit',
   remove_liq: 'Remove Liquidity',
-  remove_liq_short: 'Remove',
+  remove_liq_short: 'Withdraw',
   create_pair: 'Create a pair',
   select_pair: 'Select pair',
   promote: 'Promote',

@@ -7,7 +7,7 @@ import _ from 'i18n';
 const menuData = [
   {
     path: 'add',
-    text: _('add_liq'),
+    text: _('add_liq_short'),
     key: 'add_liq',
   },
   {
