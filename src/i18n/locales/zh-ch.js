@@ -50,7 +50,7 @@ const texts = {
 
   select_token: '选择资产',
 
-  search_token_holder: '用TokenID或者名称进行搜索',
+  search_token_holder: '用Genesis或者名称进行搜索',
   swapping_for: '用 %1 交换 %2',
   time_left: '预估剩余时间 %s',
   view_tx_detail: '查看交易细节',
@@ -259,7 +259,8 @@ const texts = {
   create_newpair: '上架新交易对',
   newpair_title: '上架新交易对的要求',
   newpair_desc1: '项目代币不能用于欺诈和圈钱',
-  newpair_desc2: '支付1,000 TSC',
+  newpair_desc2:
+    '支付1000TSC作为创建swap合约的技术服务费，一旦合约创建成功，不予退还',
   newpair_desc3: '上架token的 Genesis ID',
   newpair_desc4: '要添加到流动池的资产',
   newpair_note1: '注意: TokenSwap 有权在任何时候下架任何交易对',

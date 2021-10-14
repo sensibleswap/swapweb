@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { gzip } from 'node-gzip';
 import { Link, history, connect } from 'umi';
-import { Steps, Button, Input, message, Form } from 'antd';
+import { Steps, Button, Input, message, Form, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
@@ -25,7 +25,13 @@ const bsvtsc = 'bsv-tsc';
   return {
     ...user,
     ...pair,
+    loading: effects['pair/getAllPairs'],
     searching: effects['custom/query'],
+    submiting:
+      effects['custom/req'] ||
+      effects['custom/createSwap'] ||
+      effects['user/transferAll'] ||
+      false,
   };
 })
 export default class CreatePair extends Component {
@@ -110,6 +116,7 @@ export default class CreatePair extends Component {
 
   renderContent0() {
     const { token2 } = this.state;
+    const { searching } = this.props;
     return (
       <div className={styles.create_content}>
         <div className={styles.title}>{_('input')} A</div>
@@ -136,6 +143,7 @@ export default class CreatePair extends Component {
           <FormItem name="genesis">
             <Input.TextArea className={styles.input} onChange={this.change} />
           </FormItem>
+          {searching && <Spin />}
           {token2 && (
             <div className={styles.token_info}>
               <TokenLogo name={token2.symbol} />
@@ -384,20 +392,22 @@ export default class CreatePair extends Component {
   };
 
   render() {
-    const { loading } = this.props;
+    const { loading, submiting } = this.props;
     if (loading) return <Loading />;
     const { step } = this.state;
     return (
       <Pool pageName="createPair">
-        <div className={styles.container}>
-          <PoolMenu currentMenuIndex={2} />
-          {this.renderSteps()}
-          <Form ref={this.formRef}>
-            {step === 0 && this.renderContent0()}
-            {step === 1 && this.renderContent1()}
-            {step === 2 && this.renderContent2()}
-          </Form>
-        </div>
+        <Spin spinning={submiting}>
+          <div className={styles.container}>
+            <PoolMenu currentMenuIndex={2} />
+            {this.renderSteps()}
+            <Form ref={this.formRef}>
+              {step === 0 && this.renderContent0()}
+              {step === 1 && this.renderContent1()}
+              {step === 2 && this.renderContent2()}
+            </Form>
+          </div>
+        </Spin>
       </Pool>
     );
   }

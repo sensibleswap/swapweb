@@ -281,8 +281,8 @@ export default class TokenList extends Component {
               <a
                 href={
                   isZh
-                    ? 'https://app.gitbook.com/o/-MRwja99n-szigy6AT6z/s/-MS1k5-YXvZij6l03Xu9-1608594363/c/dKMhFoSVq0gQ8Dccc9HK/feng-xian-ti-shi'
-                    : 'https://app.gitbook.com/o/-MRwja99n-szigy6AT6z/s/-MS1k5-YXvZij6l03Xu9-887967055/risks-and-disclaimer/risks'
+                    ? 'https://tokenswap.gitbook.io/tokenswap/v/zhong-wen/general-faq/feng-xian-ti-shi'
+                    : 'https://tokenswap.gitbook.io/tokenswap/risks'
                 }
                 target="_blank"
                 className={styles.btn_link}
