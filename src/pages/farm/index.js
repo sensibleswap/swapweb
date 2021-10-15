@@ -6,7 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { gzip, ungzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 // import pairApi from '../../api/pair';
-import { jc, formatSat, formatAmount, tokenPre } from 'common/utils';
+import { jc, formatSat, formatAmount, tokenPre, parseUrl } from 'common/utils';
 import EventBus from 'common/eventBus';
 import FormatNumber from 'components/formatNumber';
 import TokenLogo from 'components/tokenicon';
@@ -53,19 +53,14 @@ export default class FarmC extends Component {
       if (newURL !== oldURL) {
         let newHash = newURL.substr(newURL.indexOf('#'));
         let oldHash = oldURL.substr(oldURL.indexOf('#'));
-        newHash = newHash.split('/');
-        oldHash = oldHash.split('/');
-        if (
-          newHash[1] === oldHash[1] &&
-          newHash[2] &&
-          newHash[2] !== oldHash[2]
-          // && props.allFarmPairs[newHash[2]]
-        ) {
+        const newpair = parseUrl(newHash);
+        const oldpair = parseUrl(oldHash);
+        if (newpair && newpair !== oldpair) {
           EventBus.emit('changeFarmPair');
           props.dispatch({
             type: 'farm/saveFarm',
             payload: {
-              currentPair: newHash[2],
+              currentPair: newpair,
             },
           });
         }

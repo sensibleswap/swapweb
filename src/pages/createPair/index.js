@@ -157,7 +157,9 @@ export default class CreatePair extends Component {
         </div>
         <div className={styles.desc}>
           {_('find_tokenid')}{' '}
-          <Link to="https://blockcheck.info/">BlockCheck</Link>
+          <a href="https://blockcheck.info/" target="_blank">
+            BlockCheck
+          </a>
         </div>
 
         {this.renderButton()}
@@ -245,7 +247,7 @@ export default class CreatePair extends Component {
         address: userAddress,
       },
     });
-    console.log(res);
+    // console.log(res);
     if (res.msg) {
       return message.error(res.msg);
     }
@@ -317,7 +319,7 @@ export default class CreatePair extends Component {
       amountCheckRawTx: tx_res[1].routeCheckTxHex,
       tokenID: token2.genesis,
     };
-    console.log(payload);
+    // console.log(payload);
     let create_data = JSON.stringify(payload);
 
     create_data = await gzip(create_data);

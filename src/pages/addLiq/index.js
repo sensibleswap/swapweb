@@ -733,7 +733,7 @@ export default class Liquidity extends Component {
         data: liq_data,
       },
     });
-    console.log(addliq_res);
+    // console.log(addliq_res);
     if (addliq_res.code && addliq_res.msg) {
       return message.error(addliq_res.msg);
     }

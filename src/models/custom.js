@@ -47,7 +47,7 @@ export default {
       const res = yield customApi.createswap.call(customApi, {
         data,
       });
-      console.log(res);
+      // console.log(res);
       if (res.code) {
         return res;
       }
@@ -60,7 +60,7 @@ export default {
       const res = yield customApi.pairInfo.call(customApi, {
         symbol,
       });
-      console.log(res);
+      // console.log(res);
       if (res.code) {
         return res;
       }

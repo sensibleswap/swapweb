@@ -51,11 +51,18 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
+    this.initData();
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
   }
   componentWillUnmount() {
     this.polling = false;
+  }
+
+  initData() {
+    this.props.dispatch({
+      type: 'pair/fetchIcons',
+    });
   }
 
   fetchPairData = async () => {

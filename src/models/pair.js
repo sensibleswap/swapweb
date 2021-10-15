@@ -1,9 +1,12 @@
+import 'whatwg-fetch';
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
 import { parseUrl } from 'common/utils';
 import debug from 'debug';
+
 const log = debug('pair');
+const iconUrl = 'https://volt.id/api.json?method=sensibleft.getSensibleFtList';
 
 const { localStorage } = window;
 
@@ -19,10 +22,36 @@ export default {
     token1: {},
     token2: {},
     LP: 100000,
+    iconList: undefined,
   },
 
   subscriptions: {
-    async setup({ dispatch, history }) {},
+    async setup({ dispatch, history }) {
+      fetch(iconUrl)
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          let icons = {
+            bsv: {
+              type: 'iconlogo-bitcoin',
+            },
+          };
+          if (data.success) {
+            data.data.list.forEach((item) => {
+              icons[item.genesis] = {
+                url: item.logo,
+              };
+            });
+            dispatch({
+              type: 'save',
+              payload: {
+                iconList: icons,
+              },
+            });
+          }
+        });
+    },
   },
 
   effects: {

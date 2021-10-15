@@ -322,8 +322,8 @@ export function tokenPre() {
   return isTestNet() ? 'tbsv-' : 'bsv-';
 }
 
-export function parseUrl() {
-  const { hash } = location;
+export function parseUrl(hash) {
+  if (!hash) hash = location.hash;
   let [, hash1, hash2, hash3] = hash.split('/');
   if (hash2) hash2 = hash2.toLocaleLowerCase();
   if (hash3) hash3 = hash3.toLocaleLowerCase();

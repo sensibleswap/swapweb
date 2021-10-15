@@ -5,7 +5,7 @@ import EventBus from 'common/eventBus';
 import querystring from 'querystringify';
 import { CheckCircleOutlined } from '@ant-design/icons';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
-import { jc, strAbbreviation } from 'common/utils';
+import { jc, strAbbreviation, parseUrl } from 'common/utils';
 import TokenPair from 'components/tokenPair';
 import { history, connect, Link } from 'umi';
 import styles from './index.less';
@@ -51,14 +51,10 @@ export default class TokenList extends Component {
       if (newURL !== oldURL) {
         let newHash = newURL.substr(newURL.indexOf('#'));
         let oldHash = oldURL.substr(oldURL.indexOf('#'));
-        newHash = newHash.split('/');
-        oldHash = oldHash.split('/');
-        if (
-          newHash[1] === oldHash[1] &&
-          newHash[2] &&
-          newHash[2] !== oldHash[2]
-        ) {
-          this.changeToken(newHash[2].toLowerCase());
+        const newpair = parseUrl(newHash);
+        const oldpair = parseUrl(oldHash);
+        if (newpair && newpair !== oldpair) {
+          this.changeToken(newpair);
         }
       }
     });

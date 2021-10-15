@@ -15,14 +15,11 @@ import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
 
-@connect(({ pair, custom, loading }) => {
+@connect(({ pair, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
-    loading:
-      effects['pair/getAllPairs'] ||
-      effects['pair/getPairData'] ||
-      effects['custom/getPairData'],
+    loading: effects['pair/getAllPairs'] || effects['pair/getPairData'],
   };
 })
 export default class SwapPage extends Component {
