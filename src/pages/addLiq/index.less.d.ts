@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   add_content: string;
+  arrow: string;
   balance: string;
   box: string;
   btn: string;

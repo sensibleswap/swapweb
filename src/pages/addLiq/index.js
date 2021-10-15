@@ -370,7 +370,9 @@ export default class Liquidity extends Component {
               >
                 <TokenLogo name={symbol1} genesisID="bsv" />
                 <div className={styles.name}>{symbol1}</div>
-                <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                <div className={styles.arrow}>
+                  <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                </div>
               </div>
               <FormItem name={'origin_amount'}>
                 <Input
@@ -408,7 +410,9 @@ export default class Liquidity extends Component {
                   <TokenLogo name={symbol2} genesisID={token2.tokenID} />
                 </div>
                 <div className={styles.name}>{symbol2 || _('select')}</div>
-                <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                <div className={styles.arrow}>
+                  <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                </div>
               </div>
               <FormItem name={'aim_amount'}>
                 <Input

@@ -181,7 +181,9 @@ export default class Swap extends Component {
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <TokenLogo name={symbol1} genesisID={origin_token.tokenID || 'bsv'} />
           <div className={styles.name}>{symbol1}</div>
-          <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          <div className={styles.arrow}>
+            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          </div>
         </div>
         <FormItem name="origin_amount">
           <Input
@@ -212,7 +214,9 @@ export default class Swap extends Component {
             )}
           </div>
           <div className={styles.name}>{symbol2 || _('select')}</div>
-          <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          <div className={styles.arrow}>
+            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          </div>
         </div>
         <FormItem name="aim_amount">
           <Input
