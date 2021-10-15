@@ -441,17 +441,17 @@ export default class UserInfo extends Component {
                     />
                     <div className={styles.label}>BSV Testnet</div>
                   </li>
+                </>
+              )}
+
+              {!isApp && (
+                <>
                   <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
                     <div className={styles.sens_icon}>
                       <img src={sensiletIcon} />
                     </div>
                     <div className={styles.label}>Sensilet</div>
                   </li>
-                </>
-              )}
-
-              {!isApp && (
-                <>
                   <li
                     onClick={() => this.connectWebWallet(1)}
                     style={{ fontSize: 15 }}
