@@ -41,7 +41,7 @@ export default {
               },
             };
             data.data.list.forEach((item) => {
-              icons[item.genesis] = {
+              icons[item.genesis.toString()] = {
                 url: item.logo,
               };
             });
