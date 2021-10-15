@@ -60,7 +60,7 @@ export default class FarmC extends Component {
           props.dispatch({
             type: 'farm/saveFarm',
             payload: {
-              currentPair: newpair,
+              currentFarmPair: newpair,
             },
           });
         }
@@ -101,23 +101,23 @@ export default class FarmC extends Component {
     });
   };
 
-  changeCurrentFarm = async (currentPair) => {
+  changeCurrentFarm = async (currentFarmPair) => {
     const { allFarmPairs, dispatch } = this.props;
 
     let { hash } = location;
     if (hash.indexOf('farm') > -1) {
-      history.push(`/farm/${currentPair}`);
+      history.push(`/farm/${currentFarmPair}`);
     }
     dispatch({
       type: 'farm/saveFarm',
       payload: {
-        currentPair,
+        currentFarmPair,
         allFarmPairs,
       },
     });
   };
 
-  harvest2 = async (havest_data, currentPair, requestIndex) => {
+  harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
     const { dispatch, accountInfo } = this.props;
     const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
     let sign_res = await dispatch({
@@ -144,7 +144,7 @@ export default class FarmC extends Component {
     const harvest2_res = await dispatch({
       type: 'farm/harvest2',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         requestIndex,
         pubKey: publicKey,
         sig,
@@ -154,19 +154,19 @@ export default class FarmC extends Component {
     if (code === 99999) {
       const raw = await ungzip(Buffer.from(data.other));
       const newData = JSON.parse(raw.toString());
-      return this.harvest2(newData, currentPair, requestIndex);
+      return this.harvest2(newData, currentFarmPair, requestIndex);
     }
     return harvest2_res;
   };
 
-  harvest = async (currentPair, params) => {
+  harvest = async (currentFarmPair, params) => {
     const { dispatch, accountInfo } = this.props;
     const { userAddress, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         address: userAddress,
         op: 3,
       },
@@ -197,7 +197,7 @@ export default class FarmC extends Component {
     }
 
     let hav_data = {
-      symbol: currentPair,
+      symbol: currentFarmPair,
       requestIndex,
       bsvRawTx: tx_res.txHex,
       bsvOutputIndex: 0,
@@ -216,7 +216,7 @@ export default class FarmC extends Component {
     }
     const harvest2_res = await this.harvest2(
       harvest_res.data,
-      currentPair,
+      currentFarmPair,
       requestIndex,
     );
     if (harvest2_res.code && harvest2_res.msg) {
@@ -276,7 +276,7 @@ export default class FarmC extends Component {
       loading,
       dispatch,
       bsvPrice,
-      currentPair,
+      currentFarmPair,
       pairsData,
       allPairs,
     } = this.props;
@@ -345,7 +345,7 @@ export default class FarmC extends Component {
     return (
       <div
         className={
-          pairName === currentPair
+          pairName === currentFarmPair
             ? jc(styles.item, styles.current)
             : styles.item
         }

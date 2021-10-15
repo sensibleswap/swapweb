@@ -87,11 +87,11 @@ export default class Withdraw extends Component {
       const {
         // accountInfo,
         allFarmPairs,
-        // currentPair,
+        currentFarmPair,
         lockedTokenAmount,
       } = this.props;
       // const { userBalance, } = accountInfo;
-      const { lptoken = {} } = allFarmPairs[currentPair];
+      const { lptoken = {} } = allFarmPairs[currentFarmPair];
       // const LP = userBalance[lptoken.tokenID] || 0;
       let _addLp = e.target.value;
       _addLp = formatAmount(_addLp, lptoken.decimal);
@@ -127,7 +127,7 @@ export default class Withdraw extends Component {
   renderForm() {
     const {
       allPairs,
-      currentPair,
+      currentFarmPair,
       loading,
       submiting,
       symbol1,
@@ -135,7 +135,7 @@ export default class Withdraw extends Component {
       // lptoken,
       lockedTokenAmount,
     } = this.props;
-    if (loading || !currentPair) return <Loading />;
+    if (loading || !currentFarmPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
     const { token2 } = allPairs[
       `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
@@ -197,7 +197,7 @@ export default class Withdraw extends Component {
   withdraw2 = async (withdraw_data, requestIndex) => {
     const { txHex, scriptHex, satoshis, inputIndex } = withdraw_data;
     // const { addLP } = this.state;
-    const { dispatch, currentPair, accountInfo } = this.props;
+    const { dispatch, currentFarmPair, accountInfo } = this.props;
 
     let sign_res = await dispatch({
       type: 'user/signTx',
@@ -224,7 +224,7 @@ export default class Withdraw extends Component {
     const withdraw2_res = await dispatch({
       type: 'farm/withdraw2',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         requestIndex,
         pubKey: publicKey,
         sig,
@@ -242,13 +242,13 @@ export default class Withdraw extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, lptoken, accountInfo } = this.props;
+    const { dispatch, currentFarmPair, lptoken, accountInfo } = this.props;
     const { userAddress, userBalance, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         address: userAddress,
         op: 2,
       },
@@ -294,7 +294,7 @@ export default class Withdraw extends Component {
     }
 
     let data = {
-      symbol: currentPair,
+      symbol: currentFarmPair,
       requestIndex,
       tokenRemoveAmount: _value,
       bsvRawTx: tx_res.txHex,

@@ -54,6 +54,7 @@ export default class TokenList extends Component {
         const newpair = parseUrl(newHash);
         const oldpair = parseUrl(oldHash);
         if (newpair && newpair !== oldpair) {
+          // console.log('newpair:',newpair)
           this.changeToken(newpair);
         }
       }
@@ -77,6 +78,7 @@ export default class TokenList extends Component {
 
   changeToken = async (currentPair) => {
     const { dispatch, finish } = this.props;
+    // console.log('localStorage.setItem:', currentPair);
     window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
     if (currentPair.length === 40) {
       await dispatch({

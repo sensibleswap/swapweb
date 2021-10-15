@@ -38,7 +38,7 @@ export const FEE_FACTOR = 10000;
 
 export const MINAMOUNT = 1000;
 
-export const iconlist = {
+export const icons = {
   bsv: {
     type: 'iconlogo-bitcoin',
   },

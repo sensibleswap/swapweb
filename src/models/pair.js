@@ -33,7 +33,7 @@ export default {
         })
         .then((data) => {
           let icons;
-          log(data);
+          // console.log(data);
           if (data.success && data.data.list) {
             icons = {
               bsv: {
@@ -74,11 +74,13 @@ export default {
       let allPairs = { ...data };
 
       const urlPair = parseUrl();
+      // console.log('urlPair:', urlPair)
       let customPair; // = yield select((state) => state.pair.customPair);
       if (!currentPair) {
         currentPair =
           urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
       }
+      // console.log('localStorage:',localStorage.getItem(TSWAP_CURRENT_PAIR))
 
       if (data[currentPair]) {
         customPair = false;
@@ -100,6 +102,7 @@ export default {
         }
       }
 
+      // console.log('105-currentPair:',currentPair, 'payload:',payload)
       if (!currentPair || !allPairs[currentPair]) {
         Object.keys(data).forEach((item) => {
           if (item.indexOf('bsv-') > -1 || item.indexOf('-bsv') > -1) {
@@ -109,8 +112,8 @@ export default {
         });
       }
 
+      // console.log('localstorage.set:', currentPair);
       localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-      // console.log(allPairs, data, currentPair);
 
       yield put({
         type: 'savePair',

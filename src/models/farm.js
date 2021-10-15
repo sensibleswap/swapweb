@@ -1,12 +1,7 @@
 import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
 import pairApi from '../api/pair';
-import {
-  TSWAP_CURRENT_PAIR,
-  DEFAULT_PAIR,
-  USDT_PAIR,
-  TSWAP_SOURCE,
-} from 'common/const';
+import { TSWAP_CURRENT_FARM_PAIR, USDT_PAIR, TSWAP_SOURCE } from 'common/const';
 import { formatSat, parseUrl } from 'common/utils';
 import debug from 'debug';
 const log = debug('farm');
@@ -16,7 +11,7 @@ export default {
 
   state: {
     allFarmPairs: [],
-    currentPair: '',
+    currentFarmPair: '',
     lockedTokenAmount: 0,
     symbol1: '',
     symbol2: '',
@@ -42,9 +37,9 @@ export default {
         return res;
       }
       const urlPair = parseUrl();
-      let currentPair =
-        urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
-      if (!currentPair || !data[currentPair]) {
+      let currentFarmPair =
+        urlPair || localStorage.getItem(TSWAP_CURRENT_FARM_PAIR);
+      if (!currentFarmPair || !data[currentFarmPair]) {
         Object.keys(data).forEach((item) => {
           if (
             item.indexOf('bsv-') > -1 ||
@@ -52,8 +47,9 @@ export default {
             item.indexOf('tbsv-') ||
             item.indexOf('-tbsv')
           ) {
-            currentPair = item;
-            localStorage.setItem(TSWAP_CURRENT_PAIR, item);
+            currentFarmPair = item;
+            // console.log('localstorage.set:', item)
+            localStorage.setItem(TSWAP_CURRENT_FARM_PAIR, item);
           }
         });
       }
@@ -85,14 +81,14 @@ export default {
         type: 'saveFarm',
         payload: {
           allFarmPairs: data,
-          currentPair,
+          currentFarmPair,
           bsvPrice,
           pairsData,
         },
       });
       return {
         data,
-        currentPair,
+        currentFarmPair,
       };
     },
 
@@ -171,9 +167,9 @@ export default {
     },
     saveFarm(state, action) {
       let { allFarmPairs } = action.payload;
-      let { currentPair } = action.payload;
-      if (!currentPair) currentPair = state.currentPair;
-      if (!currentPair) {
+      let { currentFarmPair } = action.payload;
+      if (!currentFarmPair) currentFarmPair = state.currentFarmPair;
+      if (!currentFarmPair) {
         return {
           ...state,
           ...action.payload,
@@ -185,14 +181,14 @@ export default {
       if (!allFarmPairs) {
         allFarmPairs = state.allFarmPairs;
       }
-      if (allFarmPairs[currentPair]) {
-        const currentPairObj = allFarmPairs[currentPair];
+      if (allFarmPairs[currentFarmPair]) {
+        const currentPairObj = allFarmPairs[currentFarmPair];
         token = currentPairObj.token;
         lockedTokenAmount = currentPairObj.lockedTokenAmount;
         rewardToken = currentPairObj.rewardToken;
       }
 
-      const pairName = currentPair.toUpperCase().split('-');
+      const pairName = currentFarmPair.toUpperCase().split('-');
       const [symbol1, symbol2] = pairName;
       return {
         ...state,
