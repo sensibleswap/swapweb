@@ -7,7 +7,7 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 import { TSWAP_CURRENT_PAIR } from 'common/const';
 import { jc, strAbbreviation, parseUrl } from 'common/utils';
 import TokenPair from 'components/tokenPair';
-import { history, connect, Link } from 'umi';
+import { history, connect } from 'umi';
 import styles from './index.less';
 import _ from 'i18n';
 import Cookie from 'js-cookie';

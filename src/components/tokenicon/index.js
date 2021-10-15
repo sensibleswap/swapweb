@@ -1,9 +1,9 @@
 'use strict';
 import React from 'react';
+import { connect } from 'umi';
 import CustomIcon from 'components/icon';
 import { icons } from 'common/config';
 import styles from './index.less';
-import { connect } from 'umi';
 
 @connect(({ pair }) => {
   return {
@@ -11,6 +11,9 @@ import { connect } from 'umi';
   };
 })
 export default class TokenIcon extends React.Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
     const { icon, url, size = 40, style } = this.props;
 

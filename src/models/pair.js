@@ -22,7 +22,7 @@ export default {
     token1: {},
     token2: {},
     LP: 100000,
-    iconList: undefined,
+    iconList: '',
   },
 
   subscriptions: {

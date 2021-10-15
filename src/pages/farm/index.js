@@ -233,14 +233,14 @@ export default class FarmC extends Component {
         amount,
         data.txid,
         params.rewardToken.symbol,
-        params.rewardToken.genesisHash,
+        params.rewardToken.tokenID,
       );
       this.fetch();
     } else {
       return message.error(msg);
     }
   };
-  showModal(amount, txid, symbol) {
+  showModal(amount, txid, symbol, tokenID) {
     Modal.info({
       title: '',
       content: (
@@ -257,6 +257,7 @@ export default class FarmC extends Component {
             </span>
             <TokenLogo
               name={symbol}
+              genesisID={tokenID}
               style={{ fontSize: 20, marginRight: 10 }}
             />
             <span className={styles.symbol}>{symbol}</span>

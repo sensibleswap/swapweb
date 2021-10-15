@@ -12,6 +12,7 @@ export default {
   favicon: './assets/ts.png',
   title: 'TokenSwap - AMM DEX running on BSV',
   routes,
+  dva: {},
   fastRefresh: {},
   cssModulesTypescriptLoader: {},
   alias: {
