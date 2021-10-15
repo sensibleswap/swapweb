@@ -32,24 +32,26 @@ export default {
           return res.json();
         })
         .then((data) => {
-          let icons = {
-            bsv: {
-              type: 'iconlogo-bitcoin',
-            },
-          };
-          if (data.success) {
+          let icons;
+          log(data);
+          if (data.success && data.data.list) {
+            icons = {
+              bsv: {
+                type: 'iconlogo-bitcoin',
+              },
+            };
             data.data.list.forEach((item) => {
               icons[item.genesis] = {
                 url: item.logo,
               };
             });
-            dispatch({
-              type: 'save',
-              payload: {
-                iconList: icons,
-              },
-            });
           }
+          dispatch({
+            type: 'save',
+            payload: {
+              iconList: icons,
+            },
+          });
         });
     },
   },

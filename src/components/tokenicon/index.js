@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import CustomIcon from 'components/icon';
+import { iconlist } from 'common/const';
 import styles from './index.less';
 import { connect } from 'umi';
 
@@ -11,8 +12,8 @@ import { connect } from 'umi';
 })
 export default class TokenIcon extends React.Component {
   render() {
-    const { icon, url, size = 40, style, iconList } = this.props;
-    // console.log(iconList);
+    const { icon, url, size = 40, style } = this.props;
+
     if (icon) {
       return <CustomIcon type={icon} style={{ fontSize: size, ...style }} />;
     }
@@ -26,7 +27,8 @@ export default class TokenIcon extends React.Component {
       );
     }
 
-    let { name, genesisID } = this.props;
+    let { name, genesisID, iconList } = this.props;
+    if (!iconList) iconList = iconlist;
     const icons_name = iconList[genesisID];
     if (icons_name) {
       if (icons_name.type) {
