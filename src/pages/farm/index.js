@@ -6,7 +6,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { gzip, ungzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 // import pairApi from '../../api/pair';
-import { jc, formatSat, formatAmount, tokenPre } from 'common/utils';
+import { jc, formatSat, formatAmount, tokenPre, parseUrl } from 'common/utils';
 import EventBus from 'common/eventBus';
 import FormatNumber from 'components/formatNumber';
 import TokenLogo from 'components/tokenicon';
@@ -47,26 +47,20 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
-      allPairs: {},
     };
     window.addEventListener('hashchange', (event) => {
       const { newURL, oldURL } = event;
       if (newURL !== oldURL) {
         let newHash = newURL.substr(newURL.indexOf('#'));
         let oldHash = oldURL.substr(oldURL.indexOf('#'));
-        newHash = newHash.split('/');
-        oldHash = oldHash.split('/');
-        if (
-          newHash[1] === oldHash[1] &&
-          newHash[2] &&
-          newHash[2] !== oldHash[2]
-          // && props.allFarmPairs[newHash[2]]
-        ) {
+        const newpair = parseUrl(newHash);
+        const oldpair = parseUrl(oldHash);
+        if (newpair && newpair !== oldpair) {
           EventBus.emit('changeFarmPair');
           props.dispatch({
             type: 'farm/saveFarm',
             payload: {
-              currentPair: newHash[2],
+              currentFarmPair: newpair,
             },
           });
         }
@@ -107,23 +101,23 @@ export default class FarmC extends Component {
     });
   };
 
-  changeCurrentFarm = async (currentPair) => {
+  changeCurrentFarm = async (currentFarmPair) => {
     const { allFarmPairs, dispatch } = this.props;
 
     let { hash } = location;
     if (hash.indexOf('farm') > -1) {
-      history.push(`/farm/${currentPair}`);
+      history.push(`/farm/${currentFarmPair}`);
     }
     dispatch({
       type: 'farm/saveFarm',
       payload: {
-        currentPair,
+        currentFarmPair,
         allFarmPairs,
       },
     });
   };
 
-  harvest2 = async (havest_data, currentPair, requestIndex) => {
+  harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
     const { dispatch, accountInfo } = this.props;
     const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
     let sign_res = await dispatch({
@@ -150,7 +144,7 @@ export default class FarmC extends Component {
     const harvest2_res = await dispatch({
       type: 'farm/harvest2',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         requestIndex,
         pubKey: publicKey,
         sig,
@@ -160,22 +154,19 @@ export default class FarmC extends Component {
     if (code === 99999) {
       const raw = await ungzip(Buffer.from(data.other));
       const newData = JSON.parse(raw.toString());
-      return this.harvest2(newData, currentPair, requestIndex);
-    }
-    if (harvest2_res.msg) {
-      return message.error(harvest2_res.msg);
+      return this.harvest2(newData, currentFarmPair, requestIndex);
     }
     return harvest2_res;
   };
 
-  harvest = async (currentPair, params) => {
+  harvest = async (currentFarmPair, params) => {
     const { dispatch, accountInfo } = this.props;
     const { userAddress, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         address: userAddress,
         op: 3,
       },
@@ -206,7 +197,7 @@ export default class FarmC extends Component {
     }
 
     let hav_data = {
-      symbol: currentPair,
+      symbol: currentFarmPair,
       requestIndex,
       bsvRawTx: tx_res.txHex,
       bsvOutputIndex: 0,
@@ -225,9 +216,12 @@ export default class FarmC extends Component {
     }
     const harvest2_res = await this.harvest2(
       harvest_res.data,
-      currentPair,
+      currentFarmPair,
       requestIndex,
     );
+    if (harvest2_res.code && harvest2_res.msg) {
+      return message.error(harvest2_res.msg);
+    }
     const { code, data, msg } = harvest2_res;
     const amount = formatSat(
       data.rewardTokenAmount,
@@ -235,13 +229,18 @@ export default class FarmC extends Component {
     );
     if (!code && data.txid) {
       // message.success('success');
-      this.showModal(amount, data.txid, params.rewardToken.symbol);
+      this.showModal(
+        amount,
+        data.txid,
+        params.rewardToken.symbol,
+        params.rewardToken.tokenID,
+      );
       this.fetch();
     } else {
       return message.error(msg);
     }
   };
-  showModal(amount, txid, symbol) {
+  showModal(amount, txid, symbol, tokenID) {
     Modal.info({
       title: '',
       content: (
@@ -258,6 +257,7 @@ export default class FarmC extends Component {
             </span>
             <TokenLogo
               name={symbol}
+              genesisID={tokenID}
               style={{ fontSize: 20, marginRight: 10 }}
             />
             <span className={styles.symbol}>{symbol}</span>
@@ -273,7 +273,14 @@ export default class FarmC extends Component {
   }
 
   renderItem(pairName, data, index) {
-    const { loading, dispatch, bsvPrice, currentPair, pairsData } = this.props;
+    const {
+      loading,
+      dispatch,
+      bsvPrice,
+      currentFarmPair,
+      pairsData,
+      allPairs,
+    } = this.props;
 
     if (loading || !pairsData[pairName]) {
       return null;
@@ -306,6 +313,7 @@ export default class FarmC extends Component {
     if (!reward_token) {
       return null;
     }
+    const { tokenID } = allPairs[pairName].token2;
     const reward_bsv_amount = formatSat(reward_token.swapToken1Amount);
     const reward_token_amount = formatSat(
       reward_token.swapToken2Amount,
@@ -317,16 +325,6 @@ export default class FarmC extends Component {
     let _total = BigNumber(poolTokenAmount)
       .multipliedBy(lp_price)
       .multipliedBy(bsvPrice);
-
-    // if (_total.isGreaterThan(1000000)) {
-    //   _total = formatAmount(_total.div(1000000), 2);
-    //   _total = _total + 'm';
-    // } else if (_total.isGreaterThan(1000)) {
-    //   _total = formatAmount(_total.div(1000), 2);
-    //   _total = _total + 'k';
-    // } else {
-    //   _total = formatAmount(_total, 2);
-    // }
 
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
@@ -348,7 +346,7 @@ export default class FarmC extends Component {
     return (
       <div
         className={
-          pairName === currentPair
+          pairName === currentFarmPair
             ? jc(styles.item, styles.current)
             : styles.item
         }
@@ -358,7 +356,13 @@ export default class FarmC extends Component {
         <div className={styles.item_header}>
           <div className={styles.item_title}>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol2} symbol2={symbol1} size={20} />
+              <TokenPair
+                symbol1={symbol2}
+                symbol2={symbol1}
+                size={20}
+                genesisID2="bsv"
+                genesisID1={tokenID}
+              />
             </div>
             <div className={styles.name}>
               {symbol2}/{symbol1}
@@ -486,7 +490,7 @@ export default class FarmC extends Component {
   }
 
   render() {
-    const { app_pannel, currentMenuIndex, allPairs } = this.state;
+    const { app_pannel, currentMenuIndex } = this.state;
 
     return (
       <Spin spinning={this.props.submiting}>

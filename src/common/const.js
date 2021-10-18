@@ -4,7 +4,10 @@ export const USDT_PAIR = 'bsv-usdt';
 
 export const TSWAP_NETWORK = 'TSwapNetwork';
 export const TSWAP_CURRENT_PAIR = 'TSwapCurrentPair';
+export const TSWAP_CURRENT_FARM_PAIR = 'TSwapCurrentFarmPair';
 export const TSWAP_POOL_SHOW_OP = 'TSwapPoolShowOP';
+
+export const TSWAP_SOURCE = 'tswap.io';
 
 export const REFRESH_CHARTDAT = 60;
 

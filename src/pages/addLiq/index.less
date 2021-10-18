@@ -85,19 +85,26 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin-right: 20px;
+    // margin-right: 20px;
   }
 
   .name {
     font-size: 22px;
     font-weight: 700;
-    width: 60px;
-    margin-right: 15px;
+    width: 70px;
+    // margin-right: 15px;
     margin-left: 10px;
   }
 
   :global(.ant-form-item) {
     margin-bottom: 0;
+  }
+
+  .arrow {
+    padding: 10px 15px 10px 10px;
+    background-color: #f6f6f9ed;
+    box-shadow: 0 0 5px 5px #f6f6f9ed;
+    margin-left: 5px;
   }
 }
 
@@ -268,55 +275,6 @@
   font-size: 14px;
   font-weight: 500;
   margin-top: 5px;
-}
-
-.steps {
-  margin-bottom: 25px;
-
-  :global {
-    .ant-steps-item-title {
-      font-size: 12px;
-    }
-
-    .ant-steps-item-icon > .ant-steps-icon {
-      top: -6px;
-    }
-
-    .ant-steps-item-icon {
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      margin-left: 42px;
-    }
-
-    .ant-steps-item-process .ant-steps-item-icon {
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-    }
-
-    .ant-steps-item-content {
-      width: 100px;
-      margin-top: 4px;
-    }
-
-    .ant-steps-item-tail {
-      margin-left: 42px;
-    }
-
-    .ant-steps-item-tail::after {
-      height: 4px;
-      margin-left: 20px;
-    }
-
-    .ant-steps-item-wait
-      .ant-steps-item-icon
-      > .ant-steps-icon
-      .ant-steps-icon-dot {
-      border: 4px solid #dbdbdb;
-      background-color: transparent;
-    }
-  }
 }
 
 .my_pair_info {

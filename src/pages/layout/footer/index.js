@@ -26,6 +26,14 @@ export default function Footer() {
           >
             <CustomIcon type="iconTwitter" />
           </a>
+
+          <a
+            href="https://discord.gg/PyRHs2KaAh"
+            target="_blank"
+            className={styles.icon}
+          >
+            <CustomIcon type="icondiscord" />
+          </a>
         </div>
       </div>
     </section>

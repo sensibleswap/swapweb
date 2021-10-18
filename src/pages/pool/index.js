@@ -60,20 +60,25 @@ export default class Pool extends Component {
     const { token1, token2 } = allPairs[currentPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();
+    const token = allPairs[currentPair].token2;
     return (
       <div className={styles.content}>
         <Chart symbol1={symbol1} symbol2={symbol2} />
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
+              <TokenPair
+                symbol1={symbol1}
+                symbol2={symbol2}
+                size={30}
+                genesisID1="bsv"
+                genesisID2={token.tokenID}
+              />
             </div>
             <div className={styles.name}>
               LP({symbol2}/{symbol1})
             </div>
           </h2>
-          {/*<div className={styles.subtitle}>{_('your_liq')}</div>
-    <div className={styles.fiat}>$</div>*/}
         </div>
         <Pair
           pairData={pairData}
@@ -84,8 +89,37 @@ export default class Pool extends Component {
     );
   }
 
+  renderCreateContent() {
+    return (
+      <div className={styles.content1}>
+        <div className={styles.title}>{_('create_newpair')}</div>
+        <dl className={styles.detail}>
+          <dt className={styles.sub_title}>{_('newpair_title')}</dt>
+          <dd className={styles.desc}>
+            <span className={styles.dot}></span> {_('newpair_desc1')}
+          </dd>
+          <dd className={styles.desc}>
+            <span className={styles.dot}></span> {_('newpair_desc2')}
+          </dd>
+          <dd className={styles.desc}>
+            <span className={styles.dot}></span> {_('newpair_desc3')}
+          </dd>
+          <dd className={styles.desc}>
+            <span className={styles.dot}></span> {_('newpair_desc4')}
+          </dd>
+          <p>
+            {_('newpair_note1')}
+            <br />
+            {_('newpair_note2')}
+          </p>
+        </dl>
+      </div>
+    );
+  }
+
   render() {
     const { app_pannel } = this.state;
+    const { pageName } = this.props;
 
     return (
       <>
@@ -98,7 +132,9 @@ export default class Pool extends Component {
           >
             <div className={styles.left_inner}>
               <Header />
-              {this.renderContent()}
+              {pageName === 'createPair'
+                ? this.renderCreateContent()
+                : this.renderContent()}
               <div className={styles.app_start_btn_wrap}>
                 <Button
                   type="primary"

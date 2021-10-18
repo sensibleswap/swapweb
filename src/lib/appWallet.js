@@ -1,4 +1,5 @@
 import { formatSat, strAbbreviation } from 'common/utils';
+// import 'common/vconsole';
 
 const callJavaScriptBridge = (method, param = {}) => {
   const jsCallbackName = `_voltJsCallback_${Date.now()}_${Math.round(

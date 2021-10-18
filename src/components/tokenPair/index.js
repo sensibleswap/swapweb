@@ -2,12 +2,18 @@ import TokenIcon from '../tokenicon';
 import styles from './index.less';
 
 export default function TokenIcons(props) {
-  const { symbol1, symbol2, size, style } = props;
+  const { symbol1, genesisID1, symbol2, genesisID2, size, style } = props;
   return (
     <div className={styles.icons} style={style}>
-      <TokenIcon name={symbol1} size={size} style={{ zIndex: 1 }} />
+      <TokenIcon
+        name={symbol1}
+        genesisID={genesisID1}
+        size={size}
+        style={{ zIndex: 1 }}
+      />
       <TokenIcon
         name={symbol2}
+        genesisID={genesisID2}
         size={size}
         style={{ size, marginLeft: `-${size / 3}px` }}
       />

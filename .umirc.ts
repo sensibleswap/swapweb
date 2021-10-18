@@ -12,6 +12,7 @@ export default {
   favicon: './assets/ts.png',
   title: 'TokenSwap - AMM DEX running on BSV',
   routes,
+  dva: {},
   fastRefresh: {},
   cssModulesTypescriptLoader: {},
   alias: {
@@ -20,6 +21,7 @@ export default {
     components: '@/components',
     common: '@/common',
     api: '@/api',
+    assets: 'public/assets',
   },
   analyze: {
     analyzerMode: 'server',
@@ -59,7 +61,8 @@ export default {
       rel: 'stylesheet',
     },
     {
-      href: 'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
+      href:
+        'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
       rel: 'stylesheet',
     },
   ],

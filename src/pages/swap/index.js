@@ -114,11 +114,15 @@ export default class Swap extends Component {
   };
 
   changeOriginAmount = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
     const { token1, token2 } = this.props;
     const { dirForward } = this.state;
     const decimal = dirForward ? token1.decimal : token2.decimal;
     if (value > 0) {
+      value = formatAmount(value, token1.decimal);
+      this.formRef.current.setFieldsValue({
+        origin_amount: value,
+      });
       const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
       this.setState({
         origin_amount: value,
@@ -141,8 +145,13 @@ export default class Swap extends Component {
   };
 
   changeAimAmount = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    const { decimal } = this.props.token2;
     if (value > 0) {
+      value = formatAmount(value, decimal);
+      this.formRef.current.setFieldsValue({
+        aim_amount: value,
+      });
       this.setState({
         aim_amount: value,
         lastMod: 'aim',
@@ -170,9 +179,11 @@ export default class Swap extends Component {
     return (
       <div className={styles.box}>
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
-          <TokenLogo name={symbol1} />
+          <TokenLogo name={symbol1} genesisID={origin_token.tokenID || 'bsv'} />
           <div className={styles.name}>{symbol1}</div>
-          <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          <div className={styles.arrow}>
+            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          </div>
         </div>
         <FormItem name="origin_amount">
           <Input
@@ -195,10 +206,17 @@ export default class Swap extends Component {
       <div className={styles.box}>
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <div style={{ width: 40 }}>
-            {symbol2 && <TokenLogo name={symbol2} />}
+            {symbol2 && (
+              <TokenLogo
+                name={symbol2}
+                genesisID={aim_token.tokenID || 'bsv'}
+              />
+            )}
           </div>
           <div className={styles.name}>{symbol2 || _('select')}</div>
-          <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          <div className={styles.arrow}>
+            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+          </div>
         </div>
         <FormItem name="aim_amount">
           <Input
@@ -657,7 +675,7 @@ export default class Swap extends Component {
       if (tx_res.list) {
         tx_res = tx_res.list;
       }
-      if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+      if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
         return message.error(_('txs_fail'));
       }
 

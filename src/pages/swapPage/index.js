@@ -54,17 +54,16 @@ export default class SwapPage extends Component {
       type: 'pair/getAllPairs',
     });
 
-    let { currentPair } = this.props;
-    if (currentPair) {
-      await dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          // currentPair,
-        },
-      });
+    // if (currentPair) {
+    await dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        // currentPair,
+      },
+    });
 
-      EventBus.emit('reloadChart', 'swap');
-    }
+    // }
+    EventBus.emit('reloadChart', 'swap');
   };
 
   renderContent() {

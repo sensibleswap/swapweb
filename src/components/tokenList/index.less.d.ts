@@ -2,9 +2,19 @@
 // Please do not change this file!
 interface CssExports {
   big: string;
+  btn: string;
+  btn_link: string;
+  dec_desc: string;
+  dec_title: string;
+  decla: string;
+  genesis_id: string;
   icon_name: string;
   item: string;
+  menu: string;
+  menu_item: string;
+  menu_item_selected: string;
   name: string;
+  not: string;
   search_input: string;
   selected: string;
   small: string;

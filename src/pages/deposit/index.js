@@ -85,7 +85,8 @@ export default class Deposit extends Component {
       //输入框变化值
       const { accountInfo, lptoken } = this.props;
       const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      const _addLp = e.target.value;
+      let _addLp = e.target.value;
+      _addLp = formatAmount(_addLp, lptoken.decimal);
       if (_addLp <= 0) {
         value = 0;
       } else if (_addLp >= LP) {
@@ -112,7 +113,7 @@ export default class Deposit extends Component {
 
   renderForm() {
     const {
-      currentPair,
+      currentFarmPair,
       loading,
       submiting,
       accountInfo,
@@ -124,18 +125,20 @@ export default class Deposit extends Component {
       pairsData,
       allPairs = {},
     } = this.props;
-    if (loading || !currentPair) return <Loading />;
+    if (loading || !currentFarmPair || !pairsData[currentFarmPair])
+      return <Loading />;
     const { addLPRate, addLP } = this.state;
     const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
-    const currentPairData = pairsData[currentPair] || {};
+    const currentPairData = pairsData[currentFarmPair] || {};
     const { swapToken1Amount, swapToken2Amount } = currentPairData;
     const bsv_amount = formatSat(swapToken1Amount);
 
-    const { decimal } = allPairs[currentPair]
-      ? allPairs[currentPair].token2
+    const { decimal } = allPairs[currentFarmPair]
+      ? allPairs[currentFarmPair].token2
       : 8;
     const token_amount = formatSat(swapToken2Amount, decimal);
     const price = formatAmount(token_amount / bsv_amount, decimal);
+    const { token2 } = allPairs[currentFarmPair];
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -163,7 +166,13 @@ export default class Deposit extends Component {
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
               <div className={styles.icon}>
-                <TokenPair symbol1={symbol2} symbol2={symbol1} size={25} />
+                <TokenPair
+                  symbol1={symbol2}
+                  symbol2={symbol1}
+                  genesisID2="bsv"
+                  genesisID1={token2.tokenID}
+                  size={25}
+                />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}-LP
@@ -192,14 +201,18 @@ export default class Deposit extends Component {
           >
             <div className={styles.pair_left}>
               <div className={styles.icon} style={{ marginRight: 10 }}>
-                <TokenLogo name={rewardToken.symbol} size={25} />
+                <TokenLogo
+                  name={rewardToken.symbol}
+                  genesisID={rewardToken.tokenID}
+                  size={25}
+                />
               </div>
               <div className={styles.name} style={{ fontSize: 22 }}>
                 {rewardToken.symbol}
               </div>
             </div>
             <div className={styles.pair_right}>
-              <FormatNumber value={pairYields[currentPair]} />% {_('apy')}
+              <FormatNumber value={pairYields[currentFarmPair]} />% {_('apy')}
             </div>
           </div>
 
@@ -215,13 +228,13 @@ export default class Deposit extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, lptoken, accountInfo } = this.props;
+    const { dispatch, currentFarmPair, lptoken, accountInfo } = this.props;
     const { userAddress, userBalance, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         address: userAddress,
         op: 1,
       },
@@ -276,12 +289,12 @@ export default class Deposit extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
       return message.error(_('txs_fail'));
     }
 
     let data = {
-      symbol: currentPair,
+      symbol: currentFarmPair,
       requestIndex: requestIndex,
       bsvRawTx: tx_res[0].txHex,
       bsvOutputIndex: 0,
@@ -351,7 +364,8 @@ export default class Deposit extends Component {
   }
 
   renderResult() {
-    const { symbol1, symbol2 } = this.props;
+    const { symbol1, symbol2, allPairs, currentFarmPair } = this.props;
+    const { token2 } = allPairs[currentFarmPair];
     const { addLP } = this.state;
     return (
       <div className={styles.content}>
@@ -369,7 +383,13 @@ export default class Deposit extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />{' '}
+            <TokenPair
+              symbol1={symbol1}
+              symbol2={symbol2}
+              genesisID2="bsv"
+              genesisID1={token2.tokenID}
+              size={20}
+            />{' '}
             {symbol1}/{symbol2}-LP
           </div>
         </div>

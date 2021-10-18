@@ -33,11 +33,12 @@ const datas = [
   },
 ];
 
-@connect(({ user, farm, loading }) => {
+@connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
   return {
     ...user,
     ...farm,
+    ...pair,
     loading: effects['farm/getAllPairs'],
     submiting:
       effects['farm/reqSwap'] ||
@@ -85,14 +86,15 @@ export default class Withdraw extends Component {
       //输入框变化值
       const {
         // accountInfo,
-        // allFarmPairs,
-        // currentPair,
+        allFarmPairs,
+        currentFarmPair,
         lockedTokenAmount,
       } = this.props;
       // const { userBalance, } = accountInfo;
-      // const { lptoken = {} } = allFarmPairs[currentPair];
+      const { lptoken = {} } = allFarmPairs[currentFarmPair];
       // const LP = userBalance[lptoken.tokenID] || 0;
-      const _addLp = e.target.value;
+      let _addLp = e.target.value;
+      _addLp = formatAmount(_addLp, lptoken.decimal);
       if (_addLp <= 0) {
         value = 0;
       } else if (_addLp >= lockedTokenAmount) {
@@ -124,7 +126,8 @@ export default class Withdraw extends Component {
 
   renderForm() {
     const {
-      currentPair,
+      allPairs,
+      currentFarmPair,
       loading,
       submiting,
       symbol1,
@@ -132,8 +135,11 @@ export default class Withdraw extends Component {
       // lptoken,
       lockedTokenAmount,
     } = this.props;
-    if (loading || !currentPair) return <Loading />;
+    if (loading || !currentFarmPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
+    const { token2 } = allPairs[
+      `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
+    ];
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -161,7 +167,13 @@ export default class Withdraw extends Component {
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
               <div className={styles.icon}>
-                <TokenPair symbol1={symbol2} symbol2={symbol1} size={25} />
+                <TokenPair
+                  symbol1={symbol2}
+                  symbol2={symbol1}
+                  size={25}
+                  genesisID2="bsv"
+                  genesisID1={token2.tokenID}
+                />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}-LP
@@ -185,7 +197,7 @@ export default class Withdraw extends Component {
   withdraw2 = async (withdraw_data, requestIndex) => {
     const { txHex, scriptHex, satoshis, inputIndex } = withdraw_data;
     // const { addLP } = this.state;
-    const { dispatch, currentPair, accountInfo } = this.props;
+    const { dispatch, currentFarmPair, accountInfo } = this.props;
 
     let sign_res = await dispatch({
       type: 'user/signTx',
@@ -212,7 +224,7 @@ export default class Withdraw extends Component {
     const withdraw2_res = await dispatch({
       type: 'farm/withdraw2',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         requestIndex,
         pubKey: publicKey,
         sig,
@@ -225,21 +237,18 @@ export default class Withdraw extends Component {
       return this.withdraw2(newData, requestIndex);
     }
 
-    if (withdraw2_res.msg) {
-      return message.error(withdraw2_res.msg);
-    }
     return withdraw2_res;
   };
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentPair, lptoken, accountInfo } = this.props;
+    const { dispatch, currentFarmPair, lptoken, accountInfo } = this.props;
     const { userAddress, userBalance, changeAddress } = accountInfo;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
       payload: {
-        symbol: currentPair,
+        symbol: currentFarmPair,
         address: userAddress,
         op: 2,
       },
@@ -280,12 +289,12 @@ export default class Withdraw extends Component {
       tx_res = tx_res.list[0];
     }
 
-    if (!tx_res.txid) {
+    if (!tx_res.txHex) {
       return message.error(_('txs_fail'));
     }
 
     let data = {
-      symbol: currentPair,
+      symbol: currentFarmPair,
       requestIndex,
       tokenRemoveAmount: _value,
       bsvRawTx: tx_res.txHex,
@@ -304,6 +313,9 @@ export default class Withdraw extends Component {
       return message.error(withdraw_res.msg);
     }
     const withdraw2_res = await this.withdraw2(withdraw_res.data, requestIndex);
+    if (withdraw2_res.code && withdraw2_res.msg) {
+      return message.error(withdraw2_res.msg);
+    }
 
     if (!withdraw2_res.code && withdraw2_res.data.txid) {
       message.success('success');

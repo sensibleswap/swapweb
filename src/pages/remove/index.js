@@ -11,6 +11,7 @@ import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
+import PoolMenu from 'components/poolMenu';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
@@ -76,35 +77,39 @@ export default class RemovePage extends Component {
 
   async fetch() {
     const { dispatch } = this.props;
-    const allPairs = await dispatch({
+    await dispatch({
       type: 'pair/getAllPairs',
     });
-    // console.log(allPairs);
 
-    let { currentPair } = this.props;
-    // console.log(currentPair);
+    // if (currentPair) {
+    const pairData = await dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        // currentPair,
+      },
+    });
 
-    if (currentPair) {
-      const pairData = await dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          // currentPair,
-        },
-      });
-      const { swapToken1Amount, swapToken2Amount } = pairData;
-      const { token1, token2 } = allPairs[currentPair];
-      const symbol1 = token1.symbol.toUpperCase();
-      const symbol2 = token2.symbol.toUpperCase();
-      const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
-        formatSat(swapToken1Amount, token1.decimal),
-      );
-      this.setState({
-        symbol1,
-        symbol2,
-        price: formatAmount(price, token2.decimal),
-      });
-      EventBus.emit('reloadChart', type);
-    }
+    // }
+
+    const { currentPair, allPairs } = this.props;
+    const { swapToken1Amount, swapToken2Amount } = pairData;
+    const { token1, token2 } = allPairs[currentPair];
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
+    const genesisID1 = token1.tokenID || 'bsv';
+    const genesisID2 = token2.tokenID;
+    const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
+      formatSat(swapToken1Amount, token1.decimal),
+    );
+    this.setState({
+      symbol1,
+      symbol2,
+      genesisID1,
+      genesisID2,
+      price: formatAmount(price, token2.decimal),
+    });
+    EventBus.emit('reloadChart', type);
+    // }
     // console.log(pairData);
   }
 
@@ -134,13 +139,19 @@ export default class RemovePage extends Component {
     } = this.props;
     const LP = accountInfo.userBalance[lptoken.tokenID];
     if (loading || !currentPair) return <Loading />;
-    const { symbol1, symbol2 } = this.state;
+    const { symbol1, symbol2, genesisID1, genesisID2 } = this.state;
     return (
       <div className={styles.content}>
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={40} />
+              <TokenPair
+                symbol1={symbol1}
+                symbol2={symbol2}
+                size={40}
+                genesisID1={genesisID1}
+                genesisID2={genesisID2}
+              />
             </div>
             <div className={styles.name}>
               {symbol2}/{symbol1}
@@ -161,7 +172,8 @@ export default class RemovePage extends Component {
       const { accountInfo, allPairs, currentPair } = this.props;
       const { lptoken = {} } = allPairs[currentPair];
       const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      const _removeLp = e.target.value;
+      let _removeLp = e.target.value;
+      _removeLp = formatAmount(_removeLp, lptoken.decimal);
       if (_removeLp <= 0) {
         value = 0;
       } else if (_removeLp >= LP) {
@@ -257,7 +269,14 @@ export default class RemovePage extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
-    const { removeRate, removeLP, symbol1, symbol2 } = this.state;
+    const {
+      removeRate,
+      removeLP,
+      symbol1,
+      symbol2,
+      genesisID1,
+      genesisID2,
+    } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     const { removeToken1, removeToken2 } = this.calc();
     return (
@@ -289,7 +308,13 @@ export default class RemovePage extends Component {
           </div>
           <div className={styles.s_box}>
             <div className={styles.coin}>
-              <TokenPair symbol1={symbol1} symbol2={symbol2} size={30} />
+              <TokenPair
+                symbol1={symbol1}
+                symbol2={symbol2}
+                size={30}
+                genesisID1={genesisID1}
+                genesisID2={genesisID2}
+              />
             </div>
             <div className={styles.name}>
               {symbol1}/{symbol2}-LP
@@ -313,13 +338,13 @@ export default class RemovePage extends Component {
             <div className={styles.values_left}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol1} size={20} />
+                  <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
                   <div style={{ marginLeft: 5 }}>{symbol1}</div>
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol2} size={20} />
+                  <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
                   <div style={{ marginLeft: 5 }}>{symbol2}</div>
                 </div>
               </div>
@@ -417,7 +442,7 @@ export default class RemovePage extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
       return message.error(_('txs_fail'));
     }
 
@@ -439,7 +464,7 @@ export default class RemovePage extends Component {
       },
     });
 
-    if (removeliq_res.code && !removeliq_res.data.txid) {
+    if (removeliq_res.code && removeliq_res.msg) {
       return message.error(removeliq_res.msg);
     }
     message.success('success');
@@ -523,6 +548,8 @@ export default class RemovePage extends Component {
     const {
       symbol1,
       symbol2,
+      genesisID1,
+      genesisID2,
       final_lp,
       receive_token1,
       receive_token2,
@@ -542,7 +569,13 @@ export default class RemovePage extends Component {
           <div className={styles.f_item}>
             <div className={styles.f_label}>
               <div className={styles.icon}>
-                <TokenPair symbol1={symbol1} symbol2={symbol2} size={20} />
+                <TokenPair
+                  symbol1={symbol1}
+                  symbol2={symbol2}
+                  size={20}
+                  genesisID1={genesisID1}
+                  genesisID2={genesisID2}
+                />
               </div>
               <div className={styles.name}>
                 {symbol2}/{symbol1}
@@ -565,7 +598,7 @@ export default class RemovePage extends Component {
           <div className={styles.f_item}>
             <div className={styles.f_label}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={20} />
+                <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
               </div>
               <div className={styles.name}>
                 <FormatNumber value={receive_token1} suffix={symbol1} />
@@ -573,7 +606,7 @@ export default class RemovePage extends Component {
             </div>
             <div className={styles.f_value}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol2} size={20} />
+                <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
               </div>
               <div className={styles.name}>
                 <FormatNumber value={receive_token2} suffix={symbol2} />
@@ -601,32 +634,14 @@ export default class RemovePage extends Component {
 
   render() {
     const { page, formFinish } = this.state;
+    const { currentPair } = this.props;
     return (
       <Pool>
         <div
           className={styles.container}
           style={{ display: page === 'form' ? 'block' : 'none' }}
         >
-          <div className={styles.head}>
-            <div className={styles.menu}>
-              <span
-                className={styles.menu_item}
-                key="add_liq"
-                onClick={() => {
-                  const { currentPair } = this.props;
-                  history.push(`/pool/${currentPair}/add`);
-                }}
-              >
-                {_('add_liq')}
-              </span>
-              <span
-                className={jc(styles.menu_item, styles.menu_item_selected)}
-                key="remove_liq"
-              >
-                {_('remove_liq_short')}
-              </span>
-            </div>
-          </div>
+          <PoolMenu currentMenuIndex={1} currentPair={currentPair} />
           {formFinish ? this.renderResult() : this.renderForm()}
         </div>
       </Pool>

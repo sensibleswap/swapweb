@@ -13,6 +13,7 @@ import FormatNumber from 'components/formatNumber';
 import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
+import PoolMenu from 'components/poolMenu';
 import SelectToken from '../selectToken';
 import Pool from '../pool';
 import styles from './index.less';
@@ -61,27 +62,42 @@ export default class Liquidity extends Component {
   }
 
   fetch = async () => {
+    // const { dispatch } = this.props;
+    // await dispatch({
+    //   type: 'pair/getAllPairs',
+    // });
+
+    // let { currentPair } = this.props;
+    // if (currentPair) {
+    //   await dispatch({
+    //     type: 'pair/getPairData',
+    //     payload: {
+    //       // currentPair,
+    //     },
+    //   });
+    // }
     const { dispatch } = this.props;
     await dispatch({
       type: 'pair/getAllPairs',
     });
 
-    let { currentPair } = this.props;
-    if (currentPair) {
-      await dispatch({
-        type: 'pair/getPairData',
-        payload: {
-          // currentPair,
-        },
-      });
-    }
+    // if (currentPair) {
+    await dispatch({
+      type: 'pair/getPairData',
+      payload: {
+        // currentPair,
+      },
+    });
+
+    // }
     EventBus.emit('reloadChart', type);
   };
 
   changeOriginAmount = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
     const { pairData, token1, token2 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+    value = formatAmount(value, token1.decimal);
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -105,6 +121,7 @@ export default class Liquidity extends Component {
 
     const user_aim_amount = formatSat(token2AddAmount, token2.decimal);
     this.formRef.current.setFieldsValue({
+      origin_amount: value,
       aim_amount: user_aim_amount,
     });
     this.setState({
@@ -116,9 +133,10 @@ export default class Liquidity extends Component {
   };
 
   changeAimAmount = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
     const { pairData, token2, token1 } = this.props;
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
+    value = formatAmount(value, token2.decimal);
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -141,6 +159,7 @@ export default class Liquidity extends Component {
 
     this.formRef.current.setFieldsValue({
       origin_amount: user_origin_amount,
+      aim_amount: value,
     });
     this.setState({
       aim_amount: value || 0,
@@ -349,9 +368,11 @@ export default class Liquidity extends Component {
                 className={styles.coin}
                 onClick={() => this.showUI('selectToken')}
               >
-                <TokenLogo name={symbol1} />
+                <TokenLogo name={symbol1} genesisID="bsv" />
                 <div className={styles.name}>{symbol1}</div>
-                <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                <div className={styles.arrow}>
+                  <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                </div>
               </div>
               <FormItem name={'origin_amount'}>
                 <Input
@@ -386,10 +407,12 @@ export default class Liquidity extends Component {
                 onClick={() => this.showUI('selectToken')}
               >
                 <div style={{ width: 40 }}>
-                  <TokenLogo name={symbol2} />
+                  <TokenLogo name={symbol2} genesisID={token2.tokenID} />
                 </div>
                 <div className={styles.name}>{symbol2 || _('select')}</div>
-                <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                <div className={styles.arrow}>
+                  <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                </div>
               </div>
               <FormItem name={'aim_amount'}>
                 <Input
@@ -692,7 +715,7 @@ export default class Liquidity extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
       return message.error(_('txs_fail'));
     }
 
@@ -714,8 +737,8 @@ export default class Liquidity extends Component {
         data: liq_data,
       },
     });
-    // console.log(addliq_res)
-    if (addliq_res.code && !addliq_res.data.txid) {
+    // console.log(addliq_res);
+    if (addliq_res.code && addliq_res.msg) {
       return message.error(addliq_res.msg);
     }
     message.success('success');
@@ -766,6 +789,8 @@ export default class Liquidity extends Component {
           <TokenPair
             symbol1={symbol1}
             symbol2={symbol2}
+            genesisID1="bsv"
+            genesisID2={token2.tokenID}
             size={20}
             style={{ marginLeft: 10 }}
           />{' '}
@@ -788,7 +813,8 @@ export default class Liquidity extends Component {
   }
 
   renderSwap() {
-    if (!this.props.currentPair) return 'No pair';
+    const { currentPair } = this.props;
+    if (!currentPair) return 'No pair';
     const { formFinish, page } = this.state;
 
     return (
@@ -796,26 +822,7 @@ export default class Liquidity extends Component {
         className={styles.container}
         style={{ display: page === 'form' ? 'block' : 'none' }}
       >
-        <div className={styles.head}>
-          <div className={styles.menu}>
-            <span
-              className={jc(styles.menu_item, styles.menu_item_selected)}
-              key="add_liq"
-            >
-              {_('add_liq')}
-            </span>
-            <span
-              className={styles.menu_item}
-              key="remove_liq"
-              onClick={() => {
-                const { currentPair } = this.props;
-                history.push(`/pool/${currentPair}/remove`);
-              }}
-            >
-              {_('remove_liq_short')}
-            </span>
-          </div>
-        </div>
+        <PoolMenu currentMenuIndex={0} currentPair={currentPair} />
         {formFinish ? this.renderResult() : this.renderForm()}
       </div>
     );

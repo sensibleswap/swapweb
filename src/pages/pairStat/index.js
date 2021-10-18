@@ -8,9 +8,9 @@ import _ from 'i18n';
 
 export default function PairStat(props) {
   const {
-    totalLiquidity = {},
-    volume = {},
-    fees = {},
+    // totalLiquidity = {},
+    // volume = {},
+    // fees = {},
     swapToken1Amount,
     swapToken2Amount,
     token1,
@@ -27,6 +27,7 @@ export default function PairStat(props) {
         <div className={styles.value2} key={token1.tokenid}>
           <TokenLogo
             name={token1.symbol}
+            genesisID={token1.tokenID || 'bsv'}
             size={30}
             style={{ marginRight: 10 }}
           />{' '}
@@ -35,6 +36,7 @@ export default function PairStat(props) {
         <div className={styles.value2} key={token2.tokenid}>
           <TokenLogo
             name={token2.symbol}
+            genesisID={token2.tokenID || 'bsv'}
             size={30}
             style={{ marginRight: 10 }}
           />{' '}

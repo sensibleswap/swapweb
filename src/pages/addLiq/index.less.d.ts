@@ -2,6 +2,7 @@
 // Please do not change this file!
 interface CssExports {
   add_content: string;
+  arrow: string;
   balance: string;
   box: string;
   btn: string;
@@ -37,7 +38,6 @@ interface CssExports {
   result_data1: string;
   result_data2: string;
   selectToken_wrap: string;
-  steps: string;
   switch_icon: string;
   title: string;
   view_detail: string;
