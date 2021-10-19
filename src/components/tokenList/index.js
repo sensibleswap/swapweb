@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { Input, message, Button } from 'antd';
+import { Input, message, Button, Spin } from 'antd';
 import EventBus from 'common/eventBus';
 import querystring from 'querystringify';
 import { CheckCircleOutlined } from '@ant-design/icons';
@@ -19,29 +19,23 @@ const query = querystring.parse(window.location.search);
 const { Search } = Input;
 const listMenu = [_('curated_tokens'), _('unverified_zone')];
 
-@connect(({ pair, custom }) => {
+@connect(({ pair, custom, loading }) => {
+  const effects = loading.effects;
   return {
     ...pair,
+    loadingCustomPairs: effects['custom/allPairs'] || false,
   };
 })
 export default class TokenList extends Component {
   constructor(props) {
     super(props);
-    const { pairList } = props;
-    let _allPairs = [],
-      _showList = [];
-    Object.keys(pairList).forEach((item) => {
-      const _obj = {
-        ...pairList[item],
-        name: item,
-      };
-      _allPairs.push(_obj);
-      _showList.push(_obj);
-    });
+
+    const pairArr = this.handlePairs(props.pairList);
     this.state = {
-      showList: _showList,
-      allPairs: _allPairs,
+      showList: pairArr,
+      allPairs: pairArr,
       currentMenuIndex: 0,
+      customAllPairs: [],
       customShowList: [],
       showDec: true,
     };
@@ -59,6 +53,21 @@ export default class TokenList extends Component {
         }
       }
     });
+  }
+
+  handlePairs(pairs) {
+    let arr = [];
+    Object.keys(pairs).forEach((item) => {
+      const _obj = {
+        ...pairs[item],
+        name: pairs[item].token1.symbol + '-' + pairs[item].token2.symbol,
+      };
+      arr.push(_obj);
+    });
+    arr.sort((a, b) => {
+      return b.poolAmount - a.poolAmount;
+    });
+    return arr;
   }
 
   select = async (currentPair, type) => {
@@ -145,7 +154,22 @@ export default class TokenList extends Component {
     });
   };
 
-  handleChangeCustom = async (e) => {
+  handleChangeCustom = (e) => {
+    const { value } = e.target;
+    const { customAllPairs } = this.state;
+    // if(!token) return;
+    if (!value) {
+      return this.setState({
+        customShowList: customAllPairs,
+      });
+    }
+    const res = this.searchByKeywords(value, customAllPairs);
+    this.setState({
+      customShowList: res,
+    });
+  };
+
+  handleChangeCustom1 = async (e) => {
     const { value } = e.target;
     const { dispatch } = this.props;
     let res = await dispatch({
@@ -207,9 +231,32 @@ export default class TokenList extends Component {
     );
   }
 
+  changeMenu = async (index) => {
+    this.setState({
+      currentMenuIndex: index,
+    });
+  };
+
+  startCustomPair = async () => {
+    const { customAllPairs } = this.state;
+    const { dispatch } = this.props;
+    if (customAllPairs.length < 1) {
+      const res = await dispatch({
+        type: 'custom/allPairs',
+      });
+      const arr = this.handlePairs(res);
+      this.setState({
+        customAllPairs: arr,
+        customShowList: arr,
+      });
+    }
+
+    this.setState({ showDec: false });
+  };
+
   render() {
     const { showList, customShowList, currentMenuIndex, showDec } = this.state;
-    const { size = 'big' } = this.props;
+    const { size = 'big', loadingCustomPairs } = this.props;
     const isZh = lang.toLowerCase() === 'zh-cn';
     return (
       <div className={styles[size]}>
@@ -221,9 +268,7 @@ export default class TokenList extends Component {
                   ? jc(styles.menu_item, styles.menu_item_selected)
                   : styles.menu_item
               }
-              onClick={() => {
-                this.setState({ currentMenuIndex: index });
-              }}
+              onClick={() => this.changeMenu(index)}
               key={menu}
             >
               {menu}
@@ -261,14 +306,16 @@ export default class TokenList extends Component {
             onChange={this.handleChangeCustom}
           />
 
-          <div className={styles.token_list}>
-            {customShowList &&
-              customShowList.map((item, index) => {
-                if ((item.test && query.env === 'local') || !item.test) {
-                  return this.renderList(item, index, 'custom');
-                }
-              })}
-          </div>
+          <Spin spinning={loadingCustomPairs}>
+            <div className={styles.token_list}>
+              {customShowList &&
+                customShowList.map((item, index) => {
+                  if ((item.test && query.env === 'local') || !item.test) {
+                    return this.renderList(item, index, 'custom');
+                  }
+                })}
+            </div>
+          </Spin>
 
           {showDec && (
             <div className={styles.decla}>
@@ -288,7 +335,7 @@ export default class TokenList extends Component {
               <Button
                 type="primary"
                 className={styles.btn}
-                onClick={() => this.setState({ showDec: false })}
+                onClick={this.startCustomPair}
               >
                 {_('acknowlege')}
               </Button>

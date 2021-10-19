@@ -69,6 +69,20 @@ export default {
       });
       return res.data;
     },
+    *allPairs({ payload }, { call, put, select }) {
+      const res = yield customApi.allPairs.call(customApi);
+      console.log(res);
+      if (res.code) {
+        return [];
+      }
+      yield put({
+        type: 'save',
+        payload: {
+          customAllPairs: res.data,
+        },
+      });
+      return res.data;
+    },
   },
 
   reducers: {

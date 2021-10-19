@@ -32,9 +32,10 @@ export default {
         return [];
       }
       const timeRange = yield select((state) => state.records.timeRange);
-      const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
+      const { swapCodeHash, swapID, token2 } = allPairs[currentPair] || {};
 
       const { type } = payload;
+      if (!swapCodeHash || !swapID) return [];
       const res = yield recordsApi.query.call(recordsApi, {
         codeHash: swapCodeHash,
         genesisHash: swapID,

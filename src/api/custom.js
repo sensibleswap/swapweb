@@ -16,6 +16,10 @@ class Custom extends BaseAPI {
     return this.sendRequest(api_url, params, method, catchError);
   }
 
+  allPairs() {
+    return this._request('allpairs');
+  }
+
   req(params) {
     return this._request('reqcreateswap', params, 'POST');
   }
