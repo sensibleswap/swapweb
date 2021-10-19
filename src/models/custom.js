@@ -71,7 +71,7 @@ export default {
     },
     *allPairs({ payload }, { call, put, select }) {
       const res = yield customApi.allPairs.call(customApi);
-      console.log(res);
+      log(res);
       if (res.code) {
         return [];
       }

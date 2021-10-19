@@ -79,12 +79,14 @@ export default class UserInfo extends Component {
             type: 'pair/updatePairData',
           });
 
-          dispatch({
-            type: 'farm/updatePairData',
-            payload: {
-              address: accountInfo.userAddress,
-            },
-          });
+          if (window.location.hash.indexOf('farm') > -1) {
+            dispatch({
+              type: 'farm/updatePairData',
+              payload: {
+                address: accountInfo.userAddress,
+              },
+            });
+          }
 
           if (isLogin) {
             const res = await dispatch({
