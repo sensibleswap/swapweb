@@ -11,18 +11,19 @@ import TimeRangeTabs from './timeRangeTabs';
 import styles from './index.less';
 import _ from 'i18n';
 
-@connect(({ pair, records, loading }) => {
+@connect(({ pair, records, farm, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
     ...records,
+    ...farm,
     loading: effects['pair/getAllPairs'] || effects['records/query'],
   };
 })
 export default class Chart extends Component {
   constructor(props) {
     super(props);
-    const { currentPair } = props;
+    const { currentPair, bsvPrice } = props;
     this.state = {
       chart_index: 0,
       cur_price: '',
@@ -79,7 +80,10 @@ export default class Chart extends Component {
               label: _('price'),
               value: formatNumberForDisplay({
                 value: params[0].value[1],
-                suffix: currentPair === USDT_PAIR ? 'USDT' : 'BSV',
+                suffix:
+                  currentPair === USDT_PAIR
+                    ? 'USDT'
+                    : `BSV ($${params[0].value[1] * bsvPrice})`,
               }),
             });
           }

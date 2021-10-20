@@ -15,6 +15,7 @@ import Clipboard from 'components/clipboard';
 import FormatNumber from 'components/formatNumber';
 import CustomIcon from 'components/icon';
 import { sleep } from 'common/utils';
+import Wallet from '@/lib/main';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
@@ -51,7 +52,7 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
-    this.initData();
+    this.initWallet();
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
   }
@@ -59,11 +60,27 @@ export default class UserInfo extends Component {
     this.polling = false;
   }
 
-  initData() {
-    this.props.dispatch({
-      type: 'pair/fetchIcons',
+  initWallet = () => {
+    const _wallet = Wallet({ type: 2 });
+
+    _wallet.bsv.on('accountChanged', async (depositAddress) => {
+      console.log(depositAddress);
+      if (depositAddress) {
+        await this.props.dispatch({
+          type: 'user/loadingUserData',
+          payload: {
+            type: 2,
+          },
+        });
+        // EventBus.emit('reloadPair');
+      }
     });
-  }
+    _wallet.bsv.on('close', () => {
+      this.props.dispatch({
+        type: 'user/disconnectWebWallet',
+      });
+    });
+  };
 
   fetchPairData = async () => {
     const _self = this;
