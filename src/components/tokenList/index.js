@@ -40,19 +40,20 @@ export default class TokenList extends Component {
       showDec: true,
     };
 
-    window.addEventListener('hashchange', (event) => {
-      const { newURL, oldURL } = event;
-      if (newURL !== oldURL) {
-        let newHash = newURL.substr(newURL.indexOf('#'));
-        let oldHash = oldURL.substr(oldURL.indexOf('#'));
-        const newpair = parseUrl(newHash);
-        const oldpair = parseUrl(oldHash);
-        if (newpair && newpair !== oldpair) {
-          // console.log('newpair:',newpair)
-          this.changeToken(newpair);
-        }
-      }
-    });
+    // window.addEventListener('hashchange', (event) => {
+    //   const { newURL, oldURL } = event;
+    //   if (newURL !== oldURL) {
+    //     let newHash = newURL.substr(newURL.indexOf('#'));
+    //     let oldHash = oldURL.substr(oldURL.indexOf('#'));
+    //     const newpair = parseUrl(newHash);
+    //     const oldpair = parseUrl(oldHash);
+    //     if (newpair && newpair !== oldpair) {
+    //       console.log('newpair:',newpair, 'oldpair:', oldpair)
+    //       console.log('changeToken')
+    //       // this.changeToken(newpair);
+    //     }
+    //   }
+    // });
   }
 
   handlePairs(pairs) {
@@ -82,38 +83,40 @@ export default class TokenList extends Component {
       }
 
       EventBus.emit('reloadPair');
+      const { finish } = this.props;
+      finish && finish(currentPair);
     }
   };
 
-  changeToken = async (currentPair) => {
-    const { dispatch, finish } = this.props;
-    // console.log('localStorage.setItem:', currentPair);
-    window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
-    if (currentPair.length === 40) {
-      await dispatch({
-        type: 'pair/getAllPairs',
-        payload: {
-          symbol: currentPair,
-        },
-      });
-    }
+  // changeToken = async (currentPair) => {
+  //   const { dispatch, finish } = this.props;
+  //   // console.log('localStorage.setItem:', currentPair);
+  //   window.localStorage.setItem(TSWAP_CURRENT_PAIR, currentPair);
+  //   if (currentPair.length === 40) {
+  //     await dispatch({
+  //       type: 'pair/getAllPairs',
+  //       payload: {
+  //         symbol: currentPair,
+  //       },
+  //     });
+  //   }
+  //   console.log('123456')
+  //   await dispatch({
+  //     type: 'pair/getPairData',
+  //     payload: {
+  //       currentPair,
+  //     },
+  //   });
+  //   // }
 
-    await dispatch({
-      type: 'pair/getPairData',
-      payload: {
-        currentPair,
-      },
-    });
-    // }
-
-    let { hash } = location;
-    if (hash.indexOf('swap') > -1) {
-      EventBus.emit('reloadChart', 'swap');
-    } else if (hash.indexOf('pool') > -1) {
-      EventBus.emit('reloadChart', 'pool');
-    }
-    finish && finish(currentPair);
-  };
+  //   let { hash } = location;
+  //   if (hash.indexOf('swap') > -1) {
+  //     EventBus.emit('reloadChart', 'swap');
+  //   } else if (hash.indexOf('pool') > -1) {
+  //     EventBus.emit('reloadChart', 'pool');
+  //   }
+  //   finish && finish(currentPair);
+  // };
 
   escapeRegExpWildcards(searchStr) {
     const regExp = /([\(\[\{\\\^\$\}\]\)\?\*\+\.])/gim;
