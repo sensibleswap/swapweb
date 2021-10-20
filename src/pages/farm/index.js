@@ -86,6 +86,10 @@ export default class FarmC extends Component {
       type: 'pair/getAllPairs',
       payload: {},
     });
+
+    dispatch({
+      type: 'farm/getBlockInfo',
+    });
   };
 
   showPannel = (index) => {
@@ -476,10 +480,14 @@ export default class FarmC extends Component {
   }
 
   renderContent() {
-    const { allFarmPairs } = this.props;
+    const { allFarmPairs, blockInfo } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
+        <div className={styles.farm_title}>
+          {blockInfo.blocks &&
+            `${_('last_block_height')} #${blockInfo.blocks || 0}`}
+        </div>
         <div className={styles.items}>
           {Object.keys(allFarmPairs).map((item, index) => {
             return this.renderItem(item, allFarmPairs[item], index);

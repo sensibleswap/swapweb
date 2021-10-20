@@ -21,6 +21,10 @@ class History extends BaseAPI {
     return this.sendRequest(api_url, params, method, catchError);
   }
 
+  blockInfo() {
+    return this._request(`blockchain/info`);
+  }
+
   query(params) {
     const { codeHash, genesisHash, type, currentPair } = params;
     if (type === 'pool') {

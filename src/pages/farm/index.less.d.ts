@@ -15,6 +15,7 @@ interface CssExports {
   current: string;
   desc: string;
   farm_intro: string;
+  farm_title: string;
   head: string;
   icon: string;
   item: string;

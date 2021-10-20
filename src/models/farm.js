@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
 import pairApi from '../api/pair';
+import sensApi from '../api/sensiblequery';
 import { TSWAP_CURRENT_FARM_PAIR, USDT_PAIR, TSWAP_SOURCE } from 'common/const';
 import { formatSat, parseUrl } from 'common/utils';
 import debug from 'debug';
@@ -20,6 +21,7 @@ export default {
     pairYields: {},
     bsvPrice: 0,
     pairsData: {},
+    blockInfo: {},
   },
 
   subscriptions: {
@@ -157,6 +159,21 @@ export default {
     *harvest2({ payload }, { call, put }) {
       const res = yield farmApi.harvest2.call(farmApi, payload);
       log('harvest:', payload, res);
+      return res;
+    },
+
+    *getBlockInfo({ payload }, { call, put }) {
+      const res = yield sensApi.blockInfo.call(sensApi);
+      log('blockInfo:', res);
+      if (res.code === 0) {
+        yield put({
+          type: 'save',
+          payload: {
+            blockInfo: res.data,
+          },
+        });
+        return res.data;
+      }
       return res;
     },
   },

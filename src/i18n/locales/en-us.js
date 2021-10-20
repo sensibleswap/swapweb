@@ -237,6 +237,7 @@ const texts = {
   harvest: 'Harvest',
   farm_desc:
     'Provide liquidity and deposit your LP tokens to earn and harvest tokens',
+  last_block_height: 'Latest BSV block height:',
   your_deposited_lp: 'Your deposited LP',
   apy_info:
     'APY = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
