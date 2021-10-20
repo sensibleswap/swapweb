@@ -17,7 +17,7 @@ import styles from './index.less';
 import _ from 'i18n';
 
 // import Header from '../layout/header';
-import { history } from 'umi';
+// import { history } from 'umi';
 import BigNumber from 'bignumber.js';
 
 let busy = false;

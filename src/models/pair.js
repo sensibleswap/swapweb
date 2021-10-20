@@ -75,7 +75,8 @@ export default {
 
       const urlPair = parseUrl();
       // console.log('urlPair:', urlPair)
-      let customPair; // = yield select((state) => state.pair.customPair);
+
+      let customPair;
       if (!currentPair) {
         currentPair =
           urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
