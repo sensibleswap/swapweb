@@ -21,7 +21,7 @@ export default {
     pairYields: {},
     bsvPrice: 0,
     pairsData: {},
-    blockInfo: {},
+    blockHeight: 0,
   },
 
   subscriptions: {
@@ -57,9 +57,14 @@ export default {
       }
       let p = [];
       let pairsData = {};
+      let blockHeight;
       const pairs = Object.keys(data);
       pairs.forEach((item) => {
-        p.push(pairApi.querySwapInfo(item));
+        if (item === 'blockHeight') {
+          blockHeight = data[item];
+        } else {
+          p.push(pairApi.querySwapInfo(item));
+        }
       });
       const datas_res = yield Promise.all(p);
       pairs.forEach((item, index) => {
@@ -162,20 +167,20 @@ export default {
       return res;
     },
 
-    *getBlockInfo({ payload }, { call, put }) {
-      const res = yield sensApi.blockInfo.call(sensApi);
-      log('blockInfo:', res);
-      if (res.code === 0) {
-        yield put({
-          type: 'save',
-          payload: {
-            blockInfo: res.data,
-          },
-        });
-        return res.data;
-      }
-      return res;
-    },
+    // *getBlockInfo({ payload }, { call, put }) {
+    //   const res = yield sensApi.blockInfo.call(sensApi);
+    //   log('blockInfo:', res);
+    //   if (res.code === 0) {
+    //     yield put({
+    //       type: 'save',
+    //       payload: {
+    //         blockInfo: res.data,
+    //       },
+    //     });
+    //     return res.data;
+    //   }
+    //   return res;
+    // },
   },
 
   reducers: {

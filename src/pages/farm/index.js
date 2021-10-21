@@ -92,9 +92,9 @@ export default class FarmC extends Component {
       payload: {},
     });
 
-    dispatch({
-      type: 'farm/getBlockInfo',
-    });
+    // dispatch({
+    //   type: 'farm/getBlockInfo',
+    // });
   };
 
   showPannel = (index) => {
@@ -485,13 +485,12 @@ export default class FarmC extends Component {
   }
 
   renderContent() {
-    const { allFarmPairs, blockInfo } = this.props;
+    const { allFarmPairs, blockHeight } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
         <div className={styles.farm_title}>
-          {blockInfo.blocks &&
-            `${_('last_block_height')} #${blockInfo.blocks - 1 || 0}`}
+          {blockHeight && `${_('last_block_height')} #${blockHeight - 1 || 0}`}
         </div>
         <div className={styles.items}>
           {Object.keys(allFarmPairs).map((item, index) => {

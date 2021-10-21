@@ -74,12 +74,15 @@ export default class UserInfo extends Component {
           await sleep(20 * 1e3);
           i++;
           const { dispatch, busy, isLogin, accountInfo } = _self.props;
+          const { hash } = window.location;
           if (busy) return;
-          dispatch({
-            type: 'pair/updatePairData',
-          });
+          if (hash.indexOf('farm') < 0) {
+            dispatch({
+              type: 'pair/updatePairData',
+            });
+          }
 
-          if (window.location.hash.indexOf('farm') > -1) {
+          if (hash.indexOf('farm') > -1) {
             dispatch({
               type: 'farm/updatePairData',
               payload: {
