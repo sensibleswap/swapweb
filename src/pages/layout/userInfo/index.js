@@ -64,9 +64,10 @@ export default class UserInfo extends Component {
     const _wallet = Wallet({ type: 2 });
 
     _wallet.bsv.on('accountChanged', async (depositAddress) => {
-      console.log(depositAddress);
-      if (depositAddress) {
-        await this.props.dispatch({
+      const { dispatch, isLogin } = this.props;
+
+      if (depositAddress && !isLogin) {
+        await dispatch({
           type: 'user/loadingUserData',
           payload: {
             type: 2,
@@ -361,7 +362,7 @@ export default class UserInfo extends Component {
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
     const { accountInfo, connecting, isLogin } = this.props;
-    const DEFAULT_VOLT_WALLET_INDEX = isApp ? 3 : 2;
+    // const DEFAULT_VOLT_WALLET_INDEX = isApp ? 3 : 2;
 
     return (
       <>
@@ -432,11 +433,7 @@ export default class UserInfo extends Component {
           >
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              <li
-                onClick={() =>
-                  this.connectWebWallet(DEFAULT_VOLT_WALLET_INDEX, 'mainnet')
-                }
-              >
+              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
                   style={{ fontSize: 30 }}
@@ -446,14 +443,7 @@ export default class UserInfo extends Component {
 
               {query.env === 'local' && (
                 <>
-                  <li
-                    onClick={() =>
-                      this.connectWebWallet(
-                        DEFAULT_VOLT_WALLET_INDEX,
-                        'testnet',
-                      )
-                    }
-                  >
+                  <li onClick={() => this.connectWebWallet(2, 'testnet')}>
                     <CustomIcon
                       type="iconBSVtestnet"
                       style={{ fontSize: 30 }}
