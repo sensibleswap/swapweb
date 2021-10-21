@@ -129,6 +129,14 @@ export default class FarmC extends Component {
   harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
     const { dispatch, accountInfo } = this.props;
     const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
+    console.log(1, {
+      txHex,
+      scriptHex,
+      satoshis,
+      inputIndex,
+      address: accountInfo.userAddress,
+    });
+
     let sign_res = await dispatch({
       type: 'user/signTx',
       payload: {
@@ -141,6 +149,8 @@ export default class FarmC extends Component {
         },
       },
     });
+    console.log(2, sign_res);
+    return { code: 1, msg: 'error' };
 
     if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
