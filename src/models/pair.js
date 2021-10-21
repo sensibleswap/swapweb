@@ -1,7 +1,8 @@
 import 'whatwg-fetch';
+import BigNumber from 'bignumber.js';
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
-import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR } from 'common/const';
+import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR, USDT_PAIR } from 'common/const';
 import { parseUrl } from 'common/utils';
 import debug from 'debug';
 
@@ -23,6 +24,7 @@ export default {
     token2: {},
     LP: 100000,
     iconList: '',
+    bsvPrice: 0,
   },
 
   subscriptions: {
@@ -179,6 +181,24 @@ export default {
 
       // console.log(data)
       return data;
+    },
+
+    *getUSDPrice({ payload }, { call, put, select }) {
+      const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+
+      if (price_res.code === 0) {
+        const bsvPrice = BigNumber(price_res.data.swapToken2Amount)
+          .div(price_res.data.swapToken1Amount)
+          .multipliedBy(Math.pow(10, 8 - 6))
+          .toString();
+
+        yield put({
+          type: 'save',
+          payload: {
+            bsvPrice,
+          },
+        });
+      }
     },
 
     *reqSwap({ payload }, { call, put, select }) {

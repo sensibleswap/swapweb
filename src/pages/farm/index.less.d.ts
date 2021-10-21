@@ -27,6 +27,7 @@ interface CssExports {
   left: string;
   left_inner: string;
   link: string;
+  logo: string;
   lp_amount: string;
   main_title: string;
   menu: string;

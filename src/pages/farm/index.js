@@ -91,10 +91,6 @@ export default class FarmC extends Component {
       type: 'pair/getAllPairs',
       payload: {},
     });
-
-    dispatch({
-      type: 'farm/getBlockInfo',
-    });
   };
 
   showPannel = (index) => {
@@ -129,13 +125,6 @@ export default class FarmC extends Component {
   harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
     const { dispatch, accountInfo } = this.props;
     const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
-    console.log(1, {
-      txHex,
-      scriptHex,
-      satoshis,
-      inputIndex,
-      address: accountInfo.userAddress,
-    });
 
     let sign_res = await dispatch({
       type: 'user/signTx',
@@ -149,8 +138,6 @@ export default class FarmC extends Component {
         },
       },
     });
-    console.log(2, sign_res);
-    return { code: 1, msg: 'error' };
 
     if (sign_res.msg && !sign_res.sig) {
       return message.error(sign_res);
@@ -259,7 +246,8 @@ export default class FarmC extends Component {
       return message.error(msg);
     }
   };
-  showModal(amount, txid, symbol, tokenID) {
+  showModal = (amount, txid, symbol, tokenID) => {
+    const { iconList } = this.props;
     Modal.info({
       title: '',
       content: (
@@ -274,10 +262,10 @@ export default class FarmC extends Component {
             <span style={{ marginRight: 30 }}>
               <FormatNumber value={amount} />
             </span>
-            <TokenLogo
-              name={symbol}
-              genesisID={tokenID}
-              style={{ fontSize: 20, marginRight: 10 }}
+            <img
+              alt={symbol}
+              src={iconList[tokenID].url}
+              className={styles.logo}
             />
             <span className={styles.symbol}>{symbol}</span>
           </div>
@@ -289,7 +277,7 @@ export default class FarmC extends Component {
       icon: '',
       width: 375,
     });
-  }
+  };
 
   renderItem(pairName, data, index) {
     const {
@@ -495,13 +483,13 @@ export default class FarmC extends Component {
   }
 
   renderContent() {
-    const { allFarmPairs, blockInfo } = this.props;
+    const { allFarmPairs } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
         <div className={styles.farm_title}>
-          {blockInfo.blocks &&
-            `${_('last_block_height')} #${blockInfo.blocks - 1 || 0}`}
+          {allFarmPairs.blockHeight &&
+            `${_('last_block_height')} #${allFarmPairs.blockHeight}`}
         </div>
         <div className={styles.items}>
           {Object.keys(allFarmPairs).map((item, index) => {

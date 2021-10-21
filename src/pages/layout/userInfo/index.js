@@ -73,7 +73,9 @@ export default class UserInfo extends Component {
             type: 2,
           },
         });
-        // EventBus.emit('reloadPair');
+        if (window.location.hash.indexOf('farm') > -1) {
+          EventBus.emit('reloadPair');
+        }
       }
     });
     _wallet.bsv.on('close', () => {
@@ -89,15 +91,21 @@ export default class UserInfo extends Component {
     if (_timer < 1) {
       setTimeout(async () => {
         while (this.polling) {
+          const { dispatch, busy, isLogin, accountInfo } = _self.props;
+          dispatch({
+            type: 'pair/getUSDPrice',
+          });
           await sleep(20 * 1e3);
           i++;
-          const { dispatch, busy, isLogin, accountInfo } = _self.props;
+          const { hash } = window.location;
           if (busy) return;
-          dispatch({
-            type: 'pair/updatePairData',
-          });
+          if (hash.indexOf('farm') < 0) {
+            dispatch({
+              type: 'pair/updatePairData',
+            });
+          }
 
-          if (window.location.hash.indexOf('farm') > -1) {
+          if (hash.indexOf('farm') > -1) {
             dispatch({
               type: 'farm/updatePairData',
               payload: {
@@ -182,11 +190,11 @@ export default class UserInfo extends Component {
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
-    if (isLogin) {
-      await dispatch({
-        type: 'user/disconnectWebWallet',
-      });
-    }
+    // if (isLogin) {
+    //   await dispatch({
+    //     type: 'user/disconnectWebWallet',
+    //   });
+    // }
 
     const con_res = await dispatch({
       type: 'user/connectWebWallet',

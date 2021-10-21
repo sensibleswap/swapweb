@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import CustomIcon from 'components/icon';
-import { icons } from 'common/config';
+// import { icons } from 'common/config';
 import styles from './index.less';
 
 @connect(({ pair }) => {
@@ -31,9 +31,9 @@ export default class TokenIcon extends React.Component {
     }
 
     let { name, genesisID, iconList } = this.props;
-    if (!iconList) {
-      iconList = icons;
-    }
+    // if (!iconList) {
+    //   iconList = icons;
+    // }
     const icons_name = iconList[genesisID];
     if (icons_name) {
       if (icons_name.type) {

@@ -2,9 +2,10 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
+import BigNumber from 'bignumber.js';
 import { connect } from 'umi';
 import { Spin } from 'antd';
-import { formatNumberForDisplay } from 'common/utils';
+import { formatNumberForDisplay, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import { USDT_PAIR, COLOR1, COLOR2 } from 'common/const';
 import TimeRangeTabs from './timeRangeTabs';
@@ -83,7 +84,10 @@ export default class Chart extends Component {
                 suffix:
                   currentPair === USDT_PAIR
                     ? 'USDT'
-                    : `BSV ($${params[0].value[1] * bsvPrice})`,
+                    : `BSV ($${formatAmount(
+                        BigNumber(params[0].value[1]).multipliedBy(bsvPrice),
+                        4,
+                      )})`,
               }),
             });
           }

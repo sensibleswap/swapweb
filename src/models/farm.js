@@ -1,8 +1,7 @@
-import BigNumber from 'bignumber.js';
+// import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
 import pairApi from '../api/pair';
-import sensApi from '../api/sensiblequery';
-import { TSWAP_CURRENT_FARM_PAIR, USDT_PAIR, TSWAP_SOURCE } from 'common/const';
+import { TSWAP_CURRENT_FARM_PAIR, TSWAP_SOURCE } from 'common/const';
 import { formatSat, parseUrl } from 'common/utils';
 import debug from 'debug';
 const log = debug('farm');
@@ -19,9 +18,8 @@ export default {
     lptoken: {},
     rewardToken: {},
     pairYields: {},
-    bsvPrice: 0,
+    // bsvPrice: 0,
     pairsData: {},
-    blockInfo: {},
   },
 
   subscriptions: {
@@ -57,10 +55,14 @@ export default {
       }
       let p = [];
       let pairsData = {};
-      const pairs = Object.keys(data);
-      pairs.forEach((item) => {
-        p.push(pairApi.querySwapInfo(item));
+      let pairs = [];
+      Object.keys(data).forEach((item) => {
+        if (item !== 'blockHeight') {
+          pairs.push(item);
+          p.push(pairApi.querySwapInfo(item));
+        }
       });
+
       const datas_res = yield Promise.all(p);
       pairs.forEach((item, index) => {
         if (datas_res[index].code === 0) {
@@ -68,23 +70,23 @@ export default {
         }
       });
 
-      let bsvPrice = 0;
+      // let bsvPrice = 0;
 
-      const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
 
-      if (price_res.code === 0) {
-        bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-          .div(price_res.data.swapToken1Amount)
-          .multipliedBy(Math.pow(10, 8 - 6))
-          .toString();
-      }
+      // if (price_res.code === 0) {
+      //   bsvPrice = BigNumber(price_res.data.swapToken2Amount)
+      //     .div(price_res.data.swapToken1Amount)
+      //     .multipliedBy(Math.pow(10, 8 - 6))
+      //     .toString();
+      // }
 
       yield put({
         type: 'saveFarm',
         payload: {
           allFarmPairs: data,
           currentFarmPair,
-          bsvPrice,
+          // bsvPrice,
           pairsData,
         },
       });
@@ -103,21 +105,21 @@ export default {
         return res;
       }
 
-      let bsvPrice = 0;
-      const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+      // let bsvPrice = 0;
+      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
 
-      if (price_res.code === 0) {
-        bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-          .div(price_res.data.swapToken1Amount)
-          .multipliedBy(Math.pow(10, 8 - 6))
-          .toString();
-      }
+      // if (price_res.code === 0) {
+      //   bsvPrice = BigNumber(price_res.data.swapToken2Amount)
+      //     .div(price_res.data.swapToken1Amount)
+      //     .multipliedBy(Math.pow(10, 8 - 6))
+      //     .toString();
+      // }
 
       yield put({
         type: 'saveFarm',
         payload: {
           allFarmPairs: data,
-          bsvPrice,
+          // bsvPrice,
         },
       });
 
@@ -159,21 +161,6 @@ export default {
     *harvest2({ payload }, { call, put }) {
       const res = yield farmApi.harvest2.call(farmApi, payload);
       log('harvest:', payload, res);
-      return res;
-    },
-
-    *getBlockInfo({ payload }, { call, put }) {
-      const res = yield sensApi.blockInfo.call(sensApi);
-      log('blockInfo:', res);
-      if (res.code === 0) {
-        yield put({
-          type: 'save',
-          payload: {
-            blockInfo: res.data,
-          },
-        });
-        return res.data;
-      }
       return res;
     },
   },
