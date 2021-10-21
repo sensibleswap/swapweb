@@ -21,7 +21,6 @@ export default {
     pairYields: {},
     bsvPrice: 0,
     pairsData: {},
-    blockHeight: 0,
   },
 
   subscriptions: {
@@ -57,15 +56,14 @@ export default {
       }
       let p = [];
       let pairsData = {};
-      let blockHeight;
-      const pairs = Object.keys(data);
-      pairs.forEach((item) => {
-        if (item === 'blockHeight') {
-          blockHeight = data[item];
-        } else {
+      let pairs = [];
+      Object.keys(data).forEach((item) => {
+        if (item !== 'blockHeight') {
+          pairs.push(item);
           p.push(pairApi.querySwapInfo(item));
         }
       });
+
       const datas_res = yield Promise.all(p);
       pairs.forEach((item, index) => {
         if (datas_res[index].code === 0) {

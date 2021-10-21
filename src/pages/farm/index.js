@@ -485,12 +485,13 @@ export default class FarmC extends Component {
   }
 
   renderContent() {
-    const { allFarmPairs, blockHeight } = this.props;
+    const { allFarmPairs } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
         <div className={styles.farm_title}>
-          {blockHeight && `${_('last_block_height')} #${blockHeight - 1 || 0}`}
+          {allFarmPairs.blockHeight &&
+            `${_('last_block_height')} #${allFarmPairs.blockHeight}`}
         </div>
         <div className={styles.items}>
           {Object.keys(allFarmPairs).map((item, index) => {
