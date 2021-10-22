@@ -34,6 +34,14 @@ export default function Footer() {
           >
             <CustomIcon type="icondiscord" />
           </a>
+
+          <a
+            href="https://github.com/sensibleswap/interface-doc/blob/master/swap_interface_en.md"
+            target="_blank"
+            className={styles.icon}
+          >
+            <CustomIcon type="icongithub" />
+          </a>
         </div>
       </div>
     </section>

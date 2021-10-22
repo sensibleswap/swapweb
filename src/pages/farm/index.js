@@ -19,6 +19,7 @@ import Withdraw from '../withdraw';
 import styles from './index.less';
 import _ from 'i18n';
 // const log = debug('farm');
+let busy = false;
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -72,25 +73,32 @@ export default class FarmC extends Component {
     EventBus.on('reloadPair', () => {
       const { hash } = window.location;
       if (hash.indexOf('farm') > -1) {
-        this.fetch();
+        this.updateFarmPairs();
       }
     });
     this.fetch();
   }
 
   fetch = async () => {
+    this.updateFarmPairs();
+    this.props.dispatch({
+      type: 'pair/getAllPairs',
+      payload: {},
+    });
+  };
+
+  updateFarmPairs = async () => {
+    if (busy) return;
+    busy = true;
     const { dispatch, accountInfo } = this.props;
     const { userAddress } = accountInfo;
-    dispatch({
+    await dispatch({
       type: 'farm/getAllPairs',
       payload: {
         address: userAddress,
       },
     });
-    dispatch({
-      type: 'pair/getAllPairs',
-      payload: {},
-    });
+    busy = false;
   };
 
   showPannel = (index) => {

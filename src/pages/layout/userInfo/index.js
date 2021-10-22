@@ -80,8 +80,17 @@ export default class UserInfo extends Component {
     });
     _wallet.bsv.on('close', () => {
       this.props.dispatch({
-        type: 'user/disconnectWebWallet',
+        type: 'user/save',
+        payload: {
+          accountInfo: {
+            userBalance: {},
+          },
+          isLogin: false,
+        },
       });
+      if (window.location.hash.indexOf('farm') > -1) {
+        EventBus.emit('reloadPair');
+      }
     });
   };
 
