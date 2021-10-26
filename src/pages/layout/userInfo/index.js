@@ -122,14 +122,10 @@ export default class UserInfo extends Component {
               },
             });
           }
-
           if (isLogin) {
-            const res = await dispatch({
+            await dispatch({
               type: 'user/updateUserData',
             });
-            if (res.msg && res.msg.indexOf('not_login') > -1) {
-              this.disConnect();
-            }
           }
 
           if (i > 1) {
