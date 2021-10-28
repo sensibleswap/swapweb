@@ -9,8 +9,8 @@ const timeRangeOptions = [
   // { label: '4H', value: '4h' },
   { label: '1D', value: '1d' },
   { label: '1W', value: '1w' },
-  // { label: '1M', value: '1m' },
-  { label: 'ALL', value: 'all' },
+  { label: '1M', value: '1m' },
+  // { label: 'ALL', value: 'all' },
 ];
 
 @connect(({ records }) => {
