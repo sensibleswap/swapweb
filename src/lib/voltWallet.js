@@ -105,7 +105,6 @@ export default {
   },
 
   signTx: (params) => {
-    console.log(7, bsv.signTx(params));
     return bsv.signTx(params);
   },
 };

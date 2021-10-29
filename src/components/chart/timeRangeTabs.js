@@ -7,9 +7,9 @@ import _ from 'i18n';
 
 const timeRangeOptions = [
   // { label: '4H', value: '4h' },
-  { label: '1D', value: '1d' },
-  { label: '1W', value: '1w' },
-  { label: '1M', value: '1m' },
+  { label: 'D', value: '1d' },
+  { label: 'W', value: '1w' },
+  { label: 'M', value: '1m' },
   // { label: 'ALL', value: 'all' },
 ];
 

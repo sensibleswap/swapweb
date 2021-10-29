@@ -46,7 +46,17 @@ export default class Chart extends Component {
       },
       xAxis: {
         type: 'time',
-        show: true,
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        // axisLabel: {
+        //   formatter: function(value, index) {
+        //     return value.substr(8, 2)
+        //   }
+        // }
       },
       yAxis: [
         {
@@ -63,6 +73,9 @@ export default class Chart extends Component {
       ],
       tooltip: {
         trigger: 'axis',
+        axisPointer: {
+          type: 'none',
+        },
         className: styles.tooltip,
         renderMode: 'html',
         formatter: function (params) {
@@ -128,7 +141,7 @@ export default class Chart extends Component {
           showSymbol: false,
           lineStyle: {
             color: COLOR2,
-            width: 2,
+            width: props.type === 'pool' ? 2 : 1,
           },
           itemStyle: {
             color: COLOR2,
@@ -136,7 +149,7 @@ export default class Chart extends Component {
           emphasis: {
             lineStyle: {
               color: COLOR2,
-              width: 2,
+              width: props.type === 'pool' ? 2 : 1,
             },
           },
           yAxisIndex: 1,
@@ -170,15 +183,13 @@ export default class Chart extends Component {
         // console.log(chartData.map((d) => (
         //   d.formattedTime
         // )))
-        // this.option.xAxis.data = chartData.map((d) => (
-        //   d.timestamp
-        // ))
+        this.option.xAxis.data = chartData.map((d) => d.formattedTime);
         this.option.series[0].data = chartData.map((d) => ({
           name: d.timestamp,
           value: [d.formattedTime, d.price],
         }));
-        console.log(this.props.timeRange, dateInterval[this.props.timeRange]);
-        this.option.xAxis.minInterval = dateInterval[this.props.timeRange];
+        // console.log(this.props.timeRange, dateInterval[this.props.timeRange]);
+        this.option.xAxis.minInterval = dateInterval['1m'];
         this.option.series[1].data = chartData.map((d) => ({
           name: d.timestamp,
           value: [d.formattedTime, d.volumn],

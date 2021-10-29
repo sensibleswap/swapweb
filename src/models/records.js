@@ -8,7 +8,7 @@ export default {
   namespace: 'records',
 
   state: {
-    timeRange: '1w', // '4h' | '1d' | '1w' | '1m' | 'all'
+    timeRange: '1d', // '4h' | '1d' | '1w' | '1m' | 'all'
   },
 
   subscriptions: {
