@@ -16,6 +16,7 @@ const dateInterval = {
   '1m': 3600 * 24 * 1000 * 30,
   '1w': 3600 * 24 * 1000 * 7,
   '1d': 3600 * 24 * 1000,
+  all: 2,
 };
 
 @connect(({ pair, records, farm, loading }) => {

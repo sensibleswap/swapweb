@@ -248,13 +248,14 @@ export default class FarmC extends Component {
         data.txid,
         params.rewardToken.symbol,
         params.rewardToken.tokenID,
+        harvest2_res.data.blockHeight,
       );
       this.fetch();
     } else {
       return message.error(msg);
     }
   };
-  showModal = (amount, txid, symbol, tokenID) => {
+  showModal = (amount, txid, symbol, tokenID, blockHeight) => {
     const { iconList } = this.props;
     Modal.info({
       title: '',
@@ -277,7 +278,9 @@ export default class FarmC extends Component {
             />
             <span className={styles.symbol}>{symbol}</span>
           </div>
-          <div className={styles.txt}>{_('harvest_success')}</div>
+          <div className={styles.txt}>
+            {_('harvest_success')}@block{blockHeight}
+          </div>
           <div className={styles.txid}>{`Txid: ${txid}`}</div>
         </div>
       ),
@@ -325,7 +328,7 @@ export default class FarmC extends Component {
 
     const reward_symbol = `${tokenPre()}${symbol.toLowerCase()}`;
     const reward_token = pairsData[reward_symbol];
-    if (!reward_token) {
+    if (!reward_token || !allPairs[pairName]) {
       return null;
     }
     const { tokenID } = allPairs[pairName].token2;

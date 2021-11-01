@@ -57,6 +57,7 @@ export default class Withdraw extends Component {
       addLP: 0,
       formFinish: false,
       price: 0,
+      blockHeight: 0,
     };
   }
 
@@ -322,6 +323,7 @@ export default class Withdraw extends Component {
       this.updateData();
       this.setState({
         formFinish: true,
+        blockHeight: withdraw2_res.data.blockHeight,
       });
     } else {
       return message.error(withdraw2_res.msg);
@@ -371,7 +373,7 @@ export default class Withdraw extends Component {
 
   renderResult() {
     const { symbol1, symbol2 } = this.props;
-    const { addLP } = this.state;
+    const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
         <div className={styles.finish_logo}>
@@ -380,7 +382,9 @@ export default class Withdraw extends Component {
             style={{ fontSize: 64, color: '#2BB696' }}
           />
         </div>
-        <div className={styles.finish_title}>{_('withdraw_success')}</div>
+        <div className={styles.finish_title}>
+          {_('withdraw_success')}@block{blockHeight}
+        </div>
         <div className={styles.small_title}>{_('withdrew')}</div>
 
         <div className={styles.pair_data}>

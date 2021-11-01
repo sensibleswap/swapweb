@@ -74,9 +74,11 @@ export default {
           newData.forEach((item, i) => {
             const { minPrice, maxPrice, token1Volume, timestamp } = item;
             // if (i > 0 && (!startTimestamp || timestamp > startTimestamp)) {
+            const _timestamp = formatTime(timestamp * 1000);
             const stepData = {
               timestamp: timestamp * 1000,
-              formattedTime: formatTime(timestamp * 1000).substr(0, 10),
+              formattedTime:
+                timeRange === 'all' ? _timestamp : _timestamp.substr(0, 10),
               volumn: formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8),
             };
 

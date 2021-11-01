@@ -55,6 +55,7 @@ export default class Deposit extends Component {
       addLPRate: 0,
       addLP: 0,
       formFinish: false,
+      blockHeight: 0,
     };
   }
 
@@ -127,6 +128,7 @@ export default class Deposit extends Component {
     } = this.props;
     if (loading || !currentFarmPair || !pairsData[currentFarmPair])
       return <Loading />;
+    if (!allPairs[currentFarmPair]) return null;
     const { addLPRate, addLP } = this.state;
     const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
     const currentPairData = pairsData[currentFarmPair] || {};
@@ -315,6 +317,7 @@ export default class Deposit extends Component {
       this.updateData();
       this.setState({
         formFinish: true,
+        blockHeight: deposit_res.data.blockHeight,
       });
     } else {
       return message.error(deposit_res.msg);
@@ -366,7 +369,7 @@ export default class Deposit extends Component {
   renderResult() {
     const { symbol1, symbol2, allPairs, currentFarmPair } = this.props;
     const { token2 } = allPairs[currentFarmPair];
-    const { addLP } = this.state;
+    const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
         <div className={styles.finish_logo}>
@@ -375,7 +378,9 @@ export default class Deposit extends Component {
             style={{ fontSize: 64, color: '#2BB696' }}
           />
         </div>
-        <div className={styles.finish_title}>{_('deposit_success')}</div>
+        <div className={styles.finish_title}>
+          {_('deposit_success')}@block{blockHeight}
+        </div>
         <div className={styles.small_title}>{_('deposited')}</div>
 
         <div className={styles.pair_data}>

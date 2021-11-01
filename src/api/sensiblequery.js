@@ -6,6 +6,7 @@ const intervals = {
   '1D': 144,
   '1W': 144 * 7,
   '1M': 144 * 30,
+  ALL: 2,
 };
 class History extends BaseAPI {
   _request(api, params = {}, method = 'GET', url = '', catchError) {
