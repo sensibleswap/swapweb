@@ -90,9 +90,7 @@ export default class Withdraw extends Component {
         currentFarmPair,
         lockedTokenAmount,
       } = this.props;
-      // const { userBalance, } = accountInfo;
       const { lptoken = {} } = allFarmPairs[currentFarmPair];
-      // const LP = userBalance[lptoken.tokenID] || 0;
       let _addLp = e.target.value;
       _addLp = formatAmount(_addLp, lptoken.decimal);
       if (_addLp <= 0) {
