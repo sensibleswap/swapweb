@@ -12,13 +12,13 @@ export default function Footer() {
           <div className={styles.text}>TokenSwap © 2021</div>
         </div>
         <div className={styles.icons}>
-          <a
+          {/*<a
             href="https://t.me/tswap_io"
             target="_blank"
             className={styles.icon}
           >
             <CustomIcon type="icontelegram" />
-          </a>
+          </a>*/}
           <a
             href="https://twitter.com/tswap_io"
             target="_blank"
@@ -33,6 +33,14 @@ export default function Footer() {
             className={styles.icon}
           >
             <CustomIcon type="icondiscord" />
+          </a>
+
+          <a
+            href="https://github.com/sensibleswap/interface-doc/blob/master/swap_interface_en.md"
+            target="_blank"
+            className={styles.icon}
+          >
+            <CustomIcon type="icongithub" />
           </a>
         </div>
       </div>

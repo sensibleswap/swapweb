@@ -19,6 +19,7 @@ import Withdraw from '../withdraw';
 import styles from './index.less';
 import _ from 'i18n';
 // const log = debug('farm');
+let busy = false;
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -72,29 +73,32 @@ export default class FarmC extends Component {
     EventBus.on('reloadPair', () => {
       const { hash } = window.location;
       if (hash.indexOf('farm') > -1) {
-        this.fetch();
+        this.updateFarmPairs();
       }
     });
     this.fetch();
   }
 
   fetch = async () => {
+    this.updateFarmPairs();
+    this.props.dispatch({
+      type: 'pair/getAllPairs',
+      payload: {},
+    });
+  };
+
+  updateFarmPairs = async () => {
+    if (busy) return;
+    busy = true;
     const { dispatch, accountInfo } = this.props;
     const { userAddress } = accountInfo;
-    dispatch({
+    await dispatch({
       type: 'farm/getAllPairs',
       payload: {
         address: userAddress,
       },
     });
-    dispatch({
-      type: 'pair/getAllPairs',
-      payload: {},
-    });
-
-    // dispatch({
-    //   type: 'farm/getBlockInfo',
-    // });
+    busy = false;
   };
 
   showPannel = (index) => {
@@ -129,6 +133,7 @@ export default class FarmC extends Component {
   harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
     const { dispatch, accountInfo } = this.props;
     const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
+
     let sign_res = await dispatch({
       type: 'user/signTx',
       payload: {
@@ -243,13 +248,15 @@ export default class FarmC extends Component {
         data.txid,
         params.rewardToken.symbol,
         params.rewardToken.tokenID,
+        harvest2_res.data.blockHeight,
       );
       this.fetch();
     } else {
       return message.error(msg);
     }
   };
-  showModal(amount, txid, symbol, tokenID) {
+  showModal = (amount, txid, symbol, tokenID, blockHeight) => {
+    const { iconList } = this.props;
     Modal.info({
       title: '',
       content: (
@@ -264,14 +271,16 @@ export default class FarmC extends Component {
             <span style={{ marginRight: 30 }}>
               <FormatNumber value={amount} />
             </span>
-            <TokenLogo
-              name={symbol}
-              genesisID={tokenID}
-              style={{ fontSize: 20, marginRight: 10 }}
+            <img
+              alt={symbol}
+              src={iconList[tokenID].url}
+              className={styles.logo}
             />
             <span className={styles.symbol}>{symbol}</span>
           </div>
-          <div className={styles.txt}>{_('harvest_success')}</div>
+          <div className={styles.txt}>
+            {_('harvest_success')}@block{blockHeight}
+          </div>
           <div className={styles.txid}>{`Txid: ${txid}`}</div>
         </div>
       ),
@@ -279,7 +288,7 @@ export default class FarmC extends Component {
       icon: '',
       width: 375,
     });
-  }
+  };
 
   renderItem(pairName, data, index) {
     const {
@@ -319,7 +328,7 @@ export default class FarmC extends Component {
 
     const reward_symbol = `${tokenPre()}${symbol.toLowerCase()}`;
     const reward_token = pairsData[reward_symbol];
-    if (!reward_token) {
+    if (!reward_token || !allPairs[pairName]) {
       return null;
     }
     const { tokenID } = allPairs[pairName].token2;
