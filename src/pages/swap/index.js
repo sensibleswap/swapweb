@@ -240,7 +240,9 @@ export default class Swap extends Component {
     }
 
     let origin_amount = this.state.dirForward
-      ? userBalance.BSV * 0.98 || 0
+      ? token1.symbol === 'bsv'
+        ? userBalance.BSV * 0.98 || 0
+        : userBalance[token1.tokenID]
       : userBalance[token2.tokenID] || 0;
     origin_amount = formatAmount(origin_amount, decimal);
     this.formRef.current.setFieldsValue({
@@ -600,42 +602,94 @@ export default class Swap extends Component {
       op: dirForward ? 3 : 4,
     };
     if (dirForward) {
-      let amount = BigNumber(origin_amount).multipliedBy(1e8).toString();
-      const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
-      let total = BigInt(amount) + BigInt(txFee);
-      const _allBalance = total > BigInt(userTotal);
-      if (_allBalance) {
-        total = userTotal;
-        amount = BigInt(userTotal) - BigInt(txFee);
-      }
-      if (amount < MINAMOUNT) {
-        return message.error(_('lower_amount', MINAMOUNT));
-      }
-      const ts_res = await dispatch({
-        type: 'user/transferBsv',
-        payload: {
-          address: bsvToAddress,
-          amount: total.toString(),
-          changeAddress,
-          note: 'tswap.io(swap)',
-          noBroadcast: true,
-        },
-      });
+      let amount = BigNumber(origin_amount)
+        .multipliedBy(Math.pow(10, token1.decimal))
+        .toString();
 
-      if (ts_res.msg) {
-        return message.error(ts_res.msg);
-      }
-      if (_allBalance) {
-        amount = amount - BigInt(ts_res.fee || 0);
-      }
+      if (token1.symbol === 'bsv') {
+        const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
+        let total = BigInt(amount) + BigInt(txFee);
+        const _allBalance = total > BigInt(userTotal);
+        if (_allBalance) {
+          total = userTotal;
+          amount = BigInt(userTotal) - BigInt(txFee);
+        }
+        if (amount < MINAMOUNT) {
+          return message.error(_('lower_amount', MINAMOUNT));
+        }
+        const ts_res = await dispatch({
+          type: 'user/transferBsv',
+          payload: {
+            address: bsvToAddress,
+            amount: total.toString(),
+            changeAddress,
+            note: 'tswap.io(swap)',
+            noBroadcast: true,
+          },
+        });
 
-      payload = {
-        ...payload,
-        // token1TxID: ts_res.txid,
-        bsvOutputIndex: 0,
-        bsvRawTx: ts_res.list ? ts_res.list[0].txHex : ts_res.txHex,
-        token1AddAmount: amount.toString(),
-      };
+        if (ts_res.msg) {
+          return message.error(ts_res.msg);
+        }
+        if (_allBalance) {
+          amount = amount - BigInt(ts_res.fee || 0);
+        }
+
+        payload = {
+          ...payload,
+          // token1TxID: ts_res.txid,
+          bsvOutputIndex: 0,
+          bsvRawTx: ts_res.list ? ts_res.list[0].txHex : ts_res.txHex,
+          token1AddAmount: amount.toString(),
+        };
+      } else {
+        let tx_res = await dispatch({
+          type: 'user/transferAll',
+          payload: {
+            datas: [
+              {
+                type: 'bsv',
+                address: bsvToAddress,
+                amount: txFee,
+                changeAddress,
+                note: 'tswap.io(swap)',
+              },
+              {
+                type: 'sensibleFt',
+                address: tokenToAddress,
+                amount,
+                changeAddress,
+                codehash: token1.codeHash,
+                genesis: token1.tokenID,
+                rabinApis,
+                note: 'tswap.io(swap)',
+              },
+            ],
+            noBroadcast: true,
+          },
+        });
+        if (!tx_res) {
+          return message.error(_('txs_fail'));
+        }
+        if (tx_res.msg) {
+          return message.error(tx_res.msg);
+        }
+        if (tx_res.list) {
+          tx_res = tx_res.list;
+        }
+        if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
+          return message.error(_('txs_fail'));
+        }
+
+        payload = {
+          ...payload,
+          bsvRawTx: tx_res[0].txHex,
+          bsvOutputIndex: 0,
+          token1RawTx: tx_res[1].txHex,
+          token1OutputIndex: 0,
+          amountCheckRawTx: tx_res[1].routeCheckTxHex,
+        };
+      }
     } else {
       const amount = BigNumber(origin_amount)
         .multipliedBy(Math.pow(10, token2.decimal))

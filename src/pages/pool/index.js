@@ -71,7 +71,7 @@ export default class Pool extends Component {
                 symbol1={symbol1}
                 symbol2={symbol2}
                 size={30}
-                genesisID1="bsv"
+                genesisID1={token1.symbol === 'bsv' ? 'bsv' : token1.tokenID}
                 genesisID2={token.tokenID}
               />
             </div>

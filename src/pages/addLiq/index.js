@@ -180,7 +180,10 @@ export default class Liquidity extends Component {
     const { accountInfo, pairData, token1, token2 } = this.props;
     const { userBalance } = accountInfo;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
-    const origin_amount = userBalance.BSV || 0;
+    const origin_amount =
+      (token1.symbol === 'bsv'
+        ? userBalance.BSV
+        : userBalance[token1.tokenID]) || 0;
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -366,7 +369,14 @@ export default class Liquidity extends Component {
               <div className={styles.balance} onClick={this.setOriginBalance}>
                 {_('your_balance')}:{' '}
                 <span>
-                  <FormatNumber value={userBalance.BSV || 0} suffix={symbol1} />
+                  <FormatNumber
+                    value={
+                      (token1.symbol === 'bsv'
+                        ? userBalance.BSV
+                        : userBalance[token1.tokenID]) || 0
+                    }
+                    suffix={symbol1}
+                  />
                 </span>
               </div>
             </div>
@@ -375,7 +385,10 @@ export default class Liquidity extends Component {
                 className={styles.coin}
                 onClick={() => this.showUI('selectToken')}
               >
-                <TokenLogo name={symbol1} genesisID="bsv" />
+                <TokenLogo
+                  name={symbol1}
+                  genesisID={token1.symbol === 'bsv' ? 'bsv' : token1.tokenID}
+                />
                 <div className={styles.name}>{symbol1}</div>
                 <div className={styles.arrow}>
                   <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
@@ -465,14 +478,24 @@ export default class Liquidity extends Component {
           {_('enter_amount')}
         </Button>
       );
-    } else if (parseFloat(origin_amount) <= formatSat(1000)) {
+    } else if (
+      token1.symbol === 'bsv' &&
+      parseFloat(origin_amount) <= formatSat(1000)
+    ) {
       // 数额太小
       btn = (
         <Button className={styles.btn_wait} shape="round">
           {_('lower_amount', 1000)}
         </Button>
       );
-    } else if (parseFloat(origin_amount) > parseFloat(userBalance.BSV || 0)) {
+    } else if (
+      parseFloat(origin_amount) >
+      parseFloat(
+        (token1.symbol === 'bsv'
+          ? userBalance.BSV
+          : userBalance[token1.tokenID]) || 0,
+      )
+    ) {
       // 余额不足
       btn = (
         <Button className={styles.btn_wait} shape="round">
@@ -587,6 +610,7 @@ export default class Liquidity extends Component {
     // )
     // .isGreaterThan(userBalance.BSV || 0))
     if (
+      token1.symbol === 'bsv' &&
       BigNumber(origin_amount)
         .plus(BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)))
         .isGreaterThan(userBalance.BSV || 0)
@@ -603,9 +627,10 @@ export default class Liquidity extends Component {
     }
 
     if (lastMod === 'origin') {
-      const token1AddAmount = BigNumber(origin_amount)
+      let token1AddAmount = BigNumber(origin_amount)
         .multipliedBy(Math.pow(10, token1.decimal))
         .toString();
+
       let token2AddAmount;
       if (swapToken1Amount === '0' && swapToken2Amount === '0') {
         token2AddAmount = BigNumber(aim_amount)
@@ -680,6 +705,7 @@ export default class Liquidity extends Component {
     if (!_origin_amount) _origin_amount = this.state._origin_amount;
     if (!_aim_amount) _aim_amount = this.state._aim_amount;
     const {
+      token1,
       token2,
       currentPair,
       dispatch,
@@ -691,51 +717,114 @@ export default class Liquidity extends Component {
     const { bsvToAddress, tokenToAddress, requestIndex, txFee } =
       reqSwapData || data;
 
-    let tx_res = await dispatch({
-      type: 'user/transferAll',
-      payload: {
-        datas: [
-          {
-            type: 'bsv',
-            address: bsvToAddress,
-            amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
-            changeAddress,
-            note: 'tswap.io(add liquidity)',
-          },
-          {
-            type: 'sensibleFt',
-            address: tokenToAddress,
-            amount: _aim_amount.toString(),
-            changeAddress,
-            codehash: token2.codeHash,
-            genesis: token2.tokenID,
-            rabinApis,
-            note: 'tswap.io(add liquidity)',
-          },
-        ],
-        noBroadcast: true,
-      },
-    });
-    if (tx_res.msg) {
-      return message.error(tx_res.msg);
-    }
-    if (tx_res.list) {
-      tx_res = tx_res.list;
-    }
-    if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
-      return message.error(_('txs_fail'));
+    let liq_data;
+    if (token1.symbol === 'bsv') {
+      let tx_res = await dispatch({
+        type: 'user/transferAll',
+        payload: {
+          datas: [
+            {
+              type: 'bsv',
+              address: bsvToAddress,
+              amount: (BigInt(_origin_amount) + BigInt(txFee)).toString(),
+              changeAddress,
+              note: 'tswap.io(add liquidity)',
+            },
+            {
+              type: 'sensibleFt',
+              address: tokenToAddress,
+              amount: _aim_amount.toString(),
+              changeAddress,
+              codehash: token2.codeHash,
+              genesis: token2.tokenID,
+              rabinApis,
+              note: 'tswap.io(add liquidity)',
+            },
+          ],
+          noBroadcast: true,
+        },
+      });
+      if (tx_res.msg) {
+        return message.error(tx_res.msg);
+      }
+      if (tx_res.list) {
+        tx_res = tx_res.list;
+      }
+      if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
+        return message.error(_('txs_fail'));
+      }
+
+      liq_data = {
+        symbol: currentPair,
+        requestIndex: requestIndex,
+        bsvRawTx: tx_res[0].txHex,
+        bsvOutputIndex: 0,
+        token2RawTx: tx_res[1].txHex,
+        token2OutputIndex: 0,
+        token1AddAmount: _origin_amount.toString(),
+        amountCheckRawTx: tx_res[1].routeCheckTxHex,
+      };
+    } else {
+      let tx_res = await dispatch({
+        type: 'user/transferAll',
+        payload: {
+          datas: [
+            {
+              type: 'bsv',
+              address: bsvToAddress,
+              amount: txFee,
+              changeAddress,
+              note: 'tswap.io(add liquidity)',
+            },
+            {
+              type: 'sensibleFt',
+              address: tokenToAddress,
+              amount: _origin_amount.toString(),
+              changeAddress,
+              codehash: token1.codeHash,
+              genesis: token1.tokenID,
+              rabinApis,
+              note: 'tswap.io(add liquidity)',
+            },
+            {
+              type: 'sensibleFt',
+              address: tokenToAddress,
+              amount: _aim_amount.toString(),
+              changeAddress,
+              codehash: token2.codeHash,
+              genesis: token2.tokenID,
+              rabinApis,
+              note: 'tswap.io(add liquidity)',
+            },
+          ],
+          noBroadcast: true,
+        },
+      });
+      if (tx_res.msg) {
+        return message.error(tx_res.msg);
+      }
+      if (tx_res.list) {
+        tx_res = tx_res.list;
+      }
+      if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
+        return message.error(_('txs_fail'));
+      }
+
+      liq_data = {
+        symbol: currentPair,
+        requestIndex: requestIndex,
+        bsvRawTx: tx_res[0].txHex,
+        bsvOutputIndex: 0,
+        token1AddAmount: _origin_amount.toString(),
+        token1RawTx: tx_res[1].txHex,
+        token1OutputIndex: 0,
+        amountCheck1RawTx: tx_res[1].routeCheckTxHex,
+        token2RawTx: tx_res[2].txHex,
+        token2OutputIndex: 0,
+        amountCheck2RawTx: tx_res[2].routeCheckTxHex,
+      };
     }
 
-    let liq_data = {
-      symbol: currentPair,
-      requestIndex: requestIndex,
-      bsvRawTx: tx_res[0].txHex,
-      bsvOutputIndex: 0,
-      token2RawTx: tx_res[1].txHex,
-      token2OutputIndex: 0,
-      token1AddAmount: _origin_amount.toString(),
-      amountCheckRawTx: tx_res[1].routeCheckTxHex,
-    };
     liq_data = JSON.stringify(liq_data);
     liq_data = await gzip(liq_data);
     const addliq_res = await dispatch({
