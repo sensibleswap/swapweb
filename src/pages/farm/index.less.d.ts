@@ -15,6 +15,7 @@ interface CssExports {
   current: string;
   desc: string;
   farm_intro: string;
+  farm_title: string;
   head: string;
   icon: string;
   item: string;
@@ -26,6 +27,7 @@ interface CssExports {
   left: string;
   left_inner: string;
   link: string;
+  logo: string;
   lp_amount: string;
   main_title: string;
   menu: string;

@@ -15,6 +15,7 @@ import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
 
+let busy = false;
 @connect(({ pair, loading }) => {
   const { effects } = loading;
   return {
@@ -44,11 +45,18 @@ export default class SwapPage extends Component {
   };
 
   componentDidMount() {
-    EventBus.on('reloadPair', this.fetch);
+    EventBus.on('reloadPair', () => {
+      const { hash } = window.location;
+      if (hash.indexOf('swap') > -1) {
+        this.fetch();
+      }
+    });
     this.fetch();
   }
 
   fetch = async () => {
+    if (busy) return;
+    busy = true;
     const { dispatch } = this.props;
     await dispatch({
       type: 'pair/getAllPairs',
@@ -64,6 +72,7 @@ export default class SwapPage extends Component {
 
     // }
     EventBus.emit('reloadChart', 'swap');
+    busy = false;
   };
 
   renderContent() {

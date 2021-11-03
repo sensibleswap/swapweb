@@ -38,6 +38,7 @@ export default class API {
         method,
         headers: {
           'Content-Type': 'application/json',
+          'Accept-Encoding': 'gzip',
         },
         // credentials: 'include',
       };

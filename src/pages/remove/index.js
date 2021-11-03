@@ -17,9 +17,10 @@ import styles from './index.less';
 import _ from 'i18n';
 
 // import Header from '../layout/header';
-import { history } from 'umi';
+// import { history } from 'umi';
 import BigNumber from 'bignumber.js';
 
+let busy = false;
 const type = 'pool';
 
 const datas = [
@@ -72,10 +73,18 @@ export default class RemovePage extends Component {
   }
 
   componentDidMount() {
+    EventBus.on('reloadPair', () => {
+      const { hash } = window.location;
+      if (hash.indexOf('remove') > -1) {
+        this.fetch();
+      }
+    });
     this.fetch();
   }
 
   async fetch() {
+    if (busy) return;
+    busy = true;
     const { dispatch } = this.props;
     await dispatch({
       type: 'pair/getAllPairs',
@@ -109,6 +118,7 @@ export default class RemovePage extends Component {
       price: formatAmount(price, token2.decimal),
     });
     EventBus.emit('reloadChart', type);
+    busy = false;
     // }
     // console.log(pairData);
   }

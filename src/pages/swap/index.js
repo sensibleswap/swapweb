@@ -723,11 +723,13 @@ export default class Swap extends Component {
         // currentPair,
       },
     });
+    setTimeout(() => {
+      dispatch({
+        type: 'user/loadingUserData',
+        payload: {},
+      });
+    }, 3000);
     EventBus.emit('reloadChart', 'swap');
-    dispatch({
-      type: 'user/loadingUserData',
-      payload: {},
-    });
   }
 
   renderResult() {

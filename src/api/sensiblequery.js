@@ -3,9 +3,10 @@ import BaseAPI from './base';
 import { isTestNet } from 'common/utils';
 
 const intervals = {
-  'bsv-boex': 4,
-  'bsv-mc': 10,
-  'bsv-ovts': 4,
+  '1D': 144,
+  '1W': 144 * 7,
+  '1M': 144 * 30,
+  ALL: 2,
 };
 class History extends BaseAPI {
   _request(api, params = {}, method = 'GET', url = '', catchError) {
@@ -21,8 +22,12 @@ class History extends BaseAPI {
     return this.sendRequest(api_url, params, method, catchError);
   }
 
+  // blockInfo() {
+  //   return this._request(`blockchain/info`);
+  // }
+
   query(params) {
-    const { codeHash, genesisHash, type, currentPair } = params;
+    const { codeHash, genesisHash, type, timeRange } = params;
     if (type === 'pool') {
       return this._request(
         `contract/swap-aggregate-amount/${codeHash}/${genesisHash}`,
@@ -36,7 +41,7 @@ class History extends BaseAPI {
         `contract/swap-aggregate/${codeHash}/${genesisHash}`,
         {
           start: 690000,
-          interval: intervals[currentPair] || 2,
+          interval: intervals[timeRange.toUpperCase()] || 2,
         },
       );
     }

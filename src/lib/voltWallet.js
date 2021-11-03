@@ -2,14 +2,15 @@ import { Bsv } from '@volt-wallet/sdk';
 import { formatSat, strAbbreviation } from 'common/utils';
 // import 'common/vconsole';
 
-const bsv = new Bsv({
-  iframeUrl: 'https://sdkpage.volt.id/iframe/',
-  popupUrl: 'https://sdkpage.volt.id/popup/',
-  apiPrefix: {
-    tls: true,
-    endpoint: 'volt.id',
-  },
-});
+const bsv = new Bsv();
+// {
+//   iframeUrl: 'https://sdkpage.volt.id/hash_a483cbf/iframe',
+//   popupUrl: 'https://sdkpage.volt.id/hash_a483cbf/popup',
+//   apiPrefix: {
+//     tls: true,
+//     endpoint: 'volt.id',
+//   },
+// });
 
 const getBsvBalance = async () => {
   const res = await bsv.getBsvBalance();
@@ -26,6 +27,7 @@ const getSensibleFtBalance = async () => {
 };
 
 export default {
+  bsv,
   info: async () => {
     let accountInfo = await bsv.getAccountInfo();
     const bsvBalance = await getBsvBalance();

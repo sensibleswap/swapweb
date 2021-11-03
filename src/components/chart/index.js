@@ -2,27 +2,36 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch';
 import * as echarts from 'echarts';
+import BigNumber from 'bignumber.js';
 import { connect } from 'umi';
 import { Spin } from 'antd';
-import { formatNumberForDisplay } from 'common/utils';
+import { formatNumberForDisplay, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
 import { USDT_PAIR, COLOR1, COLOR2 } from 'common/const';
 import TimeRangeTabs from './timeRangeTabs';
 import styles from './index.less';
 import _ from 'i18n';
 
-@connect(({ pair, records, loading }) => {
+const dateInterval = {
+  '1m': 3600 * 24 * 1000 * 30,
+  '1w': 3600 * 24 * 1000 * 7,
+  '1d': 3600 * 24 * 1000,
+  all: 2,
+};
+
+@connect(({ pair, records, farm, loading }) => {
   const { effects } = loading;
   return {
     ...pair,
     ...records,
+    ...farm,
     loading: effects['pair/getAllPairs'] || effects['records/query'],
   };
 })
 export default class Chart extends Component {
   constructor(props) {
     super(props);
-    const { currentPair } = props;
+    const { currentPair, bsvPrice } = props;
     this.state = {
       chart_index: 0,
       cur_price: '',
@@ -32,13 +41,23 @@ export default class Chart extends Component {
     this.option = {
       grid: {
         top: 10,
-        bottom: 10,
+        bottom: 30,
         left: 0,
         right: 0,
       },
       xAxis: {
         type: 'time',
-        show: false,
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        // axisLabel: {
+        //   formatter: function(value, index) {
+        //     return value.substr(8, 2)
+        //   }
+        // }
       },
       yAxis: [
         {
@@ -55,10 +74,13 @@ export default class Chart extends Component {
       ],
       tooltip: {
         trigger: 'axis',
+        axisPointer: {
+          type: 'none',
+        },
         className: styles.tooltip,
         renderMode: 'html',
         formatter: function (params) {
-          const lines = [{ label: _('date'), value: params[0].axisValueLabel }];
+          const lines = [{ label: _('date'), value: params[0].value[0] }];
           if (props.type === 'pool') {
             lines.push({
               label: 'TVL',
@@ -79,7 +101,13 @@ export default class Chart extends Component {
               label: _('price'),
               value: formatNumberForDisplay({
                 value: params[0].value[1],
-                suffix: currentPair === USDT_PAIR ? 'USDT' : 'BSV',
+                suffix:
+                  currentPair === USDT_PAIR
+                    ? 'USDT'
+                    : `BSV ($${formatAmount(
+                        BigNumber(params[0].value[1]).multipliedBy(bsvPrice),
+                        4,
+                      )})`,
               }),
             });
           }
@@ -110,11 +138,11 @@ export default class Chart extends Component {
         },
         {
           data: [],
-          type: 'line',
+          type: props.type === 'pool' ? 'line' : 'bar',
           showSymbol: false,
           lineStyle: {
             color: COLOR2,
-            width: 2,
+            width: props.type === 'pool' ? 2 : 1,
           },
           itemStyle: {
             color: COLOR2,
@@ -122,7 +150,7 @@ export default class Chart extends Component {
           emphasis: {
             lineStyle: {
               color: COLOR2,
-              width: 2,
+              width: props.type === 'pool' ? 2 : 1,
             },
           },
           yAxisIndex: 1,
@@ -153,10 +181,16 @@ export default class Chart extends Component {
           value: [d.formattedTime, d.amount],
         }));
       } else {
+        // console.log(chartData.map((d) => (
+        //   d.formattedTime
+        // )))
+        this.option.xAxis.data = chartData.map((d) => d.formattedTime);
         this.option.series[0].data = chartData.map((d) => ({
           name: d.timestamp,
           value: [d.formattedTime, d.price],
         }));
+        // console.log(this.props.timeRange, dateInterval[this.props.timeRange]);
+        this.option.xAxis.minInterval = dateInterval['1m'];
         this.option.series[1].data = chartData.map((d) => ({
           name: d.timestamp,
           value: [d.formattedTime, d.volumn],

@@ -8,7 +8,7 @@ export default {
   namespace: 'records',
 
   state: {
-    timeRange: '1w', // '4h' | '1d' | '1w' | '1m' | 'all'
+    timeRange: '1d', // '4h' | '1d' | '1w' | '1m' | 'all'
   },
 
   subscriptions: {
@@ -32,14 +32,16 @@ export default {
         return [];
       }
       const timeRange = yield select((state) => state.records.timeRange);
-      const { swapCodeHash, swapID, token2 } = allPairs[currentPair];
+      const { swapCodeHash, swapID, token2 } = allPairs[currentPair] || {};
 
       const { type } = payload;
+      if (!swapCodeHash || !swapID) return [];
       const res = yield recordsApi.query.call(recordsApi, {
         codeHash: swapCodeHash,
         genesisHash: swapID,
-        currentPair,
+        // currentPair,
         type,
+        timeRange,
       });
 
       if (!res || res.code) {
@@ -71,24 +73,26 @@ export default {
         } else {
           newData.forEach((item, i) => {
             const { minPrice, maxPrice, token1Volume, timestamp } = item;
-            if (i > 0 && (!startTimestamp || timestamp > startTimestamp)) {
-              const stepData = {
-                timestamp: timestamp * 1000,
-                formattedTime: formatTime(timestamp * 1000),
-                volumn: formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8),
-              };
+            // if (i > 0 && (!startTimestamp || timestamp > startTimestamp)) {
+            const _timestamp = formatTime(timestamp * 1000);
+            const stepData = {
+              timestamp: timestamp * 1000,
+              formattedTime:
+                timeRange === 'all' ? _timestamp : _timestamp.substr(0, 10),
+              volumn: formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8),
+            };
 
-              let _price =
-                (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
-              if (currentPair === USDT_PAIR) {
-                _price = 1 / _price;
-                stepData.price = formatAmount(_price, 6);
-              } else {
-                stepData.price = formatAmount(_price, 8);
-              }
-
-              dataTimeline.push(stepData);
+            let _price =
+              (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
+            if (currentPair === USDT_PAIR) {
+              _price = 1 / _price;
+              stepData.price = formatAmount(_price, 6);
+            } else {
+              stepData.price = formatAmount(_price, 8);
             }
+
+            dataTimeline.push(stepData);
+            // }
           });
         }
       }

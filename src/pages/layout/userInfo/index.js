@@ -15,6 +15,7 @@ import Clipboard from 'components/clipboard';
 import FormatNumber from 'components/formatNumber';
 import CustomIcon from 'components/icon';
 import { sleep } from 'common/utils';
+import Wallet from '@/lib/main';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
@@ -51,7 +52,7 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
-    this.initData();
+    this.initWallet();
     this.fetchPairData();
     EventBus.on('login', this.chooseLoginWallet);
   }
@@ -59,11 +60,39 @@ export default class UserInfo extends Component {
     this.polling = false;
   }
 
-  initData() {
-    this.props.dispatch({
-      type: 'pair/fetchIcons',
+  initWallet = () => {
+    const _wallet = Wallet({ type: 2 });
+
+    _wallet.bsv.on('accountChanged', async (depositAddress) => {
+      const { dispatch, isLogin } = this.props;
+
+      if (depositAddress && !isLogin) {
+        await dispatch({
+          type: 'user/loadingUserData',
+          payload: {
+            type: 2,
+          },
+        });
+        if (window.location.hash.indexOf('farm') > -1) {
+          EventBus.emit('reloadPair');
+        }
+      }
     });
-  }
+    _wallet.bsv.on('close', () => {
+      this.props.dispatch({
+        type: 'user/save',
+        payload: {
+          accountInfo: {
+            userBalance: {},
+          },
+          isLogin: false,
+        },
+      });
+      if (window.location.hash.indexOf('farm') > -1) {
+        EventBus.emit('reloadPair');
+      }
+    });
+  };
 
   fetchPairData = async () => {
     const _self = this;
@@ -71,28 +100,32 @@ export default class UserInfo extends Component {
     if (_timer < 1) {
       setTimeout(async () => {
         while (this.polling) {
+          const { dispatch, busy, isLogin, accountInfo } = _self.props;
+          dispatch({
+            type: 'pair/getUSDPrice',
+          });
           await sleep(20 * 1e3);
           i++;
-          const { dispatch, busy, isLogin, accountInfo } = _self.props;
+          const { hash } = window.location;
           if (busy) return;
-          dispatch({
-            type: 'pair/updatePairData',
-          });
+          if (hash.indexOf('farm') < 0) {
+            dispatch({
+              type: 'pair/updatePairData',
+            });
+          }
 
-          dispatch({
-            type: 'farm/updatePairData',
-            payload: {
-              address: accountInfo.userAddress,
-            },
-          });
-
+          if (hash.indexOf('farm') > -1) {
+            dispatch({
+              type: 'farm/updatePairData',
+              payload: {
+                address: accountInfo.userAddress,
+              },
+            });
+          }
           if (isLogin) {
-            const res = await dispatch({
+            await dispatch({
               type: 'user/updateUserData',
             });
-            if (res.msg && res.msg.indexOf('not_login') > -1) {
-              this.disConnect();
-            }
           }
 
           if (i > 1) {
@@ -162,11 +195,11 @@ export default class UserInfo extends Component {
     this.closeChooseDialog();
     const { isLogin, dispatch } = this.props;
 
-    if (isLogin) {
-      await dispatch({
-        type: 'user/disconnectWebWallet',
-      });
-    }
+    // if (isLogin) {
+    //   await dispatch({
+    //     type: 'user/disconnectWebWallet',
+    //   });
+    // }
 
     const con_res = await dispatch({
       type: 'user/connectWebWallet',
@@ -342,7 +375,7 @@ export default class UserInfo extends Component {
   render() {
     const { pop_visible, chooseLogin_visible } = this.state;
     const { accountInfo, connecting, isLogin } = this.props;
-    const DEFAULT_VOLT_WALLET_INDEX = isApp ? 3 : 2;
+    // const DEFAULT_VOLT_WALLET_INDEX = isApp ? 3 : 2;
 
     return (
       <>
@@ -413,11 +446,7 @@ export default class UserInfo extends Component {
           >
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
-              <li
-                onClick={() =>
-                  this.connectWebWallet(DEFAULT_VOLT_WALLET_INDEX, 'mainnet')
-                }
-              >
+              <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
                 <CustomIcon
                   type="iconicon-volt-tokenswap-circle"
                   style={{ fontSize: 30 }}
@@ -427,14 +456,7 @@ export default class UserInfo extends Component {
 
               {query.env === 'local' && (
                 <>
-                  <li
-                    onClick={() =>
-                      this.connectWebWallet(
-                        DEFAULT_VOLT_WALLET_INDEX,
-                        'testnet',
-                      )
-                    }
-                  >
+                  <li onClick={() => this.connectWebWallet(2, 'testnet')}>
                     <CustomIcon
                       type="iconBSVtestnet"
                       style={{ fontSize: 30 }}

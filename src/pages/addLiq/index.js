@@ -19,6 +19,7 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 
+let busy = false;
 const type = 'pool';
 // let _poolTimer = 0;
 const FormItem = Form.Item;
@@ -56,7 +57,10 @@ export default class Liquidity extends Component {
 
   componentDidMount() {
     EventBus.on('reloadPair', () => {
-      this.fetch();
+      const { hash } = window.location;
+      if (hash.indexOf('add') > -1) {
+        this.fetch();
+      }
     });
     this.fetch();
   }
@@ -76,6 +80,8 @@ export default class Liquidity extends Component {
     //     },
     //   });
     // }
+    if (busy) return;
+    busy = true;
     const { dispatch } = this.props;
     await dispatch({
       type: 'pair/getAllPairs',
@@ -91,6 +97,7 @@ export default class Liquidity extends Component {
 
     // }
     EventBus.emit('reloadChart', type);
+    busy = false;
   };
 
   changeOriginAmount = (e) => {
