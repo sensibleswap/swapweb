@@ -124,12 +124,12 @@ export default {
     *transferAll({ payload }, { call, put, select }) {
       // const { datas } = payload;
       const type = yield select((state) => state.user.walletType);
-      // console.log(...datas)
+      console.log(payload);
       try {
         const _wallet = Wallet({ type });
         const res = yield _wallet.transferAll(payload);
         // const res = yield bsv.transferAll(type, datas);
-        // console.log(res)
+        console.log(res);
         log(res);
         return res;
       } catch (error) {

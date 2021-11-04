@@ -454,17 +454,12 @@ export default class UserInfo extends Component {
                 <div className={styles.label}>Volt {_('wallet')}</div>
               </li>
 
-              {query.env === 'local' && (
-                <>
-                  <li onClick={() => this.connectWebWallet(2, 'testnet')}>
-                    <CustomIcon
-                      type="iconBSVtestnet"
-                      style={{ fontSize: 30 }}
-                    />
-                    <div className={styles.label}>BSV Testnet</div>
-                  </li>
-                </>
-              )}
+              <>
+                <li onClick={() => this.connectWebWallet(2, 'testnet')}>
+                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 30 }} />
+                  <div className={styles.label}>BSV Testnet</div>
+                </li>
+              </>
 
               {!isApp && (
                 <>
