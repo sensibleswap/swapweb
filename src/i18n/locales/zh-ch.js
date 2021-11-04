@@ -287,5 +287,8 @@ const texts = {
   not_acknowlege: '不知道风险',
   download_sensilet:
     '请先安装Sensilet插件。如果已经安装，请刷新页面。点击确定下载插件。',
+
+  download_voltwallet:
+    '请先安装Volt插件。如果已经安装，请刷新页面。点击确定下载插件。',
 };
 module.exports = texts;

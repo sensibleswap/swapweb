@@ -468,6 +468,13 @@ export default class UserInfo extends Component {
 
               {!isApp && (
                 <>
+                  <li onClick={() => this.connectWebWallet(5, 'mainnet')}>
+                    <CustomIcon
+                      type="iconicon-volt-tokenswap-circle"
+                      style={{ fontSize: 30 }}
+                    />
+                    <div className={styles.label}>Chrome Ext</div>
+                  </li>
                   <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
                     <div className={styles.sens_icon}>
                       <img src={sensiletIcon} />
