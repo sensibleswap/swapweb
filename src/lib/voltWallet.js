@@ -3,14 +3,14 @@ import { formatSat, strAbbreviation } from 'common/utils';
 // import 'common/vconsole';
 
 const bsv = new Bsv();
-// {
-//   iframeUrl: 'https://sdkpage.volt.id/hash_a483cbf/iframe',
-//   popupUrl: 'https://sdkpage.volt.id/hash_a483cbf/popup',
+//   {
+//   iframeUrl: 'https://sdkpage.volt.id/hash_1c8906d/iframe',
+//   popupUrl: 'https://sdkpage.volt.id/hash_1c8906d/popup',
 //   apiPrefix: {
 //     tls: true,
 //     endpoint: 'volt.id',
 //   },
-// });
+// }
 
 const getBsvBalance = async () => {
   const res = await bsv.getBsvBalance();
