@@ -290,7 +290,7 @@ export default class FarmC extends Component {
     });
   };
 
-  renderItem(pairName, data, index) {
+  renderItem(data, index) {
     const {
       loading,
       dispatch,
@@ -300,11 +300,8 @@ export default class FarmC extends Component {
       allPairs,
     } = this.props;
 
-    if (loading || !pairsData[pairName]) {
-      return null;
-    }
-    const [symbol1, symbol2] = pairName.toUpperCase().split('-');
     const {
+      pairName,
       token,
       lockedTokenAmount,
       poolTokenAmount,
@@ -312,6 +309,10 @@ export default class FarmC extends Component {
       rewardTokenAmount = 0,
       rewardToken,
     } = data;
+    if (loading || !pairsData[pairName]) {
+      return null;
+    }
+    const [symbol1, symbol2] = pairName.toUpperCase().split('-');
 
     const { decimal, symbol } = rewardToken;
     const {
@@ -494,7 +495,7 @@ export default class FarmC extends Component {
   }
 
   renderContent() {
-    const { allFarmPairs } = this.props;
+    const { allFarmPairs, allFarmPairsArr } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
@@ -503,8 +504,8 @@ export default class FarmC extends Component {
             `${_('last_block_height')} #${allFarmPairs.blockHeight}`}
         </div>
         <div className={styles.items}>
-          {Object.keys(allFarmPairs).map((item, index) => {
-            return this.renderItem(item, allFarmPairs[item], index);
+          {allFarmPairsArr.map((item, index) => {
+            return this.renderItem(item, index);
           })}
         </div>
       </div>

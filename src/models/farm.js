@@ -11,6 +11,7 @@ export default {
 
   state: {
     allFarmPairs: [],
+    allFarmPairsArr: [],
     currentFarmPair: '',
     lockedTokenAmount: 0,
     symbol1: '',
@@ -55,10 +56,12 @@ export default {
       }
       let p = [];
       let pairsData = {};
-      let pairs = [];
+      let pairs = [],
+        farmPairs = [];
       Object.keys(data).forEach((item) => {
         if (item !== 'blockHeight') {
           pairs.push(item);
+          farmPairs.push({ ...data[item], pairName: item });
           p.push(pairApi.querySwapInfo(item));
         }
       });
@@ -69,22 +72,15 @@ export default {
           pairsData[item] = datas_res[index].data;
         }
       });
-
-      // let bsvPrice = 0;
-
-      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
-
-      // if (price_res.code === 0) {
-      //   bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-      //     .div(price_res.data.swapToken1Amount)
-      //     .multipliedBy(Math.pow(10, 8 - 6))
-      //     .toString();
-      // }
+      farmPairs.sort((a, b) => {
+        return b.poolTokenAmount - a.poolTokenAmount;
+      });
 
       yield put({
         type: 'saveFarm',
         payload: {
           allFarmPairs: data,
+          allFarmPairsArr: farmPairs,
           currentFarmPair,
           // bsvPrice,
           pairsData,
@@ -105,20 +101,20 @@ export default {
         return res;
       }
 
-      // let bsvPrice = 0;
-      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
-
-      // if (price_res.code === 0) {
-      //   bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-      //     .div(price_res.data.swapToken1Amount)
-      //     .multipliedBy(Math.pow(10, 8 - 6))
-      //     .toString();
-      // }
-
+      let farmPairs = [];
+      Object.keys(data).forEach((item) => {
+        if (item !== 'blockHeight') {
+          farmPairs.push({ ...data[item], pairName: item });
+        }
+      });
+      farmPairs.sort((a, b) => {
+        return b.poolTokenAmount - a.poolTokenAmount;
+      });
       yield put({
         type: 'saveFarm',
         payload: {
           allFarmPairs: data,
+          allFarmPairsArr: farmPairs,
           // bsvPrice,
         },
       });
