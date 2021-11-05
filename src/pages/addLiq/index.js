@@ -800,8 +800,7 @@ export default class Liquidity extends Component {
           noBroadcast: true,
         },
       });
-      console.log(tx_res);
-      debugger;
+
       if (tx_res.msg) {
         return message.error(tx_res.msg);
       }
