@@ -23,10 +23,7 @@ export default class TokenIcon extends React.Component {
 
     if (url) {
       return (
-        <img
-          src={url}
-          style={{ width: size, height: size, ...style, borderRadius: 20 }}
-        />
+        <img src={url} style={{ height: size, ...style, borderRadius: 20 }} />
       );
     }
 
@@ -52,7 +49,7 @@ export default class TokenIcon extends React.Component {
         return (
           <img
             src={icons_name.url}
-            style={{ width: size, height: size, ...style, borderRadius: 20 }}
+            style={{ height: size, ...style, borderRadius: 20 }}
           />
         );
       }
@@ -68,7 +65,7 @@ export default class TokenIcon extends React.Component {
         className={styles.logo}
         style={{
           fontSize: size * 0.84,
-          width: size,
+          // width: size,
           height: size,
           lineHeight: `${size}px`,
           ...style,
