@@ -37,8 +37,7 @@ export default {
 
       const userAddress = await bsv.getAddress();
       const tokenBalance = await getSensibleFtBalance();
-      // const network = await bsv.getNetwork();
-      const network = 'mainnet';
+      const network = await bsv.getNetwork();
 
       const userBalance = {
         BSV: bsvBalance,
