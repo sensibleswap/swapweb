@@ -205,7 +205,7 @@ export default class TokenList extends Component {
             <TokenPair
               symbol1={item.token1.symbol}
               symbol2={item.token2.symbol}
-              genesisID1="bsv"
+              genesisID1={item.token1.tokenID || 'bsv'}
               genesisID2={item.token2.tokenID}
               size={25}
             />
