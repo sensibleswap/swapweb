@@ -32,23 +32,18 @@ const getSensibleFtBalance = async () => {
 export default {
   info: async () => {
     if (checkExtension()) {
-      let accountInfo = {};
-      const bsvBalance = await getBsvBalance();
+      let accountInfo = await bsv.getAccount();
+      const paymail = await bsv.getPaymail();
+      let userBalance = {};
+      accountInfo.balance.forEach((item) => {
+        userBalance[item.is_bsv ? 'BSV' : item.genesis] = item.value;
+      });
 
-      const userAddress = await bsv.getAddress();
-      const tokenBalance = await getSensibleFtBalance();
-      const network = await bsv.getNetwork();
-
-      const userBalance = {
-        BSV: bsvBalance,
-        ...tokenBalance,
-      };
       accountInfo = {
         ...accountInfo,
         userBalance,
-        userAddress,
-        userAddressShort: strAbbreviation(userAddress, [7, 7]),
-        network,
+        userAddressShort:
+          paymail || strAbbreviation(accountInfo.userAddress, [7, 7]),
       };
       //   console.log('accountInfo:', accountInfo);
       return accountInfo;
