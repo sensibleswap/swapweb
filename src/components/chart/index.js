@@ -31,7 +31,7 @@ const dateInterval = {
 export default class Chart extends Component {
   constructor(props) {
     super(props);
-    const { currentPair, bsvPrice } = props;
+    const { currentPair, bsvPrice, allPairs } = props;
     this.state = {
       chart_index: 0,
       cur_price: '',
@@ -81,12 +81,14 @@ export default class Chart extends Component {
         renderMode: 'html',
         formatter: function (params) {
           const lines = [{ label: _('date'), value: params[0].value[0] }];
+
+          const token1 = allPairs[currentPair].token1.symbol.toUpperCase();
           if (props.type === 'pool') {
             lines.push({
               label: 'TVL',
               value: formatNumberForDisplay({
                 value: params[0].value[1],
-                suffix: 'BSV',
+                suffix: token1,
               }),
             });
           } else {
@@ -94,7 +96,7 @@ export default class Chart extends Component {
               label: _('volume'),
               value: formatNumberForDisplay({
                 value: params[1].value[1],
-                suffix: 'BSV',
+                suffix: token1,
               }),
             });
             lines.push({
@@ -104,7 +106,7 @@ export default class Chart extends Component {
                 suffix:
                   currentPair === USDT_PAIR
                     ? 'USDT'
-                    : `BSV ($${formatAmount(
+                    : `${token1} ($${formatAmount(
                         BigNumber(params[0].value[1]).multipliedBy(bsvPrice),
                         4,
                       )})`,
