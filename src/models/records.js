@@ -32,7 +32,8 @@ export default {
         return [];
       }
       const timeRange = yield select((state) => state.records.timeRange);
-      const { swapCodeHash, swapID, token2 } = allPairs[currentPair] || {};
+      const { swapCodeHash, swapID, token2, token1 } =
+        allPairs[currentPair] || {};
 
       const { type } = payload;
       if (!swapCodeHash || !swapID) return [];
@@ -83,7 +84,9 @@ export default {
             };
 
             let _price =
-              (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
+              (minPrice + maxPrice) /
+              2 /
+              Math.pow(10, token1.decimal - token2.decimal);
             if (currentPair === USDT_PAIR) {
               _price = 1 / _price;
               stepData.price = formatAmount(_price, 6);

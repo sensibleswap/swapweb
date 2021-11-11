@@ -106,10 +106,16 @@ export default class Chart extends Component {
                 suffix:
                   currentPair === USDT_PAIR
                     ? 'USDT'
-                    : `${token1} ($${formatAmount(
-                        BigNumber(params[0].value[1]).multipliedBy(bsvPrice),
-                        4,
-                      )})`,
+                    : `${token1} ${
+                        token1 === 'BSV'
+                          ? `($${formatAmount(
+                              BigNumber(params[0].value[1]).multipliedBy(
+                                bsvPrice,
+                              ),
+                              4,
+                            )})`
+                          : ''
+                      }`,
               }),
             });
           }
