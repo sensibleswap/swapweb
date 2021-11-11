@@ -67,7 +67,10 @@ export default {
               dataTimeline.push({
                 timestamp: timestamp * 1000,
                 formattedTime: formatTime(timestamp * 1000),
-                amount: formatAmount((closeAmount / Math.pow(10, 8)) * 2, 8),
+                amount: formatAmount(
+                  (closeAmount / Math.pow(10, token1.decimal)) * 2,
+                  token1.decimal,
+                ),
               });
             }
           });
@@ -80,7 +83,10 @@ export default {
               timestamp: timestamp * 1000,
               formattedTime:
                 timeRange === 'all' ? _timestamp : _timestamp.substr(0, 10),
-              volumn: formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8),
+              volumn: formatAmount(
+                (token1Volume / Math.pow(10, token1.decimal)) * 2,
+                token1.decimal,
+              ),
             };
 
             let _price =
@@ -91,7 +97,7 @@ export default {
               _price = 1 / _price;
               stepData.price = formatAmount(_price, 6);
             } else {
-              stepData.price = formatAmount(_price, 8);
+              stepData.price = formatAmount(_price, token1.decimal);
             }
 
             dataTimeline.push(stepData);

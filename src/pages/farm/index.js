@@ -341,9 +341,10 @@ export default class FarmC extends Component {
     const token_price = BigNumber(reward_bsv_amount).div(reward_token_amount);
 
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
-    let _total = BigNumber(poolTokenAmount)
-      .multipliedBy(lp_price)
-      .multipliedBy(bsvPrice);
+    let _total = BigNumber(poolTokenAmount).multipliedBy(lp_price);
+    if (symbol1 === 'BSV') {
+      _total = _total.multipliedBy(bsvPrice);
+    }
 
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
