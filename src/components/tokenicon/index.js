@@ -65,7 +65,7 @@ export default class TokenIcon extends React.Component {
         className={styles.logo}
         style={{
           fontSize: size * 0.84,
-          // width: size,
+          width: size,
           height: size,
           lineHeight: `${size}px`,
           ...style,

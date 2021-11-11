@@ -260,7 +260,8 @@ export default class Withdraw extends Component {
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
     if (
-      BigNumber(txFee + 100000)
+      BigNumber(txFee)
+        .plus(100000)
         .div(Math.pow(10, 8))
         .isGreaterThan(userBalance.BSV || 0)
     ) {

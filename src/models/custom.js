@@ -16,12 +16,13 @@ export default {
   effects: {
     *query({ payload }, { call, put, select }) {
       const { genesisHash } = payload;
+      // console.log(payload)
       const res = yield sensibleApi.genesisInfo.call(sensibleApi, {
         genesisHash,
       });
 
       if (res.code) {
-        console.log(res.msg);
+        // console.log(res.msg);
         return res;
       }
 

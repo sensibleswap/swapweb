@@ -70,28 +70,57 @@ export default class CreatePair extends Component {
     );
   }
 
-  change = async (e) => {
+  change = async (e, index) => {
     const { value } = e.target;
     if (!value) {
-      return this.setState({
-        token2: undefined,
-      });
+      return this.setState(
+        index === 1
+          ? {
+              token1: undefined,
+            }
+          : {
+              token2: undefined,
+            },
+      );
     }
-    const { dispatch } = this.props;
-    const res = await dispatch({
-      type: 'custom/query',
-      payload: {
-        genesisHash: e.target.value,
-      },
-    });
-    if (!res || res.code) {
+    if (index === 1 && e.target.value.toUpperCase() === 'BSV') {
       return this.setState({
-        token2: undefined,
+        token1: {
+          symbol: 'BSV',
+          name: 'Bitcoin SV',
+        },
       });
+    } else {
+      const { dispatch } = this.props;
+      const res = await dispatch({
+        type: 'custom/query',
+        payload: {
+          genesisHash: e.target.value,
+        },
+      });
+      if (e.target.value.toUpperCase() === 'BSV') return;
+      if (!res || res.code) {
+        return this.setState(
+          index === 1
+            ? {
+                token1: undefined,
+              }
+            : {
+                token2: undefined,
+              },
+        );
+      } else {
+        this.setState(
+          index === 1
+            ? {
+                token1: res,
+              }
+            : {
+                token2: res,
+              },
+        );
+      }
     }
-    this.setState({
-      token2: res,
-    });
   };
 
   gotoPayStep = () => {
@@ -100,13 +129,18 @@ export default class CreatePair extends Component {
     });
   };
 
-  editPair = () => {
+  editPair = (index) => {
     this.setState({
       step: 0,
     });
-    this.formRef.current.setFieldsValue({
-      genesis: this.state.token2.genesis,
-    });
+    // index === 1 ?
+    // this.formRef.current.setFieldsValue({
+    //   genesis1: this.state.token1.genesis,
+    // })
+    // :
+    // this.formRef.current.setFieldsValue({
+    //   genesis2: this.state.token2.genesis,
+    // })
   };
 
   finish = () => {
@@ -116,16 +150,40 @@ export default class CreatePair extends Component {
   };
 
   renderContent0() {
-    const { token2 } = this.state;
-    const { searching } = this.props;
+    const { token1, token2 } = this.state;
+    // const { searching } = this.props;
     return (
       <div className={styles.create_content}>
-        <div className={styles.title}>{_('input')} A</div>
-        <div className={styles.box}>
-          <div className={styles.coin}>
-            <TokenLogo name={symbol1} genesisID="bsv" />
-            <div className={styles.name}>{symbol1}</div>
-          </div>
+        <div className={styles.title}>
+          {_('input')} A: {_('enter_bsv_or_tokenid')}
+        </div>
+
+        <div
+          className={
+            token1
+              ? jc(styles.input_wrap, styles.input_result)
+              : styles.input_wrap
+          }
+        >
+          <FormItem name="genesis1">
+            <Input.TextArea
+              className={styles.input}
+              onChange={(e) => this.change(e, 1)}
+            />
+          </FormItem>
+
+          {token1 && (
+            <div className={styles.token_info}>
+              <TokenLogo
+                name={token1.symbol}
+                genesisID={token1.genesis || 'bsv'}
+              />
+              <div className={styles.token_name}>
+                <div className={styles.symbol}>{token1.symbol}</div>
+                <div className={styles.full_name}>{token1.name}</div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.switch_icon}>
@@ -141,10 +199,12 @@ export default class CreatePair extends Component {
               : styles.input_wrap
           }
         >
-          <FormItem name="genesis">
-            <Input.TextArea className={styles.input} onChange={this.change} />
+          <FormItem name="genesis2">
+            <Input.TextArea
+              className={styles.input}
+              onChange={(e) => this.change(e, 2)}
+            />
           </FormItem>
-          {searching && <Spin />}
           {token2 && (
             <div className={styles.token_info}>
               <TokenLogo name={token2.symbol} genesisID={token2.genesis} />
@@ -168,8 +228,7 @@ export default class CreatePair extends Component {
   }
 
   renderContent1() {
-    const { token2 } = this.state;
-    const { symbol } = token2;
+    const { token1, token2 } = this.state;
     return (
       <div className={styles.create_content}>
         <div className={styles.title}>{_('confirm_and_pay')}</div>
@@ -179,17 +238,30 @@ export default class CreatePair extends Component {
           </div>
           <div className={styles.line}>
             <div className={styles.coin}>
-              <TokenLogo name={symbol1} genesisID="bsv" size={25} />
-              <div className={styles.name}>{symbol1}</div>
+              <TokenLogo
+                name={token1.symbol}
+                genesisID={token1.genesis || 'bsv'}
+                size={25}
+              />
+              <div className={styles.name}>{token1.symbol}</div>
+            </div>
+            <div className={styles.op}>
+              <span className={styles.edit} onClick={() => this.editPair(1)}>
+                {_('edit')}
+              </span>
             </div>
           </div>
           <div className={styles.line}>
             <div className={styles.coin}>
-              <TokenLogo name={symbol} genesisID={token2.genesis} size={25} />
-              <div className={styles.name}>{symbol}</div>
+              <TokenLogo
+                name={token2.symbol}
+                genesisID={token2.genesis}
+                size={25}
+              />
+              <div className={styles.name}>{token2.symbol}</div>
             </div>
             <div className={styles.op}>
-              <span className={styles.edit} onClick={this.editPair}>
+              <span className={styles.edit} onClick={() => this.editPair(2)}>
                 {_('edit')}
               </span>
             </div>
@@ -308,7 +380,7 @@ export default class CreatePair extends Component {
       return message.error(_('txs_fail'));
     }
 
-    const { token2 } = this.state;
+    const { token1, token2 } = this.state;
 
     const payload = {
       requestIndex,
@@ -317,7 +389,8 @@ export default class CreatePair extends Component {
       tokenRawTx: tx_res[1].txHex,
       tokenOutputIndex: 0,
       amountCheckRawTx: tx_res[1].routeCheckTxHex,
-      tokenID: token2.genesis,
+      token1ID: token1.genesis,
+      token2ID: token2.genesis,
     };
     // console.log(payload);
     let create_data = JSON.stringify(payload);

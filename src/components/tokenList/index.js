@@ -62,6 +62,7 @@ export default class TokenList extends Component {
       const _obj = {
         ...pairs[item],
         name: pairs[item].token1.symbol + '-' + pairs[item].token2.symbol,
+        id: item,
       };
       arr.push(_obj);
     });
@@ -197,7 +198,8 @@ export default class TokenList extends Component {
         className={styles.item}
         key={item.name + index}
         onClick={() =>
-          this.select(type === 'custom' ? item.token2.tokenID : item.name, type)
+          // this.select(type === 'custom' ? item.token2.tokenID : item.name, type)
+          this.select(item.id, type)
         }
       >
         <div className={styles.icon_name}>
@@ -213,14 +215,10 @@ export default class TokenList extends Component {
           <div className={styles.name}>{item.name.toUpperCase()}</div>
         </div>
         {type === 'custom' && (
-          <div className={styles.genesis_id}>
-            {strAbbreviation(item.token2.tokenID)}
-          </div>
+          <div className={styles.genesis_id}>{strAbbreviation(item.id)}</div>
         )}
         <div className={styles.selected}>
-          {((type === 'custom' &&
-            customPair &&
-            currentPair === item.token2.tokenID) ||
+          {((type === 'custom' && customPair && currentPair === item.id) ||
             (type !== 'custom' &&
               !customPair &&
               currentPair === item.name)) && (

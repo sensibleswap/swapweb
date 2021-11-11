@@ -93,12 +93,13 @@ export default {
         });
         // console.log(res1);
         if (!res1.code) {
-          res1.data &&
-            res1.data.length > 0 &&
-            res1.data.forEach((item) => {
-              allPairs[item.token2.tokenID] = item;
-            });
-          customPair = true;
+          if (res1.data && res1.data.length > 0) {
+            allPairs[currentPair] = res1.data[0];
+            // res1.data.forEach((item) => {
+
+            // });
+            customPair = true;
+          }
         } else {
           customPair = false;
           currentPair = '';

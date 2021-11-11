@@ -270,6 +270,7 @@ const texts = {
   pay_fee: '支付费用',
   finish: '完成',
   enter_tokenid: '输入Token的Genesis ID',
+  enter_bsv_or_tokenid: '输入BSV或Token的Genesis ID',
   find_tokenid: 'Token Genesis IDs 可以找到',
   select_token_pair: '选择输入交易对',
   next_step: '下一步',

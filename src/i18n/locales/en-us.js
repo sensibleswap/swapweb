@@ -275,6 +275,7 @@ const texts = {
   pay_fee: 'Pay fee',
   finish: 'Finish',
   enter_tokenid: 'Enter Token Genesis ID',
+  enter_bsv_or_tokenid: 'Enter BSV or Token Genesis ID',
   find_tokenid: 'Token Genesis IDs can be found on',
   select_token_pair: 'Select and enter a token pair',
   next_step: 'Next step',
