@@ -338,3 +338,25 @@ export function parseUrl(hash) {
   }
   return currentPair;
 }
+
+export function LeastFee(txFee, balance) {
+  let needLeastAmount = BigNumber(txFee).plus(100000).div(Math.pow(10, 8));
+  log(
+    'txFee:',
+    txFee,
+    BigNumber(txFee).plus(100000).div(Math.pow(10, 8)).toString(),
+    'balance:',
+    balance,
+  );
+  if (needLeastAmount.isGreaterThan(balance)) {
+    return {
+      code: 1,
+      msg: `${_('need_token')} ${needLeastAmount.toString()}BSV, ${_(
+        'you_have',
+      )} ${balance}`,
+    };
+  }
+  return {
+    code: 0,
+  };
+}

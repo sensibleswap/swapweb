@@ -4,7 +4,7 @@ import { connect } from 'umi';
 import { gzip } from 'node-gzip';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
-import { formatSat, formatAmount, jc } from 'common/utils';
+import { formatSat, formatAmount, LeastFee } from 'common/utils';
 import Pair from 'components/pair';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
@@ -408,20 +408,9 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    let needLeastAmount = BigNumber(txFee).plus(100000).div(Math.pow(10, 8));
-    log(
-      'txFee:',
-      txFee,
-      BigNumber(txFee).plus(100000).div(Math.pow(10, 8)).toString(),
-      'balance:',
-      userBalance.BSV,
-    );
-    if (needLeastAmount.isGreaterThan(userBalance.BSV)) {
-      return message.error(
-        `${_('need_token')} ${needLeastAmount.toString()}BSV, ${_(
-          'you_have',
-        )} ${userBalance.BSV}`,
-      );
+    const isLackBalance = LeastFee(txFee, userBalance.BSV);
+    if (isLackBalance.code) {
+      message.error(isLackBalance.msg);
     }
 
     const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);
