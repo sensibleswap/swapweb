@@ -136,7 +136,7 @@ export default class Withdraw extends Component {
     } = this.props;
     if (loading || !currentFarmPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
-    const { token2 } = allPairs[
+    const { token1, token2 } = allPairs[
       `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
     ];
     return (
@@ -170,7 +170,7 @@ export default class Withdraw extends Component {
                   symbol1={symbol2}
                   symbol2={symbol1}
                   size={25}
-                  genesisID2="bsv"
+                  genesisID2={token1.tokenID || 'bsv'}
                   genesisID1={token2.tokenID}
                 />
               </div>
@@ -259,13 +259,20 @@ export default class Withdraw extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    if (
-      BigNumber(txFee)
-        .plus(100000)
-        .div(Math.pow(10, 8))
-        .isGreaterThan(userBalance.BSV || 0)
-    ) {
-      return message.error(_('lac_token_balance', 'BSV'));
+    let needLeastAmount = BigNumber(txFee).plus(100000).div(Math.pow(10, 8));
+    log(
+      'txFee:',
+      txFee,
+      BigNumber(txFee).plus(100000).div(Math.pow(10, 8)).toString(),
+      'balance:',
+      userBalance.BSV,
+    );
+    if (needLeastAmount.isGreaterThan(userBalance.BSV)) {
+      return message.error(
+        `${_('need_token')} ${needLeastAmount.toString()}BSV, ${_(
+          'you_have',
+        )} ${userBalance.BSV}`,
+      );
     }
 
     const _value = BigNumber(addLP)

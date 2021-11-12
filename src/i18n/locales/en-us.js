@@ -170,6 +170,8 @@ const texts = {
   login: 'Log In',
   lac_balance: 'Insufficient Balance',
   lac_token_balance: 'Insufficient %s Balance',
+  need_token: 'Need',
+  you_have: 'You have',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
   lower_amount: 'Above %s Sat input required',

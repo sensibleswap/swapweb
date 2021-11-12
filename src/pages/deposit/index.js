@@ -132,15 +132,15 @@ export default class Deposit extends Component {
     const { addLPRate, addLP } = this.state;
     const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
     const currentPairData = pairsData[currentFarmPair] || {};
+    const { token1, token2 } = allPairs[currentFarmPair];
     const { swapToken1Amount, swapToken2Amount } = currentPairData;
-    const bsv_amount = formatSat(swapToken1Amount);
+    const bsv_amount = formatSat(swapToken1Amount, token1.decimal);
 
-    const { decimal } = allPairs[currentFarmPair]
-      ? allPairs[currentFarmPair].token2
-      : 8;
-    const token_amount = formatSat(swapToken2Amount, decimal);
-    const price = formatAmount(token_amount / bsv_amount, decimal);
-    const { token2 } = allPairs[currentFarmPair];
+    // const { decimal } = allPairs[currentFarmPair]
+    //   ? token2
+    //   : 8;
+    const token_amount = formatSat(swapToken2Amount, token2.decimal);
+    const price = formatAmount(token_amount / bsv_amount, token2.decimal);
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -171,7 +171,7 @@ export default class Deposit extends Component {
                 <TokenPair
                   symbol1={symbol2}
                   symbol2={symbol1}
-                  genesisID2="bsv"
+                  genesisID2={token1.tokenID || 'bsv'}
                   genesisID1={token2.tokenID}
                   size={25}
                 />
@@ -248,12 +248,20 @@ export default class Deposit extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    if (
-      BigNumber(txFee + 100000)
-        .div(Math.pow(10, 8))
-        .isGreaterThan(userBalance.BSV || 0)
-    ) {
-      return message.error(_('lac_token_balance', 'BSV'));
+    let needLeastAmount = BigNumber(txFee).plus(100000).div(Math.pow(10, 8));
+    log(
+      'txFee:',
+      txFee,
+      BigNumber(txFee).plus(100000).div(Math.pow(10, 8)).toString(),
+      'balance:',
+      userBalance.BSV,
+    );
+    if (needLeastAmount.isGreaterThan(userBalance.BSV)) {
+      return message.error(
+        `${_('need_token')} ${needLeastAmount.toString()}BSV, ${_(
+          'you_have',
+        )} ${userBalance.BSV}`,
+      );
     }
 
     const _value = BigNumber(addLP)
@@ -368,7 +376,7 @@ export default class Deposit extends Component {
 
   renderResult() {
     const { symbol1, symbol2, allPairs, currentFarmPair } = this.props;
-    const { token2 } = allPairs[currentFarmPair];
+    const { token1, token2 } = allPairs[currentFarmPair];
     const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
@@ -391,7 +399,7 @@ export default class Deposit extends Component {
             <TokenPair
               symbol1={symbol1}
               symbol2={symbol2}
-              genesisID2="bsv"
+              genesisID2={token1.tokenID || 'bsv'}
               genesisID1={token2.tokenID}
               size={20}
             />{' '}

@@ -167,6 +167,8 @@ const texts = {
   login: '登录',
   lac_balance: '余额不足',
   lac_token_balance: '%s 余额不足',
+  need_token: '至少需要',
+  you_have: '您的余额',
   no_pair: '没有该交易对',
   not_enough: '超出了%s流动池存量',
   lower_amount: '输入至少高于%s聪',

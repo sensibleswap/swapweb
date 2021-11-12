@@ -312,28 +312,30 @@ export default class FarmC extends Component {
     if (loading || !pairsData[pairName]) {
       return null;
     }
+    const { token1, token2 } = allPairs[pairName];
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');
 
     const { decimal, symbol } = rewardToken;
-    const {
-      swapLpAmount = 0,
-      swapToken1Amount = 0,
-      // swapToken2Amount = 0,
-    } = pairsData[pairName];
-    //swapLpAmount和poolTokenAmount是lp的数量，是不带精度的！
+    const { swapLpAmount = 0, swapToken1Amount = 0 } = pairsData[pairName];
+
     const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
-    const bsv_amount = formatSat(swapToken1Amount);
-    // const token_amount = formatSat(swapToken2Amount, decimal);
-    // const lp_amount = formatSat(swapLpAmount, decimal);
+    const bsv_amount = formatSat(swapToken1Amount, token1.decimal);
+
     const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
 
     const reward_symbol = `${tokenPre()}${symbol.toLowerCase()}`;
-    const reward_token = pairsData[reward_symbol];
+    let reward_token = pairsData[reward_symbol];
+    if (pairName === 'usdt-tsc') {
+      reward_token = pairsData[pairName];
+    }
     if (!reward_token || !allPairs[pairName]) {
       return null;
     }
-    const { tokenID } = allPairs[pairName].token2;
-    const reward_bsv_amount = formatSat(reward_token.swapToken1Amount);
+
+    const reward_bsv_amount = formatSat(
+      reward_token.swapToken1Amount,
+      token1.decimal,
+    );
     const reward_token_amount = formatSat(
       reward_token.swapToken2Amount,
       decimal,
@@ -380,8 +382,8 @@ export default class FarmC extends Component {
                 symbol1={symbol2}
                 symbol2={symbol1}
                 size={20}
-                genesisID2="bsv"
-                genesisID1={tokenID}
+                genesisID2={token1.tokenID || 'bsv'}
+                genesisID1={token2.tokenID}
               />
             </div>
             <div className={styles.name}>

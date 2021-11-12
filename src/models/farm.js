@@ -43,10 +43,11 @@ export default {
       if (!currentFarmPair || !data[currentFarmPair]) {
         Object.keys(data).forEach((item) => {
           if (
-            item.indexOf('bsv-') > -1 ||
-            item.indexOf('-bsv') > -1 ||
-            item.indexOf('tbsv-') ||
-            item.indexOf('-tbsv')
+            // item.indexOf('bsv-') > -1 ||
+            // item.indexOf('-bsv') > -1 ||
+            // item.indexOf('tbsv-') ||
+            // item.indexOf('-tbsv')
+            item !== 'blockHeight'
           ) {
             currentFarmPair = item;
             // console.log('localstorage.set:', item)

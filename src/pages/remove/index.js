@@ -408,12 +408,20 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    if (
-      BigNumber(txFee + 100000)
-        .div(Math.pow(10, token1.decimal))
-        .isGreaterThan(userBalance.BSV || 0)
-    ) {
-      return message.error(_('lac_token_balance', 'BSV'));
+    let needLeastAmount = BigNumber(txFee).plus(100000).div(Math.pow(10, 8));
+    log(
+      'txFee:',
+      txFee,
+      BigNumber(txFee).plus(100000).div(Math.pow(10, 8)).toString(),
+      'balance:',
+      userBalance.BSV,
+    );
+    if (needLeastAmount.isGreaterThan(userBalance.BSV)) {
+      return message.error(
+        `${_('need_token')} ${needLeastAmount.toString()}BSV, ${_(
+          'you_have',
+        )} ${userBalance.BSV}`,
+      );
     }
 
     const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);

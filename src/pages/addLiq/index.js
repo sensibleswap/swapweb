@@ -886,7 +886,7 @@ export default class Liquidity extends Component {
           <TokenPair
             symbol1={symbol1}
             symbol2={symbol2}
-            genesisID1="bsv"
+            genesisID1={token1.tokenID || 'bsv'}
             genesisID2={token2.tokenID}
             size={20}
             style={{ marginLeft: 10 }}
