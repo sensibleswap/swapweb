@@ -261,7 +261,7 @@ export default class Withdraw extends Component {
 
     const isLackBalance = LeastFee(txFee, userBalance.BSV);
     if (isLackBalance.code) {
-      message.error(isLackBalance.msg);
+      return message.error(isLackBalance.msg);
     }
 
     const _value = BigNumber(addLP)

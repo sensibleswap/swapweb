@@ -410,7 +410,7 @@ export default class RemovePage extends Component {
 
     const isLackBalance = LeastFee(txFee, userBalance.BSV);
     if (isLackBalance.code) {
-      message.error(isLackBalance.msg);
+      return message.error(isLackBalance.msg);
     }
 
     const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);
