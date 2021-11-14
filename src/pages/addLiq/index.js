@@ -60,6 +60,7 @@ export default class Liquidity extends Component {
       const { hash } = window.location;
       if (hash.indexOf('add') > -1) {
         this.fetch();
+        this.setState({ page: 'form' });
       }
     });
     this.fetch();

@@ -367,7 +367,10 @@ export default class Withdraw extends Component {
   }
 
   renderResult() {
-    const { symbol1, symbol2 } = this.props;
+    const { symbol1, symbol2, allPairs } = this.props;
+    const { token1, token2 } = allPairs[
+      `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
+    ];
     const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
@@ -387,10 +390,13 @@ export default class Withdraw extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <div className={styles.icon} style={{ marginRight: 10 }}>
-              <CustomIcon type="iconlogo-bitcoin" />
-              <CustomIcon type="iconlogo-vusd" />
-            </div>{' '}
+            <TokenPair
+              symbol1={symbol2}
+              symbol2={symbol1}
+              size={25}
+              genesisID2={token1.tokenID || 'bsv'}
+              genesisID1={token2.tokenID}
+            />{' '}
             {symbol1}/{symbol2}-LP
           </div>
         </div>

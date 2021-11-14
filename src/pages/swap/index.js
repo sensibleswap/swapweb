@@ -842,6 +842,14 @@ export default class Swap extends Component {
       </div>
     );
   }
+  componentDidMount() {
+    EventBus.on('reloadPair', () => {
+      const { hash } = window.location;
+      if (hash.indexOf('swap') > -1) {
+        this.setState({ page: 'form' });
+      }
+    });
+  }
   finish = () => {
     this.setState({
       formFinish: false,

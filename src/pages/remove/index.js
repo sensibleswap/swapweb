@@ -77,6 +77,7 @@ export default class RemovePage extends Component {
       const { hash } = window.location;
       if (hash.indexOf('remove') > -1) {
         this.fetch();
+        this.setState({ page: 'form' });
       }
     });
     this.fetch();

@@ -80,6 +80,7 @@ export default class Chart extends Component {
         className: styles.tooltip,
         renderMode: 'html',
         formatter: function (params) {
+          // console.log('params',params)
           const lines = [{ label: _('date'), value: params[0].value[0] }];
 
           const token1 = allPairs[currentPair].token1.symbol.toUpperCase();
@@ -94,10 +95,12 @@ export default class Chart extends Component {
           } else {
             lines.push({
               label: _('volume'),
-              value: formatNumberForDisplay({
-                value: params[1].value[1],
-                suffix: token1,
-              }),
+              value: params[1]
+                ? formatNumberForDisplay({
+                    value: params[1].value[1],
+                    suffix: token1,
+                  })
+                : '',
             });
             lines.push({
               label: _('price'),
@@ -182,6 +185,7 @@ export default class Chart extends Component {
   handleData = async (type) => {
     if (type !== this.props.type || !this._isMounted) return;
     const chartData = await this.getChartData(type);
+    // console.log('chartData:', chartData)
     if (chartData.length > 1) {
       if (type === 'pool') {
         this.option.series[0].data = chartData.map((d) => ({
@@ -203,15 +207,20 @@ export default class Chart extends Component {
           name: d.timestamp,
           value: [d.formattedTime, d.volumn],
         }));
+        console.log('this.option.series[1].data:', this.option.series[1].data);
       }
     } else {
       this.option.series[0].data = [];
     }
 
-    this.myChart.setOption(this.option);
-    this.setState({
-      chartData,
-    });
+    // this.myChart.clear();
+    // this.myChart.setOption(this.option);
+    setTimeout(() => {
+      this.myChart.setOption(this.option);
+      this.setState({
+        chartData,
+      });
+    }, 500);
   };
 
   async getChartData(type) {

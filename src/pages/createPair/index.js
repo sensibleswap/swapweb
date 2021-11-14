@@ -14,7 +14,6 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 
-const symbol1 = 'BSV';
 const { Step } = Steps;
 const FormItem = Form.Item;
 const stepData = [_('select_pair'), _('pay_fee'), _('finish')];
@@ -234,7 +233,7 @@ export default class CreatePair extends Component {
         <div className={styles.title}>{_('confirm_and_pay')}</div>
         <div className={styles.info}>
           <div className={styles.sub_title}>
-            {symbol1}/{token2.symbol} {_('pair')}
+            {token1.symbol}/{token2.symbol} {_('pair')}
           </div>
           <div className={styles.line}>
             <div className={styles.coin}>
@@ -274,8 +273,7 @@ export default class CreatePair extends Component {
   }
 
   renderContent2() {
-    const { token2 } = this.state;
-    const { symbol } = token2;
+    const { token1, token2 } = this.state;
     return (
       <div className={styles.create_content}>
         <div className={styles.finish_logo}>
@@ -285,17 +283,17 @@ export default class CreatePair extends Component {
           />
         </div>
         <div className={styles.finish_title}>
-          {symbol1}/{symbol}
+          {token1.symbol}/{token2.symbol}
         </div>
         <div className={styles.finish_desc}>{_('create_success')}</div>
 
         <div className={styles.info}>
           <div className={styles.line}>
-            <div className={styles.label}>{_('pooled', symbol1)}</div>
+            <div className={styles.label}>{_('pooled', token1.symbol)}</div>
             <div className={styles.no}>0.0</div>
           </div>
           <div className={styles.line}>
-            <div className={styles.label}>{_('pooled', symbol)}</div>
+            <div className={styles.label}>{_('pooled', token2.symbol)}</div>
             <div className={styles.no}>0.0</div>
           </div>
           <div className={styles.line}>

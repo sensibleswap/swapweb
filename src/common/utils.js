@@ -4,6 +4,7 @@ import bytes from 'bytes';
 import moment from 'moment';
 import BigNumber from 'bignumber.js';
 import format from 'format-number';
+import querystring from 'querystringify';
 import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
 import debug from 'debug';
 const log = debug('utils');
@@ -360,3 +361,10 @@ export function LeastFee(txFee, balance) {
     code: 0,
   };
 }
+
+//是否是本地环境，url中包含参数env=local
+function isLocalEnvFun() {
+  const query = querystring.parse(location.search);
+  return query.env === 'local';
+}
+export const isLocalEnv = isLocalEnvFun();
