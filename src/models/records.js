@@ -1,6 +1,11 @@
 import recordsApi from '../api/sensiblequery';
 import { USDT_PAIR } from 'common/const';
-import { formatTime, formatAmount, parseUrl, getTimeAgo } from 'common/utils';
+import {
+  formatTime,
+  formatAmount,
+  getCurrentPair,
+  getTimeAgo,
+} from 'common/utils';
 import debug from 'debug';
 const log = debug('records');
 
@@ -19,14 +24,7 @@ export default {
     *query({ payload }, { call, put, select }) {
       const allPairs = yield select((state) => state.pair.allPairs);
 
-      const urlPair = parseUrl();
-
-      let currentPair;
-      if (urlPair) {
-        currentPair = urlPair;
-      } else {
-        currentPair = yield select((state) => state.pair.currentPair);
-      }
+      let currentPair = getCurrentPair();
 
       if (!currentPair) {
         return [];
@@ -106,6 +104,7 @@ export default {
         }
       }
 
+      // console.log(dataTimeline)
       return dataTimeline;
     },
   },

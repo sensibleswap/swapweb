@@ -14,6 +14,8 @@ import styles from './index.less';
 import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
+import FarmPairIcon from 'components/pairIcon/farmIcon';
+import PairIcon from '../../components/pairIcon';
 
 const datas = [
   {
@@ -62,6 +64,7 @@ export default class Deposit extends Component {
   componentDidMount() {
     EventBus.on('changeFarmPair', () => {
       this.changeData(0);
+      this.setState({ formFinish: false });
     });
   }
 
@@ -122,9 +125,9 @@ export default class Deposit extends Component {
       symbol2,
       lptoken,
       rewardToken,
-      pairYields,
       pairsData,
       allPairs = {},
+      allFarmPairs,
     } = this.props;
     if (loading || !currentFarmPair || !pairsData[currentFarmPair])
       return <Loading />;
@@ -167,18 +170,7 @@ export default class Deposit extends Component {
 
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
-              <div className={styles.icon}>
-                <TokenPair
-                  symbol1={symbol2}
-                  symbol2={symbol1}
-                  genesisID2={token1.tokenID || 'bsv'}
-                  genesisID1={token2.tokenID}
-                  size={25}
-                />
-              </div>
-              <div className={styles.name}>
-                {symbol2}/{symbol1}-LP
-              </div>
+              <FarmPairIcon keyword="pair" />
             </div>
             <div className={styles.pair_right}>
               <Input
@@ -214,7 +206,8 @@ export default class Deposit extends Component {
               </div>
             </div>
             <div className={styles.pair_right}>
-              <FormatNumber value={pairYields[currentFarmPair]} />% {_('apy')}
+              <FormatNumber value={allFarmPairs[currentFarmPair]._yield} />%{' '}
+              {_('apy')}
             </div>
           </div>
 
@@ -364,8 +357,6 @@ export default class Deposit extends Component {
   }
 
   renderResult() {
-    const { symbol1, symbol2, allPairs, currentFarmPair } = this.props;
-    const { token1, token2 } = allPairs[currentFarmPair];
     const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
@@ -385,14 +376,7 @@ export default class Deposit extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <TokenPair
-              symbol1={symbol1}
-              symbol2={symbol2}
-              genesisID2={token1.tokenID || 'bsv'}
-              genesisID1={token2.tokenID}
-              size={20}
-            />{' '}
-            {symbol1}/{symbol2}-LP
+            <PairIcon keyword="pair" size={20} />
           </div>
         </div>
 

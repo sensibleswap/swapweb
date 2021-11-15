@@ -8,11 +8,11 @@ import Pair from 'components/pair';
 import Chart from 'components/chart/poolChart';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
-import TokenPair from 'components/tokenPair';
 import Notice from 'components/notice';
 import Header from '../layout/header';
 import styles from './index.less';
 import _ from 'i18n';
+import PairIcon from 'components/pairIcon';
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -54,29 +54,21 @@ export default class Pool extends Component {
       loading,
       allPairs,
       accountInfo,
+      token1,
+      token2,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
-
-    const { token1, token2 } = allPairs[currentPair];
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-    const token = allPairs[currentPair].token2;
     return (
       <div className={styles.content}>
-        <Chart symbol1={symbol1} symbol2={symbol2} />
+        <Chart symbol1={token1.symbol} symbol2={token2.symbol} />
         <div className={styles.main_title}>
           <h2>
             <div className={styles.icon}>
-              <TokenPair
-                symbol1={symbol1}
-                symbol2={symbol2}
-                size={30}
-                genesisID1={token1.tokenID || 'bsv'}
-                genesisID2={token.tokenID}
-              />
+              <PairIcon keyword="pairIcon" />
             </div>
             <div className={styles.name}>
-              LP({symbol2}/{symbol1})
+              LP(
+              <PairIcon keyword="name2name1" />)
             </div>
           </h2>
         </div>

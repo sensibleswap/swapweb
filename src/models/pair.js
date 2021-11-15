@@ -3,8 +3,8 @@ import BigNumber from 'bignumber.js';
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
 import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR, USDT_PAIR } from 'common/const';
-import { parseUrl } from 'common/utils';
 import debug from 'debug';
+import { getCurrentPair } from 'common/utils';
 
 const log = debug('pair');
 const iconUrl = 'https://volt.id/api.json?method=sensibleft.getSensibleFtList';
@@ -75,14 +75,13 @@ export default {
       }
       let allPairs = { ...data };
 
-      const urlPair = parseUrl();
       // console.log('urlPair:', urlPair)
 
       let customPair;
       if (!currentPair) {
-        currentPair =
-          urlPair || localStorage.getItem(TSWAP_CURRENT_PAIR) || DEFAULT_PAIR;
+        currentPair = getCurrentPair();
       }
+
       // console.log('localStorage:',localStorage.getItem(TSWAP_CURRENT_PAIR))
 
       if (data[currentPair]) {
@@ -269,13 +268,15 @@ export default {
       }
 
       const { token1, token2, lptoken, rabinApis } = allPairs[currentPair];
+      const symbol1 = token1.symbol.toUpperCase();
+      const symbol2 = token2.symbol.toUpperCase();
 
       return {
         ...state,
         ...action.payload,
         currentPair,
-        token1,
-        token2,
+        token1: { ...token1, symbol: symbol1, isBsv: symbol1 === 'BSV' },
+        token2: { ...token2, symbol: symbol2 },
         lptoken,
         rabinApis,
       };

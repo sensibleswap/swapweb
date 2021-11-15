@@ -78,12 +78,10 @@ export default class SwapPage extends Component {
   renderContent() {
     const { loading, token1, token2, pairData } = this.props;
     if (loading || !token1.symbol) return <Loading />;
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
 
     return (
       <div className={styles.content}>
-        <Chart symbol1={symbol1} symbol2={symbol2} />
+        <Chart symbol1={token1.symbol} symbol2={token2.symbol} />
 
         <h3 className={styles.title}>{_('pair_stat')}</h3>
         <PairStat pairData={{ ...pairData, token1, token2 }} />

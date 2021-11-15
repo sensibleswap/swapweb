@@ -6,18 +6,17 @@ import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
-import { formatAmount, formatSat, jc } from 'common/utils';
+import { formatAmount, formatSat } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
-import TokenPair from 'components/tokenPair';
-import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
 import SelectToken from '../selectToken';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
+import PairIcon from 'components/pairIcon';
 
 let busy = false;
 const type = 'pool';
@@ -182,9 +181,7 @@ export default class Liquidity extends Component {
     const { userBalance } = accountInfo;
     const { swapLpAmount, swapToken1Amount, swapToken2Amount } = pairData;
     const origin_amount =
-      (token1.symbol === 'bsv'
-        ? userBalance.BSV
-        : userBalance[token1.tokenID]) || 0;
+      (token1.isBsv ? userBalance.BSV : userBalance[token1.tokenID]) || 0;
 
     if (swapToken1Amount === '0' && swapToken2Amount === '0') {
       //第一次添加流动性
@@ -275,8 +272,6 @@ export default class Liquidity extends Component {
   renderInfo(total_origin_amount, total_aim_amount, share) {
     const { price_dir } = this.state;
     const { token1, token2 } = this.props;
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
     const price1 = formatAmount(
       total_aim_amount / total_origin_amount,
       token2.decimal,
@@ -294,10 +289,10 @@ export default class Liquidity extends Component {
             onClick={this.switchPriceDir}
             style={{ cursor: 'pointer' }}
           >
-            1 {price_dir ? symbol1 : symbol2} ={' '}
+            1 {price_dir ? token1.symbol : token2.symbol} ={' '}
             <FormatNumber
               value={price_dir ? price1 : price2}
-              suffix={price_dir ? symbol2 : symbol1}
+              suffix={price_dir ? token2.symbol : token1.symbol}
             />{' '}
             <CustomIcon
               type="iconSwitch"
@@ -359,8 +354,6 @@ export default class Liquidity extends Component {
   renderForm() {
     const { token1, token2, submiting, accountInfo } = this.props;
     const { userBalance } = accountInfo;
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
     return (
       <div className={styles.add_content}>
         <Spin spinning={submiting}>
@@ -372,11 +365,11 @@ export default class Liquidity extends Component {
                 <span>
                   <FormatNumber
                     value={
-                      (token1.symbol === 'bsv'
+                      (token1.isBsv
                         ? userBalance.BSV
                         : userBalance[token1.tokenID]) || 0
                     }
-                    suffix={symbol1}
+                    suffix={token1.symbol}
                   />
                 </span>
               </div>
@@ -386,11 +379,7 @@ export default class Liquidity extends Component {
                 className={styles.coin}
                 onClick={() => this.showUI('selectToken')}
               >
-                <TokenLogo
-                  name={symbol1}
-                  genesisID={token1.symbol === 'bsv' ? 'bsv' : token1.tokenID}
-                />
-                <div className={styles.name}>{symbol1}</div>
+                <PairIcon keyword="token1" />
                 <div className={styles.arrow}>
                   <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
                 </div>
@@ -416,7 +405,7 @@ export default class Liquidity extends Component {
                 <span>
                   <FormatNumber
                     value={userBalance[token2.tokenID] || 0}
-                    suffix={symbol2}
+                    suffix={token2.symbol}
                   />
                 </span>
               </div>
@@ -427,10 +416,7 @@ export default class Liquidity extends Component {
                 className={styles.coin}
                 onClick={() => this.showUI('selectToken')}
               >
-                <div style={{ width: 40 }}>
-                  <TokenLogo name={symbol2} genesisID={token2.tokenID} />
-                </div>
-                <div className={styles.name}>{symbol2 || _('select')}</div>
+                <PairIcon keyword="token2" />
                 <div className={styles.arrow}>
                   <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
                 </div>
@@ -479,10 +465,7 @@ export default class Liquidity extends Component {
           {_('enter_amount')}
         </Button>
       );
-    } else if (
-      token1.symbol === 'bsv' &&
-      parseFloat(origin_amount) <= formatSat(1000)
-    ) {
+    } else if (token1.isBsv && parseFloat(origin_amount) <= formatSat(1000)) {
       // 数额太小
       btn = (
         <Button className={styles.btn_wait} shape="round">
@@ -492,9 +475,7 @@ export default class Liquidity extends Component {
     } else if (
       parseFloat(origin_amount) >
       parseFloat(
-        (token1.symbol === 'bsv'
-          ? userBalance.BSV
-          : userBalance[token1.tokenID]) || 0,
+        (token1.isBsv ? userBalance.BSV : userBalance[token1.tokenID]) || 0,
       )
     ) {
       // 余额不足
@@ -546,17 +527,18 @@ export default class Liquidity extends Component {
     new_origin_amount,
   }) => {
     const { token1, token2 } = this.props;
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
     Modal.confirm({
       title: _('liq_price_change_title'),
       icon: '',
       onOk: this.handleOk,
       content: _('liq_price_change_contnet')
-        .replace('%1', `${origin_amount}${symbol1} + ${aim_amount}${symbol2}`)
+        .replace(
+          '%1',
+          `${origin_amount}${token1.symbol} + ${aim_amount}${token2.symbol}`,
+        )
         .replace(
           '%2',
-          `${new_origin_amount}${symbol1} + ${new_aim_amount}${symbol2}`,
+          `${new_origin_amount}${token1.symbol} + ${new_aim_amount}${token2.symbol}`,
         ),
       okText: _('continue_add_liq'),
       cancelText: _('cancel'),
@@ -611,7 +593,7 @@ export default class Liquidity extends Component {
     // )
     // .isGreaterThan(userBalance.BSV || 0))
     if (
-      token1.symbol === 'bsv' &&
+      token1.isBsv &&
       BigNumber(origin_amount)
         .plus(BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)))
         .isGreaterThan(userBalance.BSV || 0)
@@ -719,7 +701,7 @@ export default class Liquidity extends Component {
       reqSwapData || data;
 
     let liq_data;
-    if (token1.symbol === 'bsv') {
+    if (token1.isBsv) {
       let tx_res = await dispatch({
         type: 'user/transferAll',
         payload: {
@@ -867,8 +849,6 @@ export default class Liquidity extends Component {
     const { token1, token2, allPairs, currentPair } = this.props;
     const { _origin_amount, _aim_amount, lpAddAmount } = this.state;
     const { lptoken = {} } = allPairs[currentPair];
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
     return (
       <div className={styles.add_content}>
         <div className={styles.finish_logo}>
@@ -879,22 +859,13 @@ export default class Liquidity extends Component {
         </div>
         <div className={styles.finish_title}>{_('add_success')}</div>
         <div className={styles.result_data1}>
-          {_('added')} {formatSat(_origin_amount, token1.decimal)} {symbol1} +{' '}
-          {formatSat(_aim_amount, token2.decimal)} {symbol2}
+          {_('added')} {formatSat(_origin_amount, token1.decimal)}{' '}
+          {token1.symbol} + {formatSat(_aim_amount, token2.decimal)}{' '}
+          {token2.symbol}
         </div>
         <div className={styles.result_data2}>
           {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
-          <TokenPair
-            symbol1={symbol1}
-            symbol2={symbol2}
-            genesisID1={token1.tokenID || 'bsv'}
-            genesisID2={token2.tokenID}
-            size={20}
-            style={{ marginLeft: 10 }}
-          />{' '}
-          <span style={{ fontWeight: 700, marginLeft: 10 }}>
-            {symbol1}/{symbol2}-LP
-          </span>
+          <PairIcon keyword="pair" size={20} />{' '}
         </div>
         {/*this.renderResultInfo()*/}
         <Button

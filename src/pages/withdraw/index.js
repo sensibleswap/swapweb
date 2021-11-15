@@ -8,11 +8,11 @@ import { formatAmount, LeastFee } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
-import TokenPair from 'components/tokenPair';
 import styles from '../deposit/index.less';
 import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
+import PairIcon from 'components/pairIcon';
 
 const datas = [
   {
@@ -64,6 +64,7 @@ export default class Withdraw extends Component {
   componentDidMount() {
     EventBus.on('changeFarmPair', () => {
       this.changeData(0);
+      this.setState({ formFinish: false });
     });
   }
 
@@ -125,20 +126,14 @@ export default class Withdraw extends Component {
 
   renderForm() {
     const {
-      allPairs,
       currentFarmPair,
       loading,
       submiting,
-      symbol1,
-      symbol2,
       // lptoken,
       lockedTokenAmount,
     } = this.props;
     if (loading || !currentFarmPair) return <Loading />;
     const { addLPRate, addLP } = this.state;
-    const { token1, token2 } = allPairs[
-      `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
-    ];
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
@@ -165,18 +160,7 @@ export default class Withdraw extends Component {
 
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
-              <div className={styles.icon}>
-                <TokenPair
-                  symbol1={symbol2}
-                  symbol2={symbol1}
-                  size={25}
-                  genesisID2={token1.tokenID || 'bsv'}
-                  genesisID1={token2.tokenID}
-                />
-              </div>
-              <div className={styles.name}>
-                {symbol2}/{symbol1}-LP
-              </div>
+              <PairIcon keyword="pair" />
             </div>
             <div className={styles.pair_right}>
               <Input
@@ -241,8 +225,9 @@ export default class Withdraw extends Component {
 
   handleSubmit = async () => {
     const { addLP } = this.state;
-    const { dispatch, currentFarmPair, lptoken, accountInfo } = this.props;
+    const { dispatch, currentFarmPair, accountInfo, allFarmPairs } = this.props;
     const { userAddress, userBalance, changeAddress } = accountInfo;
+    const lptoken = allFarmPairs[currentFarmPair].token;
 
     let res = await dispatch({
       type: 'farm/reqSwap',
@@ -367,10 +352,6 @@ export default class Withdraw extends Component {
   }
 
   renderResult() {
-    const { symbol1, symbol2, allPairs } = this.props;
-    const { token1, token2 } = allPairs[
-      `${symbol1.toLowerCase()}-${symbol2.toLowerCase()}`
-    ];
     const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
@@ -390,14 +371,7 @@ export default class Withdraw extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <TokenPair
-              symbol1={symbol2}
-              symbol2={symbol1}
-              size={25}
-              genesisID2={token1.tokenID || 'bsv'}
-              genesisID1={token2.tokenID}
-            />{' '}
-            {symbol1}/{symbol2}-LP
+            <PairIcon keyword="pair" />
           </div>
         </div>
 

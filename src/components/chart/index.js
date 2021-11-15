@@ -95,12 +95,10 @@ export default class Chart extends Component {
           } else {
             lines.push({
               label: _('volume'),
-              value: params[1]
-                ? formatNumberForDisplay({
-                    value: params[1].value[1],
-                    suffix: token1,
-                  })
-                : '',
+              value: formatNumberForDisplay({
+                value: params[1].value[1],
+                suffix: token1,
+              }),
             });
             lines.push({
               label: _('price'),
@@ -186,7 +184,7 @@ export default class Chart extends Component {
     if (type !== this.props.type || !this._isMounted) return;
     const chartData = await this.getChartData(type);
     // console.log('chartData:', chartData)
-    if (chartData.length > 1) {
+    if (chartData.length > 0) {
       if (type === 'pool') {
         this.option.series[0].data = chartData.map((d) => ({
           name: d.timestamp,
@@ -207,7 +205,7 @@ export default class Chart extends Component {
           name: d.timestamp,
           value: [d.formattedTime, d.volumn],
         }));
-        console.log('this.option.series[1].data:', this.option.series[1].data);
+        // console.log('this.option.series[1].data:', this.option.series[1].data);
       }
     } else {
       this.option.series[0].data = [];
@@ -215,6 +213,7 @@ export default class Chart extends Component {
 
     // this.myChart.clear();
     // this.myChart.setOption(this.option);
+    // console.log(this.option)
     setTimeout(() => {
       this.myChart.setOption(this.option);
       this.setState({

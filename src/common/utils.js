@@ -5,10 +5,16 @@ import moment from 'moment';
 import BigNumber from 'bignumber.js';
 import format from 'format-number';
 import querystring from 'querystringify';
-import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
+import {
+  TSWAP_NETWORK,
+  DEFAULT_NET,
+  TSWAP_CURRENT_FARM_PAIR,
+  TSWAP_CURRENT_PAIR,
+  DEFAULT_PAIR,
+} from 'common/const';
 import debug from 'debug';
 const log = debug('utils');
-const location = window.location;
+const { localStorage, location } = window;
 
 // 格式化日期
 export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
@@ -323,6 +329,7 @@ export function tokenPre() {
   return isTestNet() ? 'tbsv-' : 'bsv-';
 }
 
+//获取url中当前交易对名称或id
 export function parseUrl(hash) {
   if (!hash) hash = location.hash;
   let [, hash1, hash2, hash3] = hash.split('/');
@@ -340,6 +347,19 @@ export function parseUrl(hash) {
   return currentPair;
 }
 
+//获取当前交易对
+export function getCurrentPair(type = 'pair') {
+  const urlPair = parseUrl();
+  let currentPair =
+    urlPair ||
+    window.localStorage.getItem(
+      type === 'farm' ? TSWAP_CURRENT_FARM_PAIR : TSWAP_CURRENT_PAIR,
+    ) ||
+    DEFAULT_PAIR;
+  return currentPair;
+}
+
+//手续费多预留100000的余额判断
 export function LeastFee(txFee, balance) {
   let needLeastAmount = BigNumber(txFee).plus(100000).div(Math.pow(10, 8));
   log(

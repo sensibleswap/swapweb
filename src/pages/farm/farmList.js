@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import { history } from 'umi';
 import { Tooltip } from 'antd';
-import BigNumber from 'bignumber.js';
-import { jc, formatSat, formatAmount, tokenPre } from 'common/utils';
+import { jc, formatSat, formatAmount } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import TokenPair from 'components/tokenPair';
@@ -29,23 +28,17 @@ export default class FarmList extends Component {
   };
 
   renderItem(data) {
-    const {
-      loading,
-      dispatch,
-      bsvPrice,
-      currentFarmPair,
-      pairsData,
-      allPairs,
-    } = this.props;
+    const { loading, currentFarmPair, pairsData, allPairs } = this.props;
 
     const {
       pairName,
       token,
       lockedTokenAmount,
-      poolTokenAmount,
       rewardAmountPerBlock,
       rewardTokenAmount = 0,
       rewardToken,
+      _total = 0,
+      _yield = 0,
     } = data;
     if (loading || !pairsData[pairName]) {
       return null;
@@ -53,55 +46,11 @@ export default class FarmList extends Component {
     const { token1, token2 } = allPairs[pairName];
     const [symbol1, symbol2] = pairName.toUpperCase().split('-');
 
-    const { decimal, symbol } = rewardToken;
-    const { swapLpAmount = 0, swapToken1Amount = 0 } = pairsData[pairName];
+    const { decimal } = rewardToken;
 
     const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
-    const bsv_amount = formatSat(swapToken1Amount, token1.decimal);
-
-    const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
-
-    const reward_symbol = `${tokenPre()}${symbol.toLowerCase()}`;
-    let reward_token = pairsData[reward_symbol];
-    if (pairName === 'usdt-tsc') {
-      reward_token = pairsData[pairName];
-    }
-    if (!reward_token || !allPairs[pairName]) {
-      return null;
-    }
-
-    const reward_bsv_amount = formatSat(
-      reward_token.swapToken1Amount,
-      token1.decimal,
-    );
-    const reward_token_amount = formatSat(
-      reward_token.swapToken2Amount,
-      decimal,
-    );
-    const token_price = BigNumber(reward_bsv_amount).div(reward_token_amount);
 
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
-    let _total = BigNumber(poolTokenAmount).multipliedBy(lp_price);
-    if (symbol1 === 'BSV') {
-      _total = _total.multipliedBy(bsvPrice);
-    }
-
-    let _yield = BigNumber(reword_amount)
-      .multipliedBy(144)
-      .multipliedBy(365)
-      .multipliedBy(token_price)
-      .div(BigNumber(poolTokenAmount).multipliedBy(lp_price))
-      .multipliedBy(100);
-
-    _yield = formatAmount(_yield, 2);
-    let { pairYields } = this.props;
-    pairYields[pairName] = _yield;
-    dispatch({
-      type: 'farm/save',
-      payload: {
-        pairYields,
-      },
-    });
 
     return (
       <div

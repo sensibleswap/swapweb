@@ -2,23 +2,18 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip } from 'node-gzip';
+import BigNumber from 'bignumber.js';
 import { Slider, Button, Spin, message, Input } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, LeastFee } from 'common/utils';
-import Pair from 'components/pair';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
-import TokenPair from 'components/tokenPair';
-import TokenLogo from 'components/tokenicon';
 import PoolMenu from 'components/poolMenu';
+import PairIcon from 'components/pairIcon';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-
-// import Header from '../layout/header';
-// import { history } from 'umi';
-import BigNumber from 'bignumber.js';
 
 let busy = false;
 const type = 'pool';
@@ -64,8 +59,6 @@ export default class RemovePage extends Component {
       removeLp: 0,
       page: 'form',
       formFinish: false,
-      symbol1: '',
-      symbol2: '',
       removeToken1: 0,
       removeToken2: 0,
       price: 0,
@@ -104,18 +97,10 @@ export default class RemovePage extends Component {
     const { currentPair, allPairs } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const { token1, token2 } = allPairs[currentPair];
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-    const genesisID1 = token1.tokenID || 'bsv';
-    const genesisID2 = token2.tokenID;
     const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
       formatSat(swapToken1Amount, token1.decimal),
     );
     this.setState({
-      symbol1,
-      symbol2,
-      genesisID1,
-      genesisID2,
       price: formatAmount(price, token2.decimal),
     });
     EventBus.emit('reloadChart', type);
@@ -137,43 +122,6 @@ export default class RemovePage extends Component {
       type: 'user/loadingUserData',
       payload: {},
     });
-  }
-
-  renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      accountInfo,
-      lptoken,
-      allPairs,
-    } = this.props;
-    const LP = accountInfo.userBalance[lptoken.tokenID];
-    if (loading || !currentPair) return <Loading />;
-    const { symbol1, symbol2, genesisID1, genesisID2 } = this.state;
-    return (
-      <div className={styles.content}>
-        <div className={styles.main_title}>
-          <h2>
-            <div className={styles.icon}>
-              <TokenPair
-                symbol1={symbol1}
-                symbol2={symbol2}
-                size={40}
-                genesisID1={genesisID1}
-                genesisID2={genesisID2}
-              />
-            </div>
-            <div className={styles.name}>
-              {symbol2}/{symbol1}
-            </div>
-          </h2>
-          <div className={styles.subtitle}>{_('your_liq')}</div>
-          <div className={styles.fiat}>$</div>
-        </div>
-        <Pair pairData={pairData} curPair={allPairs[currentPair]} LP={LP} />
-      </div>
-    );
   }
 
   changeData = (e) => {
@@ -280,14 +228,7 @@ export default class RemovePage extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
-    const {
-      removeRate,
-      removeLP,
-      symbol1,
-      symbol2,
-      genesisID1,
-      genesisID2,
-    } = this.state;
+    const { removeRate, removeLP } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     const { removeToken1, removeToken2 } = this.calc();
     return (
@@ -319,16 +260,11 @@ export default class RemovePage extends Component {
           </div>
           <div className={styles.s_box}>
             <div className={styles.coin}>
-              <TokenPair
-                symbol1={symbol1}
-                symbol2={symbol2}
-                size={30}
-                genesisID1={genesisID1}
-                genesisID2={genesisID2}
-              />
+              <PairIcon keyword="pairIcon" />
             </div>
             <div className={styles.name}>
-              {symbol1}/{symbol2}-LP
+              <PairIcon keyword="name1name2" />
+              -LP
             </div>
             <Input
               className={styles.input}
@@ -349,14 +285,18 @@ export default class RemovePage extends Component {
             <div className={styles.values_left}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
-                  <div style={{ marginLeft: 5 }}>{symbol1}</div>
+                  <PairIcon keyword="token1icon" size={20} />
+                  <div style={{ marginLeft: 5 }}>
+                    <PairIcon keyword="token1name" />
+                  </div>
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
-                  <div style={{ marginLeft: 5 }}>{symbol2}</div>
+                  <PairIcon keyword="token2icon" size={20} />
+                  <div style={{ marginLeft: 5 }}>
+                    <PairIcon keyword="token2name" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -532,36 +472,9 @@ export default class RemovePage extends Component {
     }
   }
 
-  renderInfo() {
-    const { symbol1, symbol2, receive_token1, receive_token2 } = this.state;
-    return (
-      <div className={styles.my_pair_info}>
-        <div className={styles.info_title_swap}>
-          <div className={styles.info_title}>{_('your_re_liq')}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>{symbol1}</div>
-          <div className={styles.info_value}>{receive_token1}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>{symbol2}</div>
-          <div className={styles.info_value}>{receive_token2}</div>
-        </div>
-      </div>
-    );
-  }
-
   renderResult() {
     // const LP = userBalance[lptoken.tokenID];
-    const {
-      symbol1,
-      symbol2,
-      genesisID1,
-      genesisID2,
-      final_lp,
-      receive_token1,
-      receive_token2,
-    } = this.state;
+    const { final_lp, receive_token1, receive_token2 } = this.state;
     return (
       <div className={styles.remove_content}>
         <div className={styles.finish_logo}>
@@ -576,18 +489,7 @@ export default class RemovePage extends Component {
           <div className={styles.f_title}>{_('your_pos')}</div>
           <div className={styles.f_item}>
             <div className={styles.f_label}>
-              <div className={styles.icon}>
-                <TokenPair
-                  symbol1={symbol1}
-                  symbol2={symbol2}
-                  size={20}
-                  genesisID1={genesisID1}
-                  genesisID2={genesisID2}
-                />
-              </div>
-              <div className={styles.name}>
-                {symbol2}/{symbol1}
-              </div>
+              <PairIcon keyword="pair" size={20} />
             </div>
             <div className={styles.f_value}>
               <FormatNumber value={final_lp} />
@@ -606,18 +508,20 @@ export default class RemovePage extends Component {
           <div className={styles.f_item}>
             <div className={styles.f_label}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
+                <PairIcon keyword="token1icon" size={20} />
               </div>
               <div className={styles.name}>
-                <FormatNumber value={receive_token1} suffix={symbol1} />
+                <FormatNumber value={receive_token1} />{' '}
+                <PairIcon keyword="token1name" />
               </div>
             </div>
             <div className={styles.f_value}>
               <div className={styles.icon}>
-                <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
+                <PairIcon keyword="token2icon" size={20} />
               </div>
               <div className={styles.name}>
-                <FormatNumber value={receive_token2} suffix={symbol2} />
+                <FormatNumber value={receive_token2} />{' '}
+                <PairIcon keyword="token2name" />
               </div>
             </div>
           </div>

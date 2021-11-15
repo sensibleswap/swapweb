@@ -10,7 +10,7 @@ import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
-import TokenLogo from 'components/tokenicon';
+import PairIcon from 'components/pairIcon';
 import Loading from 'components/loading';
 import SelectToken from '../selectToken';
 import styles from './index.less';
@@ -171,16 +171,13 @@ export default class Swap extends Component {
   };
 
   renderOriginToken() {
-    const { token1, token2, pairData } = this.props;
+    const { pairData } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward } = this.state;
-    const origin_token = dirForward ? token1 : token2;
-    const symbol1 = origin_token.symbol.toUpperCase();
     return (
       <div className={styles.box}>
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
-          <TokenLogo name={symbol1} genesisID={origin_token.tokenID || 'bsv'} />
-          <div className={styles.name}>{symbol1}</div>
+          <PairIcon keyword={dirForward ? 'token1' : 'token2'} size={40} />
           <div className={styles.arrow}>
             <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
           </div>
@@ -197,23 +194,13 @@ export default class Swap extends Component {
   }
 
   renderAimToken() {
-    const { token1, token2, pairData } = this.props;
+    const { pairData } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const { dirForward } = this.state;
-    const aim_token = dirForward ? token2 : token1;
-    const symbol2 = aim_token.symbol.toUpperCase();
     return (
       <div className={styles.box}>
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
-          <div style={{ width: 40 }}>
-            {symbol2 && (
-              <TokenLogo
-                name={symbol2}
-                genesisID={aim_token.tokenID || 'bsv'}
-              />
-            )}
-          </div>
-          <div className={styles.name}>{symbol2 || _('select')}</div>
+          <PairIcon keyword={dirForward ? 'token2' : 'token1'} size={40} />
           <div className={styles.arrow}>
             <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
           </div>
@@ -240,7 +227,7 @@ export default class Swap extends Component {
     }
 
     let origin_amount = this.state.dirForward
-      ? token1.symbol === 'bsv'
+      ? token1.isBsv
         ? userBalance.BSV * 0.98 || 0
         : userBalance[token1.tokenID]
       : userBalance[token2.tokenID] || 0;
@@ -374,8 +361,8 @@ export default class Swap extends Component {
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
     const { slip, fee } = this.state;
-    const symbol1 = origin_token.symbol.toUpperCase();
-    const symbol2 = aim_token.symbol.toUpperCase();
+    const symbol1 = origin_token.symbol;
+    const symbol2 = aim_token.symbol;
     const _swapToken1Amount = formatSat(swapToken1Amount, token1.decimal);
     const _swapToken2Amount = formatSat(swapToken2Amount, token2.decimal);
     const price = dirForward
@@ -606,7 +593,7 @@ export default class Swap extends Component {
         .multipliedBy(Math.pow(10, token1.decimal))
         .toString();
 
-      if (token1.symbol === 'bsv') {
+      if (token1.isBsv) {
         const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
         let total = BigInt(amount) + BigInt(txFee);
         const _allBalance = total > BigInt(userTotal);
@@ -797,8 +784,8 @@ export default class Swap extends Component {
     const { token1, token2 } = this.props;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
-    const symbol1 = origin_token.symbol.toUpperCase();
-    const symbol2 = aim_token.symbol.toUpperCase();
+    const symbol1 = origin_token.symbol;
+    const symbol2 = aim_token.symbol;
 
     return (
       <div className={styles.content}>

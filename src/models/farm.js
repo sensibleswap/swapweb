@@ -2,7 +2,8 @@
 import farmApi from '../api/farm';
 import pairApi from '../api/pair';
 import { TSWAP_CURRENT_FARM_PAIR, TSWAP_SOURCE } from 'common/const';
-import { formatSat, parseUrl } from 'common/utils';
+import { formatSat, getCurrentPair } from 'common/utils';
+import { handleFarmData } from 'common/farmUtils';
 import debug from 'debug';
 const log = debug('farm');
 
@@ -28,27 +29,20 @@ export default {
   },
 
   effects: {
-    *getAllPairs({ payload }, { call, put }) {
+    *getAllPairs({ payload }, { call, put, select }) {
       const res = yield farmApi.queryAllPairs.call(farmApi, payload.address);
       log('farmApi:', res);
-      const { data } = res;
+      let { data } = res;
 
       if (res.code !== 0) {
         console.log(res.msg);
         return res;
       }
-      const urlPair = parseUrl();
-      let currentFarmPair =
-        urlPair || localStorage.getItem(TSWAP_CURRENT_FARM_PAIR);
+
+      let currentFarmPair = getCurrentPair('farm');
       if (!currentFarmPair || !data[currentFarmPair]) {
         Object.keys(data).forEach((item) => {
-          if (
-            // item.indexOf('bsv-') > -1 ||
-            // item.indexOf('-bsv') > -1 ||
-            // item.indexOf('tbsv-') ||
-            // item.indexOf('-tbsv')
-            item !== 'blockHeight'
-          ) {
+          if (item !== 'blockHeight') {
             currentFarmPair = item;
             // console.log('localstorage.set:', item)
             localStorage.setItem(TSWAP_CURRENT_FARM_PAIR, item);
@@ -73,17 +67,21 @@ export default {
           pairsData[item] = datas_res[index].data;
         }
       });
-      farmPairs.sort((a, b) => {
-        return b.poolTokenAmount - a.poolTokenAmount;
-      });
+      const { allPairs, bsvPrice } = yield select((state) => state.pair);
+      let { allFarmData, allFarmArr } = handleFarmData(
+        data,
+        allPairs,
+        pairsData,
+        bsvPrice,
+      );
+      // console.log(allFarmData, allFarmArr)
 
       yield put({
         type: 'saveFarm',
         payload: {
-          allFarmPairs: data,
-          allFarmPairsArr: farmPairs,
+          allFarmPairs: allFarmData,
+          allFarmPairsArr: allFarmArr,
           currentFarmPair,
-          // bsvPrice,
           pairsData,
         },
       });
@@ -108,15 +106,21 @@ export default {
           farmPairs.push({ ...data[item], pairName: item });
         }
       });
-      farmPairs.sort((a, b) => {
-        return b.poolTokenAmount - a.poolTokenAmount;
-      });
+      const { allPairs, bsvPrice } = yield select((state) => state.pair);
+      const { pairsData } = yield select((state) => state.farm);
+      let { allFarmData, allFarmArr } = handleFarmData(
+        data,
+        allPairs,
+        pairsData,
+        bsvPrice,
+      );
+      // console.log(allFarmData)
+
       yield put({
         type: 'saveFarm',
         payload: {
-          allFarmPairs: data,
-          allFarmPairsArr: farmPairs,
-          // bsvPrice,
+          allFarmPairs: allFarmData,
+          allFarmPairsArr: allFarmArr,
         },
       });
 
