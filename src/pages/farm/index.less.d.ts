@@ -18,6 +18,7 @@ interface CssExports {
   farm_title: string;
   head: string;
   icon: string;
+  input: string;
   item: string;
   item_data: string;
   item_detail_line_2: string;
@@ -36,6 +37,9 @@ interface CssExports {
   mod: string;
   mod_content: string;
   name: string;
+  pair_box: string;
+  pair_left: string;
+  pair_right: string;
   right: string;
   right_box: string;
   sidebar: string;

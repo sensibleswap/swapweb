@@ -13,9 +13,6 @@ interface CssExports {
   coin: string;
   container: string;
   container_center: string;
-  d: string;
-  data: string;
-  datas: string;
   desc: string;
   done_btn: string;
   f_box: string;

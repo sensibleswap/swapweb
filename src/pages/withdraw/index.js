@@ -14,6 +14,7 @@ import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
+import LoginBtn from 'components/loginBtn';
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -210,21 +211,13 @@ export default class Withdraw extends Component {
     }
   };
 
-  login() {
-    EventBus.emit('login');
-  }
-
   renderButton() {
     const { isLogin, lockedTokenAmount } = this.props;
     const { addLP } = this.state;
     // console.log(addLP, lockedTokenAmount)
     if (!isLogin) {
       // 未登录
-      return (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
+      return <LoginBtn />;
     } else if (addLP <= 0) {
       // 不存在的交易对
       return (

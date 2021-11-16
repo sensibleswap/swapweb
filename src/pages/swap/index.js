@@ -15,6 +15,7 @@ import Loading from 'components/loading';
 import SelectToken from '../selectToken';
 import styles from './index.less';
 import _ from 'i18n';
+import LoginBtn from 'components/loginBtn';
 
 const log = debug('swap');
 
@@ -463,10 +464,6 @@ export default class Swap extends Component {
     localStorage.setItem(slippage_tolerance_value, value);
   };
 
-  login() {
-    EventBus.emit('login');
-  }
-
   renderButton() {
     const { isLogin, pairData, token1, token2, accountInfo } = this.props;
     const { userBalance } = accountInfo;
@@ -486,11 +483,7 @@ export default class Swap extends Component {
     const beyond = parseFloat(slip) > parseFloat(tol);
     if (!isLogin) {
       // 未登录
-      return (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
+      return <LoginBtn />;
     } else if (swapToken1Amount === '0' || swapToken2Amount === '0') {
       // 交易对没有数量，不能交易
       return (

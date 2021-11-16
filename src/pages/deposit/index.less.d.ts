@@ -4,7 +4,6 @@ interface CssExports {
   app_hide: string;
   app_start_btn_wrap: string;
   app_title: string;
-  balance: string;
   big_btn: string;
   box: string;
   btn: string;
@@ -14,9 +13,6 @@ interface CssExports {
   container: string;
   container_center: string;
   content: string;
-  d: string;
-  data: string;
-  datas: string;
   desc: string;
   done_btn: string;
   finish_desc: string;

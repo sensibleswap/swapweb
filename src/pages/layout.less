@@ -101,6 +101,43 @@ p.desc {
   box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
 }
 
+.pair_box {
+  margin-top: 10px;
+  height: 70px;
+  background-color: #f6f6f9;
+  padding: 10px;
+  border-radius: 55px 8px 8px 55px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .pair_left {
+    display: flex;
+    align-items: center;
+
+    :global(.pair-name),
+    .name {
+      margin-left: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+      margin-right: 20px;
+      margin-left: 10px;
+    }
+  }
+
+  .pair_right {
+    font-size: 18px;
+    font-weight: 700;
+    .input {
+      height: 48px;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 8px;
+    }
+  }
+}
+
 .app_start_btn_wrap {
   position: fixed;
   bottom: 0;

@@ -15,6 +15,7 @@ import PairIcon from 'components/pairIcon';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
+import LoginBtn from 'components/loginBtn';
 
 let busy = false;
 const type = 'pool';
@@ -330,20 +331,12 @@ export default class RemovePage extends Component {
     });
   };
 
-  login() {
-    EventBus.emit('login');
-  }
-
   renderButton() {
     const { isLogin, pairData, accountInfo, lptoken } = this.props;
     const LP = accountInfo.userBalance[lptoken.tokenID];
     if (!isLogin) {
       // 未登录
-      return (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
+      return <LoginBtn />;
     } else if (!pairData) {
       // 不存在的交易对
       return (

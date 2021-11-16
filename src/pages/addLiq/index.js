@@ -18,6 +18,7 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
+import LoginBtn from 'components/loginBtn';
 
 let busy = false;
 const type = 'pool';
@@ -438,10 +439,6 @@ export default class Liquidity extends Component {
     );
   }
 
-  login() {
-    EventBus.emit('login');
-  }
-
   renderButton = () => {
     const { isLogin, token1, token2, accountInfo } = this.props;
     const { userBalance } = accountInfo;
@@ -449,11 +446,7 @@ export default class Liquidity extends Component {
     let btn;
     if (!isLogin) {
       // 未登录
-      btn = (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
+      btn = <LoginBtn />;
     }
     // else if (!origin_token_id || !aim_token_id) {
     //     //未选择Token

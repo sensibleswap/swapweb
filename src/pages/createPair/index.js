@@ -13,6 +13,7 @@ import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
+import LoginBtn from 'components/loginBtn';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
@@ -50,10 +51,6 @@ export default class CreatePair extends Component {
         type: 'pair/getAllPairs',
       });
     }
-  }
-
-  login() {
-    EventBus.emit('login');
   }
 
   renderSteps() {
@@ -417,11 +414,7 @@ export default class CreatePair extends Component {
     let btn;
     if (!isLogin) {
       // 未登录
-      btn = (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
+      btn = <LoginBtn />;
     } else if (!token2) {
       // 未输入数量
       btn = (

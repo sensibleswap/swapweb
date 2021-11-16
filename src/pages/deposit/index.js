@@ -14,6 +14,7 @@ import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { formatAmount, formatSat, LeastFee } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
+import LoginBtn from 'components/loginBtn';
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -246,21 +247,13 @@ export default class Deposit extends Component {
     }
   };
 
-  login() {
-    EventBus.emit('login');
-  }
-
   renderButton() {
     const { isLogin, accountInfo, lptoken } = this.props;
     const { addLP } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID];
     if (!isLogin) {
       // 未登录
-      return (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
+      return <LoginBtn />;
     } else if (addLP <= 0) {
       // 不存在的交易对
       return (

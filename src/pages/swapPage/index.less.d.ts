@@ -11,11 +11,15 @@ interface CssExports {
   container_center: string;
   content: string;
   desc: string;
+  input: string;
   left: string;
   left_inner: string;
   link: string;
   main_title: string;
   name: string;
+  pair_box: string;
+  pair_left: string;
+  pair_right: string;
   right: string;
   sidebar: string;
   small_btn: string;
