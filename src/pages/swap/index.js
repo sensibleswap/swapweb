@@ -15,7 +15,7 @@ import Loading from 'components/loading';
 import SelectToken from '../selectToken';
 import styles from './index.less';
 import _ from 'i18n';
-import LoginBtn from 'components/loginBtn';
+import { LoginBtn, EnterAmountBtn } from 'components/btns';
 
 const log = debug('swap');
 
@@ -493,11 +493,7 @@ export default class Swap extends Component {
       );
     } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
       // 未输入数量
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('enter_amount')}
-        </Button>
-      );
+      return <EnterAmountBtn />;
     } else if (parseFloat(origin_amount) <= formatSat(MINAMOUNT)) {
       // 数额太小
       return (

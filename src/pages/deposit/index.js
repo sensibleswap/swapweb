@@ -14,7 +14,7 @@ import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { formatAmount, formatSat, LeastFee } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
-import LoginBtn from 'components/loginBtn';
+import { LoginBtn, EnterAmountBtn } from 'components/btns';
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -256,11 +256,7 @@ export default class Deposit extends Component {
       return <LoginBtn />;
     } else if (addLP <= 0) {
       // 不存在的交易对
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('enter_amount')}
-        </Button>
-      );
+      return <EnterAmountBtn />;
     } else if (addLP > LP) {
       return (
         <Button className={styles.btn_wait} shape="round">

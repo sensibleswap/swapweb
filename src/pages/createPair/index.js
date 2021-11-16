@@ -13,7 +13,7 @@ import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-import LoginBtn from 'components/loginBtn';
+import { LoginBtn } from 'components/btns';
 
 const { Step } = Steps;
 const FormItem = Form.Item;

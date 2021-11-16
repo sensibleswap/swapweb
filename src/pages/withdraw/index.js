@@ -14,7 +14,7 @@ import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
-import LoginBtn from 'components/loginBtn';
+import { LoginBtn, EnterAmountBtn } from 'components/btns';
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -220,11 +220,7 @@ export default class Withdraw extends Component {
       return <LoginBtn />;
     } else if (addLP <= 0) {
       // 不存在的交易对
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('enter_amount')}
-        </Button>
-      );
+      return <EnterAmountBtn />;
     } else if (BigNumber(addLP).isGreaterThan(lockedTokenAmount)) {
       return (
         <Button className={styles.btn_wait} shape="round">

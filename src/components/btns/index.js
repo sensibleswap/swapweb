@@ -8,7 +8,7 @@ function login() {
   EventBus.emit('login');
 }
 
-function LoginBtn() {
+export function LoginBtn() {
   return (
     <Button className={styles.btn_wait} shape="round" onClick={login}>
       {_('connect_wallet')}
@@ -16,4 +16,10 @@ function LoginBtn() {
   );
 }
 
-export default LoginBtn;
+export function EnterAmountBtn() {
+  return (
+    <Button className={styles.btn_wait} shape="round">
+      {_('enter_amount')}
+    </Button>
+  );
+}

@@ -15,7 +15,7 @@ import PairIcon from 'components/pairIcon';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-import LoginBtn from 'components/loginBtn';
+import { LoginBtn } from 'components/btns';
 
 let busy = false;
 const type = 'pool';

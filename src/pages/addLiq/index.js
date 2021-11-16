@@ -18,7 +18,7 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
-import LoginBtn from 'components/loginBtn';
+import { LoginBtn, EnterAmountBtn } from 'components/btns';
 
 let busy = false;
 const type = 'pool';
@@ -447,18 +447,9 @@ export default class Liquidity extends Component {
     if (!isLogin) {
       // 未登录
       btn = <LoginBtn />;
-    }
-    // else if (!origin_token_id || !aim_token_id) {
-    //     //未选择Token
-    //     return <Button className={styles.btn_wait}>{_('select_a_token_pair')}</Button>
-    // }
-    else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
+    } else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
       // 未输入数量
-      btn = (
-        <Button className={styles.btn_wait} shape="round">
-          {_('enter_amount')}
-        </Button>
-      );
+      btn = <EnterAmountBtn />;
     } else if (
       token1.isBsv &&
       parseFloat(origin_amount) <= formatSat(MINAMOUNT)
