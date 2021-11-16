@@ -3,9 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
-import { Slider, Button, Spin, message, Input } from 'antd';
+import { Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, LeastFee } from 'common/utils';
+import Rate from 'components/rate';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
@@ -17,25 +18,6 @@ import _ from 'i18n';
 
 let busy = false;
 const type = 'pool';
-
-const datas = [
-  {
-    label: '25%',
-    value: 25,
-  },
-  {
-    label: '50%',
-    value: 50,
-  },
-  {
-    label: '75%',
-    value: 75,
-  },
-  {
-    label: _('max'),
-    value: 100,
-  },
-];
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -55,7 +37,6 @@ export default class RemovePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      removeRate: 0,
       removeLp: 0,
       page: 'form',
       formFinish: false,
@@ -70,7 +51,7 @@ export default class RemovePage extends Component {
       const { hash } = window.location;
       if (hash.indexOf('remove') > -1) {
         this.fetch();
-        this.setState({ page: 'form' });
+        this.clear();
       }
     });
     this.fetch();
@@ -124,40 +105,12 @@ export default class RemovePage extends Component {
     });
   }
 
-  changeData = (e) => {
-    let value;
-    if (e.target) {
-      //输入框变化值
-      const { accountInfo, allPairs, currentPair } = this.props;
-      const { lptoken = {} } = allPairs[currentPair];
-      const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      let _removeLp = e.target.value;
-      _removeLp = formatAmount(_removeLp, lptoken.decimal);
-      if (_removeLp <= 0) {
-        value = 0;
-      } else if (_removeLp >= LP) {
-        value = 100;
-      } else {
-        value = BigNumber(_removeLp).div(LP).multipliedBy(100).toString();
-      }
-      return this.setState({
-        removeLP: _removeLp,
-        removeRate: value,
-      });
-    }
-    this.slideData(e);
-  };
-
-  slideData = (value) => {
-    const { accountInfo, allPairs, currentPair } = this.props;
-    const { userBalance } = accountInfo;
-    const { lptoken = {} } = allPairs[currentPair];
-    const LP = userBalance[lptoken.tokenID] || 0;
+  changeData = (value) => {
     this.setState({
-      removeRate: value,
-      removeLP: BigNumber(LP).multipliedBy(value).div(100).toString(),
+      removeLP: value,
     });
   };
+
   calc = () => {
     const {
       currentPair,
@@ -175,32 +128,19 @@ export default class RemovePage extends Component {
         removeLP: 0,
       };
     }
+    const { removeLP } = this.state;
+    if (!removeLP) {
+      return {
+        removeToken1: 0,
+        removeToken2: 0,
+      };
+    }
 
-    // if (!LP) {
-    //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    //   const { removeLP = 0 } = this.state;
-    //   console.log(removeLP);
-    //   const rate = BigNumber(removeLP).div(swapLpAmount);
-    //   const { token1, token2 } = allPairs[currentPair];
-    //   const removeToken1 = formatSat(
-    //     BigNumber(swapToken1Amount).multipliedBy(rate),
-    //     token1.decimal,
-    //   );
-    //   const removeToken2 = formatSat(
-    //     BigNumber(swapToken2Amount).multipliedBy(rate),
-    //     token2.decimal,
-    //   );
-    //   return {
-    //     removeToken1: formatAmount(removeToken1, token1.decimal),
-    //     removeToken2: formatAmount(removeToken2, token2.decimal),
-    //     removeLP: formatSat(removeLP, lptoken.decimal),
-    //   };
-    // }
     LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    const { removeRate } = this.state;
-    const removeLP = LP.multipliedBy(removeRate).div(100);
-    const rate = removeLP.div(swapLpAmount);
+    const rate = BigNumber(removeLP)
+      .multipliedBy(Math.pow(10, lptoken.decimal))
+      .div(swapLpAmount);
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
       BigNumber(swapToken1Amount).multipliedBy(rate),
@@ -228,45 +168,17 @@ export default class RemovePage extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
-    const { removeRate, removeLP } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     const { removeToken1, removeToken2 } = this.calc();
     return (
       <div className={styles.remove_content}>
         <Spin spinning={submiting}>
-          <div className={styles.data}>{formatAmount(removeRate, 2)}%</div>
-          <Slider value={removeRate} onChange={this.slideData} />
-
-          <div className={styles.datas}>
-            {datas.map((item) => (
-              <div
-                className={styles.d}
-                onClick={() => this.changeData(item.value)}
-                key={item.value}
-              >
-                {item.label}
-              </div>
-            ))}
-          </div>
-
-          <div
-            className={styles.lp_balance}
-            onClick={() => this.changeData(100)}
-          >
-            {_('lp_balance')}:{' '}
-            <span>
-              <FormatNumber value={LP} />
-            </span>
-          </div>
-          <div className={styles.s_box}>
-            <PairIcon keyword="pair" txt="name1/name2-LP" />
-            <Input
-              className={styles.input}
-              value={removeLP}
-              onChange={this.changeData}
-              // formatter={(value) => parseFloat(value || 0)}
-            />
-          </div>
+          <Rate
+            type="farm"
+            changeAmount={this.changeData}
+            balance={LP}
+            tokenPair={<PairIcon keyword="pair" txt="name1/name2-LP" />}
+          />
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
@@ -309,7 +221,7 @@ export default class RemovePage extends Component {
   }
 
   handleSubmit = async () => {
-    const { removeRate } = this.state;
+    const { removeLP } = this.state;
     const {
       dispatch,
       currentPair,
@@ -342,8 +254,7 @@ export default class RemovePage extends Component {
       return message.error(isLackBalance.msg);
     }
 
-    const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);
-    const _removeRate = removeLP
+    const _removeLP = BigNumber(removeLP)
       .multipliedBy(Math.pow(10, lptoken.decimal))
       .toFixed(0);
     let tx_res = await dispatch({
@@ -360,7 +271,7 @@ export default class RemovePage extends Component {
           {
             type: 'sensibleFt',
             address: tokenToAddress,
-            amount: _removeRate,
+            amount: _removeLP,
             changeAddress,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
@@ -510,18 +421,21 @@ export default class RemovePage extends Component {
           type="primary"
           shape="round"
           className={styles.done_btn}
-          onClick={() => {
-            this.setState({
-              formFinish: false,
-              removeRate: 0,
-              removeLP: 0,
-            });
-          }}
+          onClick={this.clear}
         >
           {_('done')}
         </Button>
       </div>
     );
+  }
+
+  clear() {
+    this.setState({
+      formFinish: false,
+      removeLP: 0,
+      removeToken1: 0,
+      removeToken2: 0,
+    });
   }
 
   render() {

@@ -2,36 +2,18 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip, ungzip } from 'node-gzip';
-import { Slider, Button, Spin, message, Input } from 'antd';
+import { Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
-import { formatAmount, LeastFee } from 'common/utils';
+import { LeastFee } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
+import Rate from 'components/rate';
 import styles from '../deposit/index.less';
 import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
-
-const datas = [
-  {
-    label: '25%',
-    value: 25,
-  },
-  {
-    label: '50%',
-    value: 50,
-  },
-  {
-    label: '75%',
-    value: 75,
-  },
-  {
-    label: _('max'),
-    value: 100,
-  },
-];
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -53,7 +35,6 @@ export default class Withdraw extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addLPRate: 0,
       addLP: 0,
       formFinish: false,
       price: 0,
@@ -64,7 +45,7 @@ export default class Withdraw extends Component {
   componentDidMount() {
     EventBus.on('changeFarmPair', () => {
       this.changeData(0);
-      this.setState({ formFinish: false });
+      this.clear();
     });
   }
 
@@ -82,45 +63,9 @@ export default class Withdraw extends Component {
     });
   }
 
-  changeData = (e) => {
-    let value;
-    if (e.target) {
-      //输入框变化值
-      const {
-        // accountInfo,
-        allFarmPairs,
-        currentFarmPair,
-        lockedTokenAmount,
-      } = this.props;
-      const { lptoken = {} } = allFarmPairs[currentFarmPair];
-      let _addLp = e.target.value;
-      _addLp = formatAmount(_addLp, lptoken.decimal);
-      if (_addLp <= 0) {
-        value = 0;
-      } else if (_addLp >= lockedTokenAmount) {
-        value = 100;
-      } else {
-        value = BigNumber(_addLp)
-          .div(lockedTokenAmount)
-          .multipliedBy(100)
-          .toString();
-      }
-      return this.setState({
-        addLP: _addLp,
-        addLPRate: value,
-      });
-    }
-    this.slideData(e);
-  };
-
-  slideData = (value) => {
-    const { lockedTokenAmount } = this.props;
+  changeData = (value) => {
     this.setState({
-      addLPRate: value,
-      addLP: BigNumber(lockedTokenAmount)
-        .multipliedBy(value)
-        .div(100)
-        .toString(),
+      addLP: value,
     });
   };
 
@@ -129,48 +74,18 @@ export default class Withdraw extends Component {
       currentFarmPair,
       loading,
       submiting,
-      // lptoken,
       lockedTokenAmount,
     } = this.props;
     if (loading || !currentFarmPair) return <Loading />;
-    const { addLPRate, addLP } = this.state;
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
-          <div className={styles.data}>{formatAmount(addLPRate, 2)}%</div>
-          <Slider value={addLPRate} onChange={this.slideData} />
-
-          <div className={styles.datas}>
-            {datas.map((item) => (
-              <div
-                className={styles.d}
-                onClick={() => this.changeData(item.value)}
-                key={item.value}
-              >
-                {item.label}
-              </div>
-            ))}
-          </div>
-          <div className={styles.balance} onClick={() => this.changeData(100)}>
-            {_('balance')}:{' '}
-            <span>
-              <FormatNumber value={lockedTokenAmount} />
-            </span>
-          </div>
-
-          <div className={styles.pair_box}>
-            <div className={styles.pair_left}>
-              <FarmPairIcon keyword="pair" />
-            </div>
-            <div className={styles.pair_right}>
-              <Input
-                className={styles.input}
-                value={addLP}
-                onChange={this.changeData}
-              />
-            </div>
-          </div>
-
+          <Rate
+            type="farm"
+            changeAmount={this.changeData}
+            balance={lockedTokenAmount}
+            tokenPair={<FarmPairIcon keyword="pair" />}
+          />
           {this.renderButton()}
         </Spin>
       </div>
@@ -179,7 +94,6 @@ export default class Withdraw extends Component {
 
   withdraw2 = async (withdraw_data, requestIndex) => {
     const { txHex, scriptHex, satoshis, inputIndex } = withdraw_data;
-    // const { addLP } = this.state;
     const { dispatch, currentFarmPair, accountInfo } = this.props;
 
     let sign_res = await dispatch({
@@ -242,7 +156,7 @@ export default class Withdraw extends Component {
       return message.error(res.msg);
     }
 
-    const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
+    const { requestIndex, bsvToAddress, txFee } = res.data;
 
     const isLackBalance = LeastFee(txFee, userBalance.BSV);
     if (isLackBalance.code) {
@@ -352,6 +266,13 @@ export default class Withdraw extends Component {
     }
   }
 
+  clear() {
+    this.setState({
+      formFinish: false,
+      addLP: 0,
+    });
+  }
+
   renderResult() {
     const { addLP, blockHeight } = this.state;
     return (
@@ -380,13 +301,7 @@ export default class Withdraw extends Component {
           type="primary"
           shape="round"
           className={styles.done_btn}
-          onClick={() => {
-            this.setState({
-              formFinish: false,
-              addLP: 0,
-              addLPRate: 0,
-            });
-          }}
+          onClick={this.clear}
         >
           {_('done')}
         </Button>

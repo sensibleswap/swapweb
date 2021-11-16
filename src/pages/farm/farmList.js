@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { history } from 'umi';
 import { Tooltip } from 'antd';
+import EventBus from 'common/eventBus';
 import { jc, formatSat, formatAmount } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
@@ -25,6 +26,7 @@ export default class FarmList extends Component {
         allFarmPairs,
       },
     });
+    EventBus.emit('changeFarmPair');
   };
 
   renderItem(data) {

@@ -2,37 +2,18 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip } from 'node-gzip';
-import { Slider, Button, Spin, message, Input } from 'antd';
+import BigNumber from 'bignumber.js';
 import EventBus from 'common/eventBus';
-import { formatAmount, formatSat, LeastFee } from 'common/utils';
+import { Button, Spin, message } from 'antd';
+import Rate from 'components/rate';
 import CustomIcon from 'components/icon';
-import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import TokenLogo from 'components/tokenicon';
+import FormatNumber from 'components/formatNumber';
+import FarmPairIcon from 'components/pairIcon/farmIcon';
+import { formatAmount, formatSat, LeastFee } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
-
-import BigNumber from 'bignumber.js';
-import FarmPairIcon from 'components/pairIcon/farmIcon';
-
-const datas = [
-  {
-    label: '25%',
-    value: 25,
-  },
-  {
-    label: '50%',
-    value: 50,
-  },
-  {
-    label: '75%',
-    value: 75,
-  },
-  {
-    label: _('max'),
-    value: 100,
-  },
-];
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -52,7 +33,7 @@ export default class Deposit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addLPRate: 0,
+      // addLPRate: 0,
       addLP: 0,
       formFinish: false,
       blockHeight: 0,
@@ -62,7 +43,14 @@ export default class Deposit extends Component {
   componentDidMount() {
     EventBus.on('changeFarmPair', () => {
       this.changeData(0);
-      this.setState({ formFinish: false });
+      this.clear();
+    });
+  }
+
+  clear() {
+    this.setState({
+      formFinish: false,
+      addLP: 0,
     });
   }
 
@@ -81,35 +69,9 @@ export default class Deposit extends Component {
     });
   }
 
-  changeData = (e) => {
-    let value;
-    if (e.target) {
-      //输入框变化值
-      const { accountInfo, lptoken } = this.props;
-      const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      let _addLp = e.target.value;
-      _addLp = formatAmount(_addLp, lptoken.decimal);
-      if (_addLp <= 0) {
-        value = 0;
-      } else if (_addLp >= LP) {
-        value = 100;
-      } else {
-        value = BigNumber(_addLp).div(LP).multipliedBy(100).toString();
-      }
-      return this.setState({
-        addLP: _addLp,
-        addLPRate: value,
-      });
-    }
-    this.slideData(e);
-  };
-
-  slideData = (value) => {
-    const { accountInfo, lptoken } = this.props;
-    const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
+  changeData = (value) => {
     this.setState({
-      addLPRate: value,
-      addLP: BigNumber(LP).multipliedBy(value).div(100).toString(),
+      addLP: value,
     });
   };
 
@@ -130,7 +92,6 @@ export default class Deposit extends Component {
     if (loading || !currentFarmPair || !pairsData[currentFarmPair])
       return <Loading />;
     if (!allPairs[currentFarmPair]) return null;
-    const { addLPRate, addLP } = this.state;
     const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
     const currentPairData = pairsData[currentFarmPair] || {};
     const { token1, token2 } = allPairs[currentFarmPair];
@@ -145,39 +106,12 @@ export default class Deposit extends Component {
     return (
       <div className={styles.content}>
         <Spin spinning={submiting}>
-          <div className={styles.data}>{formatAmount(addLPRate, 2)}%</div>
-          <Slider value={addLPRate} onChange={this.slideData} />
-
-          <div className={styles.datas}>
-            {datas.map((item) => (
-              <div
-                className={styles.d}
-                onClick={() => this.changeData(item.value)}
-                key={item.value}
-              >
-                {item.label}
-              </div>
-            ))}
-          </div>
-          <div className={styles.balance} onClick={() => this.changeData(100)}>
-            {_('balance')}:{' '}
-            <span>
-              <FormatNumber value={balance} />
-            </span>
-          </div>
-
-          <div className={styles.pair_box}>
-            <div className={styles.pair_left}>
-              <FarmPairIcon keyword="pair" />
-            </div>
-            <div className={styles.pair_right}>
-              <Input
-                className={styles.input}
-                value={addLP}
-                onChange={this.changeData}
-              />
-            </div>
-          </div>
+          <Rate
+            type="farm"
+            changeAmount={this.changeData}
+            balance={balance}
+            tokenPair={<FarmPairIcon keyword="pair" />}
+          />
 
           <div className={styles.switch_icon}>
             <div className={styles.icon} onClick={this.switch}>
@@ -382,13 +316,7 @@ export default class Deposit extends Component {
           type="primary"
           shape="round"
           className={styles.done_btn}
-          onClick={() => {
-            this.setState({
-              formFinish: false,
-              addLP: 0,
-              addLPRate: 0,
-            });
-          }}
+          onClick={this.clear}
         >
           {_('done')}
         </Button>
