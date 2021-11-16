@@ -1,6 +1,6 @@
 import tsWallet from './tsWallet';
 import voltWallet from './voltWallet';
-import appWallet from './appWallet';
+// import appWallet from './appWallet';
 import sensiletWallet from './sensWallet';
 
 export default function wallet(props) {
@@ -15,10 +15,10 @@ export default function wallet(props) {
     return voltWallet;
   }
 
-  if (type === 3) {
-    //app volt 钱包
-    return appWallet;
-  }
+  // if (type === 3) {
+  //   //app volt 钱包
+  //   return appWallet;
+  // }
 
   if (type === 4) {
     return sensiletWallet;

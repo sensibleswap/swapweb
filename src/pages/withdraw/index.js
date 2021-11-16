@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip, ungzip } from 'node-gzip';
-import { Button, Spin, message } from 'antd';
+import { Button, message } from 'antd';
 import EventBus from 'common/eventBus';
 import { LeastFee } from 'common/utils';
 import CustomIcon from 'components/icon';
@@ -22,13 +22,6 @@ import FarmPairIcon from 'components/pairIcon/farmIcon';
     ...farm,
     ...pair,
     loading: effects['farm/getAllPairs'],
-    submiting:
-      effects['farm/reqSwap'] ||
-      effects['farm/withdraw'] ||
-      effects['farm/withdraw2'] ||
-      effects['user/transferBsv'] ||
-      effects['user/signTx'] ||
-      false,
   };
 })
 export default class Withdraw extends Component {
@@ -70,24 +63,17 @@ export default class Withdraw extends Component {
   };
 
   renderForm() {
-    const {
-      currentFarmPair,
-      loading,
-      submiting,
-      lockedTokenAmount,
-    } = this.props;
+    const { currentFarmPair, loading, lockedTokenAmount } = this.props;
     if (loading || !currentFarmPair) return <Loading />;
     return (
       <div className={styles.content}>
-        <Spin spinning={submiting}>
-          <Rate
-            type="farm"
-            changeAmount={this.changeData}
-            balance={lockedTokenAmount}
-            tokenPair={<FarmPairIcon keyword="pair" />}
-          />
-          {this.renderButton()}
-        </Spin>
+        <Rate
+          type="farm"
+          changeAmount={this.changeData}
+          balance={lockedTokenAmount}
+          tokenPair={<FarmPairIcon keyword="pair" />}
+        />
+        {this.renderButton()}
       </div>
     );
   }
