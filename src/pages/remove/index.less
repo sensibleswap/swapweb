@@ -181,6 +181,9 @@
     .label {
       display: flex;
       align-items: center;
+      :global(.pair-name) {
+        margin-left: 5px;
+      }
     }
   }
 }
@@ -195,13 +198,15 @@
   justify-content: space-between;
   padding: 10px;
 
-  .coin {
+  .coin,
+  :global(.pair-icon) {
     display: flex;
     align-items: center;
     cursor: pointer;
   }
 
-  .name {
+  .name,
+  :global(.pair-name) {
     font-size: 16px;
     font-weight: 700;
     white-space: nowrap;

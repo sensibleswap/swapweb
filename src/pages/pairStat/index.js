@@ -18,16 +18,14 @@ export default function PairStat(props) {
         <div className={styles.label}>{_('pooled_tokens')}</div>
 
         <div className={styles.value2} key={token1.tokenid}>
-          <div style={{ marginRight: 10 }}>
-            <PairIcon keyword="token1icon" />
-          </div>
-          <FormatNumber value={amount1} /> {token1.symbol.toUpperCase()}
+          <PairIcon keyword="token1">
+            <FormatNumber value={amount1} />{' '}
+          </PairIcon>
         </div>
         <div className={styles.value2} key={token2.tokenid}>
-          <div style={{ marginRight: 10 }}>
-            <PairIcon keyword="token2icon" />
-          </div>
-          <FormatNumber value={amount2} /> {token2.symbol.toUpperCase()}
+          <PairIcon keyword="token2">
+            <FormatNumber value={amount2} />{' '}
+          </PairIcon>
         </div>
       </div>
     </div>

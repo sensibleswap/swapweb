@@ -12,7 +12,7 @@ import styles from '../deposit/index.less';
 import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
-import PairIcon from 'components/pairIcon';
+import FarmPairIcon from 'components/pairIcon/farmIcon';
 
 const datas = [
   {
@@ -160,7 +160,7 @@ export default class Withdraw extends Component {
 
           <div className={styles.pair_box}>
             <div className={styles.pair_left}>
-              <PairIcon keyword="pair" />
+              <FarmPairIcon keyword="pair" />
             </div>
             <div className={styles.pair_right}>
               <Input
@@ -317,6 +317,7 @@ export default class Withdraw extends Component {
   renderButton() {
     const { isLogin, lockedTokenAmount } = this.props;
     const { addLP } = this.state;
+    // console.log(addLP, lockedTokenAmount)
     if (!isLogin) {
       // 未登录
       return (
@@ -331,7 +332,7 @@ export default class Withdraw extends Component {
           {_('enter_amount')}
         </Button>
       );
-    } else if (addLP > lockedTokenAmount) {
+    } else if (BigNumber(addLP).isGreaterThan(lockedTokenAmount)) {
       return (
         <Button className={styles.btn_wait} shape="round">
           {_('lac_balance')}
@@ -371,7 +372,7 @@ export default class Withdraw extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <PairIcon keyword="pair" />
+            <FarmPairIcon keyword="pair" />
           </div>
         </div>
 

@@ -63,13 +63,7 @@ export default class Pool extends Component {
         <Chart symbol1={token1.symbol} symbol2={token2.symbol} />
         <div className={styles.main_title}>
           <h2>
-            <div className={styles.icon}>
-              <PairIcon keyword="pairIcon" />
-            </div>
-            <div className={styles.name}>
-              LP(
-              <PairIcon keyword="name2name1" />)
-            </div>
+            <PairIcon keyword="pair" txt="LP(name2/name1)" />
           </h2>
         </div>
         <Pair

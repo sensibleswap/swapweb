@@ -17,11 +17,12 @@ export default class PairIcon extends React.Component {
 
   render() {
     if (this.props.loading) return null;
-    const { token1, token2, keyword, size = 30 } = this.props;
+    const { token1, token2, keyword, size = 30, txt, children } = this.props;
 
     const token1Name = token1.symbol.toUpperCase();
     const token2Name = token2.symbol.toUpperCase();
 
+    // console.log(token1, token2)
     const token1Logo = (
       <TokenLogo
         name={token1.symbol}
@@ -41,56 +42,42 @@ export default class PairIcon extends React.Component {
       <TokenPair
         symbol1={token1Name}
         symbol2={token2Name}
-        genesisID1={token1.tokenID || 'bsv'}
+        genesisID1={token1.tokenID}
         genesisID2={token2.tokenID}
         size={size}
       />
     );
 
-    if (keyword === 'token1name') {
-      return token1Name;
-    }
-    if (keyword === 'token2name') {
-      return token2Name;
-    }
-    if (keyword === 'token1icon') {
-      return token1Logo;
-    }
-    if (keyword === 'token2icon') {
-      return token2Logo;
-    }
-    if (keyword === 'pairIcon') {
-      return pairIcon;
-    }
-
-    if (keyword === 'name1name2') {
-      return `${token1Name}/${token2Name}`;
-    }
-    if (keyword === 'name2name1') {
-      return `${token2Name}/${token1Name}`;
-    }
-
     if (keyword === 'token1') {
       return (
         <>
-          {token1Logo} <div className="pair-name">{token1Name}</div>
+          <div className="pair-icon">{token1Logo}</div>
+          <div className="pair-name">
+            {children} {token1Name}
+          </div>
         </>
       );
     }
     if (keyword === 'token2') {
       return (
         <>
-          {token2Logo} <div className="pair-name">{token2Name}</div>
+          <div className="pair-icon">{token2Logo}</div>
+          <div className="pair-name">
+            {children} {token2Name}
+          </div>
         </>
       );
     }
     if (keyword === 'pair') {
+      let str = `${token1Name}/${token2Name}`;
+      if (txt) {
+        str = txt.replace(/name1/g, token1Name);
+        str = str.replace(/name2/g, token2Name);
+      }
       return (
         <>
-          {pairIcon}{' '}
-          <div className="pair-name">
-            {token1Name}/{token2Name}
-          </div>
+          <div className="pair-icon">{pairIcon}</div>
+          <div className="pair-name">{str}</div>
         </>
       );
     }

@@ -12,6 +12,7 @@ import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
+import { MINAMOUNT } from 'common/config';
 import SelectToken from '../selectToken';
 import Pool from '../pool';
 import styles from './index.less';
@@ -465,11 +466,14 @@ export default class Liquidity extends Component {
           {_('enter_amount')}
         </Button>
       );
-    } else if (token1.isBsv && parseFloat(origin_amount) <= formatSat(1000)) {
+    } else if (
+      token1.isBsv &&
+      parseFloat(origin_amount) <= formatSat(MINAMOUNT)
+    ) {
       // 数额太小
       btn = (
         <Button className={styles.btn_wait} shape="round">
-          {_('lower_amount', 1000)}
+          {_('lower_amount', MINAMOUNT)}
         </Button>
       );
     } else if (

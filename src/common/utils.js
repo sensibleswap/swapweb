@@ -13,6 +13,7 @@ import {
   DEFAULT_PAIR,
 } from 'common/const';
 import debug from 'debug';
+import _ from 'i18n';
 const log = debug('utils');
 const { localStorage, location } = window;
 

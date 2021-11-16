@@ -174,7 +174,7 @@ const texts = {
   you_have: 'You have',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
-  lower_amount: 'Above %s Sat input required',
+  lower_amount: 'Minimum %s Sats required',
   pay: 'Pay',
   just: 'Just Now',
   minute_ago: ' minute ago',

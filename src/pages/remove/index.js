@@ -259,13 +259,7 @@ export default class RemovePage extends Component {
             </span>
           </div>
           <div className={styles.s_box}>
-            <div className={styles.coin}>
-              <PairIcon keyword="pairIcon" />
-            </div>
-            <div className={styles.name}>
-              <PairIcon keyword="name1name2" />
-              -LP
-            </div>
+            <PairIcon keyword="pair" txt="name1/name2-LP" />
             <Input
               className={styles.input}
               value={removeLP}
@@ -285,18 +279,12 @@ export default class RemovePage extends Component {
             <div className={styles.values_left}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <PairIcon keyword="token1icon" size={20} />
-                  <div style={{ marginLeft: 5 }}>
-                    <PairIcon keyword="token1name" />
-                  </div>
+                  <PairIcon keyword="token1" size={20} />
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <PairIcon keyword="token2icon" size={20} />
-                  <div style={{ marginLeft: 5 }}>
-                    <PairIcon keyword="token2name" />
-                  </div>
+                  <PairIcon keyword="token2" size={20} />
                 </div>
               </div>
             </div>
@@ -507,22 +495,14 @@ export default class RemovePage extends Component {
           <div className={styles.f_title}>{_('your_re_liq')}</div>
           <div className={styles.f_item}>
             <div className={styles.f_label}>
-              <div className={styles.icon}>
-                <PairIcon keyword="token1icon" size={20} />
-              </div>
-              <div className={styles.name}>
-                <FormatNumber value={receive_token1} />{' '}
-                <PairIcon keyword="token1name" />
-              </div>
+              <PairIcon keyword="token1" size={20}>
+                <FormatNumber value={receive_token1} />
+              </PairIcon>
             </div>
             <div className={styles.f_value}>
-              <div className={styles.icon}>
-                <PairIcon keyword="token2icon" size={20} />
-              </div>
-              <div className={styles.name}>
-                <FormatNumber value={receive_token2} />{' '}
-                <PairIcon keyword="token2name" />
-              </div>
+              <PairIcon keyword="token2" size={20}>
+                <FormatNumber value={receive_token2} />
+              </PairIcon>
             </div>
           </div>
         </div>

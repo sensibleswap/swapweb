@@ -37,7 +37,7 @@ export default class TokenPairList extends React.Component {
             <TokenPair
               symbol1={token1.symbol}
               symbol2={token2.symbol}
-              genesisID1={token1.tokenID || 'bsv'}
+              genesisID1={token1.tokenID}
               genesisID2={token2.tokenID}
               size={25}
             />

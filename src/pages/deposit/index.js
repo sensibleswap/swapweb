@@ -8,14 +8,12 @@ import { formatAmount, formatSat, LeastFee } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
-import TokenPair from 'components/tokenPair';
 import TokenLogo from 'components/tokenicon';
 import styles from './index.less';
 import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
-import PairIcon from '../../components/pairIcon';
 
 const datas = [
   {
@@ -376,7 +374,7 @@ export default class Deposit extends Component {
             <FormatNumber value={addLP} />
           </div>
           <div className={styles.pair_right}>
-            <PairIcon keyword="pair" size={20} />
+            <FarmPairIcon keyword="pair" size={20} />
           </div>
         </div>
 
