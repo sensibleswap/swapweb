@@ -5,7 +5,6 @@ import { gzip, ungzip } from 'node-gzip';
 import { Button, message } from 'antd';
 import EventBus from 'common/eventBus';
 import { LeastFee, formatTok } from 'common/utils';
-import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import Rate from 'components/rate';
@@ -251,23 +250,25 @@ export default class Withdraw extends Component {
   renderResult() {
     const { addLP, blockHeight } = this.state;
     return (
-      <SuccessResult
-        success_txt={`${_('withdraw_success')}@block${blockHeight}`}
-        done={this.clear}
-      >
-        <>
-          <div className={styles.small_title}>{_('withdrew')}</div>
+      <div className={styles.content}>
+        <SuccessResult
+          success_txt={`${_('withdraw_success')}@block${blockHeight}`}
+          done={this.clear}
+        >
+          <>
+            <div className={styles.small_title}>{_('withdrew')}</div>
 
-          <div className={styles.pair_data}>
-            <div className={styles.pair_left}>
-              <FormatNumber value={addLP} />
+            <div className={styles.pair_data}>
+              <div className={styles.pair_left}>
+                <FormatNumber value={addLP} />
+              </div>
+              <div className={styles.pair_right}>
+                <FarmPairIcon keyword="pair" />
+              </div>
             </div>
-            <div className={styles.pair_right}>
-              <FarmPairIcon keyword="pair" />
-            </div>
-          </div>
-        </>
-      </SuccessResult>
+          </>
+        </SuccessResult>
+      </div>
     );
     // return (
     //   <div className={styles.content}>

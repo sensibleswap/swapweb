@@ -9,7 +9,7 @@ const onClose = () => {
 };
 
 export default function Notice(props) {
-  return null;
+  // return null;
   if (sessionStorage.getItem(VOLT_NOTICE_CLOSED)) {
     return null;
   }
@@ -19,7 +19,7 @@ export default function Notice(props) {
       banner={true}
       closable
       onClose={onClose}
-      message={_('notice720')}
+      message={_('notice1117')}
     />
   );
 }

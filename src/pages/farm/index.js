@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect, history } from 'umi';
 import { Button, Spin } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
+import Notice from 'components/notice';
 import { jc, parseUrl } from 'common/utils';
 import EventBus from 'common/eventBus';
 import Header from '../layout/header';
@@ -127,80 +128,83 @@ export default class FarmC extends Component {
   render() {
     const { app_pannel, currentMenuIndex } = this.state;
     return (
-      <Spin spinning={this.props.submiting}>
-        <section className={styles.container}>
-          <section
-            className={
-              app_pannel ? jc(styles.left, styles.app_hide) : styles.left
-            }
-          >
-            <div className={styles.left_inner}>
-              <Header />
-              <FarmList {...this.props} update={this.fetch} />
-              <div className={styles.app_start_btn_wrap}>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.small_btn}
-                  onClick={() => this.showPannel(0)}
-                >
-                  {_('deposit_lp')}
-                </Button>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.small_btn}
-                  onClick={() => this.showPannel(1)}
-                >
-                  {_('withdraw_lp')}
-                </Button>
-              </div>
-            </div>
-          </section>
-          <section className={styles.right}>
-            <div
+      <>
+        <Notice />
+        <Spin spinning={this.props.submiting}>
+          <section className={styles.container}>
+            <section
               className={
-                app_pannel
-                  ? styles.sidebar
-                  : jc(styles.sidebar, styles.app_hide)
+                app_pannel ? jc(styles.left, styles.app_hide) : styles.left
               }
             >
-              <div className={styles.app_title}>
-                {_('farm')}
-                <div className={styles.close} onClick={this.hidePannel}>
-                  <CloseOutlined />
+              <div className={styles.left_inner}>
+                <Header />
+                <FarmList {...this.props} update={this.fetch} />
+                <div className={styles.app_start_btn_wrap}>
+                  <Button
+                    type="primary"
+                    shape="round"
+                    className={styles.small_btn}
+                    onClick={() => this.showPannel(0)}
+                  >
+                    {_('deposit_lp')}
+                  </Button>
+                  <Button
+                    type="primary"
+                    shape="round"
+                    className={styles.small_btn}
+                    onClick={() => this.showPannel(1)}
+                  >
+                    {_('withdraw_lp')}
+                  </Button>
                 </div>
               </div>
-
-              <div className={styles.right_box}>
-                <div className={styles.head}>
-                  <div className={styles.menu}>
-                    {['deposit', 'withdraw'].map((item, index) => (
-                      <span
-                        className={
-                          index === currentMenuIndex
-                            ? jc(styles.menu_item, styles.menu_item_selected)
-                            : styles.menu_item
-                        }
-                        key={item}
-                        onClick={() => {
-                          this.setState({
-                            currentMenuIndex: index,
-                          });
-                        }}
-                      >
-                        {_(item)}
-                      </span>
-                    ))}
+            </section>
+            <section className={styles.right}>
+              <div
+                className={
+                  app_pannel
+                    ? styles.sidebar
+                    : jc(styles.sidebar, styles.app_hide)
+                }
+              >
+                <div className={styles.app_title}>
+                  {_('farm')}
+                  <div className={styles.close} onClick={this.hidePannel}>
+                    <CloseOutlined />
                   </div>
                 </div>
-                {currentMenuIndex === 0 && <Deposit />}
-                {currentMenuIndex === 1 && <Withdraw />}
+
+                <div className={styles.right_box}>
+                  <div className={styles.head}>
+                    <div className={styles.menu}>
+                      {['deposit', 'withdraw'].map((item, index) => (
+                        <span
+                          className={
+                            index === currentMenuIndex
+                              ? jc(styles.menu_item, styles.menu_item_selected)
+                              : styles.menu_item
+                          }
+                          key={item}
+                          onClick={() => {
+                            this.setState({
+                              currentMenuIndex: index,
+                            });
+                          }}
+                        >
+                          {_(item)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {currentMenuIndex === 0 && <Deposit />}
+                  {currentMenuIndex === 1 && <Withdraw />}
+                </div>
               </div>
-            </div>
+            </section>
           </section>
-        </section>
-      </Spin>
+        </Spin>
+      </>
     );
   }
 }
