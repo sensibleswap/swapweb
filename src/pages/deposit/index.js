@@ -14,6 +14,7 @@ import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { formatAmount, formatSat, LeastFee, formatTok } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
+import { SuccessResult } from 'components/result';
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -280,36 +281,57 @@ export default class Deposit extends Component {
     const { addLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 64, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>
-          {_('deposit_success')}@block{blockHeight}
-        </div>
-        <div className={styles.small_title}>{_('deposited')}</div>
-
-        <div className={styles.pair_data}>
-          <div className={styles.pair_left}>
-            <FormatNumber value={addLP} />
-          </div>
-          <div className={styles.pair_right}>
-            <FarmPairIcon keyword="pair" size={20} />
-          </div>
-        </div>
-
-        <Button
-          type="primary"
-          shape="round"
-          className={styles.done_btn}
-          onClick={this.clear}
+        <SuccessResult
+          success_txt={`${_('deposit_success')}@block${blockHeight}`}
+          done={this.clear}
         >
-          {_('done')}
-        </Button>
+          <>
+            <div className={styles.small_title}>{_('deposited')}</div>
+
+            <div className={styles.pair_data}>
+              <div className={styles.pair_left}>
+                <FormatNumber value={addLP} />
+              </div>
+              <div className={styles.pair_right}>
+                <FarmPairIcon keyword="pair" size={20} />
+              </div>
+            </div>
+          </>
+        </SuccessResult>
       </div>
     );
+    // return (
+    //   <div className={styles.content}>
+    //     <div className={styles.finish_logo}>
+    //       <CustomIcon
+    //         type="iconicon-success"
+    //         style={{ fontSize: 64, color: '#2BB696' }}
+    //       />
+    //     </div>
+    //     <div className={styles.finish_title}>
+    //       {_('deposit_success')}@block{blockHeight}
+    //     </div>
+    //     <div className={styles.small_title}>{_('deposited')}</div>
+
+    //     <div className={styles.pair_data}>
+    //       <div className={styles.pair_left}>
+    //         <FormatNumber value={addLP} />
+    //       </div>
+    //       <div className={styles.pair_right}>
+    //         <FarmPairIcon keyword="pair" size={20} />
+    //       </div>
+    //     </div>
+
+    //     <Button
+    //       type="primary"
+    //       shape="round"
+    //       className={styles.done_btn}
+    //       onClick={this.clear}
+    //     >
+    //       {_('done')}
+    //     </Button>
+    //   </div>
+    // );
   }
 
   render() {

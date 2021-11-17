@@ -16,6 +16,7 @@ import SelectToken from '../selectToken';
 import styles from './index.less';
 import _ from 'i18n';
 import { BtnWait } from 'components/btns';
+import { SuccessResult } from 'components/result';
 
 const log = debug('swap');
 
@@ -765,48 +766,82 @@ export default class Swap extends Component {
     const aim_token = dirForward ? token2 : token1;
     const symbol1 = origin_token.symbol;
     const symbol2 = aim_token.symbol;
-
     return (
       <div className={styles.content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 64, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>{_('swap_success')}</div>
-
-        <div className={styles.detail}>
-          <div className={styles.line}>
+        <SuccessResult success_txt={_('swap_success')} done={this.finish}>
+          <div className={styles.detail}>
+            <div className={styles.line}>
+              <div className={styles.detail_item}>
+                <div className={styles.item_label}>{_('paid')}</div>
+                <div className={styles.item_value}>
+                  <FormatNumber value={origin_amount} suffix={symbol1} />
+                </div>
+              </div>
+              <div
+                className={styles.detail_item}
+                style={{ textAlign: 'right' }}
+              >
+                <div className={styles.item_label}>{_('received')}</div>
+                <div className={styles.item_value}>
+                  {realSwapAmount} {symbol2}
+                </div>
+              </div>
+            </div>
             <div className={styles.detail_item}>
-              <div className={styles.item_label}>{_('paid')}</div>
+              <div className={styles.item_label}>{_('swap_fee')}</div>
               <div className={styles.item_value}>
-                <FormatNumber value={origin_amount} suffix={symbol1} />
+                <FormatNumber value={formatSat(txFee)} suffix="BSV" />
               </div>
             </div>
-            <div className={styles.detail_item} style={{ textAlign: 'right' }}>
-              <div className={styles.item_label}>{_('received')}</div>
-              <div className={styles.item_value}>
-                {realSwapAmount} {symbol2}
-              </div>
+            <div className={styles.detail_item}>
+              <div className={styles.item_label}>{_('onchain_tx')}</div>
+              <div className={styles.item_value}>{txid}</div>
             </div>
           </div>
-          <div className={styles.detail_item}>
-            <div className={styles.item_label}>{_('swap_fee')}</div>
-            <div className={styles.item_value}>
-              <FormatNumber value={formatSat(txFee)} suffix="BSV" />
-            </div>
-          </div>
-          <div className={styles.detail_item}>
-            <div className={styles.item_label}>{_('onchain_tx')}</div>
-            <div className={styles.item_value}>{txid}</div>
-          </div>
-        </div>
-        <Button className={styles.done_btn} shape="round" onClick={this.finish}>
-          {_('done')}
-        </Button>
+        </SuccessResult>
       </div>
     );
+    // return (
+    //   <div className={styles.content}>
+    //     <div className={styles.finish_logo}>
+    //       <CustomIcon
+    //         type="iconicon-success"
+    //         style={{ fontSize: 64, color: '#2BB696' }}
+    //       />
+    //     </div>
+    //     <div className={styles.finish_title}>{_('swap_success')}</div>
+
+    //     <div className={styles.detail}>
+    //       <div className={styles.line}>
+    //         <div className={styles.detail_item}>
+    //           <div className={styles.item_label}>{_('paid')}</div>
+    //           <div className={styles.item_value}>
+    //             <FormatNumber value={origin_amount} suffix={symbol1} />
+    //           </div>
+    //         </div>
+    //         <div className={styles.detail_item} style={{ textAlign: 'right' }}>
+    //           <div className={styles.item_label}>{_('received')}</div>
+    //           <div className={styles.item_value}>
+    //             {realSwapAmount} {symbol2}
+    //           </div>
+    //         </div>
+    //       </div>
+    //       <div className={styles.detail_item}>
+    //         <div className={styles.item_label}>{_('swap_fee')}</div>
+    //         <div className={styles.item_value}>
+    //           <FormatNumber value={formatSat(txFee)} suffix="BSV" />
+    //         </div>
+    //       </div>
+    //       <div className={styles.detail_item}>
+    //         <div className={styles.item_label}>{_('onchain_tx')}</div>
+    //         <div className={styles.item_value}>{txid}</div>
+    //       </div>
+    //     </div>
+    //     <Button className={styles.done_btn} shape="round" onClick={this.finish}>
+    //       {_('done')}
+    //     </Button>
+    //   </div>
+    // );
   }
   componentDidMount() {
     EventBus.on('reloadPair', () => {

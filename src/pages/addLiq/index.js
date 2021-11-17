@@ -18,8 +18,8 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
-// import { LoginBtn, EnterAmountBtn } from 'components/btns';
 import { BtnWait } from 'components/btns';
+import { SuccessResult } from 'components/result';
 
 let busy = false;
 const type = 'pool';
@@ -836,34 +836,54 @@ export default class Liquidity extends Component {
     const { lptoken = {} } = allPairs[currentPair];
     return (
       <div className={styles.add_content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 80, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>{_('add_success')}</div>
-        <div className={styles.result_data1}>
-          {_('added')} {formatSat(_origin_amount, token1.decimal)}{' '}
-          {token1.symbol} + {formatSat(_aim_amount, token2.decimal)}{' '}
-          {token2.symbol}
-        </div>
-        <div className={styles.result_data2}>
-          {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
-          <PairIcon keyword="pair" size={20} />{' '}
-        </div>
-        {/*this.renderResultInfo()*/}
-        <Button
-          className={styles.done_btn}
-          shape="round"
-          onClick={() => {
+        <SuccessResult
+          success_txt={_('add_success')}
+          done={() => {
             history.push('/swap');
           }}
         >
-          {_('done')}
-        </Button>
+          <div className={styles.result_data1}>
+            {_('added')} {formatSat(_origin_amount, token1.decimal)}{' '}
+            {token1.symbol} + {formatSat(_aim_amount, token2.decimal)}{' '}
+            {token2.symbol}
+          </div>
+          <div className={styles.result_data2}>
+            {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
+            <PairIcon keyword="pair" size={20} />{' '}
+          </div>
+        </SuccessResult>
       </div>
     );
+    // return (
+    //   <div className={styles.add_content}>
+    //     <div className={styles.finish_logo}>
+    //       <CustomIcon
+    //         type="iconicon-success"
+    //         style={{ fontSize: 80, color: '#2BB696' }}
+    //       />
+    //     </div>
+    //     <div className={styles.finish_title}>{_('add_success')}</div>
+    //     <div className={styles.result_data1}>
+    //       {_('added')} {formatSat(_origin_amount, token1.decimal)}{' '}
+    //       {token1.symbol} + {formatSat(_aim_amount, token2.decimal)}{' '}
+    //       {token2.symbol}
+    //     </div>
+    //     <div className={styles.result_data2}>
+    //       {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
+    //       <PairIcon keyword="pair" size={20} />{' '}
+    //     </div>
+    //     {/*this.renderResultInfo()*/}
+    //     <Button
+    //       className={styles.done_btn}
+    //       shape="round"
+    //       onClick={() => {
+    //         history.push('/swap');
+    //       }}
+    //     >
+    //       {_('done')}
+    //     </Button>
+    //   </div>
+    // );
   }
 
   renderSwap() {

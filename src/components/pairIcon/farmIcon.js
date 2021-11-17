@@ -15,6 +15,7 @@ export default class FarmPairIcon extends React.Component {
 
   render() {
     const { allPairs, currentFarmPair, keyword, size = 25 } = this.props;
+    if (!allPairs[currentFarmPair]) return null;
     const { token1, token2 } = allPairs[currentFarmPair];
     const symbol1 = token1.symbol.toUpperCase();
     const symbol2 = token2.symbol.toUpperCase();

@@ -4,7 +4,7 @@ import { connect } from 'umi';
 import { gzip, ungzip } from 'node-gzip';
 import { Button, message } from 'antd';
 import EventBus from 'common/eventBus';
-import { LeastFee } from 'common/utils';
+import { LeastFee, formatTok } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
@@ -12,10 +12,9 @@ import Rate from 'components/rate';
 import styles from '../deposit/index.less';
 import _ from 'i18n';
 
-import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { BtnWait } from 'components/btns';
-import { formatTok } from '../../common/utils';
+import { SuccessResult } from 'components/result';
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -252,37 +251,56 @@ export default class Withdraw extends Component {
   renderResult() {
     const { addLP, blockHeight } = this.state;
     return (
-      <div className={styles.content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 64, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>
-          {_('withdraw_success')}@block{blockHeight}
-        </div>
-        <div className={styles.small_title}>{_('withdrew')}</div>
+      <SuccessResult
+        success_txt={`${_('withdraw_success')}@block${blockHeight}`}
+        done={this.clear}
+      >
+        <>
+          <div className={styles.small_title}>{_('withdrew')}</div>
 
-        <div className={styles.pair_data}>
-          <div className={styles.pair_left}>
-            <FormatNumber value={addLP} />
+          <div className={styles.pair_data}>
+            <div className={styles.pair_left}>
+              <FormatNumber value={addLP} />
+            </div>
+            <div className={styles.pair_right}>
+              <FarmPairIcon keyword="pair" />
+            </div>
           </div>
-          <div className={styles.pair_right}>
-            <FarmPairIcon keyword="pair" />
-          </div>
-        </div>
-
-        <Button
-          type="primary"
-          shape="round"
-          className={styles.done_btn}
-          onClick={this.clear}
-        >
-          {_('done')}
-        </Button>
-      </div>
+        </>
+      </SuccessResult>
     );
+    // return (
+    //   <div className={styles.content}>
+    //     <div className={styles.finish_logo}>
+    //       <CustomIcon
+    //         type="iconicon-success"
+    //         style={{ fontSize: 64, color: '#2BB696' }}
+    //       />
+    //     </div>
+    //     <div className={styles.finish_title}>
+    //       {_('withdraw_success')}@block{blockHeight}
+    //     </div>
+    //     <div className={styles.small_title}>{_('withdrew')}</div>
+
+    //     <div className={styles.pair_data}>
+    //       <div className={styles.pair_left}>
+    //         <FormatNumber value={addLP} />
+    //       </div>
+    //       <div className={styles.pair_right}>
+    //         <FarmPairIcon keyword="pair" />
+    //       </div>
+    //     </div>
+
+    //     <Button
+    //       type="primary"
+    //       shape="round"
+    //       className={styles.done_btn}
+    //       onClick={this.clear}
+    //     >
+    //       {_('done')}
+    //     </Button>
+    //   </div>
+    // );
   }
 
   render() {

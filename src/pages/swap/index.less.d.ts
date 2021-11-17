@@ -13,10 +13,6 @@ interface CssExports {
   detail_close: string;
   detail_item: string;
   detail_title: string;
-  done_btn: string;
-  finish_desc: string;
-  finish_logo: string;
-  finish_title: string;
   head: string;
   icon: string;
   input: string;
@@ -34,7 +30,6 @@ interface CssExports {
   switch_icon: string;
   title: string;
   tol: string;
-  view_detail: string;
 }
 export const cssExports: CssExports;
 export default cssExports;
