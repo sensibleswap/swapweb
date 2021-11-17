@@ -18,7 +18,8 @@ import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
-import { LoginBtn, EnterAmountBtn } from 'components/btns';
+// import { LoginBtn, EnterAmountBtn } from 'components/btns';
+import { BtnWait } from 'components/btns';
 
 let busy = false;
 const type = 'pool';
@@ -443,56 +444,44 @@ export default class Liquidity extends Component {
     const { isLogin, token1, token2, accountInfo } = this.props;
     const { userBalance } = accountInfo;
     const { origin_amount, aim_amount } = this.state;
-    let btn;
-    if (!isLogin) {
-      // 未登录
-      btn = <LoginBtn />;
-    } else if (parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0) {
-      // 未输入数量
-      btn = <EnterAmountBtn />;
-    } else if (
-      token1.isBsv &&
-      parseFloat(origin_amount) <= formatSat(MINAMOUNT)
-    ) {
-      // 数额太小
-      btn = (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lower_amount', MINAMOUNT)}
-        </Button>
-      );
-    } else if (
-      parseFloat(origin_amount) >
-      parseFloat(
-        (token1.isBsv ? userBalance.BSV : userBalance[token1.tokenID]) || 0,
-      )
-    ) {
-      // 余额不足
-      btn = (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lac_token_balance', token1.symbol.toUpperCase())}
-        </Button>
-      );
-    } else if (
-      parseFloat(aim_amount) > parseFloat(userBalance[token2.tokenID] || 0)
-    ) {
-      // 余额不足
-      btn = (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lac_token_balance', token2.symbol.toUpperCase())}
-        </Button>
-      );
-    } else {
-      btn = (
-        <Button
-          className={styles.btn}
-          type="primary"
-          shape="round"
-          onClick={this.preHandleSubmit}
-        >
-          {_('supply_liq')}
-        </Button>
-      );
-    }
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      {
+        key: 'enterAmount',
+        cond: parseFloat(origin_amount) <= 0 || parseFloat(aim_amount) <= 0,
+      },
+      {
+        key: 'lowerAmount',
+        cond: token1.isBsv && parseFloat(origin_amount) <= formatSat(MINAMOUNT),
+      },
+      {
+        key: 'lackBalance',
+        cond:
+          parseFloat(origin_amount) >
+          parseFloat(
+            (token1.isBsv ? userBalance.BSV : userBalance[token1.tokenID]) || 0,
+          ),
+        txtParam: token1.symbol,
+      },
+      {
+        key: 'lackBalance',
+        cond:
+          parseFloat(aim_amount) > parseFloat(userBalance[token2.tokenID] || 0),
+        txtParam: token2.symbol,
+      },
+    ];
+
+    const btn = BtnWait(conditions) || (
+      <Button
+        className={styles.btn}
+        type="primary"
+        shape="round"
+        onClick={this.preHandleSubmit}
+      >
+        {_('supply_liq')}
+      </Button>
+    );
 
     return (
       <div>

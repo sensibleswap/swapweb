@@ -15,7 +15,7 @@ import PairIcon from 'components/pairIcon';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-import { LoginBtn } from 'components/btns';
+import { BtnWait } from 'components/btns';
 
 let busy = false;
 const type = 'pool';
@@ -332,26 +332,24 @@ export default class RemovePage extends Component {
   };
 
   renderButton() {
-    const { isLogin, pairData, accountInfo, lptoken } = this.props;
+    const { removeLP = 0 } = this.state;
+    const { isLogin, accountInfo, lptoken } = this.props;
     const LP = accountInfo.userBalance[lptoken.tokenID];
-    if (!isLogin) {
-      // 未登录
-      return <LoginBtn />;
-    } else if (!pairData) {
-      // 不存在的交易对
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('no_pair')}
-        </Button>
-      );
-    } else if (!LP || LP === '0') {
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('cant_remove')}
-        </Button>
-      );
-    } else {
-      return (
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      {
+        cond: !LP || LP === '0',
+        txt: _('cant_remove'),
+      },
+      {
+        key: 'enterAmount',
+        cond: parseFloat(removeLP) <= 0,
+      },
+    ];
+
+    return (
+      BtnWait(conditions) || (
         <Button
           className={styles.btn}
           type="primary"
@@ -360,8 +358,8 @@ export default class RemovePage extends Component {
         >
           {_('remove')}
         </Button>
-      );
-    }
+      )
+    );
   }
 
   renderResult() {
@@ -422,14 +420,14 @@ export default class RemovePage extends Component {
     );
   }
 
-  clear() {
+  clear = () => {
     this.setState({
       formFinish: false,
       removeLP: 0,
       removeToken1: 0,
       removeToken2: 0,
     });
-  }
+  };
 
   render() {
     const { page, formFinish } = this.state;

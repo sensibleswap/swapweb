@@ -14,7 +14,7 @@ import _ from 'i18n';
 
 import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
-import { LoginBtn, EnterAmountBtn } from 'components/btns';
+import { BtnWait } from 'components/btns';
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -215,20 +215,18 @@ export default class Withdraw extends Component {
     const { isLogin, lockedTokenAmount } = this.props;
     const { addLP } = this.state;
     // console.log(addLP, lockedTokenAmount)
-    if (!isLogin) {
-      // 未登录
-      return <LoginBtn />;
-    } else if (addLP <= 0) {
-      // 不存在的交易对
-      return <EnterAmountBtn />;
-    } else if (BigNumber(addLP).isGreaterThan(lockedTokenAmount)) {
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lac_balance')}
-        </Button>
-      );
-    } else {
-      return (
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      { key: 'enterAmount', cond: parseFloat(addLP) <= 0 },
+      {
+        key: 'lackBalance',
+        cond: parseFloat(addLP) > parseFloat(lockedTokenAmount),
+      },
+    ];
+
+    return (
+      BtnWait(conditions) || (
         <Button
           className={styles.btn}
           type="primary"
@@ -237,16 +235,16 @@ export default class Withdraw extends Component {
         >
           {_('withdraw')}
         </Button>
-      );
-    }
+      )
+    );
   }
 
-  clear() {
+  clear = () => {
     this.setState({
       formFinish: false,
       addLP: 0,
     });
-  }
+  };
 
   renderResult() {
     const { addLP, blockHeight } = this.state;

@@ -4,7 +4,6 @@ import BN from 'bignumber.js';
 import { Input } from 'antd';
 import EventBus from 'common/eventBus';
 import FormatNumber from 'components/formatNumber';
-import FarmPairIcon from 'components/pairIcon/farmIcon';
 import Slider from './slider';
 import styles from './index.less';
 import _ from 'i18n';

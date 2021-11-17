@@ -13,7 +13,8 @@ import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-import { LoginBtn } from 'components/btns';
+// import { LoginBtn } from 'components/btns';
+import { BtnWait } from 'components/btns';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
@@ -411,20 +412,19 @@ export default class CreatePair extends Component {
   renderButton = () => {
     const { isLogin } = this.props;
     const { token2, step } = this.state;
-    let btn;
-    if (!isLogin) {
-      // 未登录
-      btn = <LoginBtn />;
-    } else if (!token2) {
-      // 未输入数量
-      btn = (
-        <Button className={styles.btn_wait} shape="round">
-          {_('select_token_pair')}
-        </Button>
-      );
-    } else if (step === 0) {
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      { cond: !token2, txt: _('select_token_pair') },
+    ];
+    const btn = BtnWait(conditions);
+    if (btn) {
+      return btn;
+    }
+
+    if (step === 0) {
       // 数额太小
-      btn = (
+      return (
         <Button
           className={styles.btn}
           shape="round"
@@ -436,7 +436,7 @@ export default class CreatePair extends Component {
       );
     } else if (step === 1) {
       // 余额不足
-      btn = (
+      return (
         <Button
           className={styles.btn}
           shape="round"
@@ -448,14 +448,12 @@ export default class CreatePair extends Component {
       );
     } else if (step === 2) {
       // 余额不足
-      btn = (
+      return (
         <Button className={styles.btn} shape="round" type="primary">
           {_('done')}
         </Button>
       );
     }
-
-    return btn;
   };
 
   render() {

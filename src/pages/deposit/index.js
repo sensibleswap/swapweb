@@ -8,13 +8,13 @@ import { Button, Spin, message } from 'antd';
 import Rate from 'components/rate';
 import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
+import { BtnWait } from 'components/btns';
 import TokenLogo from 'components/tokenicon';
 import FormatNumber from 'components/formatNumber';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { formatAmount, formatSat, LeastFee } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
-import { LoginBtn, EnterAmountBtn } from 'components/btns';
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -48,12 +48,12 @@ export default class Deposit extends Component {
     });
   }
 
-  clear() {
+  clear = () => {
     this.setState({
       formFinish: false,
       addLP: 0,
     });
-  }
+  };
 
   updateData() {
     const { dispatch, accountInfo } = this.props;
@@ -251,20 +251,18 @@ export default class Deposit extends Component {
     const { isLogin, accountInfo, lptoken } = this.props;
     const { addLP } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID];
-    if (!isLogin) {
-      // 未登录
-      return <LoginBtn />;
-    } else if (addLP <= 0) {
-      // 不存在的交易对
-      return <EnterAmountBtn />;
-    } else if (addLP > LP) {
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lac_balance')}
-        </Button>
-      );
-    } else {
-      return (
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      { key: 'enterAmount', cond: parseFloat(addLP) <= 0 },
+      {
+        key: 'lackBalance',
+        cond: parseFloat(addLP) > parseFloat(LP),
+      },
+    ];
+
+    return (
+      BtnWait(conditions) || (
         <Button
           className={styles.btn}
           type="primary"
@@ -273,8 +271,8 @@ export default class Deposit extends Component {
         >
           {_('deposit_earn')}
         </Button>
-      );
-    }
+      )
+    );
   }
 
   renderResult() {

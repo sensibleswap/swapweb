@@ -15,7 +15,7 @@ import Loading from 'components/loading';
 import SelectToken from '../selectToken';
 import styles from './index.less';
 import _ from 'i18n';
-import { LoginBtn, EnterAmountBtn } from 'components/btns';
+import { BtnWait } from 'components/btns';
 
 const log = debug('swap');
 
@@ -477,51 +477,38 @@ export default class Swap extends Component {
       tol,
     } = this.state;
     const origin_token = dirForward ? token1 : token2;
-    const aim_token = dirForward ? token2 : token1;
     const balance = userBalance[origin_token.tokenID || 'BSV'];
 
     const beyond = parseFloat(slip) > parseFloat(tol);
-    if (!isLogin) {
-      // 未登录
-      return <LoginBtn />;
-    } else if (swapToken1Amount === '0' || swapToken2Amount === '0') {
-      // 交易对没有数量，不能交易
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('pair_init')}
-        </Button>
-      );
-    } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
-      // 未输入数量
-      return <EnterAmountBtn />;
-    } else if (parseFloat(origin_amount) <= formatSat(MINAMOUNT)) {
-      // 数额太小
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lower_amount', MINAMOUNT)}
-        </Button>
-      );
-    } else if (parseFloat(origin_amount) > parseFloat(balance || 0)) {
-      // 余额不足
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lac_token_balance', origin_token.symbol.toUpperCase())}
-        </Button>
-      );
-    } else if (
-      BigNumber(aim_amount)
-        .multipliedBy(Math.pow(10, aim_token.decimal))
-        .isGreaterThan(
-          dirForward ? pairData.swapToken2Amount : pairData.swapToken1Amount,
-        )
-    ) {
-      // 池中币不足
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('not_enough', token2.symbol.toUpperCase())}
-        </Button>
-      );
-    } else if (beyond) {
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      {
+        cond: swapToken1Amount === '0' || swapToken2Amount === '0',
+        txt: _('pair_init'),
+      },
+      {
+        key: 'enterAmount',
+        cond:
+          !lastMod ||
+          (parseFloat(origin_amount) <= 0 && parseFloat(aim_amount) <= 0),
+      },
+      {
+        key: 'lowerAmount',
+        cond: parseFloat(origin_amount) <= formatSat(MINAMOUNT),
+      },
+      {
+        key: 'lackBalance',
+        cond: parseFloat(origin_amount) > parseFloat(balance || 0),
+        txtParam: origin_token.symbol,
+      },
+    ];
+
+    let _btn = BtnWait(conditions);
+    if (_btn) {
+      return _btn;
+    }
+    if (beyond) {
       // 超出容忍度
       return (
         <Button
