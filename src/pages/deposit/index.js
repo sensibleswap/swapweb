@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip } from 'node-gzip';
-import BigNumber from 'bignumber.js';
 import EventBus from 'common/eventBus';
 import { Button, Spin, message } from 'antd';
 import Rate from 'components/rate';
@@ -12,7 +11,7 @@ import { BtnWait } from 'components/btns';
 import TokenLogo from 'components/tokenicon';
 import FormatNumber from 'components/formatNumber';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
-import { formatAmount, formatSat, LeastFee } from 'common/utils';
+import { formatAmount, formatSat, LeastFee, formatTok } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
 
@@ -179,9 +178,11 @@ export default class Deposit extends Component {
       return message.error(isLackBalance.msg);
     }
 
-    const _value = BigNumber(addLP)
-      .multipliedBy(Math.pow(10, lptoken.decimal))
-      .toFixed(0);
+    // const _value = BigNumber(addLP)
+    //   .multipliedBy(Math.pow(10, lptoken.decimal))
+    //   .toFixed(0);
+    const _value = formatTok(addLP, lptoken.decimal);
+    // console.log(_value, formatTok(addLP, lptoken.decimal))
     let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {

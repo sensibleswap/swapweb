@@ -5,7 +5,6 @@ interface CssExports {
   balance: string;
   box: string;
   btn: string;
-  btn_wait: string;
   btn_warn: string;
   can_click: string;
   coin: string;

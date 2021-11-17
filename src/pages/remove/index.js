@@ -5,7 +5,7 @@ import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
-import { formatSat, formatAmount, LeastFee } from 'common/utils';
+import { formatSat, formatAmount, LeastFee, formatTok } from 'common/utils';
 import Rate from 'components/rate';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
@@ -137,11 +137,15 @@ export default class RemovePage extends Component {
       };
     }
 
-    LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
+    // LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    const rate = BigNumber(removeLP)
-      .multipliedBy(Math.pow(10, lptoken.decimal))
-      .div(swapLpAmount);
+    // const rate = BigNumber(removeLP)
+    //   .multipliedBy(Math.pow(10, lptoken.decimal))
+    //   .div(swapLpAmount);
+    const rate = BigNumber(formatTok(removeLP, lptoken.decimal)).div(
+      swapLpAmount,
+    );
+    // console.log(rate.toString(), rate1.toString())
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
       BigNumber(swapToken1Amount).multipliedBy(rate),
@@ -255,9 +259,11 @@ export default class RemovePage extends Component {
       return message.error(isLackBalance.msg);
     }
 
-    const _removeLP = BigNumber(removeLP)
-      .multipliedBy(Math.pow(10, lptoken.decimal))
-      .toFixed(0);
+    // const _removeLP = BigNumber(removeLP)
+    //   .multipliedBy(Math.pow(10, lptoken.decimal))
+    //   .toFixed(0);
+    const _removeLP = formatTok(removeLP, lptoken.decimal);
+    // console.log(_removeLP, formatTok(removeLP, lptoken.decimal));
     let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {

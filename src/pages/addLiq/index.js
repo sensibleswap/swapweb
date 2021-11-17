@@ -6,7 +6,7 @@ import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Modal } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
-import { formatAmount, formatSat } from 'common/utils';
+import { formatAmount, formatSat, formatTok } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
@@ -118,9 +118,12 @@ export default class Liquidity extends Component {
       return;
     }
 
-    const origin_amount = BigNumber(value || 0)
-      .multipliedBy(Math.pow(10, token1.decimal))
-      .toString();
+    // const origin_amount = BigNumber(value || 0)
+    //   .multipliedBy(Math.pow(10, token1.decimal))
+    //   .toString();
+    const origin_amount = formatTok(value, token1.decimal);
+
+    // console.log(origin_amount, formatTok(value, token1.decimal))
     const [lpMinted, token2AddAmount] = countLpAddAmount(
       origin_amount,
       swapToken1Amount,
@@ -156,9 +159,12 @@ export default class Liquidity extends Component {
       });
       return;
     }
-    const aim_amount = BigNumber(value || 0)
-      .multipliedBy(Math.pow(10, token2.decimal))
-      .toString();
+    // const aim_amount = BigNumber(value || 0)
+    //   .multipliedBy(Math.pow(10, token2.decimal))
+    //   .toString();
+    const aim_amount = formatTok(value, token2.decimal);
+    // console.log(aim_amount, formatSatToToken(value, token2.decimal))
+
     const [lpMinted, token1AddAmount] = countLpAddAmountWithToken2(
       aim_amount,
       swapToken1Amount,
@@ -198,9 +204,11 @@ export default class Liquidity extends Component {
       return;
     }
 
-    const token1AddAmount = BigNumber(origin_amount)
-      .multipliedBy(Math.pow(10, token1.decimal))
-      .toString();
+    // const token1AddAmount = BigNumber(origin_amount)
+    //   .multipliedBy(Math.pow(10, token1.decimal))
+    //   .toString();
+    const token1AddAmount = formatTok(origin_amount, token1.decimal);
+    // console.log(token1AddAmount, formatSatToToken(origin_amount, token1.decimal))
     const [lpMinted, token2AddAmount] = countLpAddAmount(
       token1AddAmount,
       swapToken1Amount,
@@ -237,9 +245,11 @@ export default class Liquidity extends Component {
       });
       return;
     }
-    const token2AddAmount = BigNumber(aim_amount)
-      .multipliedBy(Math.pow(10, token2.decimal))
-      .toString();
+    // const token2AddAmount = BigNumber(aim_amount)
+    //   .multipliedBy(Math.pow(10, token2.decimal))
+    //   .toString();
+    const token2AddAmount = formatTok(aim_amount, token2.decimal);
+    // console.log(token2AddAmount, formatSatToToken(aim_amount, token2.decimal))
     const [lpMinted, token1AddAmount] = countLpAddAmountWithToken2(
       token2AddAmount,
       swapToken1Amount,
@@ -559,16 +569,6 @@ export default class Liquidity extends Component {
     let { origin_amount, aim_amount, lastMod } = this.state;
     let _origin_amount, _aim_amount;
 
-    // console.log(BigNumber(txFee + 100000).toString(),
-    // BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal)).toString(),
-    //   BigNumber(origin_amount)
-    // .plus(
-    //   BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal))
-    // ).toString(), BigNumber(origin_amount)
-    // .plus(
-    //   BigNumber(txFee + 100000).div(Math.pow(10, token1.decimal))
-    // )
-    // .isGreaterThan(userBalance.BSV || 0))
     if (
       token1.isBsv &&
       BigNumber(origin_amount)
@@ -587,15 +587,19 @@ export default class Liquidity extends Component {
     }
 
     if (lastMod === 'origin') {
-      let token1AddAmount = BigNumber(origin_amount)
-        .multipliedBy(Math.pow(10, token1.decimal))
-        .toString();
+      // let token1AddAmount = BigNumber(origin_amount)
+      //   .multipliedBy(Math.pow(10, token1.decimal))
+      //   .toString();
+      let token1AddAmount = formatTok(origin_amount, token1.decimal);
+      // console.log(token1AddAmount, formatTok(origin_amount, token1.decimal))
 
       let token2AddAmount;
       if (swapToken1Amount === '0' && swapToken2Amount === '0') {
-        token2AddAmount = BigNumber(aim_amount)
-          .multipliedBy(Math.pow(10, token2.decimal))
-          .toString();
+        // token2AddAmount = BigNumber(aim_amount)
+        //   .multipliedBy(Math.pow(10, token2.decimal))
+        //   .toString();
+        token2AddAmount = formatTok(aim_amount, token2.decimal);
+        // console.log(token2AddAmount, formatTok(aim_amount, token2.decimal))
       } else {
         token2AddAmount = countLpAddAmount(
           token1AddAmount,
@@ -623,15 +627,19 @@ export default class Liquidity extends Component {
       // });
       // }
     } else if (lastMod === 'aim') {
-      const token2AddAmount = BigNumber(aim_amount)
-        .multipliedBy(Math.pow(10, token2.decimal))
-        .toString();
+      // const token2AddAmount = BigNumber(aim_amount)
+      //   .multipliedBy(Math.pow(10, token2.decimal))
+      //   .toString();
+      const token2AddAmount = formatTok(aim_amount, token2.decimal);
+      // console.log(token2AddAmount, formatTok(aim_amount, token2.decimal))
       let token1AddAmount;
 
       if (swapToken1Amount === '0' && swapToken2Amount === '0') {
-        token1AddAmount = BigNumber(origin_amount)
-          .multipliedBy(Math.pow(10, token1.decimal))
-          .toString();
+        // token1AddAmount = BigNumber(origin_amount)
+        //   .multipliedBy(Math.pow(10, token1.decimal))
+        //   .toString();
+        token1AddAmount = formatTok(origin_amount, token1.decimal);
+        // console.log(token1AddAmount, formatTok(origin_amount, token1.decimal))
       } else {
         token1AddAmount = countLpAddAmountWithToken2(
           token2AddAmount,

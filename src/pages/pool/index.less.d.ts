@@ -6,6 +6,7 @@ interface CssExports {
   app_title: string;
   big_btn: string;
   box: string;
+  btn: string;
   close: string;
   container: string;
   container_center: string;

@@ -7,7 +7,7 @@ import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Button, Form, Input, message, Spin } from 'antd';
 import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
-import { formatAmount, formatSat, jc } from 'common/utils';
+import { formatAmount, formatSat, jc, formatTok } from 'common/utils';
 import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import PairIcon from 'components/pairIcon';
@@ -565,9 +565,11 @@ export default class Swap extends Component {
       op: dirForward ? 3 : 4,
     };
     if (dirForward) {
-      let amount = BigNumber(origin_amount)
-        .multipliedBy(Math.pow(10, token1.decimal))
-        .toString();
+      // let amount = BigNumber(origin_amount)
+      //   .multipliedBy(Math.pow(10, token1.decimal))
+      //   .toString();
+      let amount = formatTok(origin_amount, token1.decimal);
+      // console.log(amount, formatTok(origin_amount, token1.decimal))
 
       if (token1.isBsv) {
         const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
@@ -654,10 +656,11 @@ export default class Swap extends Component {
         };
       }
     } else {
-      const amount = BigNumber(origin_amount)
-        .multipliedBy(Math.pow(10, token2.decimal))
-        .toString();
-
+      // const amount = BigNumber(origin_amount)
+      //   .multipliedBy(Math.pow(10, token2.decimal))
+      //   .toString();
+      const amount = formatTok(origin_amount, token2.decimal);
+      // console.log(amount, formatTok(origin_amount, token2.decimal))
       let tx_res = await dispatch({
         type: 'user/transferAll',
         payload: {

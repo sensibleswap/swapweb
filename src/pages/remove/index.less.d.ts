@@ -7,8 +7,6 @@ interface CssExports {
   big_btn: string;
   box: string;
   btn: string;
-  btn_wait: string;
-  btn_warn: string;
   close: string;
   coin: string;
   container: string;

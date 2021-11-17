@@ -15,7 +15,7 @@ import {
 import debug from 'debug';
 import _ from 'i18n';
 const log = debug('utils');
-const { localStorage, location } = window;
+const { location } = window;
 
 // 格式化日期
 export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
@@ -214,6 +214,12 @@ export const formatSat = (value, dec = 8) => {
     return BigNumber(v).toFixed(dec);
   }
   return v.toString();
+};
+
+export const formatTok = (value, dec = 8) => {
+  if (!value) return 0;
+  const v = BigNumber(value).multipliedBy(Math.pow(10, dec));
+  return v.toFixed(0);
 };
 
 export function sleep(ms) {

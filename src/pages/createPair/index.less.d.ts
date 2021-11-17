@@ -3,7 +3,6 @@
 interface CssExports {
   box: string;
   btn: string;
-  btn_wait: string;
   coin: string;
   container: string;
   create_content: string;

@@ -15,6 +15,7 @@ import _ from 'i18n';
 import BigNumber from 'bignumber.js';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { BtnWait } from 'components/btns';
+import { formatTok } from '../../common/utils';
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -150,9 +151,11 @@ export default class Withdraw extends Component {
       return message.error(isLackBalance.msg);
     }
 
-    const _value = BigNumber(addLP)
-      .multipliedBy(Math.pow(10, lptoken.decimal))
-      .toFixed(0);
+    // const _value = BigNumber(addLP)
+    //   .multipliedBy(Math.pow(10, lptoken.decimal))
+    //   .toFixed(0);
+    const _value = formatTok(addLP, lptoken.decimal);
+    // console.log(_value,formatTok(addLP, lptoken.decimal) )
     let tx_res = await dispatch({
       type: 'user/transferBsv',
       payload: {
