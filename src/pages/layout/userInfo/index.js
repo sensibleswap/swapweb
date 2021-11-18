@@ -3,14 +3,10 @@ import React, { Component } from 'react';
 import { history, connect } from 'umi';
 import querystring from 'querystringify';
 import { Popover, Modal, message } from 'antd';
-import {
-  ArrowLeftOutlined,
-  SwapOutlined,
-  LoadingOutlined,
-  DollarOutlined,
-} from '@ant-design/icons';
+import { LoadingOutlined, DollarOutlined } from '@ant-design/icons';
 import QRCode from 'qrcode.react';
 import EventBus from 'common/eventBus';
+import { AppTitle } from 'components/ui';
 import Clipboard from 'components/clipboard';
 import FormatNumber from 'components/formatNumber';
 import CustomIcon from 'components/icon';
@@ -280,11 +276,13 @@ export default class UserInfo extends Component {
 
     return (
       <div className={styles.user_pop}>
-        <div className={styles.app_title} onClick={this.closePop}>
-          <Lang />
-          {_('wallet_connected')}
-          <CustomIcon type="iconcross" />
-        </div>
+        <AppTitle
+          title={_('wallet_connected')}
+          left={<Lang />}
+          onClick={this.closePop}
+          bottomLine={true}
+        />
+
         <div className={styles.user_pop_content}>
           {qr_code_visible && (
             <div className={styles.qr_code}>

@@ -1,4 +1,6 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { jc } from 'common/utils';
 import CustomIcon from 'components/icon';
 import styles from './index.less';
 
@@ -47,4 +49,39 @@ export function IconTick() {
 
 export function IconX() {
   return <CustomIcon type="icontick-green" />;
+}
+
+export function AppTitle(props) {
+  const { left, title, onClick, bottomLine = false } = props;
+  return (
+    <div
+      className={
+        bottomLine ? jc(styles.app_title, styles.bottom_line) : styles.app_title
+      }
+    >
+      {left || <span></span>}
+      {title}
+      <div className={styles.close} onClick={onClick}>
+        <CloseOutlined />
+      </div>
+    </div>
+  );
+}
+
+export function AppStartBtn(props) {
+  const { btns, onClick, size = 'small' } = props;
+  return (
+    <div className={styles.app_start_btn_wrap}>
+      {btns.map((item) => (
+        <Button
+          type="primary"
+          shape="round"
+          className={styles[`${size}_btn`]}
+          onClick={() => onClick(item.key)}
+        >
+          {item.txt}
+        </Button>
+      ))}
+    </div>
+  );
 }

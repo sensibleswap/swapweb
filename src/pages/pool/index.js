@@ -6,13 +6,14 @@ import { jc } from 'common/utils';
 import { TSWAP_POOL_SHOW_OP } from 'common/const';
 import Pair from 'components/pair';
 import Chart from 'components/chart/poolChart';
-import CustomIcon from 'components/icon';
+import { AppTitle } from 'components/ui';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
 import Header from '../layout/header';
 import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
+import { AppStartBtn } from '../../components/ui';
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -121,24 +122,20 @@ export default class Pool extends Component {
               {pageName === 'createPair'
                 ? this.renderCreateContent()
                 : this.renderContent()}
-              <div className={styles.app_start_btn_wrap}>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.small_btn}
-                  onClick={() => this.showPannel('add')}
-                >
-                  {_('add_liq')}
-                </Button>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.small_btn}
-                  onClick={() => this.showPannel('remove')}
-                >
-                  {_('remove')}
-                </Button>
-              </div>
+
+              <AppStartBtn
+                btns={[
+                  {
+                    txt: _('add_liq'),
+                    key: 'add',
+                  },
+                  {
+                    txt: _('remove'),
+                    key: 'remove',
+                  },
+                ]}
+                onClick={this.showPannel}
+              />
             </div>
           </section>
           <section className={styles.right}>
@@ -149,12 +146,7 @@ export default class Pool extends Component {
                   : jc(styles.sidebar, styles.app_hide)
               }
             >
-              <div className={styles.app_title}>
-                {_('pool')}
-                <div className={styles.close} onClick={this.hidePannel}>
-                  <CustomIcon type="iconcross" />
-                </div>
-              </div>
+              <AppTitle title={_('pool')} onClick={this.hidePannel} />
 
               {this.props.children}
             </div>

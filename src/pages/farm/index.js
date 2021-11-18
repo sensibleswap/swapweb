@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { connect, history } from 'umi';
 import { Button, Spin } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
 import Notice from 'components/notice';
+import { AppTitle } from 'components/ui';
 import { jc, parseUrl } from 'common/utils';
 import EventBus from 'common/eventBus';
 import Header from '../layout/header';
@@ -13,6 +13,7 @@ import Withdraw from '../withdraw';
 // import debug from 'debug';
 import styles from './index.less';
 import _ from 'i18n';
+import { AppStartBtn } from '../../components/ui';
 // const log = debug('farm');
 let busy = false;
 
@@ -140,24 +141,19 @@ export default class FarmC extends Component {
               <div className={styles.left_inner}>
                 <Header />
                 <FarmList {...this.props} update={this.fetch} />
-                <div className={styles.app_start_btn_wrap}>
-                  <Button
-                    type="primary"
-                    shape="round"
-                    className={styles.small_btn}
-                    onClick={() => this.showPannel(0)}
-                  >
-                    {_('deposit_lp')}
-                  </Button>
-                  <Button
-                    type="primary"
-                    shape="round"
-                    className={styles.small_btn}
-                    onClick={() => this.showPannel(1)}
-                  >
-                    {_('withdraw_lp')}
-                  </Button>
-                </div>
+                <AppStartBtn
+                  btns={[
+                    {
+                      txt: _('deposit_lp'),
+                      key: 0,
+                    },
+                    {
+                      txt: _('withdraw_lp'),
+                      key: 1,
+                    },
+                  ]}
+                  onClick={this.showPannel}
+                />
               </div>
             </section>
             <section className={styles.right}>
@@ -168,12 +164,7 @@ export default class FarmC extends Component {
                     : jc(styles.sidebar, styles.app_hide)
                 }
               >
-                <div className={styles.app_title}>
-                  {_('farm')}
-                  <div className={styles.close} onClick={this.hidePannel}>
-                    <CloseOutlined />
-                  </div>
-                </div>
+                <AppTitle title={_('farm')} onClick={this.hidePannel} />
 
                 <div className={styles.right_box}>
                   <div className={styles.head}>

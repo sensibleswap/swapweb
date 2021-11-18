@@ -4,9 +4,9 @@ import { connect } from 'umi';
 import EventBus from 'common/eventBus';
 import { Button } from 'antd';
 import { jc } from 'common/utils';
-import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
+import { AppTitle } from 'components/ui';
 import Chart from 'components/chart/swapChart';
 
 import Header from '../layout/header';
@@ -14,6 +14,7 @@ import Swap from '../swap';
 import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
+import { AppStartBtn } from '../../components/ui';
 
 let busy = false;
 @connect(({ pair, loading }) => {
@@ -103,16 +104,16 @@ export default class SwapPage extends Component {
             <div className={styles.left_inner}>
               <Header />
               {this.renderContent()}
-              <div className={styles.app_start_btn_wrap}>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.big_btn}
-                  onClick={this.showPannel}
-                >
-                  {_('start_swapping')}
-                </Button>
-              </div>
+              <AppStartBtn
+                btns={[
+                  {
+                    txt: _('start_swapping'),
+                    key: 0,
+                  },
+                ]}
+                onClick={this.showPannel}
+                size="big"
+              />
             </div>
           </section>
           <section className={styles.right}>
@@ -123,12 +124,7 @@ export default class SwapPage extends Component {
                   : jc(styles.sidebar, styles.app_hide)
               }
             >
-              <div className={styles.app_title}>
-                {_('swap')}
-                <div className={styles.close} onClick={this.hidePannel}>
-                  <CustomIcon type="iconcross" />
-                </div>
-              </div>
+              <AppTitle title={_('swap')} onClick={this.hidePannel} />
               <Swap />
             </div>
           </section>
