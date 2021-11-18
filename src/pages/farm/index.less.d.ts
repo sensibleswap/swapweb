@@ -51,6 +51,7 @@ interface CssExports {
   txid: string;
   txt: string;
   value: string;
+  warn: string;
 }
 export const cssExports: CssExports;
 export default cssExports;

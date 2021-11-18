@@ -35,6 +35,7 @@ export default class FarmList extends Component {
     const {
       pairName,
       token,
+      abandoned = false,
       lockedTokenAmount,
       rewardAmountPerBlock,
       rewardTokenAmount = 0,
@@ -54,13 +55,16 @@ export default class FarmList extends Component {
 
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
 
+    let cls = styles.item;
+    if (abandoned) {
+      cls = jc(styles.item, styles.warn);
+    }
+    if (pairName === currentFarmPair) {
+      cls = jc(cls, styles.current);
+    }
     return (
       <div
-        className={
-          pairName === currentFarmPair
-            ? jc(styles.item, styles.current)
-            : styles.item
-        }
+        className={cls}
         key={pairName}
         onClick={() => this.changeCurrentFarm(pairName)}
       >
@@ -80,7 +84,7 @@ export default class FarmList extends Component {
             </div>
           </div>
           <div className={styles.lp_amount}>
-            {_('your_deposited_lp')}:{' '}
+            {_(abandoned ? 'abandoned_deposited_lp' : 'your_deposited_lp')}:{' '}
             <FormatNumber value={formatSat(lockedTokenAmount, token.decimal)} />
           </div>
         </div>
