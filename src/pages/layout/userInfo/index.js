@@ -74,6 +74,7 @@ export default class UserInfo extends Component {
           },
         });
         if (window.location.hash.indexOf('farm') > -1) {
+          history.push('/farm');
           EventBus.emit('reloadPair');
         }
       }

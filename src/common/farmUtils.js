@@ -70,13 +70,13 @@ export function handleFarmData(data, allPairs, pairsData, bsvPrice) {
       _total = _total.multipliedBy(bsvPrice);
     }
     item._yield = _yield;
-    item._total = _total;
+    item._total = _total.toString();
 
     allFarmData[pairName] = item;
     allFarmArr.push(item);
   });
   allFarmArr.sort((a, b) => {
-    return b._total.toString() - a._total.toString();
+    return b._total - a._total;
   });
   return { allFarmData, allFarmArr };
 }

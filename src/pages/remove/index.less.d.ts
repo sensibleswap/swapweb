@@ -5,6 +5,7 @@ interface CssExports {
   app_start_btn_wrap: string;
   app_title: string;
   big_btn: string;
+  blue: string;
   box: string;
   btn: string;
   close: string;

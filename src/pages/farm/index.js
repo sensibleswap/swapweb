@@ -68,7 +68,7 @@ export default class FarmC extends Component {
     EventBus.on('reloadPair', () => {
       const { hash } = window.location;
       if (hash.indexOf('farm') > -1) {
-        this.updateFarmPairs();
+        this.fetch();
       }
     });
     this.fetch();

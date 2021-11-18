@@ -2,14 +2,15 @@
 import React, { Component } from 'react';
 import { history } from 'umi';
 import { Tooltip } from 'antd';
+import CustomIcon from 'components/icon';
+import TokenPair from 'components/tokenPair';
+import FormatNumber from 'components/formatNumber';
 import EventBus from 'common/eventBus';
 import { jc, formatSat, formatAmount } from 'common/utils';
-import CustomIcon from 'components/icon';
-import FormatNumber from 'components/formatNumber';
-import TokenPair from 'components/tokenPair';
+import Harvest from './harvest';
 import styles from './index.less';
 import _ from 'i18n';
-import Harvest from './harvest';
+
 const { hash } = window.location;
 
 export default class FarmList extends Component {
@@ -101,28 +102,9 @@ export default class FarmList extends Component {
               title={_('apy_info').replace(/%1/g, rewardToken.symbol)}
               placement="bottom"
             >
-              <div
-                className={styles.label}
-                style={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
+              <div className={styles.label}>
                 {_('apy')}
-                <CustomIcon
-                  type="iconi"
-                  style={{
-                    border: '1px solid #e8e8e8',
-                    backgroundColor: '#fff',
-                    borderRadius: '50%',
-                    fontSize: 15,
-                    padding: 2,
-                    width: 15,
-                    textAlign: 'center',
-                    marginLeft: 10,
-                  }}
-                />
+                <CustomIcon type="iconi" />
               </div>
             </Tooltip>
             <div className={styles.value}>
@@ -133,20 +115,7 @@ export default class FarmList extends Component {
             <Tooltip title={_('payout_tips')} placement="bottom">
               <div className={styles.label}>
                 {_('payout')}
-                <CustomIcon
-                  type="iconi"
-                  style={{
-                    border: '1px solid #e8e8e8',
-                    backgroundColor: '#fff',
-                    borderRadius: '50%',
-                    fontSize: 15,
-                    padding: 2,
-                    width: 15,
-                    textAlign: 'center',
-                    marginLeft: 8,
-                    cursor: 'pointer',
-                  }}
-                />
+                <CustomIcon type="iconi" />
               </div>
             </Tooltip>
             <div className={styles.value}>
@@ -163,10 +132,7 @@ export default class FarmList extends Component {
               }`}
               placement="bottom"
             >
-              <div
-                className={styles.value}
-                style={{ fontSize: 12, color: '#2F80ED' }}
-              >
+              <div className={jc(styles.value, styles.blue)}>
                 <FormatNumber
                   value={formatAmount(_rewardTokenAmount, rewardToken.decimal)}
                 />

@@ -51,16 +51,15 @@ export default {
       }
       let p = [];
       let pairsData = {};
-      let pairs = [],
-        farmPairs = [];
+      let pairs = [];
+      // farmPairs = [];
       Object.keys(data).forEach((item) => {
         if (item !== 'blockHeight') {
           pairs.push(item);
-          farmPairs.push({ ...data[item], pairName: item });
+          // farmPairs.push({ ...data[item], pairName: item });
           p.push(pairApi.querySwapInfo(item));
         }
       });
-
       const datas_res = yield Promise.all(p);
       pairs.forEach((item, index) => {
         if (datas_res[index].code === 0) {
