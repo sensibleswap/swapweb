@@ -26,10 +26,7 @@ export default function chartTitle(props) {
               <span>{symbol2}</span>/{symbol1}
             </>
           )}
-          <CustomIcon
-            type="iconDropdown"
-            style={{ fontSize: 20, marginLeft: 15 }}
-          />
+          <CustomIcon type="iconDropdown" />
         </span>
       </Dropdown>
 

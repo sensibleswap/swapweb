@@ -10,6 +10,7 @@ import { jc, formatSat, formatAmount } from 'common/utils';
 import Harvest from './harvest';
 import styles from './index.less';
 import _ from 'i18n';
+import { Iconi } from '../../components/ui';
 
 const { hash } = window.location;
 
@@ -104,7 +105,7 @@ export default class FarmList extends Component {
             >
               <div className={styles.label}>
                 {_('apy')}
-                <CustomIcon type="iconi" />
+                <Iconi />
               </div>
             </Tooltip>
             <div className={styles.value}>
@@ -115,7 +116,7 @@ export default class FarmList extends Component {
             <Tooltip title={_('payout_tips')} placement="bottom">
               <div className={styles.label}>
                 {_('payout')}
-                <CustomIcon type="iconi" />
+                <Iconi />
               </div>
             </Tooltip>
             <div className={styles.value}>

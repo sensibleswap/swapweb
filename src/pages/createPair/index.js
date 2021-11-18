@@ -1,10 +1,8 @@
 'use strict';
 import React, { Component } from 'react';
 import { gzip } from 'node-gzip';
-import { Link, history, connect } from 'umi';
+import { history, connect } from 'umi';
 import { Steps, Button, Input, message, Form, Spin } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import CustomIcon from 'components/icon';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
@@ -13,8 +11,9 @@ import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-// import { LoginBtn } from 'components/btns';
 import { BtnWait } from 'components/btns';
+import { SuccessResult } from 'components/result';
+import { Plus } from 'components/ui';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
@@ -182,10 +181,7 @@ export default class CreatePair extends Component {
             </div>
           )}
         </div>
-
-        <div className={styles.switch_icon}>
-          <PlusOutlined style={{ fontSize: 18 }} />
-        </div>
+        <Plus />
         <div className={styles.title}>
           {_('input')} B: {_('enter_tokenid')}
         </div>
@@ -271,37 +267,34 @@ export default class CreatePair extends Component {
   }
 
   renderContent2() {
-    const { token1, token2 } = this.state;
+    const { token1 = {}, token2 = {} } = this.state;
     return (
       <div className={styles.create_content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 64, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>
-          {token1.symbol}/{token2.symbol}
-        </div>
-        <div className={styles.finish_desc}>{_('create_success')}</div>
-
-        <div className={styles.info}>
-          <div className={styles.line}>
-            <div className={styles.label}>{_('pooled', token1.symbol)}</div>
-            <div className={styles.no}>0.0</div>
+        <SuccessResult
+          suscces_txt={_('create_success')}
+          done={this.finish}
+          title={
+            <div className={styles.finish_title}>
+              {token1.symbol}/{token2.symbol}
+            </div>
+          }
+          noLine={true}
+        >
+          <div className={styles.info}>
+            <div className={styles.line}>
+              <div className={styles.label}>{_('pooled', token1.symbol)}</div>
+              <div className={styles.no}>0.0</div>
+            </div>
+            <div className={styles.line}>
+              <div className={styles.label}>{_('pooled', token2.symbol)}</div>
+              <div className={styles.no}>0.0</div>
+            </div>
+            <div className={styles.line}>
+              <div className={styles.label}>{_('your_share')}</div>
+              <div className={styles.no}>0%</div>
+            </div>
           </div>
-          <div className={styles.line}>
-            <div className={styles.label}>{_('pooled', token2.symbol)}</div>
-            <div className={styles.no}>0.0</div>
-          </div>
-          <div className={styles.line}>
-            <div className={styles.label}>{_('your_share')}</div>
-            <div className={styles.no}>0%</div>
-          </div>
-        </div>
-        <Button className={styles.done_btn} shape="round" onClick={this.finish}>
-          {_('done')}
-        </Button>
+        </SuccessResult>
       </div>
     );
   }

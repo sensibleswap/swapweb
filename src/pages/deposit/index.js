@@ -5,7 +5,6 @@ import { gzip } from 'node-gzip';
 import EventBus from 'common/eventBus';
 import { Button, Spin, message } from 'antd';
 import Rate from 'components/rate';
-import CustomIcon from 'components/icon';
 import Loading from 'components/loading';
 import { BtnWait } from 'components/btns';
 import TokenLogo from 'components/tokenicon';
@@ -15,6 +14,7 @@ import { formatAmount, formatSat, LeastFee, formatTok } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
 import { SuccessResult } from 'components/result';
+import { Arrow } from 'components/ui';
 
 @connect(({ pair, user, farm, loading }) => {
   const { effects } = loading;
@@ -113,13 +113,7 @@ export default class Deposit extends Component {
             balance={balance}
             tokenPair={<FarmPairIcon keyword="pair" />}
           />
-
-          <div className={styles.switch_icon}>
-            <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 14 }} />
-            </div>
-            <div className={styles.line}></div>
-          </div>
+          <Arrow />
 
           <div className={styles.title}>{_('earn')}</div>
           <div
@@ -300,38 +294,6 @@ export default class Deposit extends Component {
         </SuccessResult>
       </div>
     );
-    // return (
-    //   <div className={styles.content}>
-    //     <div className={styles.finish_logo}>
-    //       <CustomIcon
-    //         type="iconicon-success"
-    //         style={{ fontSize: 64, color: '#2BB696' }}
-    //       />
-    //     </div>
-    //     <div className={styles.finish_title}>
-    //       {_('deposit_success')}@block{blockHeight}
-    //     </div>
-    //     <div className={styles.small_title}>{_('deposited')}</div>
-
-    //     <div className={styles.pair_data}>
-    //       <div className={styles.pair_left}>
-    //         <FormatNumber value={addLP} />
-    //       </div>
-    //       <div className={styles.pair_right}>
-    //         <FarmPairIcon keyword="pair" size={20} />
-    //       </div>
-    //     </div>
-
-    //     <Button
-    //       type="primary"
-    //       shape="round"
-    //       className={styles.done_btn}
-    //       onClick={this.clear}
-    //     >
-    //       {_('done')}
-    //     </Button>
-    //   </div>
-    // );
   }
 
   render() {

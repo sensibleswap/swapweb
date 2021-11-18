@@ -270,38 +270,6 @@ export default class Withdraw extends Component {
         </SuccessResult>
       </div>
     );
-    // return (
-    //   <div className={styles.content}>
-    //     <div className={styles.finish_logo}>
-    //       <CustomIcon
-    //         type="iconicon-success"
-    //         style={{ fontSize: 64, color: '#2BB696' }}
-    //       />
-    //     </div>
-    //     <div className={styles.finish_title}>
-    //       {_('withdraw_success')}@block{blockHeight}
-    //     </div>
-    //     <div className={styles.small_title}>{_('withdrew')}</div>
-
-    //     <div className={styles.pair_data}>
-    //       <div className={styles.pair_left}>
-    //         <FormatNumber value={addLP} />
-    //       </div>
-    //       <div className={styles.pair_right}>
-    //         <FarmPairIcon keyword="pair" />
-    //       </div>
-    //     </div>
-
-    //     <Button
-    //       type="primary"
-    //       shape="round"
-    //       className={styles.done_btn}
-    //       onClick={this.clear}
-    //     >
-    //       {_('done')}
-    //     </Button>
-    //   </div>
-    // );
   }
 
   render() {

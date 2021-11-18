@@ -37,8 +37,16 @@ export function BtnWait(conditions) {
     if (key && datas[key]) {
       item = { ...datas[key], ...item };
     }
-
-    const txt = typeof txt === 'function' ? txt(txtParam) : item.txt;
+    let txt;
+    if (key) {
+      txt =
+        typeof datas[key].txt === 'function'
+          ? datas[key].txt(txtParam)
+          : item.txt;
+    }
+    if (!txt && item.txt) {
+      txt = item.txt;
+    }
 
     if (cond) {
       result = (

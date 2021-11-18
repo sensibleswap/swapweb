@@ -16,10 +16,7 @@ export default class Harvest extends Component {
       content: (
         <div className={styles.mod_content}>
           <div className={styles.icon}>
-            <CustomIcon
-              type="iconicon-success"
-              style={{ fontSize: 60, fontWeight: 'bold', color: '#2BB696' }}
-            />
+            <CustomIcon type="iconicon-success" />
           </div>
           <div className={styles.amount}>
             <span style={{ marginRight: 30 }}>
@@ -27,7 +24,7 @@ export default class Harvest extends Component {
             </span>
             <img
               alt={symbol}
-              src={iconList[tokenID].url}
+              src={iconList[tokenID] ? iconList[tokenID].url : ''}
               className={styles.logo}
             />
             <span className={styles.symbol}>{symbol}</span>

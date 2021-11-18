@@ -18,7 +18,6 @@ interface CssExports {
   finish_logo: string;
   finish_title: string;
   head: string;
-  icon: string;
   info_item: string;
   info_label: string;
   info_title: string;
@@ -27,7 +26,6 @@ interface CssExports {
   input: string;
   left: string;
   left_inner: string;
-  line: string;
   link: string;
   main_title: string;
   menu: string;
@@ -46,7 +44,6 @@ interface CssExports {
   small_title: string;
   strong: string;
   subtitle: string;
-  switch_icon: string;
   title: string;
   view_detail: string;
 }

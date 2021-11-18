@@ -78,18 +78,6 @@
   font-size: 12px;
   display: flex;
   align-items: center;
-
-  :global(.iconfont) {
-    margin-top: -2px;
-    border: 1px solid #e8e8e8;
-    background-color: #fff;
-    border-radius: 50%;
-    font-size: 15px;
-    padding: 2px;
-    width: 15px;
-    text-align: center;
-    margin-left: 6px;
-  }
 }
 
 .value {
@@ -180,6 +168,11 @@
 .mod_content {
   .icon {
     text-align: center;
+    :global(.iconfont) {
+      font-size: 60px;
+      font-weight: bold;
+      color: #2bb696;
+    }
   }
 
   .amount {

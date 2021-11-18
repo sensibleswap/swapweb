@@ -14,12 +14,10 @@ interface CssExports {
   detail_item: string;
   detail_title: string;
   head: string;
-  icon: string;
   input: string;
   item_label: string;
   item_value: string;
   key_value: string;
-  line: string;
   menu: string;
   menu_item: string;
   menu_item_selected: string;
@@ -27,7 +25,6 @@ interface CssExports {
   name: string;
   normal: string;
   selectToken_wrap: string;
-  switch_icon: string;
   title: string;
   tol: string;
 }

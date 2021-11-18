@@ -283,17 +283,17 @@ export default class UserInfo extends Component {
         <div className={styles.app_title} onClick={this.closePop}>
           <Lang />
           {_('wallet_connected')}
-          <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
+          <CustomIcon type="iconcross" />
         </div>
         <div className={styles.user_pop_content}>
           {qr_code_visible && (
             <div className={styles.qr_code}>
               <div className={styles.qr_code_title}>
-                <div className={styles.back}>
-                  <ArrowLeftOutlined
-                    onClick={() => this.toggleQrCode(false)}
-                    style={{ fontSize: 20, color: '#2F80ED', fontWeight: 700 }}
-                  />
+                <div
+                  className={styles.back}
+                  onClick={() => this.toggleQrCode(false)}
+                >
+                  <CustomIcon type="iconback" />
                 </div>
                 {_('qr_code')}
               </div>
@@ -312,23 +312,15 @@ export default class UserInfo extends Component {
             </div>
           </div>
           <div className={styles.line} onClick={() => this.toggleQrCode(true)}>
-            <CustomIcon
-              type="iconqr-code"
-              style={{ fontSize: 20, marginRight: 12 }}
-            />
+            <CustomIcon type="iconqr-code" />
             <span className={styles.name}>{_('show_qr_code')}</span>
           </div>
           <Clipboard text={userAddress} className={styles.line}>
-            <CustomIcon
-              type="iconcopy"
-              style={{ fontSize: 20, marginRight: 12 }}
-            />
+            <CustomIcon type="iconcopy" />
             {_('copy_account')}
           </Clipboard>
           <div className={styles.line} onClick={this.chooseLoginWallet}>
-            <SwapOutlined
-              style={{ fontSize: 20, color: '#2F80ED', marginRight: 12 }}
-            />
+            <CustomIcon type="iconswitch-account" />
             <span className={styles.name}>{_('switch_wallet')}</span>
           </div>
           {walletType === 1 && (
@@ -339,17 +331,12 @@ export default class UserInfo extends Component {
                 this.closePop();
               }}
             >
-              <DollarOutlined
-                style={{ fontSize: 20, color: '#2F80ED', marginRight: 12 }}
-              />
+              <DollarOutlined />
               <span className={styles.name}>{_('withdraw')}</span>
             </div>
           )}
           <div className={styles.line} onClick={this.disConnect}>
-            <CustomIcon
-              type="icondisconnect"
-              style={{ fontSize: 20, marginRight: 12 }}
-            />
+            <CustomIcon type="icondisconnect" />
             {_('disconnect_account')}
           </div>
           <div className={styles.ft}>
@@ -362,14 +349,9 @@ export default class UserInfo extends Component {
   renderWalletIcon() {
     const { walletType } = this.props;
     if (walletType === 1) {
-      return <span className={styles.dot} style={{ marginRight: 5 }}></span>;
+      return <span className={styles.dot}></span>;
     } else if (walletType === 2) {
-      return (
-        <CustomIcon
-          type="iconicon-volt-tokenswap-circle"
-          style={{ fontSize: 30, marginRight: 10 }}
-        />
-      );
+      return <CustomIcon type="iconicon-volt-tokenswap-circle" />;
     }
   }
 
@@ -391,7 +373,7 @@ export default class UserInfo extends Component {
           >
             <div className={styles.account_trigger}>
               {this.renderWalletIcon()}
-              <span style={{ marginRight: 5 }}>
+              <span className={styles.address}>
                 {accountInfo.userAddressShort}
               </span>
               <CustomIcon
@@ -399,13 +381,14 @@ export default class UserInfo extends Component {
                 style={{
                   fontSize: 16,
                   marginLeft: 'auto',
+                  marginRight: 0,
                   transition: 'transform 0.2s ease',
                   transform: `rotate(${pop_visible ? 180 : 0}deg)`,
                 }}
               />
             </div>
             <div className={styles.connect_app}>
-              <CustomIcon type="iconicon-me" style={{ fontSize: 24 }} />
+              <CustomIcon type="iconicon-me" />
             </div>
           </Popover>
         ) : (
@@ -429,7 +412,7 @@ export default class UserInfo extends Component {
                 className={styles.connect_app}
                 onClick={this.chooseLoginWallet}
               >
-                <CustomIcon type="iconicon-me" style={{ fontSize: 24 }} />
+                <CustomIcon type="iconicon-me" />
               </div>
             )}
           </>
@@ -448,16 +431,13 @@ export default class UserInfo extends Component {
             <div className={styles.title}>{_('connect_wallet')}</div>
             <ul>
               <li onClick={() => this.connectWebWallet(2, 'mainnet')}>
-                <CustomIcon
-                  type="iconicon-volt-tokenswap-circle"
-                  style={{ fontSize: 30 }}
-                />
+                <CustomIcon type="iconicon-volt-tokenswap-circle" />
                 <div className={styles.label}>Volt {_('wallet')}</div>
               </li>
 
               <>
                 <li onClick={() => this.connectWebWallet(2, 'testnet')}>
-                  <CustomIcon type="iconBSVtestnet" style={{ fontSize: 30 }} />
+                  <CustomIcon type="iconBSVtestnet" />
                   <div className={styles.label}>BSV Testnet</div>
                 </li>
               </>
@@ -484,11 +464,6 @@ export default class UserInfo extends Component {
                   </li>
                 </>
               )}
-              {/*process.env.NODE_ENV === 'development' && (
-                <li id="J_VoltExtConnectBtn" onClick={this.connectExtWallet}>
-                  Chrome Ext
-                </li>
-              )*/}
             </ul>
           </Modal>
         )}

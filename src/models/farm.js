@@ -194,6 +194,7 @@ export default {
 
       const pairName = currentFarmPair.toUpperCase().split('-');
       const [symbol1, symbol2] = pairName;
+
       return {
         ...state,
         ...action.payload,

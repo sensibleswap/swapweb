@@ -17,6 +17,7 @@ import styles from './index.less';
 import _ from 'i18n';
 import { BtnWait } from 'components/btns';
 import { SuccessResult } from 'components/result';
+import { Arrow } from 'components/ui';
 
 let busy = false;
 const type = 'pool';
@@ -186,12 +187,7 @@ export default class RemovePage extends Component {
             tokenPair={<PairIcon keyword="pair" txt="name1/name2-LP" />}
           />
 
-          <div className={styles.switch_icon}>
-            <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 14 }} />
-            </div>
-            <div className={styles.line}></div>
-          </div>
+          <Arrow />
 
           <div className={styles.values}>
             <div className={styles.values_left}>
@@ -387,11 +383,7 @@ export default class RemovePage extends Component {
             </div>
           </div>
 
-          <div className={styles.switch_icon} style={{ margin: '6px 0' }}>
-            <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
-            </div>
-          </div>
+          <Arrow noLine={true} />
 
           <div className={styles.f_box}>
             <div className={styles.f_title}>{_('your_re_liq')}</div>
@@ -411,59 +403,6 @@ export default class RemovePage extends Component {
         </SuccessResult>
       </div>
     );
-    // return (
-    //   <div className={styles.remove_content}>
-    //     <div className={styles.finish_logo}>
-    //       <CustomIcon
-    //         type="iconicon-success"
-    //         style={{ fontSize: 80, color: '#2BB696' }}
-    //       />
-    //     </div>
-    //     <div className={styles.finish_title}>{_('liq_removed')}</div>
-
-    //     <div className={styles.f_box}>
-    //       <div className={styles.f_title}>{_('your_pos')}</div>
-    //       <div className={styles.f_item}>
-    //         <div className={styles.f_label}>
-    //           <PairIcon keyword="pair" size={20} />
-    //         </div>
-    //         <div className={styles.f_value}>
-    //           <FormatNumber value={final_lp} />
-    //         </div>
-    //       </div>
-    //     </div>
-
-    //     <div className={styles.switch_icon} style={{ margin: '6px 0' }}>
-    //       <div className={styles.icon} onClick={this.switch}>
-    //         <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
-    //       </div>
-    //     </div>
-
-    //     <div className={styles.f_box}>
-    //       <div className={styles.f_title}>{_('your_re_liq')}</div>
-    //       <div className={styles.f_item}>
-    //         <div className={styles.f_label}>
-    //           <PairIcon keyword="token1" size={20}>
-    //             <FormatNumber value={receive_token1} />
-    //           </PairIcon>
-    //         </div>
-    //         <div className={styles.f_value}>
-    //           <PairIcon keyword="token2" size={20}>
-    //             <FormatNumber value={receive_token2} />
-    //           </PairIcon>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     <Button
-    //       type="primary"
-    //       shape="round"
-    //       className={styles.done_btn}
-    //       onClick={this.clear}
-    //     >
-    //       {_('done')}
-    //     </Button>
-    //   </div>
-    // );
   }
 
   clear = () => {

@@ -48,6 +48,14 @@
   padding: 0 15px 0 5px;
   background-color: #fff;
   box-shadow: 0px 4px 20px rgba(213, 213, 223, 0.5);
+  .address {
+    margin-right: 5px;
+    margin-left: 0px;
+  }
+  :global(.iconfont) {
+    font-size: 30px;
+    margin-right: 10px;
+  }
 }
 
 .dot {
@@ -58,6 +66,7 @@
   background-color: #2bb696;
   border-radius: 50%;
   margin-left: 10px;
+  margin-right: 5px;
 }
 
 .popover {
@@ -103,6 +112,11 @@
         width: 40px;
         height: 100%;
         cursor: pointer;
+        :global(.iconfont) {
+          font-size: 20px;
+          color: #2f80ed;
+          font-weight: 700;
+        }
       }
     }
 
@@ -155,6 +169,21 @@
 
     &:last-child {
       border-bottom: none;
+    }
+
+    :global {
+      .iconfont {
+        font-size: 20px;
+        margin-right: 12px;
+        color: #2f80ed;
+      }
+
+      .anticon svg {
+        width: 20px;
+        height: 20px;
+        color: #2f80ed;
+        margin-right: 12px;
+      }
     }
   }
 
@@ -227,6 +256,9 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    :global(.iconfont) {
+      font-size: 30px;
+    }
   }
 
   .ts_icon {
@@ -244,6 +276,7 @@
     border-radius: 50%;
     width: 30px;
     height: 30px;
+
     img {
       width: 30px;
       height: 30px;
@@ -255,6 +288,7 @@
     line-height: 20px;
     font-weight: 500;
     margin-left: 15px;
+
     .sub {
       font-size: 12px;
       line-height: 15px;
@@ -269,6 +303,7 @@
     .ant-tooltip-inner {
       background-color: #fff;
     }
+
     .ant-tooltip-arrow-content {
       background-color: #fff;
     }
@@ -391,6 +426,9 @@
 
   .connect_app {
     display: block;
+    :global(.iconfont) {
+      font-size: 24px;
+    }
   }
 
   .user_pop {
@@ -399,6 +437,10 @@
 
     .app_title {
       display: flex;
+
+      :global(.iconfont) {
+        font-size: 14px;
+      }
     }
   }
 

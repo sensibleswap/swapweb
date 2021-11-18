@@ -20,6 +20,7 @@ import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
 import { BtnWait } from 'components/btns';
 import { SuccessResult } from 'components/result';
+import { Plus } from 'components/ui';
 
 let busy = false;
 const type = 'pool';
@@ -307,16 +308,7 @@ export default class Liquidity extends Component {
               value={price_dir ? price1 : price2}
               suffix={price_dir ? token2.symbol : token1.symbol}
             />{' '}
-            <CustomIcon
-              type="iconSwitch"
-              style={{
-                fontSize: 22,
-                backgroundColor: '#F6F6F9',
-                borderRadius: '50%',
-                padding: 4,
-                marginLeft: 5,
-              }}
-            />
+            <CustomIcon type="iconSwitch" />
           </div>
         </div>
       </div>
@@ -394,7 +386,7 @@ export default class Liquidity extends Component {
               >
                 <PairIcon keyword="token1" />
                 <div className={styles.arrow}>
-                  <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                  <CustomIcon type="iconDropdown" />
                 </div>
               </div>
               <FormItem name={'origin_amount'}>
@@ -407,9 +399,7 @@ export default class Liquidity extends Component {
               </FormItem>
             </div>
 
-            <div className={styles.switch_icon}>
-              <PlusOutlined style={{ fontSize: 18 }} />
-            </div>
+            <Plus />
 
             <div className={styles.title}>
               <h3>{_('input')}</h3>
@@ -431,7 +421,7 @@ export default class Liquidity extends Component {
               >
                 <PairIcon keyword="token2" />
                 <div className={styles.arrow}>
-                  <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+                  <CustomIcon type="iconDropdown" />
                 </div>
               </div>
               <FormItem name={'aim_amount'}>
@@ -854,36 +844,6 @@ export default class Liquidity extends Component {
         </SuccessResult>
       </div>
     );
-    // return (
-    //   <div className={styles.add_content}>
-    //     <div className={styles.finish_logo}>
-    //       <CustomIcon
-    //         type="iconicon-success"
-    //         style={{ fontSize: 80, color: '#2BB696' }}
-    //       />
-    //     </div>
-    //     <div className={styles.finish_title}>{_('add_success')}</div>
-    //     <div className={styles.result_data1}>
-    //       {_('added')} {formatSat(_origin_amount, token1.decimal)}{' '}
-    //       {token1.symbol} + {formatSat(_aim_amount, token2.decimal)}{' '}
-    //       {token2.symbol}
-    //     </div>
-    //     <div className={styles.result_data2}>
-    //       {_('received')} {formatSat(lpAddAmount, lptoken.decimal)}
-    //       <PairIcon keyword="pair" size={20} />{' '}
-    //     </div>
-    //     {/*this.renderResultInfo()*/}
-    //     <Button
-    //       className={styles.done_btn}
-    //       shape="round"
-    //       onClick={() => {
-    //         history.push('/swap');
-    //       }}
-    //     >
-    //       {_('done')}
-    //     </Button>
-    //   </div>
-    // );
   }
 
   renderSwap() {

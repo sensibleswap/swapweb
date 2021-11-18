@@ -41,12 +41,12 @@ export default class Rate extends Component {
   change = ({ percent, amount }) => {
     const { balance } = this.props;
 
-    if (percent >= 0) {
+    if (parseFloat(percent) >= 0) {
       amount = this.countAmount(percent);
-    } else if (amount >= balance) {
+    } else if (parseFloat(amount) >= parseFloat(balance)) {
       percent = 100;
       amount = balance;
-    } else if (amount >= 0) {
+    } else if (parseFloat(amount) >= 0) {
       percent = this.countPercent(amount);
     }
 
@@ -73,7 +73,7 @@ export default class Rate extends Component {
         >
           {_('balance')}:{' '}
           <span>
-            <FormatNumber value={balance} />
+            <FormatNumber value={balance} round={4} />
           </span>
         </div>
 

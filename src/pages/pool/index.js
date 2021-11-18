@@ -152,7 +152,7 @@ export default class Pool extends Component {
               <div className={styles.app_title}>
                 {_('pool')}
                 <div className={styles.close} onClick={this.hidePannel}>
-                  <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
+                  <CustomIcon type="iconcross" />
                 </div>
               </div>
 

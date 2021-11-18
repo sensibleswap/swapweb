@@ -126,7 +126,7 @@ export default class SwapPage extends Component {
               <div className={styles.app_title}>
                 {_('swap')}
                 <div className={styles.close} onClick={this.hidePannel}>
-                  <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
+                  <CustomIcon type="iconcross" />
                 </div>
               </div>
               <Swap />

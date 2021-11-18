@@ -17,6 +17,7 @@ import styles from './index.less';
 import _ from 'i18n';
 import { BtnWait } from 'components/btns';
 import { SuccessResult } from 'components/result';
+import { Arrow2 } from '../../components/ui';
 
 const log = debug('swap');
 
@@ -181,7 +182,7 @@ export default class Swap extends Component {
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <PairIcon keyword={dirForward ? 'token1' : 'token2'} size={40} />
           <div className={styles.arrow}>
-            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+            <CustomIcon type="iconDropdown" />
           </div>
         </div>
         <FormItem name="origin_amount">
@@ -204,7 +205,7 @@ export default class Swap extends Component {
         <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
           <PairIcon keyword={dirForward ? 'token2' : 'token1'} size={40} />
           <div className={styles.arrow}>
-            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
+            <CustomIcon type="iconDropdown" />
           </div>
         </div>
         <FormItem name="aim_amount">
@@ -394,12 +395,7 @@ export default class Swap extends Component {
             </div>
             {this.renderOriginToken()}
 
-            <div className={styles.switch_icon}>
-              <div className={styles.icon} onClick={this.switch}>
-                <CustomIcon type="iconswitch" style={{ fontSize: 20 }} />
-              </div>
-              <div className={styles.line}></div>
-            </div>
+            <Arrow2 onClick={this.switch} />
 
             <div className={styles.title}>
               <h3>{_('you_receive')} </h3>
@@ -801,47 +797,6 @@ export default class Swap extends Component {
         </SuccessResult>
       </div>
     );
-    // return (
-    //   <div className={styles.content}>
-    //     <div className={styles.finish_logo}>
-    //       <CustomIcon
-    //         type="iconicon-success"
-    //         style={{ fontSize: 64, color: '#2BB696' }}
-    //       />
-    //     </div>
-    //     <div className={styles.finish_title}>{_('swap_success')}</div>
-
-    //     <div className={styles.detail}>
-    //       <div className={styles.line}>
-    //         <div className={styles.detail_item}>
-    //           <div className={styles.item_label}>{_('paid')}</div>
-    //           <div className={styles.item_value}>
-    //             <FormatNumber value={origin_amount} suffix={symbol1} />
-    //           </div>
-    //         </div>
-    //         <div className={styles.detail_item} style={{ textAlign: 'right' }}>
-    //           <div className={styles.item_label}>{_('received')}</div>
-    //           <div className={styles.item_value}>
-    //             {realSwapAmount} {symbol2}
-    //           </div>
-    //         </div>
-    //       </div>
-    //       <div className={styles.detail_item}>
-    //         <div className={styles.item_label}>{_('swap_fee')}</div>
-    //         <div className={styles.item_value}>
-    //           <FormatNumber value={formatSat(txFee)} suffix="BSV" />
-    //         </div>
-    //       </div>
-    //       <div className={styles.detail_item}>
-    //         <div className={styles.item_label}>{_('onchain_tx')}</div>
-    //         <div className={styles.item_value}>{txid}</div>
-    //       </div>
-    //     </div>
-    //     <Button className={styles.done_btn} shape="round" onClick={this.finish}>
-    //       {_('done')}
-    //     </Button>
-    //   </div>
-    // );
   }
   componentDidMount() {
     EventBus.on('reloadPair', () => {

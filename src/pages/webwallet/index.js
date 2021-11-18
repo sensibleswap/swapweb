@@ -106,10 +106,7 @@ export default class WebWallet extends Component {
             </div>
             <div className={styles.address}>
               <Clipboard text={userAddress}>
-                <CustomIcon
-                  type="iconcopy"
-                  style={{ fontSize: 20, marginRight: 5 }}
-                />
+                <CustomIcon type="iconcopy" />
                 {userAddress}
               </Clipboard>
             </div>
