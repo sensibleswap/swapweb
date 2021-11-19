@@ -32,7 +32,13 @@ export default class FarmList extends Component {
   };
 
   renderItem(data) {
-    const { loading, currentFarmPair, pairsData, allPairs } = this.props;
+    const {
+      loading,
+      currentFarmPair,
+      pairsData,
+      allPairs,
+      isLogin,
+    } = this.props;
 
     const {
       pairName,
@@ -53,7 +59,12 @@ export default class FarmList extends Component {
 
     const { decimal } = rewardToken;
 
-    const _rewardTokenAmount = formatSat(rewardTokenAmount, decimal);
+    const _rewardTokenAmount = isLogin
+      ? formatSat(rewardTokenAmount, decimal)
+      : 0;
+    const _lockedTokenAmount = isLogin
+      ? formatSat(lockedTokenAmount, token.decimal)
+      : 0;
 
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
 
@@ -87,7 +98,7 @@ export default class FarmList extends Component {
           </div>
           <div className={styles.lp_amount}>
             {_(abandoned ? 'abandoned_deposited_lp' : 'your_deposited_lp')}:{' '}
-            <FormatNumber value={formatSat(lockedTokenAmount, token.decimal)} />
+            <FormatNumber value={_lockedTokenAmount} />
           </div>
         </div>
 

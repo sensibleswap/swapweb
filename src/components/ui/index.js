@@ -78,6 +78,7 @@ export function AppStartBtn(props) {
           shape="round"
           className={styles[`${size}_btn`]}
           onClick={() => onClick(item.key)}
+          key={item.key}
         >
           {item.txt}
         </Button>

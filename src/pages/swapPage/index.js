@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import EventBus from 'common/eventBus';
-import { Button } from 'antd';
 import { jc } from 'common/utils';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
@@ -14,7 +13,7 @@ import Swap from '../swap';
 import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
-import { AppStartBtn } from '../../components/ui';
+import { AppStartBtn } from 'components/ui';
 
 let busy = false;
 @connect(({ pair, loading }) => {

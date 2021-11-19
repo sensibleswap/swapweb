@@ -59,7 +59,7 @@ export default {
           type: 'save',
           payload: {
             accountInfo,
-            isLogin: true,
+            // isLogin: true,
           },
         });
       } catch (error) {

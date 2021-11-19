@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { connect, history } from 'umi';
-import { Button, Spin } from 'antd';
+import { Spin } from 'antd';
 import Notice from 'components/notice';
 import { AppTitle } from 'components/ui';
 import { jc, parseUrl } from 'common/utils';
@@ -13,7 +13,7 @@ import Withdraw from '../withdraw';
 // import debug from 'debug';
 import styles from './index.less';
 import _ from 'i18n';
-import { AppStartBtn } from '../../components/ui';
+import { AppStartBtn } from 'components/ui';
 // const log = debug('farm');
 let busy = false;
 

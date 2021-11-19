@@ -1,7 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
 import { history, connect } from 'umi';
-import { Button } from 'antd';
 import { jc } from 'common/utils';
 import { TSWAP_POOL_SHOW_OP } from 'common/const';
 import Pair from 'components/pair';
@@ -13,7 +12,7 @@ import Header from '../layout/header';
 import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
-import { AppStartBtn } from '../../components/ui';
+import { AppStartBtn } from 'components/ui';
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
