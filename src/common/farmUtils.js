@@ -1,45 +1,72 @@
+import pairApi from '../api/pair';
 import BigNumber from 'bignumber.js';
-import { formatSat, formatAmount, tokenPre } from './utils';
+import { formatSat, formatAmount } from './utils';
 
-export function handleFarmData(data, allPairs, pairsData, bsvPrice) {
+export async function fetchFarmData(data) {
+  let p = [];
+  let pairsData = {};
+  let pairs = [];
+
+  Object.keys(data).forEach((item) => {
+    if (item !== 'blockHeight') {
+      let { tokenID } = data[item].token;
+      pairs.push(tokenID);
+
+      p.push(pairApi.querySwapInfo(tokenID));
+    }
+  });
+  const datas_res = await Promise.all(p);
+
+  // console.log(pairs, datas_res)
+  pairs.forEach((item, index) => {
+    if (datas_res[index].code === 0) {
+      let d = datas_res[index].data;
+      pairsData[item] = d;
+      const { token1, token2 } = d;
+      pairsData[`${token1.symbol}-${token2.symbol}`.toUpperCase()] = d; //加个交易名索引，用来快速获取奖励token的数据
+    }
+  });
+  return pairsData;
+}
+
+export function handleFarmData(data, pairsData, bsvPrice) {
   let allFarmData = {},
     allFarmArr = [];
-  Object.keys(data).forEach((pairName) => {
-    if (pairName === 'blockHeight') return;
-    let item = data[pairName];
-    item.pairName = pairName;
-    const { poolTokenAmount, rewardAmountPerBlock, rewardToken } = data[
-      pairName
+  // console.log(data)
+  Object.keys(data).forEach((id) => {
+    if (id === 'blockHeight') return;
+    let item = data[id];
+    const { poolTokenAmount, rewardAmountPerBlock, rewardToken, token } = data[
+      id
     ];
-    const { token1 } = allPairs[pairName];
-    const [symbol1] = pairName.toUpperCase().split('-');
+
+    item.id = id;
+    // console.log(id);
 
     let { decimal, symbol } = rewardToken;
-    symbol = symbol.toLowerCase();
-    const { swapLpAmount = 0, swapToken1Amount = 0 } = pairsData[pairName];
+    symbol = symbol.toUpperCase();
+
+    const { swapLpAmount = 0, swapToken1Amount = 0, token1 } = pairsData[
+      token.tokenID
+    ];
 
     const bsv_amount = formatSat(swapToken1Amount, token1.decimal);
 
     const lp_price = BigNumber(bsv_amount * 2).div(swapLpAmount);
 
-    let reward_token;
-    if (pairName.indexOf('bsv-') === 0) {
-      reward_token = pairsData[`bsv-${symbol}`];
-    } else if (pairName.indexOf('usdt-') === 0) {
-      reward_token = pairsData[`usdt-${symbol}`];
-    } else if (pairName.indexOf('tsc-') === 0) {
-      reward_token = pairsData[`usdt-tsc`];
-    } else if (pairName.indexOf('tbsv-') === 0) {
-      reward_token = pairsData[`tbsv-${symbol}`];
-    }
-    // const reward_symbol = `${tokenPre()}${symbol.toLowerCase()}`;
-    // let reward_token = pairsData[reward_symbol];
+    const symbol1 = token1.symbol.toUpperCase();
 
-    // if (pairName === 'usdt-tsc') {
-    //   reward_token = pairsData[pairName];
-    // }
-    if (!reward_token || !allPairs[pairName]) {
-      allFarmData[pairName] = item;
+    let reward_token;
+    if (symbol1 === 'BSV' || symbol1 === 'USDT') {
+      reward_token = pairsData[`${symbol1}-${symbol}`];
+    } else if (symbol1 === 'TSC') {
+      reward_token = pairsData[`USDT-TSC`];
+    } else if (symbol1 === 'TBSV' || symbol1 === 'TUSD') {
+      reward_token = pairsData[`TBSV-${symbol}`];
+    }
+
+    if (!reward_token) {
+      allFarmData[id] = item;
       allFarmArr.push(item);
       return;
     }
@@ -66,13 +93,13 @@ export function handleFarmData(data, allPairs, pairsData, bsvPrice) {
 
     _yield = formatAmount(_yield, 2);
 
-    if (symbol1 === 'BSV') {
+    if (token1.symbol === 'bsv') {
       _total = _total.multipliedBy(bsvPrice);
     }
     item._yield = _yield;
     item._total = _total.toString();
 
-    allFarmData[pairName] = item;
+    allFarmData[id] = item;
     allFarmArr.push(item);
   });
   allFarmArr.sort((a, b) => {

@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { history } from 'umi';
 import { Tooltip } from 'antd';
-import CustomIcon from 'components/icon';
 import TokenPair from 'components/tokenPair';
 import FormatNumber from 'components/formatNumber';
 import EventBus from 'common/eventBus';
@@ -10,7 +9,7 @@ import { jc, formatSat, formatAmount } from 'common/utils';
 import Harvest from './harvest';
 import styles from './index.less';
 import _ from 'i18n';
-import { Iconi } from '../../components/ui';
+import { Iconi } from 'components/ui';
 
 const { hash } = window.location;
 
@@ -32,16 +31,10 @@ export default class FarmList extends Component {
   };
 
   renderItem(data) {
-    const {
-      loading,
-      currentFarmPair,
-      pairsData,
-      allPairs,
-      isLogin,
-    } = this.props;
+    const { loading, currentFarmPair, pairsData, isLogin } = this.props;
 
     const {
-      pairName,
+      id,
       token,
       abandoned = false,
       lockedTokenAmount,
@@ -51,11 +44,13 @@ export default class FarmList extends Component {
       _total = 0,
       _yield = 0,
     } = data;
-    if (loading || !pairsData[pairName]) {
+    let { tokenID } = token;
+    if (loading || !pairsData[tokenID]) {
       return null;
     }
-    const { token1, token2 } = allPairs[pairName];
-    const [symbol1, symbol2] = pairName.toUpperCase().split('-');
+    const { token1, token2 } = pairsData[tokenID];
+    const symbol1 = token1.symbol.toUpperCase();
+    const symbol2 = token2.symbol.toUpperCase();
 
     const { decimal } = rewardToken;
 
@@ -72,15 +67,11 @@ export default class FarmList extends Component {
     if (abandoned) {
       cls = jc(styles.item, styles.warn);
     }
-    if (pairName === currentFarmPair) {
+    if (id === currentFarmPair) {
       cls = jc(cls, styles.current);
     }
     return (
-      <div
-        className={cls}
-        key={pairName}
-        onClick={() => this.changeCurrentFarm(pairName)}
-      >
+      <div className={cls} key={id} onClick={() => this.changeCurrentFarm(id)}>
         <div className={styles.item_header}>
           <div className={styles.item_title}>
             <div className={styles.icon}>
@@ -152,7 +143,7 @@ export default class FarmList extends Component {
             </Tooltip>
           </div>
           <Harvest
-            pairName={pairName}
+            id={id}
             data={data}
             {...this.props}
             rewardTokenAmount={rewardTokenAmount}
@@ -163,18 +154,18 @@ export default class FarmList extends Component {
   }
 
   render() {
-    const { allFarmPairs, allFarmPairsArr } = this.props;
+    const { allFarmPairsArr, blockHeight } = this.props;
     return (
       <div className={styles.content}>
         <div className={styles.farm_intro}>{_('farm_desc')}</div>
         <div className={styles.farm_title}>
-          {allFarmPairs.blockHeight &&
-            `${_('last_block_height')} #${allFarmPairs.blockHeight}`}
+          {blockHeight && `${_('last_block_height')} #${blockHeight}`}
         </div>
         <div className={styles.items}>
-          {allFarmPairsArr.map((item) => {
-            return this.renderItem(item);
-          })}
+          {allFarmPairsArr.length > 0 &&
+            allFarmPairsArr.map((item) => {
+              return this.renderItem(item);
+            })}
         </div>
       </div>
     );

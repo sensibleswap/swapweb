@@ -24,15 +24,16 @@ let busy = false;
     ...user,
     ...farm,
     loading:
-      effects['farm/getAllPairs'] ||
-      effects['farm/getPairData'] ||
-      effects['pair/getAllPairs'] ||
-      false,
+      effects['farm/getAllPairs'] || effects['farm/getPairData'] || false,
     submiting:
       effects['farm/reqSwap'] ||
       effects['farm/harvest'] ||
       effects['farm/harvest2'] ||
       effects['user/transferBsv'] ||
+      effects['user/transferAll'] ||
+      effects['farm/withdraw'] ||
+      effects['farm/withdraw2'] ||
+      effects['farm/deposit'] ||
       effects['user/signTx'] ||
       false,
   };
@@ -77,10 +78,10 @@ export default class FarmC extends Component {
 
   fetch = async () => {
     this.updateFarmPairs();
-    this.props.dispatch({
-      type: 'pair/getAllPairs',
-      payload: {},
-    });
+    // this.props.dispatch({
+    //   type: 'pair/getAllPairs',
+    //   payload: {},
+    // });
   };
 
   updateFarmPairs = async () => {

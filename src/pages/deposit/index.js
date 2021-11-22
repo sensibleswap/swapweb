@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip } from 'node-gzip';
 import EventBus from 'common/eventBus';
-import { Button, Spin, message } from 'antd';
+import { Button, message } from 'antd';
 import Rate from 'components/rate';
 import Loading from 'components/loading';
 import { BtnWait } from 'components/btns';
@@ -22,12 +22,7 @@ import { Arrow } from 'components/ui';
     ...pair,
     ...user,
     ...farm,
-    loading: effects['farm/getAllPairs'] || effects['pair/getAllPairs'],
-    submiting:
-      effects['farm/reqSwap'] ||
-      effects['farm/deposit'] ||
-      effects['user/transferAll'] ||
-      false,
+    loading: effects['farm/getAllPairs'],
   };
 })
 export default class Deposit extends Component {
@@ -82,68 +77,65 @@ export default class Deposit extends Component {
       loading,
       submiting,
       accountInfo,
-      symbol1,
-      symbol2,
       lptoken,
       rewardToken,
       pairsData,
-      allPairs = {},
       allFarmPairs,
     } = this.props;
-    if (loading || !currentFarmPair || !pairsData[currentFarmPair])
-      return <Loading />;
-    if (!allPairs[currentFarmPair]) return null;
-    const balance = accountInfo.userBalance[lptoken.tokenID] || 0;
-    const currentPairData = pairsData[currentFarmPair] || {};
-    const { token1, token2 } = allPairs[currentFarmPair];
-    const { swapToken1Amount, swapToken2Amount } = currentPairData;
+    if (!currentFarmPair) return null;
+    const { tokenID } = lptoken;
+    if (loading || !currentFarmPair || !pairsData[tokenID]) return <Loading />;
+    if (!pairsData[tokenID]) return null;
+    const balance = accountInfo.userBalance[tokenID] || 0;
+    const currentPairData = pairsData[tokenID] || {};
+    const {
+      swapToken1Amount,
+      swapToken2Amount,
+      token1,
+      token2,
+    } = currentPairData;
     const bsv_amount = formatSat(swapToken1Amount, token1.decimal);
-
-    // const { decimal } = allPairs[currentFarmPair]
-    //   ? token2
-    //   : 8;
     const token_amount = formatSat(swapToken2Amount, token2.decimal);
     const price = formatAmount(token_amount / bsv_amount, token2.decimal);
     return (
       <div className={styles.content}>
-        <Spin spinning={submiting}>
-          <Rate
-            type="farm"
-            changeAmount={this.changeData}
-            balance={balance}
-            tokenPair={<FarmPairIcon keyword="pair" />}
-          />
-          <Arrow />
+        <Rate
+          type="farm"
+          changeAmount={this.changeData}
+          balance={balance}
+          tokenPair={<FarmPairIcon keyword="pair" />}
+        />
+        <Arrow />
 
-          <div className={styles.title}>{_('earn')}</div>
-          <div
-            className={styles.pair_box}
-            style={{ paddingLeft: 15, paddingRight: 17 }}
-          >
-            <div className={styles.pair_left}>
-              <div className={styles.icon} style={{ marginRight: 10 }}>
-                <TokenLogo
-                  name={rewardToken.symbol}
-                  genesisID={rewardToken.tokenID}
-                  size={25}
-                />
-              </div>
-              <div className={styles.name} style={{ fontSize: 22 }}>
-                {rewardToken.symbol}
-              </div>
+        <div className={styles.title}>{_('earn')}</div>
+        <div
+          className={styles.pair_box}
+          style={{ paddingLeft: 15, paddingRight: 17 }}
+        >
+          <div className={styles.pair_left}>
+            <div className={styles.icon} style={{ marginRight: 10 }}>
+              <TokenLogo
+                name={rewardToken.symbol}
+                genesisID={rewardToken.tokenID}
+                size={25}
+              />
             </div>
-            <div className={styles.pair_right}>
-              <FormatNumber value={allFarmPairs[currentFarmPair]._yield} />%{' '}
-              {_('apy')}
+            <div className={styles.name} style={{ fontSize: 22 }}>
+              {rewardToken.symbol}
             </div>
           </div>
-
-          <div className={styles.price}>
-            1 {symbol1} = {price} {symbol2}
+          <div className={styles.pair_right}>
+            <FormatNumber value={allFarmPairs[currentFarmPair]._yield} />%{' '}
+            {_('apy')}
           </div>
+        </div>
 
-          {this.renderButton()}
-        </Spin>
+        <div className={styles.price}>
+          1 {token1.symbol.toUpperCase()} = {price}{' '}
+          {token2.symbol.toUpperCase()}
+        </div>
+
+        {this.renderButton()}
       </div>
     );
   }
@@ -173,9 +165,6 @@ export default class Deposit extends Component {
       return message.error(isLackBalance.msg);
     }
 
-    // const _value = BigNumber(addLP)
-    //   .multipliedBy(Math.pow(10, lptoken.decimal))
-    //   .toFixed(0);
     const _value = formatTok(addLP, lptoken.decimal);
     // console.log(_value, formatTok(addLP, lptoken.decimal))
     let tx_res = await dispatch({
@@ -244,7 +233,14 @@ export default class Deposit extends Component {
   };
 
   renderButton() {
-    const { isLogin, accountInfo, lptoken } = this.props;
+    const {
+      isLogin,
+      accountInfo,
+      lptoken,
+      allFarmPairs,
+      currentFarmPair,
+    } = this.props;
+
     const { addLP } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID];
 
@@ -256,6 +252,19 @@ export default class Deposit extends Component {
         cond: parseFloat(addLP) > parseFloat(LP),
       },
     ];
+
+    if (allFarmPairs[currentFarmPair].abandoned) {
+      return (
+        <Button
+          className={styles.btn}
+          type="primary"
+          shape="round"
+          disabled={true}
+        >
+          {_('deposit_earn')}
+        </Button>
+      );
+    }
 
     return (
       BtnWait(conditions) || (

@@ -1,9 +1,9 @@
 // import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
-import pairApi from '../api/pair';
+// import pairApi from '../api/pair';
 import { TSWAP_CURRENT_FARM_PAIR, TSWAP_SOURCE } from 'common/const';
 import { formatSat, getCurrentPair } from 'common/utils';
-import { handleFarmData } from 'common/farmUtils';
+import { handleFarmData, fetchFarmData } from 'common/farmUtils';
 import debug from 'debug';
 const log = debug('farm');
 
@@ -15,8 +15,6 @@ export default {
     allFarmPairsArr: [],
     currentFarmPair: '',
     lockedTokenAmount: 0,
-    symbol1: '',
-    symbol2: '',
     lptoken: {},
     rewardToken: {},
     pairYields: {},
@@ -49,27 +47,34 @@ export default {
           }
         });
       }
-      let p = [];
-      let pairsData = {};
-      let pairs = [];
-      // farmPairs = [];
-      Object.keys(data).forEach((item) => {
-        if (item !== 'blockHeight') {
-          pairs.push(item);
-          // farmPairs.push({ ...data[item], pairName: item });
-          p.push(pairApi.querySwapInfo(item));
-        }
-      });
-      const datas_res = yield Promise.all(p);
-      pairs.forEach((item, index) => {
-        if (datas_res[index].code === 0) {
-          pairsData[item] = datas_res[index].data;
-        }
-      });
-      const { allPairs, bsvPrice } = yield select((state) => state.pair);
+      const pairsData = yield fetchFarmData(data);
+      // let p = [];
+      // let pairsData = {};
+      // let pairs = [];
+
+      // Object.keys(data).forEach((item) => {
+      //   if (item !== 'blockHeight') {
+      //     let {tokenID} = data[item].token;
+      //     pairs.push(tokenID);
+
+      //     p.push(pairApi.querySwapInfo(tokenID));
+      //   }
+      // });
+      // const datas_res = yield Promise.all(p);
+
+      // // console.log(pairs, datas_res)
+      // pairs.forEach((item, index) => {
+      //   if (datas_res[index].code === 0) {
+      //     let d = datas_res[index].data;
+      //     pairsData[item] = d;
+      //     const { token1, token2 } = d;
+      //     pairsData[`${token1.symbol}-${token2.symbol}`.toUpperCase()] = d; //加个交易名索引，用来快速获取奖励token的数据
+      //   }
+      // });
+      // console.log(pairsData);
+      const { bsvPrice } = yield select((state) => state.pair);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
-        allPairs,
         pairsData,
         bsvPrice,
       );
@@ -82,6 +87,7 @@ export default {
           allFarmPairsArr: allFarmArr,
           currentFarmPair,
           pairsData,
+          blockHeight: data.blockHeight,
         },
       });
       return {
@@ -94,22 +100,16 @@ export default {
       // let { currentPair } = payload;
       const { userAddress } = yield select((state) => state.user.accountInfo);
       const res = yield farmApi.queryAllPairs.call(farmApi, userAddress);
-      const { code, msg, data } = res;
+      const { code, data } = res;
       if (code !== 0) {
         return res;
       }
 
-      let farmPairs = [];
-      Object.keys(data).forEach((item) => {
-        if (item !== 'blockHeight') {
-          farmPairs.push({ ...data[item], pairName: item });
-        }
-      });
-      const { allPairs, bsvPrice } = yield select((state) => state.pair);
-      const { pairsData } = yield select((state) => state.farm);
+      const { bsvPrice } = yield select((state) => state.pair);
+      // const { pairsData } = yield select((state) => state.farm);
+      const pairsData = yield fetchFarmData(data);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
-        allPairs,
         pairsData,
         bsvPrice,
       );
@@ -120,6 +120,7 @@ export default {
         payload: {
           allFarmPairs: allFarmData,
           allFarmPairsArr: allFarmArr,
+          blockHeight: data.blockHeight,
         },
       });
 
@@ -185,23 +186,18 @@ export default {
       if (!allFarmPairs) {
         allFarmPairs = state.allFarmPairs;
       }
-      if (allFarmPairs[currentFarmPair]) {
-        const currentPairObj = allFarmPairs[currentFarmPair];
+      const currentPairObj = allFarmPairs[currentFarmPair];
+      if (currentPairObj) {
         token = currentPairObj.token;
         lockedTokenAmount = currentPairObj.lockedTokenAmount;
         rewardToken = currentPairObj.rewardToken;
       }
-
-      const pairName = currentFarmPair.toUpperCase().split('-');
-      const [symbol1, symbol2] = pairName;
 
       return {
         ...state,
         ...action.payload,
         lptoken: token,
         rewardToken,
-        symbol1,
-        symbol2,
         lockedTokenAmount: formatSat(lockedTokenAmount, token.decimal),
       };
     },

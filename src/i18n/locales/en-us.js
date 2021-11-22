@@ -244,7 +244,7 @@ const texts = {
   last_block_height: 'Latest BSV block height:',
   your_deposited_lp: 'Your deposited LP',
   abandoned_deposited_lp:
-    'Withdraw all your LP token and yield, deposit LP token to the new contract below',
+    'Withdraw all your LP token and yield, deposit LP token to the new contract',
   apy_info:
     'APY = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
   deposit: 'Deposit',

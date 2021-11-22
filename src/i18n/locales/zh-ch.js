@@ -236,7 +236,7 @@ const texts = {
   farm_desc: '提供流动性并将LP锁仓赚取收益',
   last_block_height: 'Oracle提供的BSV区块高度：',
   your_deposited_lp: '你锁仓的LP',
-  abandoned_deposited_lp: '提取你所有的收益和LP token锁仓到下面的新合约',
+  abandoned_deposited_lp: '提取你所有的收益和LP token锁仓到新合约',
   apy_info: 'APY = (每区块奖励 * 144 * 365) * 收益token价格/锁仓总价值 * 100%',
   deposit: '锁仓',
   earn: '赚取',

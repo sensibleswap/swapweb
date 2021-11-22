@@ -216,10 +216,10 @@ export const formatSat = (value, dec = 8) => {
   return v.toString();
 };
 
-export const formatTok = (value, dec = 8) => {
+export const formatTok = (value, dec = 8, str = true) => {
   if (!value) return 0;
   const v = BigNumber(value).multipliedBy(Math.pow(10, dec));
-  return v.toFixed(0);
+  return str ? v.toFixed(0) : v;
 };
 
 export function sleep(ms) {

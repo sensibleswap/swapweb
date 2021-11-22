@@ -63,7 +63,12 @@ export default class Withdraw extends Component {
   };
 
   renderForm() {
-    const { currentFarmPair, loading, lockedTokenAmount } = this.props;
+    const {
+      currentFarmPair,
+      loading,
+      lockedTokenAmount,
+      submiting,
+    } = this.props;
     if (loading || !currentFarmPair) return <Loading />;
     return (
       <div className={styles.content}>

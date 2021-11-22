@@ -168,7 +168,7 @@ export default class Harvest extends Component {
   };
 
   render() {
-    const { pairName, data, rewardTokenAmount, isLogin } = this.props;
+    const { id, data, rewardTokenAmount, isLogin } = this.props;
     return (
       <div className={styles.item_detail_line_2}>
         <Button
@@ -176,7 +176,7 @@ export default class Harvest extends Component {
           type="primary"
           shape="round"
           disabled={!isLogin || rewardTokenAmount <= 0}
-          onClick={() => this.harvest(pairName, data)}
+          onClick={() => this.harvest(id, data)}
         >
           {_('harvest')}
         </Button>
