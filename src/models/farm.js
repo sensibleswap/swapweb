@@ -37,41 +37,23 @@ export default {
         return res;
       }
 
+      const pairsData = yield fetchFarmData(data);
+
       let currentFarmPair = getCurrentPair('farm');
-      if (!currentFarmPair || !data[currentFarmPair]) {
+      if (
+        !currentFarmPair ||
+        !data[currentFarmPair] ||
+        !pairsData[currentFarmPair]
+      ) {
         Object.keys(data).forEach((item) => {
-          if (item !== 'blockHeight') {
+          if (item !== 'blockHeight' && pairsData[data[item].token.tokenID]) {
             currentFarmPair = item;
             // console.log('localstorage.set:', item)
             localStorage.setItem(TSWAP_CURRENT_FARM_PAIR, item);
           }
         });
       }
-      const pairsData = yield fetchFarmData(data);
-      // let p = [];
-      // let pairsData = {};
-      // let pairs = [];
 
-      // Object.keys(data).forEach((item) => {
-      //   if (item !== 'blockHeight') {
-      //     let {tokenID} = data[item].token;
-      //     pairs.push(tokenID);
-
-      //     p.push(pairApi.querySwapInfo(tokenID));
-      //   }
-      // });
-      // const datas_res = yield Promise.all(p);
-
-      // // console.log(pairs, datas_res)
-      // pairs.forEach((item, index) => {
-      //   if (datas_res[index].code === 0) {
-      //     let d = datas_res[index].data;
-      //     pairsData[item] = d;
-      //     const { token1, token2 } = d;
-      //     pairsData[`${token1.symbol}-${token2.symbol}`.toUpperCase()] = d; //加个交易名索引，用来快速获取奖励token的数据
-      //   }
-      // });
-      // console.log(pairsData);
       const { bsvPrice } = yield select((state) => state.pair);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,

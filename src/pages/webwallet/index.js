@@ -68,10 +68,12 @@ export default class WebWallet extends Component {
     }
     message.success(_('withdraw_success'));
     dispatch({
-      type: 'user/loadingUserData',
-      payload: {
-        type: 1,
-      },
+      type: 'user/updateUserData',
+    });
+
+    this.formRef.current.setFieldsValue({
+      amount: '',
+      address: '',
     });
   };
   setMaxAmount = () => {

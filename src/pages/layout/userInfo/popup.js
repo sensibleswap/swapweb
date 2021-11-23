@@ -1,5 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
+import { history } from 'umi';
 import QRCode from 'qrcode.react';
 import { DollarOutlined } from '@ant-design/icons';
 import { AppTitle } from 'components/ui';
@@ -87,15 +88,15 @@ export default class Popup extends Component {
             <span className={styles.name}>{_('switch_wallet')}</span>
           </div>
           {walletType === 1 && (
-            <div
-              className={styles.line}
-              onClick={() => {
-                history.push('/webwallet');
-                this.closePop();
-              }}
-            >
+            <div className={styles.line}>
               <DollarOutlined />
-              <span className={styles.name}>{_('withdraw')}</span>
+              <a
+                target="_blank"
+                href="https://wallet.tswap.io/"
+                className={styles.name}
+              >
+                {_('withdraw')}
+              </a>
             </div>
           )}
           <div className={styles.line} onClick={disConnect}>

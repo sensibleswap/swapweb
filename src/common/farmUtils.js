@@ -1,4 +1,5 @@
 import pairApi from '../api/pair';
+import customApi from '../api/custom';
 import BigNumber from 'bignumber.js';
 import { formatSat, formatAmount } from './utils';
 
@@ -12,7 +13,11 @@ export async function fetchFarmData(data) {
       let { tokenID } = data[item].token;
       pairs.push(tokenID);
 
-      p.push(pairApi.querySwapInfo(tokenID));
+      p.push(
+        data[item].custom
+          ? customApi.querySwapInfo(tokenID)
+          : pairApi.querySwapInfo(tokenID),
+      );
     }
   });
   const datas_res = await Promise.all(p);
@@ -45,6 +50,9 @@ export function handleFarmData(data, pairsData, bsvPrice) {
 
     let { decimal, symbol } = rewardToken;
     symbol = symbol.toUpperCase();
+    if (!pairsData[token.tokenID]) {
+      return null;
+    }
 
     const { swapLpAmount = 0, swapToken1Amount = 0, token1 } = pairsData[
       token.tokenID
