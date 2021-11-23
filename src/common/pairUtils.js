@@ -17,13 +17,9 @@ export const calcAmount = (props) => {
   let amount2 = dirForward ? swapToken2Amount : swapToken1Amount;
   let decimal1 = dirForward ? token1.decimal : token2.decimal;
   let decimal2 = dirForward ? token2.decimal : token1.decimal;
-  // let _originAddAmount = BN(originAddAmount).multipliedBy(
-  //     Math.pow(10, decimal1),
-  // );
+
   let _originAddAmount = formatTok(originAddAmount, decimal1, false);
-  // let _aimAddAmount = BN(aimAddAmount).multipliedBy(
-  //     Math.pow(10, decimal2),
-  // );
+
   let _aimAddAmount = formatTok(aimAddAmount, decimal2, false);
   let newAmount1 = BN(amount1),
     newAmount2 = BN(amount2);
@@ -44,12 +40,6 @@ export const calcAmount = (props) => {
       decimal2,
     );
 
-    // this.formRef.current.setFieldsValue({
-    //     aim_amount: removeAmount,
-    // });
-    // this.setState({
-    //     aim_amount: removeAmount,
-    // });
     newOriginAddAmount = originAddAmount;
     newAimAddAmount = removeAmount;
   } else if (aimAddAmount > 0) {
@@ -70,43 +60,18 @@ export const calcAmount = (props) => {
       newAmount2 = BN(amount2);
     }
 
-    // this.formRef.current.setFieldsValue({
-    //     origin_amount: addAmountN,
-    // });
-    // this.setState({
-    //     origin_amount: addAmountN,
-    //     fee:
-    //         addAmount > 0
-    //             ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
-    //             : 0,
-    // });
     newOriginAddAmount = addAmountN;
     newAimAddAmount = aimAddAmount;
     fee =
       addAmount > 0
         ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
         : 0;
-  } else {
-    //两个值都没有大于0
-    // this.formRef.current.setFieldsValue({
-    //     origin_amount: originAddAmount,
-    //     aim_amount: aimAddAmount,
-    // });
-    // this.setState({
-    //     origin_amount: originAddAmount,
-    //     aim_amount: aimAddAmount,
-    // });
-    newOriginAddAmount = originAddAmount;
-    newAimAddAmount = aimAddAmount;
   }
 
   const p = BN(amount2).dividedBy(amount1);
   const p1 = newAmount2.dividedBy(newAmount1);
   const slip = p1.minus(p).dividedBy(p);
 
-  // this.setState({
-  //     slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
-  // });
   return {
     newOriginAddAmount,
     newAimAddAmount,
