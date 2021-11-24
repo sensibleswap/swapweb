@@ -300,5 +300,27 @@ const texts = {
   not_acknowlege: 'Do not acknowledge',
   download_sensilet:
     'Install Sensilet extention. Refresh the page if you have installed.',
+
+  //创建自定义交易对
+  create_farm_pair: 'Create liquidity mining program',
+  enter_details: 'Enter details',
+  deposit_rewards: 'Deposit rewards',
+  lptoken_genesis_id: 'Genesis ID of LP token',
+  reward_genesis_id: 'Genesis ID of reward token',
+  reward_per_block: 'Reward per block',
+  duration_in_days: 'Duration in days',
+  avg_per_block: 'Avg. 10 mins per BSV block',
+  minimum_days: 'Minimum %s days',
+  create_farm_tips: 'Please have your reward tokens ready for next step',
+  reward_estimate: 'Approx. %s reward tokens to be deposited',
+  check_create_farm_title: 'Deposit reward token into contract',
+  check_create_farm_desc:
+    'You will not be able to withdraw while liquidity mining is active',
+  reward: 'Reward',
+  duration: 'Duration',
+  deposit_and_create: 'Deposit and create program',
+  create_farm_success: 'Successfully created',
+  create_farm_success_desc: 'Your liquidity mining program (LMP) is now live',
+  network_fee: 'Network fee',
 };
 module.exports = texts;

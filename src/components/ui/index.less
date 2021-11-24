@@ -72,20 +72,33 @@
     margin-left: 6px;
   }
 }
-
-.app_title {
-  display: none;
+.title {
+  display: flex;
   height: 50px;
   line-height: 50px;
   justify-content: space-between;
   align-items: center;
   font-size: 16px;
   font-weight: 700;
-  padding: 0 20px 0 10px;
+  padding: 0 20px;
+  text-align: center;
+
+  .close {
+    color: #2f80ed;
+    cursor: pointer;
+
+    :global(.iconfont) {
+      font-size: 14px;
+    }
+  }
 }
 
-.app_title.bottom_line {
+.bottom_line {
   border-bottom: 1px solid #e8e8e8;
+}
+
+.app_title {
+  display: none;
 }
 
 .app_start_btn_wrap {
@@ -116,20 +129,14 @@
   }
 }
 
+.found_desc {
+  font-size: 14px;
+  text-align: center;
+}
+
 @media only screen and (max-width: 767.99px) {
   .app_title {
     display: flex;
-    font-size: 16px;
-    font-weight: 700;
-    text-align: center;
-
-    .close {
-      color: #2f80ed;
-
-      :global(.iconfont) {
-        font-size: 14px;
-      }
-    }
   }
 
   .app_start_btn_wrap {

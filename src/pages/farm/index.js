@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { connect, history } from 'umi';
 import { Spin } from 'antd';
+import Loading from 'components/loading';
 import Notice from 'components/notice';
 import { AppTitle } from 'components/ui';
 import { jc, parseUrl } from 'common/utils';
@@ -14,6 +15,7 @@ import Withdraw from '../withdraw';
 import styles from './index.less';
 import _ from 'i18n';
 import { AppStartBtn } from 'components/ui';
+import CreateFarm from '../createFarm';
 // const log = debug('farm');
 let busy = false;
 
@@ -45,6 +47,7 @@ export default class FarmC extends Component {
       app_pannel: false,
       current_item: 0,
       currentMenuIndex: 0,
+      showCreatePannel: false,
     };
     window.addEventListener('hashchange', (event) => {
       const { newURL, oldURL } = event;
@@ -78,10 +81,6 @@ export default class FarmC extends Component {
 
   fetch = async () => {
     this.updateFarmPairs();
-    // this.props.dispatch({
-    //   type: 'pair/getAllPairs',
-    //   payload: {},
-    // });
   };
 
   updateFarmPairs = async () => {
@@ -128,7 +127,8 @@ export default class FarmC extends Component {
   };
 
   render() {
-    const { app_pannel, currentMenuIndex } = this.state;
+    if (this.props.loading) return <Loading />;
+    const { app_pannel, currentMenuIndex, showCreatePannel } = this.state;
     return (
       <>
         <Notice />
@@ -166,32 +166,58 @@ export default class FarmC extends Component {
                 }
               >
                 <AppTitle title={_('farm')} onClick={this.hidePannel} />
-
-                <div className={styles.right_box}>
-                  <div className={styles.head}>
-                    <div className={styles.menu}>
-                      {['deposit', 'withdraw'].map((item, index) => (
-                        <span
-                          className={
-                            index === currentMenuIndex
-                              ? jc(styles.menu_item, styles.menu_item_selected)
-                              : styles.menu_item
-                          }
-                          key={item}
-                          onClick={() => {
-                            this.setState({
-                              currentMenuIndex: index,
-                            });
-                          }}
-                        >
-                          {_(item)}
-                        </span>
-                      ))}
-                    </div>
+                {showCreatePannel ? (
+                  <div className={styles.right_box}>
+                    <CreateFarm
+                      close={() => {
+                        this.setState({
+                          showCreatePannel: false,
+                        });
+                      }}
+                    />
                   </div>
-                  {currentMenuIndex === 0 && <Deposit />}
-                  {currentMenuIndex === 1 && <Withdraw />}
-                </div>
+                ) : (
+                  <>
+                    <div className={styles.right_box}>
+                      <div className={styles.head}>
+                        <div className={styles.menu}>
+                          {['deposit', 'withdraw'].map((item, index) => (
+                            <span
+                              className={
+                                index === currentMenuIndex
+                                  ? jc(
+                                      styles.menu_item,
+                                      styles.menu_item_selected,
+                                    )
+                                  : styles.menu_item
+                              }
+                              key={item}
+                              onClick={() => {
+                                this.setState({
+                                  currentMenuIndex: index,
+                                });
+                              }}
+                            >
+                              {_(item)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      {currentMenuIndex === 0 && <Deposit />}
+                      {currentMenuIndex === 1 && <Withdraw />}
+                    </div>
+                    <div
+                      className={styles.createPair_link}
+                      onClick={() => {
+                        this.setState({
+                          showCreatePannel: true,
+                        });
+                      }}
+                    >
+                      {_('create_farm_pair')}
+                    </div>
+                  </>
+                )}
               </div>
             </section>
           </section>

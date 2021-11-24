@@ -185,7 +185,6 @@ export default {
 
     *getUSDPrice({ payload }, { call, put, select }) {
       const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
-
       if (price_res.code === 0) {
         const bsvPrice = BigNumber(price_res.data.swapToken2Amount)
           .div(price_res.data.swapToken1Amount)

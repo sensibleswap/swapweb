@@ -3,6 +3,7 @@ import { Button } from 'antd';
 import { jc } from 'common/utils';
 import CustomIcon from 'components/icon';
 import styles from './index.less';
+import _ from 'i18n';
 
 export function Arrow(props) {
   const { noLine = false } = props;
@@ -52,13 +53,11 @@ export function IconX() {
 }
 
 export function AppTitle(props) {
-  const { left, title, onClick, bottomLine = false } = props;
+  const { left, title, onClick, bottomLine = false, appTitle = true } = props;
+  let cls = appTitle ? jc(styles.title, styles.app_title) : styles.title;
+  cls = bottomLine ? jc(cls, styles.bottom_line) : cls;
   return (
-    <div
-      className={
-        bottomLine ? jc(styles.app_title, styles.bottom_line) : styles.app_title
-      }
-    >
+    <div className={cls}>
       {left || <span></span>}
       {title}
       <div className={styles.close} onClick={onClick}>
@@ -83,6 +82,17 @@ export function AppStartBtn(props) {
           {item.txt}
         </Button>
       ))}
+    </div>
+  );
+}
+
+export function FoundGenesisIDs() {
+  return (
+    <div className={styles.found_desc}>
+      {_('find_tokenid')}{' '}
+      <a href="https://blockcheck.info/" target="_blank">
+        BlockCheck
+      </a>
     </div>
   );
 }

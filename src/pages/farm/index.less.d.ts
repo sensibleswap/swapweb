@@ -10,6 +10,7 @@ interface CssExports {
   container: string;
   container_center: string;
   content: string;
+  createPair_link: string;
   current: string;
   desc: string;
   farm_intro: string;

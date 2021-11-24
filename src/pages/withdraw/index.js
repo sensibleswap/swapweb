@@ -15,12 +15,11 @@ import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { BtnWait } from 'components/btns';
 import { SuccessResult } from 'components/result';
 
-@connect(({ user, pair, farm, loading }) => {
+@connect(({ user, farm, loading }) => {
   const { effects } = loading;
   return {
     ...user,
     ...farm,
-    ...pair,
     loading: effects['farm/getAllPairs'],
   };
 })

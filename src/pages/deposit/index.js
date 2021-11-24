@@ -16,10 +16,9 @@ import _ from 'i18n';
 import { SuccessResult } from 'components/result';
 import { Arrow } from 'components/ui';
 
-@connect(({ pair, user, farm, loading }) => {
+@connect(({ user, farm, loading }) => {
   const { effects } = loading;
   return {
-    ...pair,
     ...user,
     ...farm,
     loading: effects['farm/getAllPairs'],

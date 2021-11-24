@@ -143,7 +143,19 @@ export default {
 
     *harvest2({ payload }, { call, put }) {
       const res = yield farmApi.harvest2.call(farmApi, payload);
-      log('harvest:', payload, res);
+      log('harvest2:', payload, res);
+      return res;
+    },
+
+    *reqCreateFarm({ payload }, { call, put }) {
+      const res = yield farmApi.reqcreatefarm.call(farmApi, payload);
+      log('reqCreateFarm:', payload, res);
+      return res;
+    },
+
+    *createFarm({ payload }, { call, put }) {
+      const res = yield farmApi.createfarm.call(farmApi, payload);
+      log('createFarm:', payload, res);
       return res;
     },
   },

@@ -4,7 +4,6 @@ import { history, connect } from 'umi';
 import BigNumber from 'bignumber.js';
 import { gzip } from 'node-gzip';
 import { Button, Form, Input, Spin, message, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import EventBus from 'common/eventBus';
 import { formatAmount, formatSat, formatTok } from 'common/utils';
 import { countLpAddAmount, countLpAddAmountWithToken2 } from 'common/swap';

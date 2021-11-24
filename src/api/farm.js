@@ -58,6 +58,14 @@ class Farm extends BaseAPI {
   harvest2(params) {
     return this._request('harvest2', params, 'POST');
   }
+
+  reqcreatefarm(params) {
+    return this._request('reqcreatefarm', params, 'POST');
+  }
+
+  createfarm(params) {
+    return this._request('createfarm', params, 'POST');
+  }
 }
 
 export default new Farm();

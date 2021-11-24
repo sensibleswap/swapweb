@@ -6,7 +6,14 @@ import styles from './index.less';
 import _ from 'i18n';
 
 export function SuccessResult(props) {
-  const { success_txt, done, children, title, noLine = false } = props;
+  const {
+    success_txt,
+    success_desc,
+    done,
+    children,
+    title,
+    noLine = false,
+  } = props;
   return (
     <>
       <div className={styles.finish_logo}>
@@ -19,6 +26,7 @@ export function SuccessResult(props) {
         }
       >
         {success_txt}
+        {success_desc && <div className={styles.desc}>{success_desc}</div>}
       </div>
 
       {children}

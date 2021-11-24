@@ -2,19 +2,18 @@
 import React, { Component } from 'react';
 import { gzip } from 'node-gzip';
 import { history, connect } from 'umi';
-import { Steps, Button, message, Form, Spin } from 'antd';
+import { Steps, Button, Input, message, Form, Spin } from 'antd';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
-import { BtnWait } from 'components/btns';
-import { SuccessResult } from 'components/result';
-import { Plus, FoundGenesisIDs } from 'components/ui';
-import GenesisTokenInput from 'components/tokenInput/genesisInput';
-import { isTestNet } from 'common/utils';
+import { jc, isTestNet } from 'common/utils';
 import EventBus from 'common/eventBus';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
+import { BtnWait } from 'components/btns';
+import { SuccessResult } from 'components/result';
+import { Plus } from 'components/ui';
 
 const { Step } = Steps;
 const FormItem = Form.Item;
@@ -67,10 +66,57 @@ export default class CreatePair extends Component {
     );
   }
 
-  change = (key, value) => {
-    let obj = {};
-    obj[key] = value;
-    this.setState(obj);
+  change = async (e, index) => {
+    const { value } = e.target;
+    if (!value) {
+      return this.setState(
+        index === 1
+          ? {
+              token1: undefined,
+            }
+          : {
+              token2: undefined,
+            },
+      );
+    }
+    if (index === 1 && e.target.value.toUpperCase() === 'BSV') {
+      return this.setState({
+        token1: {
+          symbol: 'BSV',
+          name: 'Bitcoin SV',
+        },
+      });
+    } else {
+      const { dispatch } = this.props;
+      const res = await dispatch({
+        type: 'custom/query',
+        payload: {
+          genesisHash: e.target.value,
+        },
+      });
+      if (e.target.value.toUpperCase() === 'BSV') return;
+      if (!res || res.code) {
+        return this.setState(
+          index === 1
+            ? {
+                token1: undefined,
+              }
+            : {
+                token2: undefined,
+              },
+        );
+      } else {
+        this.setState(
+          index === 1
+            ? {
+                token1: res,
+              }
+            : {
+                token2: res,
+              },
+        );
+      }
+    }
   };
 
   gotoPayStep = () => {
@@ -79,10 +125,18 @@ export default class CreatePair extends Component {
     });
   };
 
-  editPair = () => {
+  editPair = (index) => {
     this.setState({
       step: 0,
     });
+    // index === 1 ?
+    // this.formRef.current.setFieldsValue({
+    //   genesis1: this.state.token1.genesis,
+    // })
+    // :
+    // this.formRef.current.setFieldsValue({
+    //   genesis2: this.state.token2.genesis,
+    // })
   };
 
   finish = () => {
@@ -93,28 +147,73 @@ export default class CreatePair extends Component {
 
   renderContent0() {
     const { token1, token2 } = this.state;
-    const { dispatch } = this.props;
+    // const { searching } = this.props;
     return (
       <div className={styles.create_content}>
-        <GenesisTokenInput
-          title={`${_('input')} A: ${_('enter_bsv_or_tokenid')}`}
-          dispatch={dispatch}
-          name="genesis1"
-          supportBsv={true}
-          token={token1}
-          change={(value) => this.change('token1', value)}
-        />
+        <div className={styles.title}>
+          {_('input')} A: {_('enter_bsv_or_tokenid')}
+        </div>
 
+        <div
+          className={
+            token1
+              ? jc(styles.input_wrap, styles.input_result)
+              : styles.input_wrap
+          }
+        >
+          <FormItem name="genesis1">
+            <Input.TextArea
+              className={styles.input}
+              onChange={(e) => this.change(e, 1)}
+            />
+          </FormItem>
+
+          {token1 && (
+            <div className={styles.token_info}>
+              <TokenLogo
+                name={token1.symbol}
+                genesisID={token1.genesis || 'bsv'}
+              />
+              <div className={styles.token_name}>
+                <div className={styles.symbol}>{token1.symbol}</div>
+                <div className={styles.full_name}>{token1.name}</div>
+              </div>
+            </div>
+          )}
+        </div>
         <Plus />
-        <GenesisTokenInput
-          title={`${_('input')} B: ${_('enter_tokenid')}`}
-          dispatch={dispatch}
-          name="genesis2"
-          token={token2}
-          change={(value) => this.change('token2', value)}
-        />
-
-        <FoundGenesisIDs />
+        <div className={styles.title}>
+          {_('input')} B: {_('enter_tokenid')}
+        </div>
+        <div
+          className={
+            token2
+              ? jc(styles.input_wrap, styles.input_result)
+              : styles.input_wrap
+          }
+        >
+          <FormItem name="genesis2">
+            <Input.TextArea
+              className={styles.input}
+              onChange={(e) => this.change(e, 2)}
+            />
+          </FormItem>
+          {token2 && (
+            <div className={styles.token_info}>
+              <TokenLogo name={token2.symbol} genesisID={token2.genesis} />
+              <div className={styles.token_name}>
+                <div className={styles.symbol}>{token2.symbol}</div>
+                <div className={styles.full_name}>{token2.name}</div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className={styles.desc}>
+          {_('find_tokenid')}{' '}
+          <a href="https://blockcheck.info/" target="_blank">
+            BlockCheck
+          </a>
+        </div>
 
         {this.renderButton()}
       </div>
