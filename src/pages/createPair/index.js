@@ -1,7 +1,7 @@
 'use strict';
 import React, { Component } from 'react';
 import { gzip } from 'node-gzip';
-import { Link, history, connect } from 'umi';
+import { history, connect } from 'umi';
 import { Steps, Button, Input, message, Form, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import CustomIcon from 'components/icon';
