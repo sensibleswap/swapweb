@@ -2,7 +2,12 @@ import 'whatwg-fetch';
 import BigNumber from 'bignumber.js';
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
-import { TSWAP_CURRENT_PAIR, DEFAULT_PAIR, USDT_PAIR } from 'common/const';
+import {
+  TSWAP_CURRENT_PAIR,
+  DEFAULT_PAIR,
+  USDT_PAIR,
+  USDT_TSC_PAIR,
+} from 'common/const';
 import debug from 'debug';
 import { getCurrentPair } from 'common/utils';
 
@@ -24,7 +29,11 @@ export default {
     token2: {},
     LP: 100000,
     iconList: '',
-    bsvPrice: 0,
+    // bsvPrice: 0,
+    tokenPrice: {
+      bsvPrice: 0,
+      tscPrice: 0,
+    },
   },
 
   subscriptions: {
@@ -184,21 +193,53 @@ export default {
     },
 
     *getUSDPrice({ payload }, { call, put, select }) {
-      const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
+      const pairs = [USDT_PAIR, USDT_TSC_PAIR];
+      let requests = [];
+      pairs.forEach((item) => {
+        requests.push(pairApi.querySwapInfo.call(pairApi, item));
+      });
+      const request_res = yield Promise.all(requests);
 
-      if (price_res.code === 0) {
-        const bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-          .div(price_res.data.swapToken1Amount)
-          .multipliedBy(Math.pow(10, 8 - 6))
-          .toString();
+      let bsvPrice = 0,
+        tscPrice = 0;
+      request_res.forEach((item, index) => {
+        // console.log(item);
+        let price = BigNumber(item.data.swapToken2Amount).div(
+          item.data.swapToken1Amount,
+        );
+        if (index === 0 && item.code === 0) {
+          bsvPrice = price.multipliedBy(Math.pow(10, 8 - 6)).toString();
+        } else if (index === 1 && item.code === 0) {
+          tscPrice = price.div(Math.pow(10, 8 - 6)).toString();
+        }
+      });
+      // console.log(bsvPrice, tscPrice);
 
-        yield put({
-          type: 'save',
-          payload: {
+      // if (price_res.code === 0) {
+      //   const bsvPrice = BigNumber(price_res.data.swapToken2Amount)
+      //     .div(price_res.data.swapToken1Amount)
+      //     .multipliedBy(Math.pow(10, 8 - 6))
+      //     .toString();
+
+      //   yield put({
+      //     type: 'save',
+      //     payload: {
+      //       bsvPrice,
+      //     },
+      //   });
+      // }
+
+      yield put({
+        type: 'save',
+        payload: {
+          // bsvPrice,
+          tokenPrice: {
             bsvPrice,
+            tscPrice,
           },
-        });
-      }
+        },
+      });
     },
 
     *reqSwap({ payload }, { call, put, select }) {

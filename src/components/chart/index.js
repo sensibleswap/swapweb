@@ -31,7 +31,7 @@ const dateInterval = {
 export default class Chart extends Component {
   constructor(props) {
     super(props);
-    const { currentPair, bsvPrice, allPairs } = props;
+    const { currentPair, tokenPrice, allPairs } = props;
     this.state = {
       chart_index: 0,
       cur_price: '',
@@ -111,7 +111,7 @@ export default class Chart extends Component {
                         token1 === 'BSV'
                           ? `($${formatAmount(
                               BigNumber(params[0].value[1]).multipliedBy(
-                                bsvPrice,
+                                tokenPrice.bsvPrice,
                               ),
                               4,
                             )})`
