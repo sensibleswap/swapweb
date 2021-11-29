@@ -108,6 +108,7 @@ export default class CreatePair extends Component {
         <Plus />
         <GenesisTokenInput
           title={`${_('input')} B: ${_('enter_tokenid')}`}
+          tips={_('only_custom_token')}
           dispatch={dispatch}
           name="genesis2"
           token={token2}

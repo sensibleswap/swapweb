@@ -314,5 +314,6 @@ const texts = {
   create_farm_success: '发布成功',
   create_farm_success_desc: '你的流动性挖矿计划已生效',
   network_fee: '矿工费',
+  only_custom_token: 'Token B 只能是项目方Token',
 };
 module.exports = texts;

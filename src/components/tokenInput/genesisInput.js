@@ -50,10 +50,11 @@ export default class GenesisTokenInput extends Component {
 
   render() {
     // const { token } = this.state;
-    const { title, name, supportBsv = false, token } = this.props;
+    const { title, name, supportBsv = false, token, tips } = this.props;
     return (
       <div>
         <div className={styles.title}>{title}</div>
+        {tips && <div className={styles.tips}>{tips}</div>}
         <div
           className={
             token

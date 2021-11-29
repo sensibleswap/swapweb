@@ -322,5 +322,6 @@ const texts = {
   create_farm_success: 'Successfully created',
   create_farm_success_desc: 'Your liquidity mining program (LMP) is now live',
   network_fee: 'Network fee',
+  only_custom_token: 'Token B should be your project token',
 };
 module.exports = texts;
