@@ -25,6 +25,7 @@ interface CssExports {
   sub_title: string;
   switch_icon: string;
   symbol: string;
+  tips: string;
   title: string;
   token_info: string;
   token_name: string;

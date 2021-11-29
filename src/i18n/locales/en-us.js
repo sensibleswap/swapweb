@@ -300,5 +300,6 @@ const texts = {
   not_acknowlege: 'Do not acknowledge',
   download_sensilet:
     'Install Sensilet extention. Refresh the page if you have installed.',
+  tokenb_tips: 'Token B should be your project token',
 };
 module.exports = texts;

@@ -185,6 +185,7 @@ export default class CreatePair extends Component {
         <div className={styles.title}>
           {_('input')} B: {_('enter_tokenid')}
         </div>
+        <div className={styles.tips}>{_('tokenb_tips')}</div>
         <div
           className={
             token2
