@@ -193,7 +193,6 @@ export default {
     },
 
     *getUSDPrice({ payload }, { call, put, select }) {
-      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
       const pairs = [USDT_PAIR, USDT_TSC_PAIR];
       let requests = [];
       pairs.forEach((item) => {
