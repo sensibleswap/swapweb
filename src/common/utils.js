@@ -351,6 +351,9 @@ export function parseUrl(hash) {
   ) {
     currentPair = hash2;
   }
+
+  currentPair &&
+    window.localStorage.setItem(TSWAP_CURRENT_FARM_PAIR, currentPair);
   return currentPair;
 }
 

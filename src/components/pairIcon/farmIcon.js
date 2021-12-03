@@ -14,8 +14,16 @@ export default class FarmPairIcon extends React.Component {
   }
 
   render() {
-    const { lptoken, pairsData, keyword, size = 25 } = this.props;
+    const {
+      pairsData,
+      keyword,
+      size = 25,
+      currentFarmPair,
+      allFarmPairs,
+    } = this.props;
     // console.log(lptoken)
+    if (!allFarmPairs[currentFarmPair]) return null;
+    const lptoken = allFarmPairs[currentFarmPair].token;
     if (!pairsData[lptoken.tokenID]) return null;
     const { token1, token2 } = pairsData[lptoken.tokenID];
     const symbol1 = token1.symbol.toUpperCase();

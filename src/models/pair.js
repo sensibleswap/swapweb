@@ -142,13 +142,17 @@ export default {
 
     *getPairData({ payload }, { call, put, select }) {
       let { currentPair } = payload;
+      const pairData = yield select((state) => state.pair);
+      if (!currentPair) {
+        currentPair = pairData.currentPair;
+      }
 
-      if (!currentPair)
-        currentPair = yield select((state) => state.pair.currentPair);
-
-      const customPair = yield select((state) => state.pair.customPair);
+      const { customPair, allPairs } = pairData;
       const api = customPair ? customApi : pairApi;
-      const res = yield api.querySwapInfo.call(api, currentPair);
+      const res = yield api.querySwapInfo.call(
+        api,
+        allPairs[currentPair].lptoken.tokenID,
+      );
       log('init-pairData:', currentPair, res);
       const { code, msg, data } = res;
       if (code !== 0) {
@@ -172,11 +176,14 @@ export default {
 
     *updatePairData({ payload }, { call, put, select }) {
       // let { currentPair } = payload;
-      const currentPair = yield select((state) => state.pair.currentPair);
+      const pairData = yield select((state) => state.pair);
+      const { customPair, allPairs, currentPair } = pairData;
       if (!currentPair) return;
-      const customPair = yield select((state) => state.pair.customPair);
       const api = customPair ? customApi : pairApi;
-      const res = yield api.querySwapInfo.call(api, currentPair);
+      const res = yield api.querySwapInfo.call(
+        api,
+        allPairs[currentPair].lptoken.tokenID,
+      );
       const { code, msg, data } = res;
       if (code !== 0) {
         return res;
@@ -204,13 +211,16 @@ export default {
         tscPrice = 0;
       request_res.forEach((item, index) => {
         // console.log(item);
-        let price = BigNumber(item.data.swapToken2Amount).div(
-          item.data.swapToken1Amount,
-        );
-        if (index === 0 && item.code === 0) {
-          bsvPrice = price.multipliedBy(Math.pow(10, 8 - 6)).toString();
-        } else if (index === 1 && item.code === 0) {
-          tscPrice = price.div(Math.pow(10, 8 - 6)).toString();
+
+        if (item.code === 0) {
+          let price = BigNumber(item.data.swapToken2Amount).div(
+            item.data.swapToken1Amount,
+          );
+          if (index === 0) {
+            bsvPrice = price.multipliedBy(Math.pow(10, 8 - 6)).toString();
+          } else if (index === 1) {
+            tscPrice = price.div(Math.pow(10, 8 - 6)).toString();
+          }
         }
       });
       // console.log(bsvPrice, tscPrice);

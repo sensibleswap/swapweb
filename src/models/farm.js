@@ -42,7 +42,7 @@ export default {
       if (
         !currentFarmPair ||
         !data[currentFarmPair] ||
-        !pairsData[currentFarmPair]
+        !pairsData[data[currentFarmPair].token.tokenID]
       ) {
         Object.keys(data).forEach((item) => {
           if (item !== 'blockHeight' && pairsData[data[item].token.tokenID]) {
