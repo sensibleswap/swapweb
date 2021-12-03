@@ -47,43 +47,15 @@ export default class TokenList extends Component {
   };
 
   render() {
-    const { currentMenuIndex, showDec, customAllPairs } = this.state;
+    // const { currentMenuIndex, showDec, customAllPairs } = this.state;
     const { size = 'big', currentPair, allPairs } = this.props;
     return (
       <div className={styles[size]}>
-        <Menu
-          changeMenu={this.changeMenu}
-          currentMenuIndex={currentMenuIndex}
+        <PairList
+          pairListData={allPairs}
+          currentPair={currentPair}
+          changeShowList={this.changeShowList}
         />
-        <div style={{ display: currentMenuIndex === 0 ? 'block' : 'none' }}>
-          <PairList
-            pairListData={allPairs}
-            currentPair={currentPair}
-            changeShowList={this.changeShowList}
-          />
-        </div>
-        <div
-          style={{
-            display: currentMenuIndex === 1 ? 'block' : 'none',
-            position: 'relative',
-          }}
-        >
-          {currentMenuIndex === 1 && !showDec && (
-            <PairList
-              pairListData={customAllPairs}
-              currentPair={currentPair}
-              changeShowList={this.changeShowList}
-              type="custom"
-            />
-          )}
-
-          {showDec && (
-            <CustomDecla
-              agree={this.startCustomPair}
-              deny={() => this.changeMenu(0)}
-            />
-          )}
-        </div>
       </div>
     );
   }
