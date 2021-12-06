@@ -456,24 +456,24 @@ export default class UserInfo extends Component {
 
               {query.env === 'local' && (
                 <>
-                  <li onClick={() => this.connectWebWallet(2, 'testnet')}>
-                    <CustomIcon
-                      type="iconBSVtestnet"
-                      style={{ fontSize: 30 }}
-                    />
-                    <div className={styles.label}>BSV Testnet</div>
-                  </li>
-                </>
-              )}
-
-              {!isApp && (
-                <>
                   <li onClick={() => this.connectWebWallet(5, 'mainnet')}>
                     <CustomIcon
                       type="iconicon-volt-tokenswap-circle"
                       style={{ fontSize: 30 }}
                     />
                     <div className={styles.label}>Chrome Ext</div>
+                  </li>
+                </>
+              )}
+
+              {!isApp && (
+                <>
+                  <li onClick={() => this.connectWebWallet(2, 'testnet')}>
+                    <CustomIcon
+                      type="iconBSVtestnet"
+                      style={{ fontSize: 30 }}
+                    />
+                    <div className={styles.label}>BSV Testnet</div>
                   </li>
                   <li onClick={() => this.connectWebWallet(4, 'mainnet')}>
                     <div className={styles.sens_icon}>
