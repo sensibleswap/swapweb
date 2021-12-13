@@ -14,7 +14,7 @@ export default function chartTitle(props) {
         trigger={['click']}
         overlay={<TokenList size="small" />}
         overlayClassName={styles.drop_menu}
-        overlayStyle={{ minWidth: 320 }}
+        overlayStyle={{ width: 350 }}
       >
         <span className={styles.chart_title}>
           {symbol2 === 'USDT' ? (
@@ -26,10 +26,7 @@ export default function chartTitle(props) {
               <span>{symbol2}</span>/{symbol1}
             </>
           )}
-          <CustomIcon
-            type="iconDropdown"
-            style={{ fontSize: 20, marginLeft: 15 }}
-          />
+          <CustomIcon type="iconDropdown" />
         </span>
       </Dropdown>
 

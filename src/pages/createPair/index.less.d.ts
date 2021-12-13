@@ -3,7 +3,6 @@
 interface CssExports {
   box: string;
   btn: string;
-  btn_wait: string;
   coin: string;
   container: string;
   create_content: string;
@@ -26,6 +25,7 @@ interface CssExports {
   sub_title: string;
   switch_icon: string;
   symbol: string;
+  tips: string;
   title: string;
   token_info: string;
   token_name: string;

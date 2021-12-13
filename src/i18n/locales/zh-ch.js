@@ -167,6 +167,8 @@ const texts = {
   login: '登录',
   lac_balance: '余额不足',
   lac_token_balance: '%s 余额不足',
+  need_token: '至少需要',
+  you_have: '您的余额',
   no_pair: '没有该交易对',
   not_enough: '超出了%s流动池存量',
   lower_amount: '输入至少高于%s聪',
@@ -219,6 +221,8 @@ const texts = {
   notice: '通知',
   notice720:
     'tswap已经升级完毕，同时开通了新的mc/bsv交易对，如果在2021年7月22日16时前还有流动性在旧的bsv-mc流动池中没有提取的，请前往https://v1.tswap.io进行提取流动性。未提取流动性的用户根据在流动池中的比例将获得了新的mc token的空投。因此旧池˙中提取流动性出来的只有bsv，旧的mc token已停止使用。',
+  notice1117:
+    'tswap预计在北京时间11月19日16点左右对usdt-tsc挖矿合约进行升级，升级后将上线新的usdt-tsc挖矿合约。旧的合约区块奖励将转移到新的挖矿合约上。用户可以在新的挖矿合约上线后从旧挖矿合约提取lp，锁仓到新的挖矿合约，以获得挖矿奖励。此次升级，swap合约不受影响。',
 
   cant_remove: '你没有可移除的流动性资产',
   test_only: '建议仅供测试',
@@ -232,6 +236,7 @@ const texts = {
   farm_desc: '提供流动性并将LP锁仓赚取收益',
   last_block_height: 'Oracle提供的BSV区块高度：',
   your_deposited_lp: '你锁仓的LP',
+  abandoned_deposited_lp: '提取你所有的收益和LP token锁仓到新合约',
   apy_info: 'APY = (每区块奖励 * 144 * 365) * 收益token价格/锁仓总价值 * 100%',
   deposit: '锁仓',
   earn: '赚取',
@@ -270,6 +275,7 @@ const texts = {
   pay_fee: '支付费用',
   finish: '完成',
   enter_tokenid: '输入Token的Genesis ID',
+  enter_bsv_or_tokenid: '输入BSV或Token的Genesis ID',
   find_tokenid: 'Token Genesis IDs 可以找到',
   select_token_pair: '选择输入交易对',
   next_step: '下一步',
@@ -290,5 +296,6 @@ const texts = {
 
   download_voltwallet:
     '请先安装Volt插件。如果已经安装，请刷新页面。点击确定下载插件。',
+  tokenb_tips: 'Token B 只能是项目方token',
 };
 module.exports = texts;

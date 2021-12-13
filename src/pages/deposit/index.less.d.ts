@@ -2,28 +2,19 @@
 // Please do not change this file!
 interface CssExports {
   app_hide: string;
-  app_start_btn_wrap: string;
   app_title: string;
-  balance: string;
-  big_btn: string;
+  blue: string;
   box: string;
   btn: string;
-  btn_wait: string;
-  btn_warn: string;
-  close: string;
   container: string;
   container_center: string;
   content: string;
-  d: string;
-  data: string;
-  datas: string;
   desc: string;
   done_btn: string;
   finish_desc: string;
   finish_logo: string;
   finish_title: string;
   head: string;
-  icon: string;
   info_item: string;
   info_label: string;
   info_title: string;
@@ -32,7 +23,6 @@ interface CssExports {
   input: string;
   left: string;
   left_inner: string;
-  line: string;
   link: string;
   main_title: string;
   menu: string;
@@ -47,11 +37,9 @@ interface CssExports {
   price: string;
   right: string;
   sidebar: string;
-  small_btn: string;
   small_title: string;
   strong: string;
   subtitle: string;
-  switch_icon: string;
   title: string;
   view_detail: string;
 }

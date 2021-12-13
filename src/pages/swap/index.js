@@ -2,25 +2,25 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import debug from 'debug';
-import EventBus from 'common/eventBus';
 import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
-import { Button, Form, Input, message, Spin } from 'antd';
-import { slippage_data, feeRate, FEE_FACTOR, MINAMOUNT } from 'common/config';
-import { formatAmount, formatSat, jc } from 'common/utils';
-import CustomIcon from 'components/icon';
+import { Form, Input, message, Spin } from 'antd';
+import EventBus from 'common/eventBus';
+import { slippage_data, feeRate, MINAMOUNT } from 'common/config';
+import { formatAmount, formatSat, jc, formatTok } from 'common/utils';
+import { calcAmount } from 'common/pairUtils';
 import FormatNumber from 'components/formatNumber';
-import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
+import { Arrow2 } from 'components/ui';
+import { TokenInput } from 'components/tokenInput';
 import SelectToken from '../selectToken';
+import SwapResult from './result';
+import Btn from './btn';
 import styles from './index.less';
 import _ from 'i18n';
 
 const log = debug('swap');
-
 const { slippage_tolerance_value, defaultSlipValue } = slippage_data;
-
-const FormItem = Form.Item;
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -50,7 +50,6 @@ export default class Swap extends Component {
       txFee: 0,
       lastMod: '',
       dirForward: true, //交易对方向，true正向 false反向
-      // bsvToToken: true,
       modalVisible: false,
       tol:
         window.localStorage.getItem(slippage_tolerance_value) ||
@@ -60,49 +59,64 @@ export default class Swap extends Component {
   }
 
   switch = async () => {
-    let { dirForward } = this.state;
+    const { current } = this.formRef;
     this.setState(
       {
-        dirForward: !dirForward,
+        dirForward: !this.state.dirForward,
       },
       () => {
-        const { current } = this.formRef;
         const { origin_amount, aim_amount } = current.getFieldsValue([
           'origin_amount',
           'aim_amount',
         ]);
-        const { lastMod } = this.state;
-        const { token1, token2 } = this.props;
-        const decimal = !dirForward ? token1.decimal : token2.decimal;
+        const { lastMod, dirForward } = this.state;
+        const { token1, token2, pairData } = this.props;
+        const decimal = dirForward ? token1.decimal : token2.decimal;
+        let newOriginAddAmount, newAimAddAmount, fee, slip;
         if (lastMod === 'origin') {
-          current.setFieldsValue({
-            aim_amount: origin_amount,
+          const obj = calcAmount({
+            token1,
+            token2,
+            dirForward,
+            originAddAmount: 0,
+            aimAddAmount: origin_amount,
+            pairData,
           });
-          const { newOriginAddAmount } = this.calcAmount(0, origin_amount);
-          const fee = formatAmount(
+          newAimAddAmount = origin_amount;
+          newOriginAddAmount = obj.newOriginAddAmount;
+          fee = formatAmount(
             BigNumber(newOriginAddAmount).multipliedBy(feeRate),
             decimal,
           );
-          this.setState({
-            lastMod: 'aim',
-            aim_amount: origin_amount,
-            fee,
-          });
+          slip = obj.slip;
         } else if (lastMod === 'aim') {
-          current.setFieldsValue({
-            origin_amount: aim_amount,
-          });
-          this.calcAmount(aim_amount, 0);
-          const fee = formatAmount(
+          fee = formatAmount(
             BigNumber(aim_amount).multipliedBy(feeRate),
             decimal,
           );
-          this.setState({
-            lastMod: 'origin',
-            origin_amount: aim_amount,
-            fee,
+          const obj = calcAmount({
+            token1,
+            token2,
+            dirForward,
+            originAddAmount: aim_amount,
+            aimAddAmount: 0,
+            pairData,
           });
+          newOriginAddAmount = aim_amount;
+          newAimAddAmount = obj.newAimAddAmount;
+          slip = obj.slip;
         }
+        current.setFieldsValue({
+          origin_amount: newOriginAddAmount,
+          aim_amount: newAimAddAmount,
+        });
+        this.setState({
+          lastMod: lastMod === 'origin' ? 'aim' : 'origin',
+          aim_amount: newAimAddAmount,
+          origin_amount: newOriginAddAmount,
+          fee,
+          slip,
+        });
       },
     );
   };
@@ -115,119 +129,85 @@ export default class Swap extends Component {
 
   changeOriginAmount = (e) => {
     let value = e.target.value;
-    const { token1, token2 } = this.props;
+    const { token1, token2, pairData } = this.props;
     const { dirForward } = this.state;
     const decimal = dirForward ? token1.decimal : token2.decimal;
+    let newOriginAddAmount = value,
+      newAimAddAmount,
+      fee,
+      slip;
     if (value > 0) {
       value = formatAmount(value, token1.decimal);
-      this.formRef.current.setFieldsValue({
-        origin_amount: value,
+      fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
+      const obj = calcAmount({
+        token1,
+        token2,
+        dirForward,
+        originAddAmount: value,
+        aimAddAmount: 0,
+        pairData,
       });
-      const fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
-      this.setState({
-        origin_amount: value,
-        fee,
-        lastMod: 'origin',
-      });
-      // this.calc(value - fee);
-      this.calcAmount(value, 0);
+      newAimAddAmount = obj.newAimAddAmount;
+      slip = obj.slip;
     } else {
-      this.formRef.current.setFieldsValue({
-        aim_amount: 0,
-      });
-      this.setState({
-        fee: 0,
-        slip: 0,
-        lastMod: '',
-        aim_amount: 0,
-      });
+      newAimAddAmount = 0;
+      fee = 0;
+      slip = 0;
     }
+
+    this.formRef.current.setFieldsValue({
+      origin_amount: newOriginAddAmount,
+      aim_amount: newAimAddAmount,
+    });
+    this.setState({
+      origin_amount: newOriginAddAmount,
+      aim_amount: newAimAddAmount,
+      fee,
+      slip,
+      lastMod: 'origin',
+    });
   };
 
   changeAimAmount = (e) => {
     let value = e.target.value;
-    const { decimal } = this.props.token2;
+    const { token1, token2, pairData } = this.props;
+    const { decimal } = token2;
+    const { dirForward } = this.state;
+    let newOriginAddAmount,
+      newAimAddAmount = value,
+      fee,
+      slip;
     if (value > 0) {
       value = formatAmount(value, decimal);
-      this.formRef.current.setFieldsValue({
-        aim_amount: value,
+      const obj = calcAmount({
+        token1,
+        token2,
+        dirForward,
+        originAddAmount: 0,
+        aimAddAmount: value,
+        pairData,
       });
-      this.setState({
-        aim_amount: value,
-        lastMod: 'aim',
-      });
-      this.calcAmount(0, value);
+      newOriginAddAmount = obj.newOriginAddAmount;
+      fee = obj.fee;
+      slip = obj.slip;
     } else {
-      this.formRef.current.setFieldsValue({
-        origin_amount: 0,
-      });
-      this.setState({
-        fee: 0,
-        slip: 0,
-        lastMod: '',
-        origin_amount: 0,
-      });
+      newOriginAddAmount = 0;
+      fee = 0;
+      slip = 0;
     }
+
+    this.formRef.current.setFieldsValue({
+      origin_amount: newOriginAddAmount,
+      aim_amount: newAimAddAmount,
+    });
+    this.setState({
+      origin_amount: newOriginAddAmount,
+      aim_amount: newAimAddAmount,
+      fee,
+      slip,
+      lastMod: 'aim',
+    });
   };
-
-  renderOriginToken() {
-    const { token1, token2, pairData } = this.props;
-    const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { dirForward } = this.state;
-    const origin_token = dirForward ? token1 : token2;
-    const symbol1 = origin_token.symbol.toUpperCase();
-    return (
-      <div className={styles.box}>
-        <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
-          <TokenLogo name={symbol1} genesisID={origin_token.tokenID || 'bsv'} />
-          <div className={styles.name}>{symbol1}</div>
-          <div className={styles.arrow}>
-            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
-          </div>
-        </div>
-        <FormItem name="origin_amount">
-          <Input
-            className={styles.input}
-            onChange={this.changeOriginAmount}
-            disabled={swapToken1Amount === '0' || swapToken2Amount === '0'}
-          />
-        </FormItem>
-      </div>
-    );
-  }
-
-  renderAimToken() {
-    const { token1, token2, pairData } = this.props;
-    const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { dirForward } = this.state;
-    const aim_token = dirForward ? token2 : token1;
-    const symbol2 = aim_token.symbol.toUpperCase();
-    return (
-      <div className={styles.box}>
-        <div className={styles.coin} onClick={() => this.showUI('selectToken')}>
-          <div style={{ width: 40 }}>
-            {symbol2 && (
-              <TokenLogo
-                name={symbol2}
-                genesisID={aim_token.tokenID || 'bsv'}
-              />
-            )}
-          </div>
-          <div className={styles.name}>{symbol2 || _('select')}</div>
-          <div className={styles.arrow}>
-            <CustomIcon type="iconDropdown" style={{ fontSize: 16 }} />
-          </div>
-        </div>
-        <FormItem name="aim_amount">
-          <Input
-            className={styles.input}
-            onChange={this.changeAimAmount}
-            disabled={swapToken1Amount === '0' || swapToken2Amount === '0'}
-          />
-        </FormItem>
-      </div>
-    );
-  }
 
   setOriginBalance = () => {
     const { accountInfo, token1, token2, pairData } = this.props;
@@ -240,19 +220,30 @@ export default class Swap extends Component {
     }
 
     let origin_amount = this.state.dirForward
-      ? userBalance.BSV * 0.98 || 0
+      ? token1.isBsv
+        ? userBalance.BSV * 0.98 || 0
+        : userBalance[token1.tokenID]
       : userBalance[token2.tokenID] || 0;
     origin_amount = formatAmount(origin_amount, decimal);
+    const { newAimAddAmount, slip } = calcAmount({
+      token1,
+      token2,
+      dirForward,
+      originAddAmount: origin_amount,
+      aimAddAmount: 0,
+      pairData,
+    });
     this.formRef.current.setFieldsValue({
       origin_amount,
+      aim_amount: newAimAddAmount,
     });
     this.setState({
       origin_amount,
+      aim_amount: newAimAddAmount,
+      slip,
     });
-    this.calcAmount(origin_amount, 0);
     if (origin_amount > 0) {
       this.setState({
-        // origin_amount,
         lastMod: 'origin',
         fee: formatAmount(
           BigNumber(origin_amount).multipliedBy(feeRate),
@@ -265,115 +256,24 @@ export default class Swap extends Component {
       });
     }
   };
-  calcAmount = (originAddAmount = 0, aimAddAmount = 0, pairData) => {
-    if (!pairData) pairData = this.props.pairData;
-    const { token1, token2 } = this.props;
-    const { dirForward } = this.state;
-    const { swapToken1Amount, swapToken2Amount, swapFeeRate } = pairData;
-    let amount1 = dirForward ? swapToken1Amount : swapToken2Amount;
-    let amount2 = dirForward ? swapToken2Amount : swapToken1Amount;
-    let decimal1 = dirForward ? token1.decimal : token2.decimal;
-    let decimal2 = dirForward ? token2.decimal : token1.decimal;
-    let _originAddAmount = BigNumber(originAddAmount).multipliedBy(
-      Math.pow(10, decimal1),
-    );
-    let _aimAddAmount = BigNumber(aimAddAmount).multipliedBy(
-      Math.pow(10, decimal2),
-    );
-    let newAmount1 = BigNumber(amount1),
-      newAmount2 = BigNumber(amount2);
-    let newOriginAddAmount, newAimAddAmount;
-    if (originAddAmount > 0) {
-      _originAddAmount = BigInt(_originAddAmount.toFixed(0));
-      const addAmountWithFee =
-        _originAddAmount * BigInt(FEE_FACTOR - swapFeeRate);
-      newAmount1 = BigInt(amount1) + _originAddAmount;
-      let removeAmount =
-        (addAmountWithFee * BigInt(amount2)) /
-        ((BigInt(amount1) + _originAddAmount) * BigInt(FEE_FACTOR));
-      removeAmount = BigNumber(removeAmount);
-      newAmount2 = BigNumber(amount2).minus(removeAmount);
-
-      removeAmount = formatAmount(
-        removeAmount.div(Math.pow(10, decimal2)),
-        decimal2,
-      );
-
-      this.formRef.current.setFieldsValue({
-        aim_amount: removeAmount,
-      });
-      this.setState({
-        aim_amount: removeAmount,
-      });
-      newOriginAddAmount = originAddAmount;
-      newAimAddAmount = removeAmount;
-    } else if (aimAddAmount > 0) {
-      newAmount2 = BigNumber(amount2).minus(_aimAddAmount);
-      _aimAddAmount = BigInt(_aimAddAmount.toString());
-      let addAmount =
-        (_aimAddAmount * BigInt(FEE_FACTOR) * BigInt(amount1)) /
-        (BigInt(FEE_FACTOR - swapFeeRate) * BigInt(amount2) -
-          _aimAddAmount * BigInt(FEE_FACTOR));
-
-      addAmount = BigNumber(addAmount);
-      addAmount = addAmount.div(Math.pow(10, decimal1));
-      newAmount1 = addAmount.plus(amount1);
-      let addAmountN = formatAmount(addAmount, decimal1);
-      if (!addAmount.isGreaterThan(0)) {
-        addAmountN = 0;
-        newAmount1 = amount1;
-        newAmount2 = BigNumber(amount2);
-      }
-
-      this.formRef.current.setFieldsValue({
-        origin_amount: addAmountN,
-      });
-      this.setState({
-        origin_amount: addAmountN,
-        fee:
-          addAmount > 0
-            ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
-            : 0,
-      });
-      newOriginAddAmount = addAmountN;
-      newAimAddAmount = aimAddAmount;
-    } else {
-      //两个值都没有大于0
-      this.formRef.current.setFieldsValue({
-        origin_amount: originAddAmount,
-        aim_amount: aimAddAmount,
-      });
-      this.setState({
-        origin_amount: originAddAmount,
-        aim_amount: aimAddAmount,
-      });
-      newOriginAddAmount = originAddAmount;
-      newAimAddAmount = aimAddAmount;
-    }
-
-    const p = BigNumber(amount2).dividedBy(amount1);
-    const p1 = newAmount2.dividedBy(newAmount1);
-    const slip = p1.minus(p).dividedBy(p);
-
-    this.setState({
-      slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
-    });
-    return {
-      newOriginAddAmount,
-      newAimAddAmount,
-    };
-  };
 
   renderForm = () => {
     const { token1, token2, pairData, accountInfo, submiting } = this.props;
     const { userBalance } = accountInfo;
     const { swapToken1Amount, swapToken2Amount } = pairData;
-    const { dirForward, tol } = this.state;
+    const {
+      dirForward,
+      tol,
+      slip,
+      fee,
+      lastMod,
+      origin_amount,
+      aim_amount,
+    } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
-    const { slip, fee } = this.state;
-    const symbol1 = origin_token.symbol.toUpperCase();
-    const symbol2 = aim_token.symbol.toUpperCase();
+    const symbol1 = origin_token.symbol;
+    const symbol2 = aim_token.symbol;
     const _swapToken1Amount = formatSat(swapToken1Amount, token1.decimal);
     const _swapToken2Amount = formatSat(swapToken2Amount, token2.decimal);
     const price = dirForward
@@ -401,14 +301,17 @@ export default class Swap extends Component {
                 </span>
               </div>
             </div>
-            {this.renderOriginToken()}
+            {
+              <TokenInput
+                pairData={pairData}
+                tokenKey={dirForward ? 'token1' : 'token2'}
+                showUI={() => this.showUI('selectToken')}
+                changeAmount={this.changeOriginAmount}
+                formItemName="origin_amount"
+              />
+            }
 
-            <div className={styles.switch_icon}>
-              <div className={styles.icon} onClick={this.switch}>
-                <CustomIcon type="iconswitch" style={{ fontSize: 20 }} />
-              </div>
-              <div className={styles.line}></div>
-            </div>
+            <Arrow2 onClick={this.switch} />
 
             <div className={styles.title}>
               <h3>{_('you_receive')} </h3>
@@ -423,7 +326,15 @@ export default class Swap extends Component {
               </div>
             </div>
 
-            {this.renderAimToken()}
+            {
+              <TokenInput
+                pairData={pairData}
+                tokenKey={dirForward ? 'token2' : 'token1'}
+                showUI={() => this.showUI('selectToken')}
+                changeAmount={this.changeAimAmount}
+                formItemName="aim_amount"
+              />
+            }
 
             <div className={styles.my_pair_info}>
               <div className={styles.key_value}>
@@ -459,7 +370,17 @@ export default class Swap extends Component {
                 </div>
               </div>
             </div>
-            {this.renderButton()}
+
+            <Btn
+              {...this.props}
+              slip={slip}
+              lastMod={lastMod}
+              origin_amount={origin_amount}
+              aim_amount={aim_amount}
+              dirForward={dirForward}
+              tol={tol}
+              handleSubmit={this.handleSubmit}
+            />
           </Form>
         </Spin>
       </div>
@@ -473,100 +394,6 @@ export default class Swap extends Component {
     });
     localStorage.setItem(slippage_tolerance_value, value);
   };
-
-  login() {
-    EventBus.emit('login');
-  }
-
-  renderButton() {
-    const { isLogin, pairData, token1, token2, accountInfo } = this.props;
-    const { userBalance } = accountInfo;
-    const { swapToken1Amount, swapToken2Amount } = pairData;
-    const {
-      slip,
-      lastMod,
-      origin_amount,
-      aim_amount,
-      dirForward,
-      tol,
-    } = this.state;
-    const origin_token = dirForward ? token1 : token2;
-    const aim_token = dirForward ? token2 : token1;
-    const balance = userBalance[origin_token.tokenID || 'BSV'];
-
-    const beyond = parseFloat(slip) > parseFloat(tol);
-    if (!isLogin) {
-      // 未登录
-      return (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
-    } else if (swapToken1Amount === '0' || swapToken2Amount === '0') {
-      // 交易对没有数量，不能交易
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('pair_init')}
-        </Button>
-      );
-    } else if (!lastMod || (origin_amount <= 0 && aim_amount <= 0)) {
-      // 未输入数量
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('enter_amount')}
-        </Button>
-      );
-    } else if (parseFloat(origin_amount) <= formatSat(MINAMOUNT)) {
-      // 数额太小
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lower_amount', MINAMOUNT)}
-        </Button>
-      );
-    } else if (parseFloat(origin_amount) > parseFloat(balance || 0)) {
-      // 余额不足
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('lac_token_balance', origin_token.symbol.toUpperCase())}
-        </Button>
-      );
-    } else if (
-      BigNumber(aim_amount)
-        .multipliedBy(Math.pow(10, aim_token.decimal))
-        .isGreaterThan(
-          dirForward ? pairData.swapToken2Amount : pairData.swapToken1Amount,
-        )
-    ) {
-      // 池中币不足
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('not_enough', token2.symbol.toUpperCase())}
-        </Button>
-      );
-    } else if (beyond) {
-      // 超出容忍度
-      return (
-        <Button
-          className={styles.btn_warn}
-          shape="round"
-          onClick={this.handleSubmit}
-        >
-          {_('swap_anyway')}
-        </Button>
-      );
-    } else {
-      return (
-        <Button
-          className={styles.btn}
-          type="primary"
-          shape="round"
-          onClick={this.handleSubmit}
-        >
-          {_('swap')}
-        </Button>
-      );
-    }
-  }
 
   handleSubmit = async () => {
     const { dirForward, origin_amount } = this.state;
@@ -600,47 +427,94 @@ export default class Swap extends Component {
       op: dirForward ? 3 : 4,
     };
     if (dirForward) {
-      let amount = BigNumber(origin_amount).multipliedBy(1e8).toString();
-      const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
-      let total = BigInt(amount) + BigInt(txFee);
-      const _allBalance = total > BigInt(userTotal);
-      if (_allBalance) {
-        total = userTotal;
-        amount = BigInt(userTotal) - BigInt(txFee);
-      }
-      if (amount < MINAMOUNT) {
-        return message.error(_('lower_amount', MINAMOUNT));
-      }
-      const ts_res = await dispatch({
-        type: 'user/transferBsv',
-        payload: {
-          address: bsvToAddress,
-          amount: total.toString(),
-          changeAddress,
-          note: 'tswap.io(swap)',
-          noBroadcast: true,
-        },
-      });
+      let amount = formatTok(origin_amount, token1.decimal);
 
-      if (ts_res.msg) {
-        return message.error(ts_res.msg);
-      }
-      if (_allBalance) {
-        amount = amount - BigInt(ts_res.fee || 0);
-      }
+      if (token1.isBsv) {
+        const userTotal = BigNumber(userBalance.BSV).multipliedBy(1e8);
+        let total = BigInt(amount) + BigInt(txFee);
+        const _allBalance = total > BigInt(userTotal);
+        if (_allBalance) {
+          total = userTotal;
+          amount = BigInt(userTotal) - BigInt(txFee);
+        }
+        if (amount < MINAMOUNT) {
+          return message.error(_('lower_amount', MINAMOUNT));
+        }
+        const ts_res = await dispatch({
+          type: 'user/transferBsv',
+          payload: {
+            address: bsvToAddress,
+            amount: total.toString(),
+            changeAddress,
+            note: 'tswap.io(swap)',
+            noBroadcast: true,
+          },
+        });
 
-      payload = {
-        ...payload,
-        // token1TxID: ts_res.txid,
-        bsvOutputIndex: 0,
-        bsvRawTx: ts_res.list ? ts_res.list[0].txHex : ts_res.txHex,
-        token1AddAmount: amount.toString(),
-      };
+        if (ts_res.msg) {
+          return message.error(ts_res.msg);
+        }
+        if (_allBalance) {
+          amount = amount - BigInt(ts_res.fee || 0);
+        }
+
+        payload = {
+          ...payload,
+          // token1TxID: ts_res.txid,
+          bsvOutputIndex: 0,
+          bsvRawTx: ts_res.list ? ts_res.list[0].txHex : ts_res.txHex,
+          token1AddAmount: amount.toString(),
+        };
+      } else {
+        let tx_res = await dispatch({
+          type: 'user/transferAll',
+          payload: {
+            datas: [
+              {
+                type: 'bsv',
+                address: bsvToAddress,
+                amount: txFee,
+                changeAddress,
+                note: 'tswap.io(swap)',
+              },
+              {
+                type: 'sensibleFt',
+                address: tokenToAddress,
+                amount,
+                changeAddress,
+                codehash: token1.codeHash,
+                genesis: token1.tokenID,
+                rabinApis,
+                note: 'tswap.io(swap)',
+              },
+            ],
+            noBroadcast: true,
+          },
+        });
+        if (!tx_res) {
+          return message.error(_('txs_fail'));
+        }
+        if (tx_res.msg) {
+          return message.error(tx_res.msg);
+        }
+        if (tx_res.list) {
+          tx_res = tx_res.list;
+        }
+        if (!tx_res[0] || !tx_res[0].txHex || !tx_res[1] || !tx_res[1].txHex) {
+          return message.error(_('txs_fail'));
+        }
+
+        payload = {
+          ...payload,
+          bsvRawTx: tx_res[0].txHex,
+          bsvOutputIndex: 0,
+          token1RawTx: tx_res[1].txHex,
+          token1OutputIndex: 0,
+          amountCheckRawTx: tx_res[1].routeCheckTxHex,
+        };
+      }
     } else {
-      const amount = BigNumber(origin_amount)
-        .multipliedBy(Math.pow(10, token2.decimal))
-        .toString();
-
+      const amount = formatTok(origin_amount, token2.decimal);
       let tx_res = await dispatch({
         type: 'user/transferAll',
         payload: {
@@ -732,62 +606,15 @@ export default class Swap extends Component {
     EventBus.emit('reloadChart', 'swap');
   }
 
-  renderResult() {
-    const {
-      origin_amount,
-      txFee,
-      dirForward,
-      txid,
-      realSwapAmount,
-    } = this.state;
-    const { token1, token2 } = this.props;
-    const origin_token = dirForward ? token1 : token2;
-    const aim_token = dirForward ? token2 : token1;
-    const symbol1 = origin_token.symbol.toUpperCase();
-    const symbol2 = aim_token.symbol.toUpperCase();
-
-    return (
-      <div className={styles.content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 64, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>{_('swap_success')}</div>
-
-        <div className={styles.detail}>
-          <div className={styles.line}>
-            <div className={styles.detail_item}>
-              <div className={styles.item_label}>{_('paid')}</div>
-              <div className={styles.item_value}>
-                <FormatNumber value={origin_amount} suffix={symbol1} />
-              </div>
-            </div>
-            <div className={styles.detail_item} style={{ textAlign: 'right' }}>
-              <div className={styles.item_label}>{_('received')}</div>
-              <div className={styles.item_value}>
-                {realSwapAmount} {symbol2}
-              </div>
-            </div>
-          </div>
-          <div className={styles.detail_item}>
-            <div className={styles.item_label}>{_('swap_fee')}</div>
-            <div className={styles.item_value}>
-              <FormatNumber value={formatSat(txFee)} suffix="BSV" />
-            </div>
-          </div>
-          <div className={styles.detail_item}>
-            <div className={styles.item_label}>{_('onchain_tx')}</div>
-            <div className={styles.item_value}>{txid}</div>
-          </div>
-        </div>
-        <Button className={styles.done_btn} shape="round" onClick={this.finish}>
-          {_('done')}
-        </Button>
-      </div>
-    );
+  componentDidMount() {
+    EventBus.on('reloadPair', () => {
+      const { hash } = window.location;
+      if (hash.indexOf('swap') > -1) {
+        this.setState({ page: 'form' });
+      }
+    });
   }
+
   finish = () => {
     this.setState({
       formFinish: false,
@@ -800,11 +627,32 @@ export default class Swap extends Component {
   };
 
   renderSwap() {
-    const { formFinish } = this.state;
+    const {
+      formFinish,
+      origin_amount,
+      txFee,
+      dirForward,
+      txid,
+      realSwapAmount,
+    } = this.state;
+    const { token1, token2 } = this.props;
 
     return (
       <div className={styles.container}>
-        {formFinish ? this.renderResult() : this.renderForm()}
+        {formFinish ? (
+          <SwapResult
+            origin_amount={origin_amount}
+            txFee={txFee}
+            dirForward={dirForward}
+            txid={txid}
+            realSwapAmount={realSwapAmount}
+            token1={token1}
+            token2={token2}
+            finish={this.finish}
+          />
+        ) : (
+          this.renderForm()
+        )}
       </div>
     );
   }

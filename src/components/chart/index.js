@@ -31,7 +31,7 @@ const dateInterval = {
 export default class Chart extends Component {
   constructor(props) {
     super(props);
-    const { currentPair, bsvPrice } = props;
+    const { currentPair, tokenPrice, allPairs } = props;
     this.state = {
       chart_index: 0,
       cur_price: '',
@@ -80,13 +80,16 @@ export default class Chart extends Component {
         className: styles.tooltip,
         renderMode: 'html',
         formatter: function (params) {
+          // console.log('params',params)
           const lines = [{ label: _('date'), value: params[0].value[0] }];
+
+          const token1 = allPairs[currentPair].token1.symbol.toUpperCase();
           if (props.type === 'pool') {
             lines.push({
               label: 'TVL',
               value: formatNumberForDisplay({
                 value: params[0].value[1],
-                suffix: 'BSV',
+                suffix: token1,
               }),
             });
           } else {
@@ -94,7 +97,7 @@ export default class Chart extends Component {
               label: _('volume'),
               value: formatNumberForDisplay({
                 value: params[1].value[1],
-                suffix: 'BSV',
+                suffix: token1,
               }),
             });
             lines.push({
@@ -104,10 +107,16 @@ export default class Chart extends Component {
                 suffix:
                   currentPair === USDT_PAIR
                     ? 'USDT'
-                    : `BSV ($${formatAmount(
-                        BigNumber(params[0].value[1]).multipliedBy(bsvPrice),
-                        4,
-                      )})`,
+                    : `${token1} ${
+                        token1 === 'BSV'
+                          ? `($${formatAmount(
+                              BigNumber(params[0].value[1]).multipliedBy(
+                                tokenPrice.bsvPrice,
+                              ),
+                              4,
+                            )})`
+                          : ''
+                      }`,
               }),
             });
           }
@@ -174,7 +183,8 @@ export default class Chart extends Component {
   handleData = async (type) => {
     if (type !== this.props.type || !this._isMounted) return;
     const chartData = await this.getChartData(type);
-    if (chartData.length > 1) {
+    // console.log('chartData:', chartData)
+    if (chartData.length > 0) {
       if (type === 'pool') {
         this.option.series[0].data = chartData.map((d) => ({
           name: d.timestamp,
@@ -195,15 +205,21 @@ export default class Chart extends Component {
           name: d.timestamp,
           value: [d.formattedTime, d.volumn],
         }));
+        // console.log('this.option.series[1].data:', this.option.series[1].data);
       }
     } else {
       this.option.series[0].data = [];
     }
 
-    this.myChart.setOption(this.option);
-    this.setState({
-      chartData,
-    });
+    // this.myChart.clear();
+    // this.myChart.setOption(this.option);
+    // console.log(this.option)
+    setTimeout(() => {
+      this.myChart.setOption(this.option);
+      this.setState({
+        chartData,
+      });
+    }, 500);
   };
 
   async getChartData(type) {

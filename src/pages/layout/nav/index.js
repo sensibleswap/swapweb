@@ -52,7 +52,7 @@ export default class Head extends Component {
     return (
       <div className={styles.nav_container}>
         <Link to="/" className={styles.logo}>
-          <CustomIcon type="iconTS_logo" style={{ fontSize: 60 }} />
+          <CustomIcon type="iconTS_logo" />
         </Link>
         <div className={styles.menu}>
           {menu.map((item) => {

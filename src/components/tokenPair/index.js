@@ -7,13 +7,13 @@ export default function TokenIcons(props) {
     <div className={styles.icons} style={style}>
       <TokenIcon
         name={symbol1}
-        genesisID={genesisID1}
+        genesisID={genesisID1 || 'bsv'}
         size={size}
         style={{ zIndex: 1 }}
       />
       <TokenIcon
         name={symbol2}
-        genesisID={genesisID2}
+        genesisID={genesisID2 || 'bsv'}
         size={size}
         style={{ size, marginLeft: `-${size / 3}px` }}
       />

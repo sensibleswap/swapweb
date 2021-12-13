@@ -1,6 +1,11 @@
 import recordsApi from '../api/sensiblequery';
 import { USDT_PAIR } from 'common/const';
-import { formatTime, formatAmount, parseUrl, getTimeAgo } from 'common/utils';
+import {
+  formatTime,
+  formatAmount,
+  getCurrentPair,
+  getTimeAgo,
+} from 'common/utils';
 import debug from 'debug';
 const log = debug('records');
 
@@ -19,20 +24,14 @@ export default {
     *query({ payload }, { call, put, select }) {
       const allPairs = yield select((state) => state.pair.allPairs);
 
-      const urlPair = parseUrl();
-
-      let currentPair;
-      if (urlPair) {
-        currentPair = urlPair;
-      } else {
-        currentPair = yield select((state) => state.pair.currentPair);
-      }
+      let currentPair = getCurrentPair();
 
       if (!currentPair) {
         return [];
       }
       const timeRange = yield select((state) => state.records.timeRange);
-      const { swapCodeHash, swapID, token2 } = allPairs[currentPair] || {};
+      const { swapCodeHash, swapID, token2, token1 } =
+        allPairs[currentPair] || {};
 
       const { type } = payload;
       if (!swapCodeHash || !swapID) return [];
@@ -66,7 +65,10 @@ export default {
               dataTimeline.push({
                 timestamp: timestamp * 1000,
                 formattedTime: formatTime(timestamp * 1000),
-                amount: formatAmount((closeAmount / Math.pow(10, 8)) * 2, 8),
+                amount: formatAmount(
+                  (closeAmount / Math.pow(10, token1.decimal)) * 2,
+                  token1.decimal,
+                ),
               });
             }
           });
@@ -79,16 +81,21 @@ export default {
               timestamp: timestamp * 1000,
               formattedTime:
                 timeRange === 'all' ? _timestamp : _timestamp.substr(0, 10),
-              volumn: formatAmount((token1Volume / Math.pow(10, 8)) * 2, 8),
+              volumn: formatAmount(
+                (token1Volume / Math.pow(10, token1.decimal)) * 2,
+                token1.decimal,
+              ),
             };
 
             let _price =
-              (minPrice + maxPrice) / 2 / Math.pow(10, 8 - token2.decimal);
+              (minPrice + maxPrice) /
+              2 /
+              Math.pow(10, token1.decimal - token2.decimal);
             if (currentPair === USDT_PAIR) {
               _price = 1 / _price;
               stepData.price = formatAmount(_price, 6);
             } else {
-              stepData.price = formatAmount(_price, 8);
+              stepData.price = formatAmount(_price, token1.decimal);
             }
 
             dataTimeline.push(stepData);
@@ -97,6 +104,7 @@ export default {
         }
       }
 
+      // console.log(dataTimeline)
       return dataTimeline;
     },
   },

@@ -170,9 +170,11 @@ const texts = {
   login: 'Log In',
   lac_balance: 'Insufficient Balance',
   lac_token_balance: 'Insufficient %s Balance',
+  need_token: 'Need',
+  you_have: 'You have',
   no_pair: 'No such pair',
   not_enough: 'Insufficient %s liquidity',
-  lower_amount: 'Above %s Sat input required',
+  lower_amount: 'Minimum %s Sats required',
   pay: 'Pay',
   just: 'Just Now',
   minute_ago: ' minute ago',
@@ -224,6 +226,8 @@ const texts = {
   notice: 'Notice',
   notice720:
     'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
+  notice1117:
+    'On 19th November UTC 08:00, TokenSwap will perform an upgrade to TSC/USDT liquidity mining contract, we urge users to withdraw your TSC/USDT LP from current mining contract and deposit to new TSC/USDT mining contract to earn mining yield. Other features are not affected.',
   cant_remove: 'You have no liquidity to remove',
   test_only: 'Recommended for test only',
   swap_success: 'Swap success',
@@ -239,6 +243,8 @@ const texts = {
     'Provide liquidity and deposit your LP tokens to earn and harvest tokens',
   last_block_height: 'Latest BSV block height:',
   your_deposited_lp: 'Your deposited LP',
+  abandoned_deposited_lp:
+    'Withdraw all your LP token and yield, deposit LP token to the new contract',
   apy_info:
     'APY = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
   deposit: 'Deposit',
@@ -275,6 +281,7 @@ const texts = {
   pay_fee: 'Pay fee',
   finish: 'Finish',
   enter_tokenid: 'Enter Token Genesis ID',
+  enter_bsv_or_tokenid: 'Enter BSV or Token Genesis ID',
   find_tokenid: 'Token Genesis IDs can be found on',
   select_token_pair: 'Select and enter a token pair',
   next_step: 'Next step',
@@ -293,5 +300,6 @@ const texts = {
   not_acknowlege: 'Do not acknowledge',
   download_sensilet:
     'Install Sensilet extention. Refresh the page if you have installed.',
+  tokenb_tips: 'Token B should be your project token',
 };
 module.exports = texts;
