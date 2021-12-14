@@ -18,10 +18,12 @@ export default class PairList extends Component {
   handlePairs(pairs) {
     let arr = [];
     Object.keys(pairs).forEach((item) => {
+      const { token1, token2 } = pairs[item];
       const _obj = {
         ...pairs[item],
-        name: pairs[item].token1.symbol + '-' + pairs[item].token2.symbol,
+        name: token1.symbol + '-' + token2.symbol,
         id: item,
+        tokenIDs: token1.tokenID || token1.symbol + '-' + token2.tokenID,
       };
       arr.push(_obj);
     });

@@ -25,7 +25,7 @@ export default class TokenPairList extends React.Component {
 
   renderItem = (item, props) => {
     const { currentPair, type } = props;
-    const { token1, token2, id, name } = item;
+    const { token1, token2, id, name, tokenIDs } = item;
     return (
       <div
         className={styles.item}
@@ -45,7 +45,7 @@ export default class TokenPairList extends React.Component {
           <div className={styles.name}>{name.toUpperCase()}</div>
         </div>
 
-        <div className={styles.genesis_id}>{strAbbreviation(id)}</div>
+        <div className={styles.genesis_id}>{strAbbreviation(tokenIDs)}</div>
 
         <div className={styles.selected}>
           {currentPair === id && (
