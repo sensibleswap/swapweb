@@ -29,7 +29,7 @@ export default function ChooseWallet(props) {
 
         {query.env === 'local' && (
           <>
-            <li onClick={() => this.connectWebWallet(5, 'mainnet')}>
+            <li onClick={() => connectWebWallet(5, 'mainnet')}>
               <CustomIcon
                 type="iconicon-volt-tokenswap-circle"
                 style={{ fontSize: 30 }}
