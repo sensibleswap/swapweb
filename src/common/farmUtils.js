@@ -54,7 +54,13 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       return null;
     }
 
-    const { token1, token2, swapToken2Amount } = pairsData[token.tokenID];
+    const {
+      token1,
+      token2,
+      swapToken1Amount,
+      swapToken2Amount,
+      swapLpAmount,
+    } = pairsData[token.tokenID];
 
     // const symbol1 = token1.symbol.toUpperCase();
 
@@ -71,7 +77,7 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       //用自己交易对池子数据
       reward_token = pairsData[token.tokenID];
     } else {
-      reward_token = pairsData[`USDT-${symbol}`];
+      reward_token = pairsData[`USDT-${symbol}`] || pairsData[`BSV-${symbol}`];
     }
 
     if (!reward_token) {
@@ -79,6 +85,8 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       allFarmArr.push(item);
       return;
     }
+    const token1_amount = formatSat(swapToken1Amount, token1.decimal);
+    // const token2_amount = formatSat(swapToken2Amount, token2.decimal);
 
     const reward_token1_amount = formatSat(
       reward_token.swapToken1Amount,
@@ -94,9 +102,10 @@ export function handleFarmData(data, pairsData, tokenPrice) {
 
     // const bsv_amount = formatSat(reward_token.swapToken1Amount, reward_token.token1.decimal);
 
-    const lp_price = BigNumber(reward_token1_amount * 2).div(
-      reward_token.swapLpAmount,
-    );
+    // const lp_price = BigNumber(reward_token1_amount * 2).div(
+    //   reward_token.swapLpAmount,
+    // );
+    const lp_price = BigNumber(token1_amount * 2).div(swapLpAmount);
 
     const token_price = BigNumber(reward_token1_amount).div(
       reward_token2_amount,
@@ -104,9 +113,18 @@ export function handleFarmData(data, pairsData, tokenPrice) {
 
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
     let _total = BigNumber(poolTokenAmount).multipliedBy(lp_price);
+    // if(token1.symbol === 'SHOW') debugger
+    // if(token1.symbol === 'SHOW') console.log( _total.toString());
     if (token2.symbol.toUpperCase() === 'USDT') {
       _total = formatSat(swapToken2Amount * 2, token2.decimal);
+    } else if (
+      token1.symbol !== 'bsv' &&
+      reward_token.token1.symbol.toLowerCase() === 'bsv'
+    ) {
+      //先换算成bsv价格
+      _total = _total.multipliedBy(token_price);
     }
+    // if(token1.symbol === 'SHOW') console.log( _total.toString());
 
     let _yield = BigNumber(reword_amount)
       .multipliedBy(144)
