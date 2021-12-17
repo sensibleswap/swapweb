@@ -43,38 +43,53 @@ export default class UserInfo extends Component {
     this.polling = false;
   }
 
-  initWallet = () => {
-    const _wallet = Wallet({ type: 2 });
+  accountChanged = async (depositAddress) => {
+    const { dispatch, isLogin } = this.props;
 
-    _wallet.bsv.on('accountChanged', async (depositAddress) => {
-      const { dispatch, isLogin } = this.props;
-
-      if (depositAddress && !isLogin) {
-        await dispatch({
-          type: 'user/loadingUserData',
-          payload: {
-            type: 2,
-          },
-        });
-        if (window.location.hash.indexOf('farm') > -1) {
-          history.push('/farm');
-          EventBus.emit('reloadPair');
-        }
-      }
-    });
-    _wallet.bsv.on('close', () => {
-      this.props.dispatch({
-        type: 'user/save',
+    if (depositAddress && !isLogin) {
+      await dispatch({
+        type: 'user/loadingUserData',
         payload: {
-          accountInfo: {
-            userBalance: {},
-          },
-          isLogin: false,
+          type: 2,
         },
       });
       if (window.location.hash.indexOf('farm') > -1) {
+        history.push('/farm');
         EventBus.emit('reloadPair');
       }
+    }
+  };
+
+  closeWallet = () => {
+    console.log('close');
+    this.props.dispatch({
+      type: 'user/save',
+      payload: {
+        accountInfo: {
+          userBalance: {},
+        },
+        isLogin: false,
+      },
+    });
+    if (window.location.hash.indexOf('farm') > -1) {
+      EventBus.emit('reloadPair');
+    }
+  };
+
+  initWallet = () => {
+    const _voltWallet = Wallet({ type: 2 });
+
+    _voltWallet.bsv.on('accountChanged', async (depositAddress) => {
+      this.accountChanged(depositAddress);
+    });
+    _voltWallet.bsv.on('close', () => {
+      this.closeWallet();
+    });
+
+    const _extwallet = Wallet({ type: 5 });
+
+    _extwallet.bsv.on('close', () => {
+      this.closeWallet();
     });
   };
 
@@ -184,9 +199,11 @@ export default class UserInfo extends Component {
     const { walletType } = this.props;
     if (walletType === 1) {
       return <span className={styles.dot}></span>;
-    } else if (walletType === 2) {
+    }
+    if (walletType === 2) {
       return <CustomIcon type="iconicon-volt-tokenswap-circle" />;
     }
+    return <span style={{ paddingLeft: 10 }} />;
   }
 
   renderAppConnectBtn() {

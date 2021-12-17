@@ -30,6 +30,7 @@ const getSensibleFtBalance = async () => {
 };
 
 export default {
+  bsv,
   info: async () => {
     if (checkExtension()) {
       let accountInfo = await bsv.getAccount();
@@ -102,7 +103,8 @@ export default {
 
   signTx: async (params) => {
     const res = await bsv.signTx({ list: [params] });
-    // console.log(res); debugger
+    if (res.sig) return res;
+    if (res[0].sig) return res[0];
     return res.sigList[0];
   },
 };

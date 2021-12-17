@@ -60,10 +60,10 @@ export default function btn(props) {
     },
   ];
 
-  let _btn = BtnWait(conditions);
-  if (_btn) {
-    return _btn;
-  }
+  // let _btn = BtnWait(conditions);
+  // if (_btn) {
+  //   return _btn;
+  // }
   if (beyond) {
     // 超出容忍度
     return (

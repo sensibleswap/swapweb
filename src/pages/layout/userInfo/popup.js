@@ -83,10 +83,10 @@ export default class Popup extends Component {
             <CustomIcon type="iconcopy" />
             {_('copy_account')}
           </Clipboard>
-          <div className={styles.line} onClick={chooseLoginWallet}>
+          {/*<div className={styles.line} onClick={chooseLoginWallet}>
             <CustomIcon type="iconswitch-account" />
             <span className={styles.name}>{_('switch_wallet')}</span>
-          </div>
+          </div>*/}
           {walletType === 1 && (
             <div className={styles.line}>
               <DollarOutlined />
