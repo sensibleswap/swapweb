@@ -43,14 +43,15 @@ export default class UserInfo extends Component {
     this.polling = false;
   }
 
-  accountChanged = async (depositAddress) => {
+  accountChanged = async (type) => {
     const { dispatch, isLogin } = this.props;
 
-    if (depositAddress && !isLogin) {
+    const lastType = localStorage.getItem(TSWAP_LAST_WALLET_TYPE);
+    if (!isLogin && type === lastType) {
       await dispatch({
         type: 'user/loadingUserData',
         payload: {
-          type: 2,
+          type,
         },
       });
       if (window.location.hash.indexOf('farm') > -1) {
@@ -77,18 +78,21 @@ export default class UserInfo extends Component {
   };
 
   initWallet = () => {
-    const _voltWallet = Wallet({ type: 2 });
+    const _extwallet = Wallet({ type: 5 });
 
-    _voltWallet.bsv.on('accountChanged', async (depositAddress) => {
-      this.accountChanged(depositAddress);
+    _extwallet.bsv.on('accountChanged', async (depositAddress) => {
+      depositAddress && this.accountChanged(5);
     });
-    _voltWallet.bsv.on('close', () => {
+    _extwallet.bsv.on('close', () => {
       this.closeWallet();
     });
 
-    const _extwallet = Wallet({ type: 5 });
+    const _voltWallet = Wallet({ type: 2 });
 
-    _extwallet.bsv.on('close', () => {
+    _voltWallet.bsv.on('accountChanged', async (depositAddress) => {
+      depositAddress && this.accountChanged(2);
+    });
+    _voltWallet.bsv.on('close', () => {
       this.closeWallet();
     });
   };

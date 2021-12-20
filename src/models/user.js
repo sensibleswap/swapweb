@@ -1,5 +1,9 @@
 // import bsv from 'common/walletFun';
-import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
+import {
+  TSWAP_NETWORK,
+  DEFAULT_NET,
+  TSWAP_LAST_WALLET_TYPE,
+} from 'common/const';
 import Wallet from '../lib/main';
 import debug from 'debug';
 const log = debug('user');
@@ -36,7 +40,6 @@ export default {
           type: 'save',
           payload: {
             accountInfo,
-            isLogin: true,
             walletType: type || 1,
           },
         });
@@ -102,6 +105,13 @@ export default {
         console.log(error);
         return { msg: error.message || error.toString() };
       }
+      localStorage.setItem(TSWAP_LAST_WALLET_TYPE, type);
+      yield put({
+        type: 'save',
+        payload: {
+          isLogin: true,
+        },
+      });
       return {};
     },
 

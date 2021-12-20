@@ -22,11 +22,6 @@ export default function ChooseWallet(props) {
     >
       <div className={styles.title}>{_('connect_wallet')}</div>
       <ul>
-        <li onClick={() => connectWebWallet(2, 'mainnet')}>
-          <CustomIcon type="iconicon-volt-tokenswap-circle" />
-          <div className={styles.label}>Volt {_('wallet')}</div>
-        </li>
-
         {query.env === 'local' && (
           <>
             <li onClick={() => connectWebWallet(5, 'mainnet')}>
@@ -34,10 +29,15 @@ export default function ChooseWallet(props) {
                 type="iconicon-volt-tokenswap-circle"
                 style={{ fontSize: 30 }}
               />
-              <div className={styles.label}>Chrome Ext</div>
+              <div className={styles.label}>Volt {_('wallet')}</div>
             </li>
           </>
         )}
+
+        <li onClick={() => connectWebWallet(2, 'mainnet')}>
+          <CustomIcon type="iconicon-volt-tokenswap-circle" />
+          <div className={styles.label}>Volt Web {_('wallet')}</div>
+        </li>
 
         {!isApp && (
           <>
