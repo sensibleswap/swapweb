@@ -107,32 +107,32 @@ export default class UserInfo extends Component {
           dispatch({
             type: 'pair/getUSDPrice',
           });
-          await sleep(20 * 1e3);
+          await sleep(5 * 1e3);
           i++;
-          const { hash } = window.location;
-          if (busy) return;
-          if (hash.indexOf('farm') < 0) {
-            dispatch({
-              type: 'pair/updatePairData',
-            });
-          }
-
-          if (hash.indexOf('farm') > -1) {
-            dispatch({
-              type: 'farm/updatePairData',
-              payload: {
-                address: accountInfo.userAddress,
-              },
-            });
-          }
           if (isLogin) {
             await dispatch({
               type: 'user/updateUserData',
             });
           }
+          if (i % 4 === 0) {
+            const { hash } = window.location;
+            if (busy) return;
+            if (hash.indexOf('farm') < 0) {
+              dispatch({
+                type: 'pair/updatePairData',
+              });
+            }
 
-          if (i > 1) {
-            i = 0;
+            if (hash.indexOf('farm') > -1) {
+              dispatch({
+                type: 'farm/updatePairData',
+                payload: {
+                  address: accountInfo.userAddress,
+                },
+              });
+            }
+          }
+          if (i % 8 === 0) {
             const { hash } = location;
             if (hash.indexOf('swap') > -1) {
               EventBus.emit('reloadChart', 'swap');

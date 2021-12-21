@@ -68,10 +68,8 @@ export const calcAmount = (props) => {
         : 0;
   }
 
-  const p = BN(swapToken2Amount).dividedBy(swapToken1Amount);
-  const p1 = dirForward
-    ? BN(newAmount2).dividedBy(newAmount1)
-    : newAmount1.dividedBy(newAmount2);
+  const p = BN(amount2).dividedBy(amount1);
+  const p1 = newAmount2.dividedBy(newAmount1);
   const slip = p1.minus(p).dividedBy(p);
 
   return {
