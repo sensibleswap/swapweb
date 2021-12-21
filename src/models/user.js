@@ -41,6 +41,7 @@ export default {
           payload: {
             accountInfo,
             walletType: type || 1,
+            isLogin: true,
           },
         });
       } catch (error) {
@@ -106,12 +107,6 @@ export default {
         return { msg: error.message || error.toString() };
       }
       localStorage.setItem(TSWAP_LAST_WALLET_TYPE, type);
-      yield put({
-        type: 'save',
-        payload: {
-          isLogin: true,
-        },
-      });
       return {};
     },
 

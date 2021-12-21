@@ -72,6 +72,17 @@ export default class Chart extends Component {
           max: (v) => v.max * 2,
         },
       ],
+      dataZoom: [
+        {
+          type: 'inside',
+          start: 0,
+          end: 100,
+        },
+        {
+          start: 0,
+          end: 100,
+        },
+      ],
       tooltip: {
         trigger: 'axis',
         axisPointer: {

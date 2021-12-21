@@ -9,6 +9,7 @@ import { sleep } from 'common/utils';
 import Wallet from '@/lib/main';
 import Popup from './popup';
 import ChooseWallet from './chooseWallet';
+import { TSWAP_LAST_WALLET_TYPE } from 'common/const';
 import styles from './index.less';
 import _ from 'i18n';
 
@@ -47,7 +48,7 @@ export default class UserInfo extends Component {
     const { dispatch, isLogin } = this.props;
 
     const lastType = localStorage.getItem(TSWAP_LAST_WALLET_TYPE);
-    if (!isLogin && type === lastType) {
+    if (!isLogin && type === parseInt(lastType)) {
       await dispatch({
         type: 'user/loadingUserData',
         payload: {
@@ -62,7 +63,6 @@ export default class UserInfo extends Component {
   };
 
   closeWallet = () => {
-    console.log('close');
     this.props.dispatch({
       type: 'user/save',
       payload: {
