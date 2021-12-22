@@ -51,8 +51,8 @@ export const calcAmount = (props) => {
         _aimAddAmount * BigInt(FEE_FACTOR));
 
     addAmount = BN(addAmount);
-    addAmount = addAmount.div(Math.pow(10, decimal1));
     newAmount1 = addAmount.plus(amount1);
+    addAmount = addAmount.div(Math.pow(10, decimal1));
     let addAmountN = formatAmount(addAmount, decimal1);
     if (!addAmount.isGreaterThan(0)) {
       addAmountN = 0;
@@ -67,9 +67,13 @@ export const calcAmount = (props) => {
         ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
         : 0;
   }
-
-  const p = BN(amount2).dividedBy(amount1);
-  const p1 = newAmount2.dividedBy(newAmount1);
+  // console.log('dirForward:', dirForward, 'amount1:', amount1, 'amount2:', amount2, 'newAmount1:', newAmount1.toString(), 'newAmount2:', newAmount2.toString());
+  const p = dirForward
+    ? BN(amount2).dividedBy(amount1)
+    : BN(amount1).dividedBy(amount2);
+  const p1 = dirForward
+    ? newAmount2.dividedBy(newAmount1)
+    : BN(newAmount1).dividedBy(newAmount2);
   const slip = p1.minus(p).dividedBy(p);
 
   return {
