@@ -1,10 +1,11 @@
 'use strict';
 import React, { Component } from 'react';
+import BN from 'bignumber.js';
 import { connect } from 'umi';
 import { gzip, ungzip } from 'node-gzip';
 import { Button, message } from 'antd';
 import EventBus from 'common/eventBus';
-import { LeastFee, formatTok } from 'common/utils';
+import { LeastFee, formatTok, formatSat, formatAmount } from 'common/utils';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import Rate from 'components/rate';
@@ -14,6 +15,7 @@ import _ from 'i18n';
 import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { BtnWait } from 'components/btns';
 import { SuccessResult } from 'components/result';
+import { Arrow } from 'components/ui';
 
 @connect(({ user, pair, farm, loading }) => {
   const { effects } = loading;
@@ -28,7 +30,7 @@ export default class Withdraw extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addLP: 0,
+      removeLP: 0,
       formFinish: false,
       price: 0,
       blockHeight: 0,
@@ -58,8 +60,52 @@ export default class Withdraw extends Component {
 
   changeData = (value) => {
     this.setState({
-      addLP: value,
+      removeLP: value,
     });
+  };
+
+  calc = () => {
+    const { currentFarmPair, allFarmPairs, pairsData, loading } = this.props;
+    if (loading) {
+      return {
+        removeToken1: 0,
+        removeToken2: 0,
+        removeLP: 0,
+      };
+    }
+    const { removeLP } = this.state;
+    if (!removeLP) {
+      return {
+        removeToken1: 0,
+        removeToken2: 0,
+      };
+    }
+    const currentPair = allFarmPairs[currentFarmPair];
+    const {
+      swapToken1Amount,
+      swapToken2Amount,
+      swapLpAmount,
+      lptoken,
+      token1,
+      token2,
+    } = pairsData[currentPair.token.tokenID];
+
+    let rate = BN(formatTok(removeLP, lptoken.decimal)).div(swapLpAmount);
+    if (rate > 1) rate = 1;
+    // console.log(rate.toString(), rate1.toString())
+    const removeToken1 = formatSat(
+      BN(swapToken1Amount).multipliedBy(rate),
+      token1.decimal,
+    );
+    const removeToken2 = formatSat(
+      BN(swapToken2Amount).multipliedBy(rate),
+      token2.decimal,
+    );
+    return {
+      removeToken1: formatAmount(removeToken1, token1.decimal),
+      removeToken2: formatAmount(removeToken2, token2.decimal),
+      removeLP: formatSat(removeLP, lptoken.decimal),
+    };
   };
 
   renderForm() {
@@ -67,9 +113,10 @@ export default class Withdraw extends Component {
       currentFarmPair,
       loading,
       lockedTokenAmount,
-      submiting,
+      // submiting,
     } = this.props;
     if (loading || !currentFarmPair) return <Loading />;
+    const { removeToken1, removeToken2 } = this.calc();
     return (
       <div className={styles.content}>
         <Rate
@@ -78,6 +125,35 @@ export default class Withdraw extends Component {
           balance={lockedTokenAmount}
           tokenPair={<FarmPairIcon keyword="pair" />}
         />
+
+        <Arrow />
+
+        <div className={styles.values}>
+          <div className={styles.values_left}>
+            <div className={styles.v_item}>
+              <div className={styles.label}>
+                <FarmPairIcon keyword="token1" size={20} />
+              </div>
+            </div>
+            <div className={styles.v_item}>
+              <div className={styles.label}>
+                <FarmPairIcon keyword="token2" size={20} />
+              </div>
+            </div>
+          </div>
+          <div className={styles.values_right}>
+            <div className={styles.v_item}>
+              <div className={styles.value}>
+                <FormatNumber value={removeToken1} />
+              </div>
+            </div>
+            <div className={styles.v_item}>
+              <div className={styles.value}>
+                <FormatNumber value={removeToken2} />
+              </div>
+            </div>
+          </div>
+        </div>
         {this.renderButton()}
       </div>
     );
@@ -129,7 +205,7 @@ export default class Withdraw extends Component {
   };
 
   handleSubmit = async () => {
-    const { addLP } = this.state;
+    const { removeLP } = this.state;
     const { dispatch, currentFarmPair, accountInfo, allFarmPairs } = this.props;
     const { userAddress, userBalance, changeAddress } = accountInfo;
     const lptoken = allFarmPairs[currentFarmPair].token;
@@ -154,11 +230,11 @@ export default class Withdraw extends Component {
       return message.error(isLackBalance.msg);
     }
 
-    // const _value = BigNumber(addLP)
+    // const _value = BigNumber(removeLP)
     //   .multipliedBy(Math.pow(10, lptoken.decimal))
     //   .toFixed(0);
-    const _value = formatTok(addLP, lptoken.decimal);
-    // console.log(_value,formatTok(addLP, lptoken.decimal) )
+    const _value = formatTok(removeLP, lptoken.decimal);
+    // console.log(_value,formatTok(removeLP, lptoken.decimal) )
     let tx_res = await dispatch({
       type: 'user/transferBsv',
       payload: {
@@ -219,15 +295,15 @@ export default class Withdraw extends Component {
 
   renderButton() {
     const { isLogin, lockedTokenAmount } = this.props;
-    const { addLP } = this.state;
-    // console.log(addLP, lockedTokenAmount)
+    const { removeLP } = this.state;
+    // console.log(removeLP, lockedTokenAmount)
 
     const conditions = [
       { key: 'login', cond: !isLogin },
-      { key: 'enterAmount', cond: parseFloat(addLP) <= 0 },
+      { key: 'enterAmount', cond: parseFloat(removeLP) <= 0 },
       {
         key: 'lackBalance',
-        cond: parseFloat(addLP) > parseFloat(lockedTokenAmount),
+        cond: parseFloat(removeLP) > parseFloat(lockedTokenAmount),
       },
     ];
 
@@ -248,12 +324,12 @@ export default class Withdraw extends Component {
   clear = () => {
     this.setState({
       formFinish: false,
-      addLP: 0,
+      removeLP: 0,
     });
   };
 
   renderResult() {
-    const { addLP, blockHeight } = this.state;
+    const { removeLP, blockHeight } = this.state;
     return (
       <div className={styles.content}>
         <SuccessResult
@@ -265,7 +341,7 @@ export default class Withdraw extends Component {
 
             <div className={styles.pair_data}>
               <div className={styles.pair_left}>
-                <FormatNumber value={addLP} />
+                <FormatNumber value={removeLP} />
               </div>
               <div className={styles.pair_right}>
                 <FarmPairIcon keyword="pair" />

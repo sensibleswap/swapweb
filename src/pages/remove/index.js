@@ -7,7 +7,7 @@ import { Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, LeastFee, formatTok } from 'common/utils';
 import Rate from 'components/rate';
-import CustomIcon from 'components/icon';
+// import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
