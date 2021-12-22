@@ -45,7 +45,7 @@ export default class Rate extends Component {
       amount = this.countAmount(percent);
     } else if (parseFloat(amount) >= parseFloat(balance)) {
       percent = 100;
-      amount = balance;
+      // amount = balance;
     } else if (parseFloat(amount) >= 0) {
       percent = this.countPercent(amount);
     }

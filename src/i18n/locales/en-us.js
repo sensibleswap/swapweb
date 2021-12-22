@@ -229,6 +229,7 @@ const texts = {
   notice1117:
     'On 19th November UTC 08:00, TokenSwap will perform an upgrade to TSC/USDT liquidity mining contract, we urge users to withdraw your TSC/USDT LP from current mining contract and deposit to new TSC/USDT mining contract to earn mining yield. Other features are not affected.',
   cant_remove: 'You have no liquidity to remove',
+  insufficient_balance: 'Exceeded available balance',
   test_only: 'Recommended for test only',
   swap_success: 'Swap success',
   lp_balance: 'Available to withdraw',
