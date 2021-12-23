@@ -121,9 +121,10 @@ export default class Swap extends Component {
     );
   };
 
-  showUI = (name) => {
+  showUI = (name, type) => {
     this.setState({
       page: name,
+      selectedTokenType: type,
     });
   };
 
@@ -305,7 +306,7 @@ export default class Swap extends Component {
               <TokenInput
                 pairData={pairData}
                 tokenKey={dirForward ? 'token1' : 'token2'}
-                showUI={() => this.showUI('selectToken')}
+                showUI={() => this.showUI('selectToken', 'left')}
                 changeAmount={this.changeOriginAmount}
                 formItemName="origin_amount"
               />
@@ -330,7 +331,7 @@ export default class Swap extends Component {
               <TokenInput
                 pairData={pairData}
                 tokenKey={dirForward ? 'token2' : 'token1'}
-                showUI={() => this.showUI('selectToken')}
+                showUI={() => this.showUI('selectToken', 'right')}
                 changeAmount={this.changeAimAmount}
                 formItemName="aim_amount"
               />
@@ -670,14 +671,17 @@ export default class Swap extends Component {
     const { currentPair, loading } = this.props;
     if (loading) return <Loading />;
     if (!currentPair) return 'No pair';
-    const { page } = this.state;
+    const { page, selectedTokenType } = this.state;
     return (
       <div style={{ position: 'relative' }}>
         {this.renderSwap()}
 
         {page === 'selectToken' && (
           <div className={styles.selectToken_wrap}>
-            <SelectToken finish={() => this.selectedToken()} />
+            <SelectToken
+              finish={() => this.selectedToken()}
+              type={selectedTokenType}
+            />
           </div>
         )}
       </div>

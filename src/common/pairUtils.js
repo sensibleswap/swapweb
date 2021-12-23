@@ -83,3 +83,41 @@ export const calcAmount = (props) => {
     fee,
   };
 };
+
+export const filterTokens = ({ allPairs, token1ID }) => {
+  // index: 1-token1 2-token2, filter
+  let token1Arr = [],
+    token2Arr = [];
+
+  Object.keys(allPairs).forEach((key) => {
+    const pair = allPairs[key];
+    const { token1, token2 } = pair;
+    const symbol1 = token1.symbol;
+    // const symbol2 = token2.symbol.toUpperCase();
+
+    if (
+      !token1ID || //token1空的未选择
+      token1ID.toUpperCase() === token1.symbol.toUpperCase() || // token1选择了bsv和token1为bsv的对应
+      token1ID === token1.tokenID
+    ) {
+      if (!token2Arr.find((item) => item.tokenID === token2.tokenID)) {
+        token2Arr = [...token2Arr, token2];
+      }
+    }
+
+    // if (
+    //   !token2ID ||//token1空的未选择
+    //   token2ID === symbol2 ||// token1选择了bsv和token1为bsv的对应
+    //   token2ID === token2.tokenID
+    // ) {
+    if (!token1Arr.find((item) => item.tokenID === token1.tokenID)) {
+      token1Arr = [...token1Arr, token1];
+    }
+    // }
+  });
+
+  return {
+    token1Arr,
+    token2Arr,
+  };
+};

@@ -2,14 +2,10 @@ import 'whatwg-fetch';
 import BigNumber from 'bignumber.js';
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
-import {
-  TSWAP_CURRENT_PAIR,
-  DEFAULT_PAIR,
-  USDT_PAIR,
-  USDT_TSC_PAIR,
-} from 'common/const';
+import { TSWAP_CURRENT_PAIR, USDT_PAIR, USDT_TSC_PAIR } from 'common/const';
 import debug from 'debug';
 import { getCurrentPair } from 'common/utils';
+import { filterTokens } from 'common/pairUtils';
 
 const log = debug('pair');
 const iconUrl = 'https://volt.id/api.json?method=sensibleft.getSensibleFtList';
@@ -34,6 +30,8 @@ export default {
       bsvPrice: 0,
       tscPrice: 0,
     },
+    currentToken1: 'BSV',
+    currentToken2: '',
   },
 
   subscriptions: {
@@ -90,6 +88,23 @@ export default {
       if (!currentPair) {
         currentPair = getCurrentPair();
       }
+      // console.log(currentPair);
+
+      const currentPairArr = currentPair.split('-');
+      let [currentToken1, currentToken2] = currentPairArr;
+      if (currentPairArr.length === 1) {
+        currentToken1 = 'bsv';
+        currentToken2 = currentPairArr[0];
+      }
+      // const pairData = yield select((state) => state.pair);
+      const { token1Arr, token2Arr } = filterTokens({
+        allPairs,
+        token1ID: currentToken1,
+        token2ID: currentToken2,
+      });
+      // if(!currentToken2) {
+      //   currentToken2 = token2Arr[0].tokenID;
+      // }
 
       // console.log('localStorage:',localStorage.getItem(TSWAP_CURRENT_PAIR))
 
@@ -134,6 +149,10 @@ export default {
           currentPair,
           pairList: { ...data },
           customPair,
+          token1Arr,
+          token2Arr,
+          currentToken1,
+          currentToken2,
           // mode: 'init',
         },
       });
@@ -251,6 +270,57 @@ export default {
       });
     },
 
+    *changeCurrentToken({ payload }, { call, put, select }) {
+      const { token1ID = 'BSV', token2ID } = payload;
+
+      const pairData = yield select((state) => state.pair);
+      const { allPairs } = pairData;
+      let currentToken1 = token1ID || pairData.currentToken1;
+      let currentToken2 = token2ID || pairData.currentToken2;
+
+      const { token1Arr, token2Arr } = filterTokens({
+        allPairs,
+        token1ID: currentToken1,
+      });
+      if (!currentToken2) currentToken2 = token2Arr[0].tokenID;
+
+      let currentPair;
+      Object.keys(allPairs).forEach((item) => {
+        if (
+          (allPairs[item].token1.symbol.toUpperCase() ===
+            currentToken1.toUpperCase() ||
+            allPairs[item].token1.tokenID === currentToken1) &&
+          allPairs[item].token2.tokenID === currentToken2
+        ) {
+          currentPair = item;
+        }
+      });
+      if (!currentPair) {
+        currentToken2 = token2Arr[0].tokenID;
+        Object.keys(allPairs).forEach((item) => {
+          if (
+            (allPairs[item].token1.symbol.toUpperCase() ===
+              currentToken1.toUpperCase() ||
+              allPairs[item].token1.tokenID === currentToken1) &&
+            allPairs[item].token2.tokenID === currentToken2
+          ) {
+            currentPair = item;
+          }
+        });
+      }
+      yield put({
+        type: 'save',
+        payload: {
+          currentToken1,
+          currentToken2,
+          token1Arr,
+          token2Arr,
+          currentPair,
+        },
+      });
+      return currentPair;
+    },
+
     *reqSwap({ payload }, { call, put, select }) {
       payload.source = 'tswap.io';
       const customPair = yield select((state) => state.pair.customPair);
@@ -318,14 +388,14 @@ export default {
       }
 
       const { token1, token2, lptoken, rabinApis } = allPairs[currentPair];
-      const symbol1 = token1.symbol.toUpperCase();
-      const symbol2 = token2.symbol.toUpperCase();
+      const symbol1 = token1.symbol;
+      const symbol2 = token2.symbol;
 
       return {
         ...state,
         ...action.payload,
         currentPair,
-        token1: { ...token1, symbol: symbol1, isBsv: symbol1 === 'BSV' },
+        token1: { ...token1, symbol: symbol1, isBsv: symbol1 === 'bsv' },
         token2: { ...token2, symbol: symbol2 },
         lptoken,
         rabinApis,

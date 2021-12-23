@@ -1,6 +1,8 @@
 import { Button } from 'antd';
 import BN from 'bignumber.js';
 import { BtnWait } from 'components/btns';
+import { formatSat } from 'common/utils';
+import { MINAMOUNT } from 'common/config';
 import styles from './index.less';
 import _ from 'i18n';
 

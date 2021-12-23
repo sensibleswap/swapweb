@@ -12,30 +12,33 @@ const escapeRegExpWildcards = (searchStr) => {
   return searchStr;
 };
 
-const searchByKeywords = (keywords, searchArr) => {
+const searchByKeywords = (keywords, searchArr, type) => {
   const keywordsExp = new RegExp(
     '.*?' + escapeRegExpWildcards(keywords) + '.*?',
     'img',
   );
 
   return searchArr.filter((v) => {
-    return (
-      keywordsExp.test(v.token1.symbol) ||
-      keywordsExp.test(v.token2.symbol) ||
-      keywords == v.token1.tokenID ||
-      keywords == v.token2.tokenID
-    );
+    if (type === 'pair') {
+      return (
+        keywordsExp.test(v.token1.symbol) ||
+        keywordsExp.test(v.token2.symbol) ||
+        keywords == v.token1.tokenID ||
+        keywords == v.token2.tokenID
+      );
+    }
+    return keywordsExp.test(v.symbol) || keywords == v.tokenID;
   });
 };
 
 const handleChange = (e, props) => {
   const { value } = e.target;
-  const { allPairs, changeShowList } = props;
+  const { allPairs, changeShowList, type } = props;
 
   if (!value) {
     return changeShowList(allPairs);
   }
-  const searchResultList = searchByKeywords(value, allPairs);
+  const searchResultList = searchByKeywords(value, allPairs, type);
   changeShowList(searchResultList);
 };
 
