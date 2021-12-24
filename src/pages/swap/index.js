@@ -306,7 +306,9 @@ export default class Swap extends Component {
               <TokenInput
                 pairData={pairData}
                 tokenKey={dirForward ? 'token1' : 'token2'}
-                showUI={() => this.showUI('selectToken', 'left')}
+                showUI={() =>
+                  this.showUI('selectToken', dirForward ? 'left' : 'right')
+                }
                 changeAmount={this.changeOriginAmount}
                 formItemName="origin_amount"
               />
@@ -331,7 +333,9 @@ export default class Swap extends Component {
               <TokenInput
                 pairData={pairData}
                 tokenKey={dirForward ? 'token2' : 'token1'}
-                showUI={() => this.showUI('selectToken', 'right')}
+                showUI={() =>
+                  this.showUI('selectToken', dirForward ? 'right' : 'left')
+                }
                 changeAmount={this.changeAimAmount}
                 formItemName="aim_amount"
               />

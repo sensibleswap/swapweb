@@ -290,7 +290,9 @@ export default {
           (allPairs[item].token1.symbol.toUpperCase() ===
             currentToken1.toUpperCase() ||
             allPairs[item].token1.tokenID === currentToken1) &&
-          allPairs[item].token2.tokenID === currentToken2
+          (allPairs[item].token2.symbol.toUpperCase() ===
+            currentToken2.toUpperCase() ||
+            allPairs[item].token2.tokenID === currentToken2)
         ) {
           currentPair = item;
         }
@@ -302,7 +304,9 @@ export default {
             (allPairs[item].token1.symbol.toUpperCase() ===
               currentToken1.toUpperCase() ||
               allPairs[item].token1.tokenID === currentToken1) &&
-            allPairs[item].token2.tokenID === currentToken2
+            (allPairs[item].token2.symbol.toUpperCase() ===
+              currentToken2.toUpperCase() ||
+              allPairs[item].token2.tokenID === currentToken2)
           ) {
             currentPair = item;
           }

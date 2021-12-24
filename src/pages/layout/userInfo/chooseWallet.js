@@ -22,17 +22,22 @@ export default function ChooseWallet(props) {
     >
       <div className={styles.title}>{_('connect_wallet')}</div>
       <ul>
+        {query.env === 'local' && (
+          <>
+            <li onClick={() => connectWebWallet(5, 'mainnet')}>
+              <CustomIcon
+                type="iconicon-volt-tokenswap-circle"
+                style={{ fontSize: 30 }}
+              />
+              <div className={styles.label}>Volt {_('wallet')}</div>
+            </li>
+          </>
+        )}
+
         <li onClick={() => connectWebWallet(2, 'mainnet')}>
           <CustomIcon type="iconicon-volt-tokenswap-circle" />
-          <div className={styles.label}>Volt {_('wallet')}</div>
+          <div className={styles.label}>Volt Web {_('wallet')}</div>
         </li>
-
-        <>
-          <li onClick={() => connectWebWallet(2, 'testnet')}>
-            <CustomIcon type="iconBSVtestnet" />
-            <div className={styles.label}>BSV Testnet</div>
-          </li>
-        </>
 
         {!isApp && (
           <>
@@ -41,6 +46,10 @@ export default function ChooseWallet(props) {
                 <img src={sensiletIcon} />
               </div>
               <div className={styles.label}>Sensilet</div>
+            </li>
+            <li onClick={() => connectWebWallet(2, 'testnet')}>
+              <CustomIcon type="iconBSVtestnet" />
+              <div className={styles.label}>BSV Testnet</div>
             </li>
             <li onClick={() => connectWebWallet(1)} style={{ fontSize: 15 }}>
               <div className={styles.ts_icon}>
