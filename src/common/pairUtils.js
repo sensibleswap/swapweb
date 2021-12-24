@@ -89,11 +89,16 @@ export const filterTokens = ({ allPairs, token1ID }) => {
   let token1Arr = [],
     token2Arr = [];
 
+  let allPairsArr = [];
   Object.keys(allPairs).forEach((key) => {
-    const pair = allPairs[key];
+    allPairsArr.push(allPairs[key]);
+  });
+  allPairsArr.sort((a, b) => {
+    return b.poolAmount - a.poolAmount;
+  });
+
+  allPairsArr.forEach((pair) => {
     const { token1, token2 } = pair;
-    const symbol1 = token1.symbol;
-    // const symbol2 = token2.symbol.toUpperCase();
 
     if (
       !token1ID || //token1空的未选择
@@ -105,15 +110,9 @@ export const filterTokens = ({ allPairs, token1ID }) => {
       }
     }
 
-    // if (
-    //   !token2ID ||//token1空的未选择
-    //   token2ID === symbol2 ||// token1选择了bsv和token1为bsv的对应
-    //   token2ID === token2.tokenID
-    // ) {
     if (!token1Arr.find((item) => item.tokenID === token1.tokenID)) {
       token1Arr = [...token1Arr, token1];
     }
-    // }
   });
 
   return {
