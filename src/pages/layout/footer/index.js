@@ -26,6 +26,13 @@ export default function Footer() {
             <CustomIcon type="iconTS_Logo" />
           </div>
           <div className={styles.text}>TokenSwap © 2021</div>
+          <a
+            href="https://maiimg.com/doc/?e=dnI1HYoCLxNcM6"
+            target="_blank"
+            className={styles.link}
+          >
+            What is TokenSwap
+          </a>
         </div>
         <div className={styles.icons}>
           {linksData.map((item) => (
