@@ -68,12 +68,8 @@ export const calcAmount = (props) => {
         : 0;
   }
   // console.log('dirForward:', dirForward, 'amount1:', amount1, 'amount2:', amount2, 'newAmount1:', newAmount1.toString(), 'newAmount2:', newAmount2.toString());
-  const p = dirForward
-    ? BN(amount2).dividedBy(amount1)
-    : BN(amount1).dividedBy(amount2);
-  const p1 = dirForward
-    ? newAmount2.dividedBy(newAmount1)
-    : BN(newAmount1).dividedBy(newAmount2);
+  const p = BN(amount2).dividedBy(amount1);
+  const p1 = newAmount2.dividedBy(newAmount1);
   const slip = p1.minus(p).dividedBy(p);
 
   return {
