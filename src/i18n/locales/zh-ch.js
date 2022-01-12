@@ -298,5 +298,6 @@ const texts = {
   download_voltwallet:
     '请先安装Volt插件。如果已经安装，请刷新页面。点击确定下载插件。',
   tokenb_tips: 'Token B 只能是项目方token',
+  tmp_tips: '测试交易对，请移除和此交易对相关的资产，一周后下架该交易对',
 };
 module.exports = texts;

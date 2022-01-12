@@ -302,5 +302,7 @@ const texts = {
   download_sensilet:
     'Install Sensilet extention. Refresh the page if you have installed.',
   tokenb_tips: 'Token B should be your project token',
+  tmp_tips:
+    'This is a test pair, remove your liquidity, the pair will be delisted after a week.',
 };
 module.exports = texts;
