@@ -22,7 +22,7 @@ export default function ChooseWallet(props) {
     >
       <div className={styles.title}>{_('connect_wallet')}</div>
       <ul>
-        {query.env === 'local' && (
+        {!isApp && (
           <>
             <li onClick={() => connectWebWallet(5, 'mainnet')}>
               <CustomIcon

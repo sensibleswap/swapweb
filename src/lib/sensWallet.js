@@ -5,7 +5,7 @@ import _ from 'i18n';
 const bsv = window.sensilet;
 
 function checkExtension() {
-  if (!bsv) {
+  if (!window.sensilet) {
     if (confirm(_('download_sensilet'))) {
       window.open('https://sensilet.com/');
     }
@@ -15,12 +15,12 @@ function checkExtension() {
 }
 
 const getBsvBalance = async () => {
-  const res = await bsv.getBsvBalance();
+  const res = await window.sensilet.getBsvBalance();
   return formatSat(res.balance.total);
 };
 
 const getSensibleFtBalance = async () => {
-  const res = await bsv.getSensibleFtBalance();
+  const res = await window.sensilet.getSensibleFtBalance();
   // console.log('getSensibleFtBalance:',res);
   const userBalance = {};
   res.forEach((item) => {
@@ -35,7 +35,7 @@ export default {
       let accountInfo = {};
       const bsvBalance = await getBsvBalance();
 
-      const userAddress = await bsv.getAccount();
+      const userAddress = await window.sensilet.getAccount();
       const tokenBalance = await getSensibleFtBalance();
       // const network = await bsv.getNetwork();
       const network = 'mainnet';
@@ -58,19 +58,19 @@ export default {
 
   connectAccount: () => {
     if (checkExtension()) {
-      return bsv.requestAccount({});
+      return window.sensilet.requestAccount({});
     }
   },
 
   exitAccount: () => {
-    return bsv.exitAccount();
+    return window.sensilet.exitAccount();
   },
 
   transferBsv: async (params) => {
     if (checkExtension()) {
       const { address, amount, noBroadcast } = params;
 
-      const res = await bsv.transferBsv({
+      const res = await window.sensilet.transferBsv({
         broadcast: !noBroadcast,
         receivers: [{ address, amount }],
       });
@@ -101,13 +101,13 @@ export default {
         }
       });
 
-      const res = await bsv.transferAll(data);
+      const res = await window.sensilet.transferAll(data);
       return res;
     }
   },
 
   signTx: async (params) => {
-    const res = await bsv.signTx({ list: [params] });
+    const res = await window.sensilet.signTx({ list: [params] });
     // console.log(res); debugger
     return res.sigList[0];
   },

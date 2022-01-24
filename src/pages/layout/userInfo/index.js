@@ -208,7 +208,7 @@ export default class UserInfo extends Component {
     if (walletType === 1) {
       return <span className={styles.dot}></span>;
     }
-    if (walletType === 2) {
+    if (walletType === 2 || walletType === 5) {
       return <CustomIcon type="iconicon-volt-tokenswap-circle" />;
     }
     return <span style={{ paddingLeft: 10 }} />;

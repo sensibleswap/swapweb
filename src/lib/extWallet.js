@@ -5,36 +5,36 @@ import _ from 'i18n';
 const bsv = window.voltWallet;
 
 function checkExtension() {
-  if (!bsv) {
+  if (!window.voltWallet) {
     if (confirm(_('download_voltwallet'))) {
-      window.open('https://volt.id/');
+      window.open('https://volt.id/#/download');
     }
     return false;
   }
   return true;
 }
 
-const getBsvBalance = async () => {
-  const res = await bsv.getBsvBalance();
-  return formatSat(res.balance.total);
-};
+// const getBsvBalance = async () => {
+//   const res = await bsv.getBsvBalance();
+//   return formatSat(res.balance.total);
+// };
 
-const getSensibleFtBalance = async () => {
-  const res = await bsv.getSensibleFtBalance();
-  // console.log('getSensibleFtBalance:',res);
-  const userBalance = {};
-  res.forEach((item) => {
-    userBalance[item.genesis] = formatSat(item.balance, item.decimal);
-  });
-  return userBalance;
-};
+// const getSensibleFtBalance = async () => {
+//   const res = await bsv.getSensibleFtBalance();
+//   // console.log('getSensibleFtBalance:',res);
+//   const userBalance = {};
+//   res.forEach((item) => {
+//     userBalance[item.genesis] = formatSat(item.balance, item.decimal);
+//   });
+//   return userBalance;
+// };
 
 export default {
-  bsv,
+  bsv: window.voltWallet,
   info: async () => {
     if (checkExtension()) {
-      let accountInfo = await bsv.getAccount();
-      const paymail = await bsv.getPaymail();
+      let accountInfo = await window.voltWallet.getAccount();
+      const paymail = await window.voltWallet.getPaymail();
       let userBalance = {};
       accountInfo.balance.forEach((item) => {
         userBalance[item.is_bsv ? 'BSV' : item.genesis] = item.value;
@@ -53,19 +53,19 @@ export default {
 
   connectAccount: () => {
     if (checkExtension()) {
-      return bsv.requestAccount({});
+      return window.voltWallet.requestAccount({});
     }
   },
 
   exitAccount: () => {
-    return bsv.exitAccount();
+    return window.voltWallet.exitAccount();
   },
 
   transferBsv: async (params) => {
     if (checkExtension()) {
       const { address, amount, noBroadcast } = params;
 
-      const res = await bsv.transferBsv({
+      const res = await window.voltWallet.transferBsv({
         broadcast: !noBroadcast,
         receivers: [{ address, amount }],
       });
@@ -96,13 +96,13 @@ export default {
         }
       });
 
-      const res = await bsv.transferAll(data);
+      const res = await window.voltWallet.transferAll(data);
       return res;
     }
   },
 
   signTx: async (params) => {
-    const res = await bsv.signTx({ list: [params] });
+    const res = await window.voltWallet.signTx({ list: [params] });
     if (res.sig) return res;
     if (res[0].sig) return res[0];
     return res.sigList[0];

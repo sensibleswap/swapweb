@@ -238,7 +238,7 @@ const texts = {
   last_block_height: 'Oracle提供的BSV区块高度：',
   your_deposited_lp: '您锁仓的LP',
   abandoned_deposited_lp: '提取您所有的收益和LP token锁仓到新合约',
-  apy_info: 'APY = (每区块奖励 * 144 * 365) * 收益token价格/锁仓总价值 * 100%',
+  apy_info: 'APR = (每区块奖励 * 144 * 365) * 收益token价格/锁仓总价值 * 100%',
   deposit: '锁仓',
   earn: '赚取',
   deposit_success: '锁仓成功',

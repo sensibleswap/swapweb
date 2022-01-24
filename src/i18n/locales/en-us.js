@@ -247,7 +247,7 @@ const texts = {
   abandoned_deposited_lp:
     'Withdraw all your LP token and yield, deposit LP token to the new contract',
   apy_info:
-    'APY = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
+    'APR = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
   deposit: 'Deposit',
   earn: 'Earn',
   deposit_success: 'Deposit successful',
@@ -259,7 +259,7 @@ const texts = {
   farm_withdraw_success: 'Withdraw successful',
   withdrew: 'Withdrew',
   tvl: 'TVL',
-  apy: 'APY',
+  apy: 'APR',
   yield_tips: 'your withdrawable yield: %s',
   harvest_success: 'Yield Withdrawal successful',
   amount: 'Amount',
@@ -301,6 +301,10 @@ const texts = {
   not_acknowlege: 'Do not acknowledge',
   download_sensilet:
     'Install Sensilet extention. Refresh the page if you have installed.',
+
+  download_voltwallet:
+    'Install Volt extention. Refresh the page if you have installed.',
+
   tokenb_tips: 'Token B should be your project token',
   tmp_tips:
     'This is a test pair, remove your liquidity, the pair will be delisted after a week.',
