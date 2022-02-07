@@ -1,8 +1,9 @@
 // import BigNumber from 'bignumber.js';
 import farmApi from '../api/farm';
-import pairApi from '../api/pair';
+// import pairApi from '../api/pair';
 import { TSWAP_CURRENT_FARM_PAIR, TSWAP_SOURCE } from 'common/const';
-import { formatSat, parseUrl } from 'common/utils';
+import { formatSat, getCurrentPair } from 'common/utils';
+import { handleFarmData, fetchFarmData } from 'common/farmUtils';
 import debug from 'debug';
 const log = debug('farm');
 
@@ -11,14 +12,12 @@ export default {
 
   state: {
     allFarmPairs: [],
+    allFarmPairsArr: [],
     currentFarmPair: '',
     lockedTokenAmount: 0,
-    symbol1: '',
-    symbol2: '',
     lptoken: {},
     rewardToken: {},
     pairYields: {},
-    // bsvPrice: 0,
     pairsData: {},
   },
 
@@ -27,67 +26,49 @@ export default {
   },
 
   effects: {
-    *getAllPairs({ payload }, { call, put }) {
+    *getAllPairs({ payload }, { call, put, select }) {
       const res = yield farmApi.queryAllPairs.call(farmApi, payload.address);
       log('farmApi:', res);
-      const { data } = res;
+      let { data } = res;
 
       if (res.code !== 0) {
         console.log(res.msg);
         return res;
       }
-      const urlPair = parseUrl();
-      let currentFarmPair =
-        urlPair || localStorage.getItem(TSWAP_CURRENT_FARM_PAIR);
-      if (!currentFarmPair || !data[currentFarmPair]) {
+
+      const pairsData = yield fetchFarmData(data);
+
+      let currentFarmPair = getCurrentPair('farm');
+      if (
+        !currentFarmPair ||
+        !data[currentFarmPair] ||
+        !pairsData[data[currentFarmPair].token.tokenID]
+      ) {
         Object.keys(data).forEach((item) => {
-          if (
-            item.indexOf('bsv-') > -1 ||
-            item.indexOf('-bsv') > -1 ||
-            item.indexOf('tbsv-') ||
-            item.indexOf('-tbsv')
-          ) {
+          if (item !== 'blockHeight' && pairsData[data[item].token.tokenID]) {
             currentFarmPair = item;
             // console.log('localstorage.set:', item)
             localStorage.setItem(TSWAP_CURRENT_FARM_PAIR, item);
           }
         });
       }
-      let p = [];
-      let pairsData = {};
-      let pairs = [];
-      Object.keys(data).forEach((item) => {
-        if (item !== 'blockHeight') {
-          pairs.push(item);
-          p.push(pairApi.querySwapInfo(item));
-        }
-      });
 
-      const datas_res = yield Promise.all(p);
-      pairs.forEach((item, index) => {
-        if (datas_res[index].code === 0) {
-          pairsData[item] = datas_res[index].data;
-        }
-      });
-
-      // let bsvPrice = 0;
-
-      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
-
-      // if (price_res.code === 0) {
-      //   bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-      //     .div(price_res.data.swapToken1Amount)
-      //     .multipliedBy(Math.pow(10, 8 - 6))
-      //     .toString();
-      // }
+      const { tokenPrice } = yield select((state) => state.pair);
+      let { allFarmData, allFarmArr } = handleFarmData(
+        data,
+        pairsData,
+        tokenPrice,
+      );
+      // console.log(allFarmData, allFarmArr)
 
       yield put({
         type: 'saveFarm',
         payload: {
-          allFarmPairs: data,
+          allFarmPairs: allFarmData,
+          allFarmPairsArr: allFarmArr,
           currentFarmPair,
-          // bsvPrice,
           pairsData,
+          blockHeight: data.blockHeight,
         },
       });
       return {
@@ -100,26 +81,27 @@ export default {
       // let { currentPair } = payload;
       const { userAddress } = yield select((state) => state.user.accountInfo);
       const res = yield farmApi.queryAllPairs.call(farmApi, userAddress);
-      const { code, msg, data } = res;
+      const { code, data } = res;
       if (code !== 0) {
         return res;
       }
 
-      // let bsvPrice = 0;
-      // const price_res = yield pairApi.querySwapInfo.call(pairApi, USDT_PAIR);
-
-      // if (price_res.code === 0) {
-      //   bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-      //     .div(price_res.data.swapToken1Amount)
-      //     .multipliedBy(Math.pow(10, 8 - 6))
-      //     .toString();
-      // }
+      const { tokenPrice } = yield select((state) => state.pair);
+      // const { pairsData } = yield select((state) => state.farm);
+      const pairsData = yield fetchFarmData(data);
+      let { allFarmData, allFarmArr } = handleFarmData(
+        data,
+        pairsData,
+        tokenPrice,
+      );
+      // console.log(allFarmData)
 
       yield put({
         type: 'saveFarm',
         payload: {
-          allFarmPairs: data,
-          // bsvPrice,
+          allFarmPairs: allFarmData,
+          allFarmPairsArr: allFarmArr,
+          blockHeight: data.blockHeight,
         },
       });
 
@@ -185,22 +167,18 @@ export default {
       if (!allFarmPairs) {
         allFarmPairs = state.allFarmPairs;
       }
-      if (allFarmPairs[currentFarmPair]) {
-        const currentPairObj = allFarmPairs[currentFarmPair];
+      const currentPairObj = allFarmPairs[currentFarmPair];
+      if (currentPairObj) {
         token = currentPairObj.token;
         lockedTokenAmount = currentPairObj.lockedTokenAmount;
         rewardToken = currentPairObj.rewardToken;
       }
 
-      const pairName = currentFarmPair.toUpperCase().split('-');
-      const [symbol1, symbol2] = pairName;
       return {
         ...state,
         ...action.payload,
         lptoken: token,
         rewardToken,
-        symbol1,
-        symbol2,
         lockedTokenAmount: formatSat(lockedTokenAmount, token.decimal),
       };
     },

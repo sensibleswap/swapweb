@@ -6,17 +6,11 @@ interface CssExports {
   balance: string;
   box: string;
   btn: string;
-  btn_wait: string;
-  btn_warn: string;
   coin: string;
   container: string;
   detail_close: string;
   detail_item: string;
   detail_title: string;
-  done_btn: string;
-  finish_desc: string;
-  finish_logo: string;
-  finish_title: string;
   head: string;
   icon: string;
   info_item: string;
@@ -40,7 +34,6 @@ interface CssExports {
   selectToken_wrap: string;
   switch_icon: string;
   title: string;
-  view_detail: string;
   warning: string;
 }
 export const cssExports: CssExports;

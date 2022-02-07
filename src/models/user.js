@@ -1,5 +1,9 @@
 // import bsv from 'common/walletFun';
-import { TSWAP_NETWORK, DEFAULT_NET } from 'common/const';
+import {
+  TSWAP_NETWORK,
+  DEFAULT_NET,
+  TSWAP_LAST_WALLET_TYPE,
+} from 'common/const';
 import Wallet from '../lib/main';
 import debug from 'debug';
 const log = debug('user');
@@ -36,8 +40,8 @@ export default {
           type: 'save',
           payload: {
             accountInfo,
-            isLogin: true,
             walletType: type || 1,
+            isLogin: true,
           },
         });
       } catch (error) {
@@ -59,7 +63,7 @@ export default {
           type: 'save',
           payload: {
             accountInfo,
-            isLogin: true,
+            // isLogin: true,
           },
         });
       } catch (error) {
@@ -102,6 +106,7 @@ export default {
         console.log(error);
         return { msg: error.message || error.toString() };
       }
+      localStorage.setItem(TSWAP_LAST_WALLET_TYPE, type);
       return {};
     },
 
@@ -124,12 +129,12 @@ export default {
     *transferAll({ payload }, { call, put, select }) {
       // const { datas } = payload;
       const type = yield select((state) => state.user.walletType);
-      // console.log(...datas)
+      // console.log(payload);
       try {
         const _wallet = Wallet({ type });
         const res = yield _wallet.transferAll(payload);
         // const res = yield bsv.transferAll(type, datas);
-        // console.log(res)
+        // console.log(res);
         log(res);
         return res;
       } catch (error) {

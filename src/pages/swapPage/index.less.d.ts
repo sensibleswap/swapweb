@@ -2,23 +2,25 @@
 // Please do not change this file!
 interface CssExports {
   app_hide: string;
-  app_start_btn_wrap: string;
   app_title: string;
-  big_btn: string;
+  blue: string;
   box: string;
-  close: string;
+  btn: string;
   container: string;
   container_center: string;
   content: string;
   desc: string;
+  input: string;
   left: string;
   left_inner: string;
   link: string;
   main_title: string;
   name: string;
+  pair_box: string;
+  pair_left: string;
+  pair_right: string;
   right: string;
   sidebar: string;
-  small_btn: string;
   strong: string;
   subtitle: string;
   title: string;

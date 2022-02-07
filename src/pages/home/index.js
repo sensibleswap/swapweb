@@ -10,6 +10,7 @@ import Notice from 'components/notice';
 import Cookie from 'js-cookie';
 import styles from './index.less';
 import _ from 'i18n';
+import { IconX, IconTick } from 'components/ui';
 
 const _lang = Cookie.get('lang') || navigator.language;
 export default class Home extends Component {
@@ -26,121 +27,121 @@ export default class Home extends Component {
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_1')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_2')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_3')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_4')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_5')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_6')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_7')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_8')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_9')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
           </div>
           <div className={styles.list_item}>
             <div className={styles.col_1}>{_('lb_10')}</div>
             <div className={styles.col_2}>
-              <CustomIcon type="icontick-green" style={{ fontSize: 22 }} />
+              <IconX />
             </div>
             <div className={styles.col_3}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
             <div className={styles.col_4}>
-              <CustomIcon type="iconcross-red" style={{ fontSize: 22 }} />
+              <IconTick />
             </div>
           </div>
         </div>
@@ -176,7 +177,7 @@ export default class Home extends Component {
           </nav>
           <section className={styles.main}>
             <div className={styles.logo}>
-              <CustomIcon type="iconTS_Logo" style={{ fontSize: 80 }} />
+              <CustomIcon type="iconTS_Logo" />
             </div>
             <div className={styles.main_title}>{_('tokenswap')}</div>
             <div className={styles.main_desc}>{_('tokenswap_desc')}</div>

@@ -5,6 +5,10 @@
   position: relative;
 }
 
+.blue {
+  color: #2f80ed;
+}
+
 .left {
   width: calc(~'50% - 480px + 608px');
   min-width: 608px;
@@ -65,6 +69,7 @@
     align-items: center;
   }
 
+  :global(.pair-name),
   .name {
     margin-left: 15px;
   }
@@ -100,38 +105,51 @@ p.desc {
   box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
 }
 
-.app_start_btn_wrap {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  display: none;
+.pair_box {
+  margin-top: 10px;
+  height: 70px;
+  background-color: #f6f6f9;
+  padding: 10px;
+  border-radius: 55px 8px 8px 55px;
+  display: flex;
   justify-content: space-between;
-  width: 100%;
-  background-color: #fff;
-  padding: 15px 20px;
-  box-shadow: 0px -10px 15px rgba(29, 29, 29, 0.05);
-  z-index: 99;
+  align-items: center;
 
-  .big_btn,
-  .small_btn {
+  .pair_left {
+    display: flex;
+    align-items: center;
+
+    :global(.pair-name),
+    .name {
+      margin-left: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      white-space: nowrap;
+      margin-right: 20px;
+      margin-left: 10px;
+    }
+  }
+
+  .pair_right {
     font-size: 18px;
-    font-weight: 500;
-    height: 60px;
-  }
-
-  .big_btn {
-    width: 100%;
-  }
-
-  .small_btn {
-    width: 48%;
+    font-weight: 700;
+    .input {
+      height: 48px;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 8px;
+    }
   }
 }
 
-.app_title {
-  display: none;
-  height: 50px;
-  line-height: 50px;
+.btn {
+  border: none;
+  height: 60px;
+  line-height: 52px;
+  font-weight: 500;
+  font-size: 18px;
+  margin: 15px 0 0;
+  width: 100%;
 }
 
 :global {
@@ -191,25 +209,6 @@ p.desc {
     width: 100%;
     margin: 0px auto;
     padding-top: 0;
-  }
-
-  .app_start_btn_wrap {
-    display: flex;
-  }
-
-  .app_title {
-    display: block;
-    font-size: 16px;
-    font-weight: 700;
-    text-align: center;
-    position: relative;
-
-    .close {
-      position: absolute;
-      right: 10px;
-      top: 0px;
-      color: #2f80ed;
-    }
   }
 
   .app_hide {

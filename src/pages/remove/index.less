@@ -51,99 +51,6 @@
   }
 }
 
-.data {
-  font-size: 36px;
-  line-height: 50px;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-:global(.ant-slider) {
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-:global(.ant-slider-rail) {
-  width: calc(100% + 30px);
-  background-color: #dbdbdb;
-  margin-left: -15px;
-  margin-right: -15px;
-}
-
-:global(.ant-slider-track) {
-  margin-left: -15px;
-  margin-right: -15px;
-}
-
-:global(.ant-slider-handle) {
-  height: 30px;
-  width: 30px;
-  background-color: #2f80ed;
-  border: 0;
-  margin-top: -15px;
-}
-
-.datas {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 25px;
-
-  .d {
-    border: 1px solid #2f80ed;
-    border-radius: 20px;
-    width: 70px;
-    height: 35px;
-    line-height: 35px;
-    text-align: center;
-    color: #2f80ed;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-}
-
-.pair_box {
-  margin-top: 25px;
-  border: 1px solid #eee;
-  height: 50px;
-  padding: 10px;
-  border-radius: 55px 8px 8px 55px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .pair_left {
-    display: flex;
-    align-items: center;
-
-    .icon {
-      display: flex;
-    }
-
-    :global {
-      .iconfont {
-        font-size: 30px;
-
-        &:first-child {
-          margin-right: -10px;
-          position: relative;
-        }
-      }
-    }
-
-    .name {
-      margin-left: 10px;
-      font-size: 16px;
-      font-weight: 500;
-    }
-  }
-
-  .pair_right {
-    font-size: 14px;
-    font-weight: 700;
-  }
-}
-
 .switch_icon {
   margin: 20px 0 30px;
 
@@ -181,6 +88,9 @@
     .label {
       display: flex;
       align-items: center;
+      :global(.pair-name) {
+        margin-left: 5px;
+      }
     }
   }
 }
@@ -195,13 +105,15 @@
   justify-content: space-between;
   padding: 10px;
 
-  .coin {
+  .coin,
+  :global(.pair-icon) {
     display: flex;
     align-items: center;
     cursor: pointer;
   }
 
-  .name {
+  .name,
+  :global(.pair-name) {
     font-size: 16px;
     font-weight: 700;
     white-space: nowrap;
@@ -249,33 +161,15 @@
   }
 }
 
-.btn,
-.btn_warn,
-.btn_wait {
-  border: none;
-  height: 60px;
-  line-height: 52px;
-  font-weight: 500;
-  font-size: 18px;
-  margin-top: 10px;
-  width: 100%;
-}
-
-.btn_wait,
-.btn_wait:hover,
-.btn_wait:focus,
-.btn_wait:active {
-  color: #2f80ed;
-  background-color: rgba(47, 128, 237, 0.2);
-}
-
-.btn_warn,
-.btn_warn:hover,
-.btn_warn:focus,
-.btn_warn:active {
-  background-color: darkred;
-  color: #fff;
-}
+// .btn {
+//   border: none;
+//   height: 60px;
+//   line-height: 52px;
+//   font-weight: 500;
+//   font-size: 18px;
+//   margin-top: 10px;
+//   width: 100%;
+// }
 
 .my_pair_info {
   border: 1px solid #e8e8e8;
@@ -374,6 +268,7 @@
     }
   }
 
+  :global(.pair-name),
   .name {
     margin-left: 10px;
     font-size: 14px;

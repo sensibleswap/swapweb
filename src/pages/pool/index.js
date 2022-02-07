@@ -1,18 +1,18 @@
 'use strict';
 import React, { Component } from 'react';
 import { history, connect } from 'umi';
-import { Button } from 'antd';
 import { jc } from 'common/utils';
 import { TSWAP_POOL_SHOW_OP } from 'common/const';
 import Pair from 'components/pair';
 import Chart from 'components/chart/poolChart';
-import CustomIcon from 'components/icon';
+import { AppTitle } from 'components/ui';
 import Loading from 'components/loading';
-import TokenPair from 'components/tokenPair';
 import Notice from 'components/notice';
 import Header from '../layout/header';
 import styles from './index.less';
 import _ from 'i18n';
+import PairIcon from 'components/pairIcon';
+import { AppStartBtn } from 'components/ui';
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -54,30 +54,16 @@ export default class Pool extends Component {
       loading,
       allPairs,
       accountInfo,
+      token1,
+      token2,
     } = this.props;
     if (loading || !currentPair) return <Loading />;
-
-    const { token1, token2 } = allPairs[currentPair];
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-    const token = allPairs[currentPair].token2;
     return (
       <div className={styles.content}>
-        <Chart symbol1={symbol1} symbol2={symbol2} />
+        <Chart symbol1={token1.symbol} symbol2={token2.symbol} />
         <div className={styles.main_title}>
           <h2>
-            <div className={styles.icon}>
-              <TokenPair
-                symbol1={symbol1}
-                symbol2={symbol2}
-                size={30}
-                genesisID1="bsv"
-                genesisID2={token.tokenID}
-              />
-            </div>
-            <div className={styles.name}>
-              LP({symbol2}/{symbol1})
-            </div>
+            <PairIcon keyword="pair" txt="LP(name2/name1)" />
           </h2>
         </div>
         <Pair
@@ -135,24 +121,20 @@ export default class Pool extends Component {
               {pageName === 'createPair'
                 ? this.renderCreateContent()
                 : this.renderContent()}
-              <div className={styles.app_start_btn_wrap}>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.small_btn}
-                  onClick={() => this.showPannel('add')}
-                >
-                  {_('add_liq')}
-                </Button>
-                <Button
-                  type="primary"
-                  shape="round"
-                  className={styles.small_btn}
-                  onClick={() => this.showPannel('remove')}
-                >
-                  {_('remove')}
-                </Button>
-              </div>
+
+              <AppStartBtn
+                btns={[
+                  {
+                    txt: _('add_liq'),
+                    key: 'add',
+                  },
+                  {
+                    txt: _('remove'),
+                    key: 'remove',
+                  },
+                ]}
+                onClick={this.showPannel}
+              />
             </div>
           </section>
           <section className={styles.right}>
@@ -163,12 +145,7 @@ export default class Pool extends Component {
                   : jc(styles.sidebar, styles.app_hide)
               }
             >
-              <div className={styles.app_title}>
-                {_('pool')}
-                <div className={styles.close} onClick={this.hidePannel}>
-                  <CustomIcon type="iconcross" style={{ fontSize: 14 }} />
-                </div>
-              </div>
+              <AppTitle title={_('pool')} onClick={this.hidePannel} />
 
               {this.props.children}
             </div>

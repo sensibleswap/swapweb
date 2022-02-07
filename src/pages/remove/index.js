@@ -2,45 +2,25 @@
 import React, { Component } from 'react';
 import { connect } from 'umi';
 import { gzip } from 'node-gzip';
-import { Slider, Button, Spin, message, Input } from 'antd';
+import BigNumber from 'bignumber.js';
+import { Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
-import { formatSat, formatAmount, jc } from 'common/utils';
-import Pair from 'components/pair';
-import CustomIcon from 'components/icon';
+import { formatSat, formatAmount, LeastFee, formatTok } from 'common/utils';
+import Rate from 'components/rate';
+// import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
-import TokenPair from 'components/tokenPair';
-import TokenLogo from 'components/tokenicon';
 import PoolMenu from 'components/poolMenu';
+import PairIcon from 'components/pairIcon';
 import Pool from '../pool';
 import styles from './index.less';
 import _ from 'i18n';
-
-// import Header from '../layout/header';
-// import { history } from 'umi';
-import BigNumber from 'bignumber.js';
+import { BtnWait } from 'components/btns';
+import { SuccessResult } from 'components/result';
+import { Arrow } from 'components/ui';
 
 let busy = false;
 const type = 'pool';
-
-const datas = [
-  {
-    label: '25%',
-    value: 25,
-  },
-  {
-    label: '50%',
-    value: 50,
-  },
-  {
-    label: '75%',
-    value: 75,
-  },
-  {
-    label: _('max'),
-    value: 100,
-  },
-];
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -60,12 +40,9 @@ export default class RemovePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      removeRate: 0,
       removeLp: 0,
       page: 'form',
       formFinish: false,
-      symbol1: '',
-      symbol2: '',
       removeToken1: 0,
       removeToken2: 0,
       price: 0,
@@ -77,6 +54,7 @@ export default class RemovePage extends Component {
       const { hash } = window.location;
       if (hash.indexOf('remove') > -1) {
         this.fetch();
+        this.clear();
       }
     });
     this.fetch();
@@ -103,18 +81,10 @@ export default class RemovePage extends Component {
     const { currentPair, allPairs } = this.props;
     const { swapToken1Amount, swapToken2Amount } = pairData;
     const { token1, token2 } = allPairs[currentPair];
-    const symbol1 = token1.symbol.toUpperCase();
-    const symbol2 = token2.symbol.toUpperCase();
-    const genesisID1 = token1.tokenID || 'bsv';
-    const genesisID2 = token2.tokenID;
     const price = BigNumber(formatSat(swapToken2Amount, token2.decimal)).div(
       formatSat(swapToken1Amount, token1.decimal),
     );
     this.setState({
-      symbol1,
-      symbol2,
-      genesisID1,
-      genesisID2,
       price: formatAmount(price, token2.decimal),
     });
     EventBus.emit('reloadChart', type);
@@ -138,77 +108,12 @@ export default class RemovePage extends Component {
     });
   }
 
-  renderContent() {
-    const {
-      currentPair,
-      pairData,
-      loading,
-      accountInfo,
-      lptoken,
-      allPairs,
-    } = this.props;
-    const LP = accountInfo.userBalance[lptoken.tokenID];
-    if (loading || !currentPair) return <Loading />;
-    const { symbol1, symbol2, genesisID1, genesisID2 } = this.state;
-    return (
-      <div className={styles.content}>
-        <div className={styles.main_title}>
-          <h2>
-            <div className={styles.icon}>
-              <TokenPair
-                symbol1={symbol1}
-                symbol2={symbol2}
-                size={40}
-                genesisID1={genesisID1}
-                genesisID2={genesisID2}
-              />
-            </div>
-            <div className={styles.name}>
-              {symbol2}/{symbol1}
-            </div>
-          </h2>
-          <div className={styles.subtitle}>{_('your_liq')}</div>
-          <div className={styles.fiat}>$</div>
-        </div>
-        <Pair pairData={pairData} curPair={allPairs[currentPair]} LP={LP} />
-      </div>
-    );
-  }
-
-  changeData = (e) => {
-    let value;
-    if (e.target) {
-      //输入框变化值
-      const { accountInfo, allPairs, currentPair } = this.props;
-      const { lptoken = {} } = allPairs[currentPair];
-      const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
-      let _removeLp = e.target.value;
-      _removeLp = formatAmount(_removeLp, lptoken.decimal);
-      if (_removeLp <= 0) {
-        value = 0;
-      } else if (_removeLp >= LP) {
-        value = 100;
-      } else {
-        value = BigNumber(_removeLp).div(LP).multipliedBy(100).toString();
-      }
-      return this.setState({
-        removeLP: _removeLp,
-        removeRate: value,
-      });
-    }
-    this.slideData(e);
-  };
-
-  slideData = (value) => {
-    const { accountInfo, allPairs, currentPair } = this.props;
-    const { userBalance } = accountInfo;
-    const { lptoken = {} } = allPairs[currentPair];
-    const LP = userBalance[lptoken.tokenID] || 0;
+  changeData = (value) => {
     this.setState({
-      removeRate: value,
-      removeLP: BigNumber(LP).multipliedBy(value).div(100).toString(),
+      removeLP: value,
     });
   };
+
   calc = () => {
     const {
       currentPair,
@@ -219,39 +124,31 @@ export default class RemovePage extends Component {
       loading,
     } = this.props;
     let LP = accountInfo.userBalance[lptoken.tokenID];
-    if (loading || !LP) {
+    if (loading) {
       return {
         removeToken1: 0,
         removeToken2: 0,
         removeLP: 0,
       };
     }
+    const { removeLP } = this.state;
+    if (!removeLP) {
+      return {
+        removeToken1: 0,
+        removeToken2: 0,
+      };
+    }
 
-    // if (!LP) {
-    //   const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    //   const { removeLP = 0 } = this.state;
-    //   console.log(removeLP);
-    //   const rate = BigNumber(removeLP).div(swapLpAmount);
-    //   const { token1, token2 } = allPairs[currentPair];
-    //   const removeToken1 = formatSat(
-    //     BigNumber(swapToken1Amount).multipliedBy(rate),
-    //     token1.decimal,
-    //   );
-    //   const removeToken2 = formatSat(
-    //     BigNumber(swapToken2Amount).multipliedBy(rate),
-    //     token2.decimal,
-    //   );
-    //   return {
-    //     removeToken1: formatAmount(removeToken1, token1.decimal),
-    //     removeToken2: formatAmount(removeToken2, token2.decimal),
-    //     removeLP: formatSat(removeLP, lptoken.decimal),
-    //   };
-    // }
-    LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
+    // LP = BigNumber(LP).multipliedBy(Math.pow(10, lptoken.decimal));
     const { swapToken1Amount, swapToken2Amount, swapLpAmount } = pairData;
-    const { removeRate } = this.state;
-    const removeLP = LP.multipliedBy(removeRate).div(100);
-    const rate = removeLP.div(swapLpAmount);
+    // const rate = BigNumber(removeLP)
+    //   .multipliedBy(Math.pow(10, lptoken.decimal))
+    //   .div(swapLpAmount);
+    let rate = BigNumber(formatTok(removeLP, lptoken.decimal)).div(
+      swapLpAmount,
+    );
+    if (rate > 1) rate = 1;
+    // console.log(rate.toString(), rate1.toString())
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
       BigNumber(swapToken1Amount).multipliedBy(rate),
@@ -279,83 +176,30 @@ export default class RemovePage extends Component {
     } = this.props;
     if (loading || !currentPair) return <Loading />;
     const { lptoken = {} } = allPairs[currentPair];
-    const {
-      removeRate,
-      removeLP,
-      symbol1,
-      symbol2,
-      genesisID1,
-      genesisID2,
-    } = this.state;
     const LP = accountInfo.userBalance[lptoken.tokenID] || 0;
     const { removeToken1, removeToken2 } = this.calc();
     return (
       <div className={styles.remove_content}>
         <Spin spinning={submiting}>
-          <div className={styles.data}>{formatAmount(removeRate, 2)}%</div>
-          <Slider value={removeRate} onChange={this.slideData} />
+          <Rate
+            type="farm"
+            changeAmount={this.changeData}
+            balance={LP}
+            tokenPair={<PairIcon keyword="pair" txt="name1/name2-LP" />}
+          />
 
-          <div className={styles.datas}>
-            {datas.map((item) => (
-              <div
-                className={styles.d}
-                onClick={() => this.changeData(item.value)}
-                key={item.value}
-              >
-                {item.label}
-              </div>
-            ))}
-          </div>
-
-          <div
-            className={styles.lp_balance}
-            onClick={() => this.changeData(100)}
-          >
-            {_('lp_balance')}:{' '}
-            <span>
-              <FormatNumber value={LP} />
-            </span>
-          </div>
-          <div className={styles.s_box}>
-            <div className={styles.coin}>
-              <TokenPair
-                symbol1={symbol1}
-                symbol2={symbol2}
-                size={30}
-                genesisID1={genesisID1}
-                genesisID2={genesisID2}
-              />
-            </div>
-            <div className={styles.name}>
-              {symbol1}/{symbol2}-LP
-            </div>
-            <Input
-              className={styles.input}
-              value={removeLP}
-              onChange={this.changeData}
-              // formatter={(value) => parseFloat(value || 0)}
-            />
-          </div>
-
-          <div className={styles.switch_icon}>
-            <div className={styles.icon} onClick={this.switch}>
-              <CustomIcon type="iconArrow2" style={{ fontSize: 14 }} />
-            </div>
-            <div className={styles.line}></div>
-          </div>
+          <Arrow />
 
           <div className={styles.values}>
             <div className={styles.values_left}>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
-                  <div style={{ marginLeft: 5 }}>{symbol1}</div>
+                  <PairIcon keyword="token1" size={20} />
                 </div>
               </div>
               <div className={styles.v_item}>
                 <div className={styles.label}>
-                  <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
-                  <div style={{ marginLeft: 5 }}>{symbol2}</div>
+                  <PairIcon keyword="token2" size={20} />
                 </div>
               </div>
             </div>
@@ -380,7 +224,7 @@ export default class RemovePage extends Component {
   }
 
   handleSubmit = async () => {
-    const { removeRate } = this.state;
+    const { removeLP } = this.state;
     const {
       dispatch,
       currentPair,
@@ -408,18 +252,16 @@ export default class RemovePage extends Component {
 
     const { tokenToAddress, requestIndex, bsvToAddress, txFee } = res.data;
 
-    if (
-      BigNumber(txFee + 100000)
-        .div(Math.pow(10, token1.decimal))
-        .isGreaterThan(userBalance.BSV || 0)
-    ) {
-      return message.error(_('lac_token_balance', 'BSV'));
+    const isLackBalance = LeastFee(txFee, userBalance.BSV);
+    if (isLackBalance.code) {
+      return message.error(isLackBalance.msg);
     }
 
-    const removeLP = BigNumber(removeRate).multipliedBy(LP).div(100);
-    const _removeRate = removeLP
-      .multipliedBy(Math.pow(10, lptoken.decimal))
-      .toFixed(0);
+    // const _removeLP = BigNumber(removeLP)
+    //   .multipliedBy(Math.pow(10, lptoken.decimal))
+    //   .toFixed(0);
+    const _removeLP = formatTok(removeLP, lptoken.decimal);
+    // console.log(_removeLP, formatTok(removeLP, lptoken.decimal));
     let tx_res = await dispatch({
       type: 'user/transferAll',
       payload: {
@@ -434,7 +276,7 @@ export default class RemovePage extends Component {
           {
             type: 'sensibleFt',
             address: tokenToAddress,
-            amount: _removeRate,
+            amount: _removeLP,
             changeAddress,
             codehash: lptoken.codeHash,
             genesis: lptoken.tokenID,
@@ -493,35 +335,29 @@ export default class RemovePage extends Component {
     });
   };
 
-  login() {
-    EventBus.emit('login');
-  }
-
   renderButton() {
-    const { isLogin, pairData, accountInfo, lptoken } = this.props;
+    const { removeLP = 0 } = this.state;
+    const { isLogin, accountInfo, lptoken } = this.props;
     const LP = accountInfo.userBalance[lptoken.tokenID];
-    if (!isLogin) {
-      // 未登录
-      return (
-        <Button className={styles.btn_wait} shape="round" onClick={this.login}>
-          {_('connect_wallet')}
-        </Button>
-      );
-    } else if (!pairData) {
-      // 不存在的交易对
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('no_pair')}
-        </Button>
-      );
-    } else if (!LP || LP === '0') {
-      return (
-        <Button className={styles.btn_wait} shape="round">
-          {_('cant_remove')}
-        </Button>
-      );
-    } else {
-      return (
+
+    const conditions = [
+      { key: 'login', cond: !isLogin },
+      {
+        cond: !LP || LP === '0',
+        txt: _('cant_remove'),
+      },
+      {
+        key: 'enterAmount',
+        cond: parseFloat(removeLP) <= 0,
+      },
+      {
+        cond: removeLP > LP,
+        txt: _('insufficient_balance'),
+      },
+    ];
+
+    return (
+      BtnWait(conditions) || (
         <Button
           className={styles.btn}
           type="primary"
@@ -530,117 +366,58 @@ export default class RemovePage extends Component {
         >
           {_('remove')}
         </Button>
-      );
-    }
-  }
-
-  renderInfo() {
-    const { symbol1, symbol2, receive_token1, receive_token2 } = this.state;
-    return (
-      <div className={styles.my_pair_info}>
-        <div className={styles.info_title_swap}>
-          <div className={styles.info_title}>{_('your_re_liq')}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>{symbol1}</div>
-          <div className={styles.info_value}>{receive_token1}</div>
-        </div>
-        <div className={styles.info_item}>
-          <div className={styles.info_label}>{symbol2}</div>
-          <div className={styles.info_value}>{receive_token2}</div>
-        </div>
-      </div>
+      )
     );
   }
 
   renderResult() {
     // const LP = userBalance[lptoken.tokenID];
-    const {
-      symbol1,
-      symbol2,
-      genesisID1,
-      genesisID2,
-      final_lp,
-      receive_token1,
-      receive_token2,
-    } = this.state;
+    const { final_lp, receive_token1, receive_token2 } = this.state;
     return (
       <div className={styles.remove_content}>
-        <div className={styles.finish_logo}>
-          <CustomIcon
-            type="iconicon-success"
-            style={{ fontSize: 80, color: '#2BB696' }}
-          />
-        </div>
-        <div className={styles.finish_title}>{_('liq_removed')}</div>
-
-        <div className={styles.f_box}>
-          <div className={styles.f_title}>{_('your_pos')}</div>
-          <div className={styles.f_item}>
-            <div className={styles.f_label}>
-              <div className={styles.icon}>
-                <TokenPair
-                  symbol1={symbol1}
-                  symbol2={symbol2}
-                  size={20}
-                  genesisID1={genesisID1}
-                  genesisID2={genesisID2}
-                />
+        <SuccessResult success_txt={_('liq_removed')} done={this.clear}>
+          <div className={styles.f_box}>
+            <div className={styles.f_title}>{_('your_pos')}</div>
+            <div className={styles.f_item}>
+              <div className={styles.f_label}>
+                <PairIcon keyword="pair" size={20} />
               </div>
-              <div className={styles.name}>
-                {symbol2}/{symbol1}
-              </div>
-            </div>
-            <div className={styles.f_value}>
-              <FormatNumber value={final_lp} />
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.switch_icon} style={{ margin: '6px 0' }}>
-          <div className={styles.icon} onClick={this.switch}>
-            <CustomIcon type="iconArrow2" style={{ fontSize: 12 }} />
-          </div>
-        </div>
-
-        <div className={styles.f_box}>
-          <div className={styles.f_title}>{_('your_re_liq')}</div>
-          <div className={styles.f_item}>
-            <div className={styles.f_label}>
-              <div className={styles.icon}>
-                <TokenLogo name={symbol1} size={20} genesisID={genesisID1} />
-              </div>
-              <div className={styles.name}>
-                <FormatNumber value={receive_token1} suffix={symbol1} />
-              </div>
-            </div>
-            <div className={styles.f_value}>
-              <div className={styles.icon}>
-                <TokenLogo name={symbol2} size={20} genesisID={genesisID2} />
-              </div>
-              <div className={styles.name}>
-                <FormatNumber value={receive_token2} suffix={symbol2} />
+              <div className={styles.f_value}>
+                <FormatNumber value={final_lp} />
               </div>
             </div>
           </div>
-        </div>
-        <Button
-          type="primary"
-          shape="round"
-          className={styles.done_btn}
-          onClick={() => {
-            this.setState({
-              formFinish: false,
-              removeRate: 0,
-              removeLP: 0,
-            });
-          }}
-        >
-          {_('done')}
-        </Button>
+
+          <Arrow noLine={true} />
+
+          <div className={styles.f_box}>
+            <div className={styles.f_title}>{_('your_re_liq')}</div>
+            <div className={styles.f_item}>
+              <div className={styles.f_label}>
+                <PairIcon keyword="token1" size={20}>
+                  <FormatNumber value={receive_token1} />
+                </PairIcon>
+              </div>
+              <div className={styles.f_value}>
+                <PairIcon keyword="token2" size={20}>
+                  <FormatNumber value={receive_token2} />
+                </PairIcon>
+              </div>
+            </div>
+          </div>
+        </SuccessResult>
       </div>
     );
   }
+
+  clear = () => {
+    this.setState({
+      formFinish: false,
+      removeLP: 0,
+      removeToken1: 0,
+      removeToken2: 0,
+    });
+  };
 
   render() {
     const { page, formFinish } = this.state;

@@ -5,7 +5,6 @@ interface CssExports {
   balance: string;
   box: string;
   btn: string;
-  btn_wait: string;
   btn_warn: string;
   can_click: string;
   coin: string;
@@ -14,12 +13,7 @@ interface CssExports {
   detail_close: string;
   detail_item: string;
   detail_title: string;
-  done_btn: string;
-  finish_desc: string;
-  finish_logo: string;
-  finish_title: string;
   head: string;
-  icon: string;
   input: string;
   item_label: string;
   item_value: string;
@@ -32,10 +26,8 @@ interface CssExports {
   name: string;
   normal: string;
   selectToken_wrap: string;
-  switch_icon: string;
   title: string;
   tol: string;
-  view_detail: string;
 }
 export const cssExports: CssExports;
 export default cssExports;

@@ -27,6 +27,15 @@
   cursor: pointer;
 }
 
+.warn {
+  border: 1px solid #eb5757;
+
+  .lp_amount {
+    font-weight: 500;
+    color: #eb5757;
+  }
+}
+
 .item.current {
   border: 1px solid #2f80ed;
   box-shadow: 0px 10px 15px rgba(213, 213, 223, 0.4);
@@ -69,9 +78,6 @@
   font-size: 12px;
   display: flex;
   align-items: center;
-  :global(.iconfont) {
-    margin-top: -2px;
-  }
 }
 
 .value {
@@ -88,6 +94,7 @@
 
   &:disabled {
     background-color: #fff;
+    border: 1px solid #d9d9d9;
   }
 }
 
@@ -161,6 +168,11 @@
 .mod_content {
   .icon {
     text-align: center;
+    :global(.iconfont) {
+      font-size: 60px;
+      font-weight: bold;
+      color: #2bb696;
+    }
   }
 
   .amount {

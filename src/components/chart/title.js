@@ -7,14 +7,16 @@ import styles from './index.less';
 import _ from 'i18n';
 
 export default function chartTitle(props) {
-  const { symbol1, symbol2, type } = props;
+  let { symbol1, symbol2, type } = props;
+  symbol1 = symbol1.toUpperCase();
+  symbol2 = symbol2.toUpperCase();
   return (
     <div className={styles.chart_heading}>
       <Dropdown
         trigger={['click']}
-        overlay={<TokenList size="small" />}
+        overlay={<TokenList size="small" type="pair" />}
         overlayClassName={styles.drop_menu}
-        overlayStyle={{ minWidth: 320 }}
+        overlayStyle={{ width: 350 }}
       >
         <span className={styles.chart_title}>
           {symbol2 === 'USDT' ? (
@@ -26,10 +28,7 @@ export default function chartTitle(props) {
               <span>{symbol2}</span>/{symbol1}
             </>
           )}
-          <CustomIcon
-            type="iconDropdown"
-            style={{ fontSize: 20, marginLeft: 15 }}
-          />
+          <CustomIcon type="iconDropdown" />
         </span>
       </Dropdown>
 

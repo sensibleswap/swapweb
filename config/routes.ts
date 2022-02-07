@@ -11,8 +11,4 @@ export default [
   { path: '/webwallet', component: '@/pages/webwallet' },
   { path: '/farm', component: '@/pages/farm' },
   { path: '/farm/:id', component: '@/pages/farm' },
-  // { path: '/explore', component: '@/pages/explore'},
-  // { path: '/my', component: '@/pages/my'},
-  // { path: '/manage', component: '@/pages/manage'},
-  // { path: '/pair', component: '@/pages/pair'},
 ];

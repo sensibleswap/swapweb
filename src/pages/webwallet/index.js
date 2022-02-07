@@ -68,10 +68,12 @@ export default class WebWallet extends Component {
     }
     message.success(_('withdraw_success'));
     dispatch({
-      type: 'user/loadingUserData',
-      payload: {
-        type: 1,
-      },
+      type: 'user/updateUserData',
+    });
+
+    this.formRef.current.setFieldsValue({
+      amount: '',
+      address: '',
     });
   };
   setMaxAmount = () => {
@@ -106,10 +108,7 @@ export default class WebWallet extends Component {
             </div>
             <div className={styles.address}>
               <Clipboard text={userAddress}>
-                <CustomIcon
-                  type="iconcopy"
-                  style={{ fontSize: 20, marginRight: 5 }}
-                />
+                <CustomIcon type="iconcopy" />
                 {userAddress}
               </Clipboard>
             </div>

@@ -10,16 +10,16 @@ const onClose = () => {
 
 export default function Notice(props) {
   return null;
-  if (sessionStorage.getItem(VOLT_NOTICE_CLOSED)) {
-    return null;
-  }
-  return (
-    <Alert
-      type="success"
-      banner={true}
-      closable
-      onClose={onClose}
-      message={_('notice720')}
-    />
-  );
+  // if (sessionStorage.getItem(VOLT_NOTICE_CLOSED)) {
+  //   return null;
+  // }
+  // return (
+  //   <Alert
+  //     type="success"
+  //     banner={true}
+  //     closable
+  //     onClose={onClose}
+  //     message={_('notice1117')}
+  //   />
+  // );
 }
