@@ -19,4 +19,4 @@
 /src/.umi-test
 /.env.local
 *.d.ts
-*.less.d.ts
+*less.d.ts
