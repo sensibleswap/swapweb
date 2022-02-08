@@ -1,6 +1,6 @@
 'use strict';
 import React, { Component } from 'react';
-import { history } from 'umi';
+// import { history } from 'umi';
 import QRCode from 'qrcode.react';
 import { DollarOutlined } from '@ant-design/icons';
 import { AppTitle } from 'components/ui';
@@ -10,6 +10,7 @@ import FormatNumber from 'components/formatNumber';
 import Lang from '../lang';
 import styles from './index.less';
 import _ from 'i18n';
+import DarkMode from '../darkmode';
 
 export default class Popup extends Component {
   constructor(props) {
@@ -44,7 +45,12 @@ export default class Popup extends Component {
       <div className={styles.user_pop}>
         <AppTitle
           title={_('wallet_connected')}
-          left={<Lang />}
+          left={
+            <div style={{ display: 'flex' }}>
+              <DarkMode />
+              <Lang />
+            </div>
+          }
           onClick={this.closePop}
           bottomLine={true}
         />

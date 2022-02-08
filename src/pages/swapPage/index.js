@@ -7,7 +7,7 @@ import Loading from 'components/loading';
 import Notice from 'components/notice';
 import { AppTitle } from 'components/ui';
 import Chart from 'components/chart/swapChart';
-
+import Layout from '../layout';
 import Header from '../layout/header';
 import Swap from '../swap';
 import PairStat from '../pairStat';
@@ -92,7 +92,7 @@ export default class SwapPage extends Component {
   render() {
     const { app_pannel } = this.state;
     return (
-      <>
+      <Layout>
         <Notice />
         <section className={styles.container}>
           <section
@@ -128,7 +128,7 @@ export default class SwapPage extends Component {
             </div>
           </section>
         </section>
-      </>
+      </Layout>
     );
   }
 }

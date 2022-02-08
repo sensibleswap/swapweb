@@ -6,7 +6,12 @@ import langs from 'i18n/langs';
 import styles from './index.less';
 
 // 获取当前页面的域名
-const cookieDomain = '.' + document.domain.split('.').slice(document.domain.split('.').length - 2).join('.');
+const cookieDomain =
+  '.' +
+  document.domain
+    .split('.')
+    .slice(document.domain.split('.').length - 2)
+    .join('.');
 
 // 语言选择保存在cookie中
 let currentLang = Cookie.get('lang') || navigator.language;
@@ -27,7 +32,7 @@ if (!langMatch) {
 
 // 生成语言选择的下拉菜单
 let currentLangLabel;
-langs.forEach(item => {
+langs.forEach((item) => {
   if (item.name !== currentLang) {
     currentLangLabel = item.label;
   }
@@ -35,18 +40,18 @@ langs.forEach(item => {
 
 @connect(({ user }) => {
   return {
-    ...user
-  }
+    ...user,
+  };
 })
-export default class PageFooter extends Component {
+export default class Lang extends Component {
   changeLang() {
-    const key = currentLang === 'zh-cn' ? 'en-us' : 'zh-cn'
+    const key = currentLang === 'zh-cn' ? 'en-us' : 'zh-cn';
     this.props.dispatch({
       type: 'user/save',
       payload: {
         lang: key,
-      }
-    })
+      },
+    });
     Cookie.remove('lang');
     Cookie.set('lang', key, {
       domain: cookieDomain,
@@ -56,8 +61,14 @@ export default class PageFooter extends Component {
   }
 
   render() {
-    return (<div style={this.props.style} className={styles.lang} onClick={this.changeLang.bind(this)}>
-      {currentLangLabel}
-    </div>);
+    return (
+      <div
+        style={this.props.style}
+        className={styles.lang}
+        onClick={this.changeLang.bind(this)}
+      >
+        {currentLangLabel}
+      </div>
+    );
   }
 }

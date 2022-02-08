@@ -6,6 +6,7 @@ import Notice from 'components/notice';
 import { AppTitle } from 'components/ui';
 import { jc, parseUrl } from 'common/utils';
 import EventBus from 'common/eventBus';
+import Layout from '../layout';
 import Header from '../layout/header';
 import FarmList from './farmList';
 import Deposit from '../deposit';
@@ -130,7 +131,7 @@ export default class FarmC extends Component {
   render() {
     const { app_pannel, currentMenuIndex } = this.state;
     return (
-      <>
+      <Layout>
         <Notice />
         <Spin spinning={this.props.submiting}>
           <section className={styles.container}>
@@ -196,7 +197,7 @@ export default class FarmC extends Component {
             </section>
           </section>
         </Spin>
-      </>
+      </Layout>
     );
   }
 }

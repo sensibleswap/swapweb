@@ -20,8 +20,9 @@
   font-weight: 500;
   border-radius: 20px;
   cursor: pointer;
-  background-color: #fff;
-  box-shadow: 0px 5px 20px rgba(213, 213, 223, 0.6);
+  color: var(--fg-color);
+  background-color: var(--bg-color);
+  box-shadow: 0px 5px 20px var(--bg-shadow);
 }
 
 .connect_app {
@@ -46,8 +47,8 @@
   cursor: pointer;
   border-radius: 40px;
   padding: 0 15px 0 5px;
-  background-color: #fff;
-  box-shadow: 0px 4px 20px rgba(213, 213, 223, 0.5);
+  background-color: var(--bg-color);
+  box-shadow: 0px 4px 20px var(--bg-shadow);
   .address {
     margin-right: 5px;
     margin-left: 0px;
@@ -75,7 +76,7 @@
 
 .user_pop {
   width: 375px;
-  background-color: #fff;
+  background-color: var(--bg-color);
   border-radius: 12px;
   overflow: hidden;
 
@@ -89,7 +90,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #fff;
+    background-color: var(--bg-color);
     z-index: 1;
 
     .qr_code_title {
@@ -101,7 +102,7 @@
       font-size: 18px;
       font-weight: 700;
       padding: 0 20px;
-      border-bottom: 1px solid #e8e8e8;
+      border-bottom: 1px solid var(--border-color-2nd);
 
       .back {
         position: absolute;
@@ -134,13 +135,13 @@
     align-items: center;
     font-size: 16px;
     font-weight: 700;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--border-color-2nd);
     padding: 0 20px 0 10px;
   }
 
   .hd {
     padding: 20px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--border-color-2nd);
 
     .hd_title {
       font-size: 14px;
@@ -162,7 +163,7 @@
     height: 50px;
     font-size: 14px;
     font-weight: 500;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--border-color-2nd);
     padding-left: 20px;
     cursor: pointer;
 
@@ -204,7 +205,7 @@
 
   .ant-popover-inner {
     border-radius: 12px;
-    box-shadow: 0px 10px 25px rgba(213, 213, 223, 0.6);
+    box-shadow: 0px 10px 25px var(--bg-shadow);
   }
 
   .ant-popover-inner-content {
@@ -223,7 +224,9 @@
 .chooseLogin_dialog {
   :global {
     .ant-modal-content {
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      background-color: var(--bg-color);
+      box-shadow: 0 10px 25px var(--bg-shadow);
+      color: var(--fg-color);
     }
 
     .ant-modal-content,
@@ -252,7 +255,7 @@
 
   li {
     list-style-type: none;
-    background-color: #f6f6f9;
+    background-color: var(--bg-color-2nd);
     border-radius: 30px;
     height: 60px;
     padding: 0 15px;

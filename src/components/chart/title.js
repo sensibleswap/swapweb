@@ -17,6 +17,7 @@ export default function chartTitle(props) {
         overlay={<TokenList size="small" type="pair" />}
         overlayClassName={styles.drop_menu}
         overlayStyle={{ width: 350 }}
+        getPopupContainer={() => document.getElementById('J_Page')}
       >
         <span className={styles.chart_title}>
           {symbol2 === 'USDT' ? (

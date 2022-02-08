@@ -287,6 +287,7 @@ export default class UserInfo extends Component {
             onVisibleChange={this.handleVisibleChange}
             overlayClassName={styles.popover}
             placement="bottom"
+            getPopupContainer={() => document.getElementById('J_Page')}
           >
             {this.renderConnectedBtn()}
             {this.renderAppConnectBtn()}

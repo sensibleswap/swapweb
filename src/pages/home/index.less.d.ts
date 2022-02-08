@@ -6,6 +6,7 @@ interface CssExports {
   btn: string;
   btns: string;
   col_1: string;
+  container: string;
   content: string;
   cta: string;
   green: string;

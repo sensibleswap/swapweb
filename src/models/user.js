@@ -1,6 +1,7 @@
 // import bsv from 'common/walletFun';
 import {
   TSWAP_NETWORK,
+  TSWAP_DARKMODE,
   DEFAULT_NET,
   TSWAP_LAST_WALLET_TYPE,
 } from 'common/const';
@@ -8,6 +9,7 @@ import Wallet from '../lib/main';
 import debug from 'debug';
 const log = debug('user');
 const { localStorage } = window;
+const darkMode = localStorage.getItem(TSWAP_DARKMODE);
 
 export default {
   namespace: 'user',
@@ -18,6 +20,7 @@ export default {
       userBalance: {},
     },
     walletType: 1,
+    darkMode: darkMode || 'sun',
   },
 
   subscriptions: {},
