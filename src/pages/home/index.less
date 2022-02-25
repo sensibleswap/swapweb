@@ -1,6 +1,9 @@
 @import '../../common/global.less';
+.container {
+  background-color: var(--bg-color-2nd);
+  color: var(--fg-color);
+}
 .head {
-  background-color: #f6f6f9;
   height: 100px;
 }
 
@@ -28,9 +31,12 @@
     font-weight: 500;
   }
 }
+.hidden_mobile {
+  display: flex;
+}
 
 .main {
-  background-color: #000;
+  background-color: var(--bg-color-3rd);
   color: #fff;
   padding: 60px 0;
   text-align: center;
@@ -125,7 +131,7 @@
 }
 
 .list_hd {
-  background-color: #eeeef5;
+  background-color: var(--bg-color);
   height: 60px;
   line-height: 40px;
   font-size: 14px;
@@ -143,7 +149,7 @@
 }
 
 .list_item {
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--border-color);
   padding: 25px 30px;
   display: flex;
   justify-content: space-between;

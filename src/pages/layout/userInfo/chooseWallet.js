@@ -15,6 +15,7 @@ export default function ChooseWallet(props) {
       title=""
       visible={true}
       footer={null}
+      getContainer="#J_Page"
       className={styles.chooseLogin_dialog}
       width="400px"
       onCancel={closeChooseDialog}

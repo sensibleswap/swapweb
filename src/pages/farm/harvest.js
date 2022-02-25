@@ -38,6 +38,7 @@ export default class Harvest extends Component {
       className: styles.mod,
       icon: '',
       width: 375,
+      getContainer: '#J_Page',
     });
   };
 

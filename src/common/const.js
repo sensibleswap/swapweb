@@ -8,6 +8,7 @@ export const TSWAP_CURRENT_PAIR = 'TSwapCurrentPair';
 export const TSWAP_CURRENT_FARM_PAIR = 'TSwapCurrentFarmPair';
 export const TSWAP_POOL_SHOW_OP = 'TSwapPoolShowOP';
 export const TSWAP_LAST_WALLET_TYPE = 'TSwapLastWalletType';
+export const TSWAP_DARKMODE = 'TSwapDarkMode';
 
 export const TSWAP_SOURCE = 'tswap.io';
 

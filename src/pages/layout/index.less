@@ -1,0 +1,94 @@
+:root {
+  --bg-color: #fff;
+  --bg-color-2nd: #f6f7f9;
+  --bg-color-loading: #e6f7fff0;
+  --bg-color-3rd: #000;
+
+  --bg-shadow: rgba(213, 213, 223, 0.6);
+
+  --fg-color: #1d1d1d;
+  --fg-color-light: #1d1d1daa;
+  // --fg-color-2nd: #00bd92;
+  --fg-color-2nd-light: #00000080;
+
+  --border-color: #dbdbdb;
+  --border-color-2nd: #dbdbdb;
+  --border-color-3nd: rgba(51, 51, 51, 0.1);
+
+  --teal-color: #00bd92;
+  --blue-color: #2f80ed;
+  --blue-color-bg: #2f80ed22;
+  --red-color: #eb5757;
+
+  --button-shadow: rgba(29, 29, 29, 0.05);
+}
+
+.darkMode {
+  --bg-color: #18191d;
+  --bg-color-2nd: #000;
+  --bg-color-loading: #212121e0;
+  --bg-color-3rd: #18191d;
+
+  --bg-shadow: rgba(29, 29, 29, 0.05);
+
+  --fg-color: #fff;
+  --fg-color-light: #ffffffaa;
+  // --fg-color-2nd: #fff;
+  --fg-color-2nd-light: #ffffff80;
+
+  --border-color: #18191d;
+  --border-color-2nd: #000;
+  --border-color-3nd: rgba(219, 219, 219, 0.1);
+
+  --button-shadow: rgba(0, 0, 0, 0.5);
+}
+
+.root {
+  // min-height: 100vh;
+  height: 100%;
+  min-width: 380px;
+  min-height: 600px;
+  color: var(--fg-color);
+  background-color: var(--bg-color);
+
+  :global {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .anticon,
+    .ant-input-group .ant-btn,
+    .ant-form,
+    .ant-input,
+    .ant-input-group-addon,
+    // .ant-slider,
+    .ant-select,
+    .ant-select-item,
+    .ant-select-dropdown,
+    .ant-popover-inner-content,
+    .ant-input-affix-wrapper,
+    .ant-modal-confirm-body .ant-modal-confirm-content {
+      color: var(--fg-color);
+    }
+
+    .ant-input-group .ant-btn,
+    .ant-select,
+    .ant-select-dropdown,
+    .ant-input,
+    .ant-input-group,
+    .ant-input-group-addon {
+      background-color: var(--bg-color);
+      border-color: var(--border-color-2nd);
+    }
+
+    .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+      background-color: rgba(47, 128, 237, 0.2);
+    }
+
+    .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+      background-color: rgba(47, 128, 237, 0.2);
+    }
+  }
+}

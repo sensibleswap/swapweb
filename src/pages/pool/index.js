@@ -13,6 +13,7 @@ import styles from './index.less';
 import _ from 'i18n';
 import PairIcon from 'components/pairIcon';
 import { AppStartBtn } from 'components/ui';
+import Layout from '../layout';
 
 @connect(({ user, pair, loading }) => {
   const { effects } = loading;
@@ -108,7 +109,7 @@ export default class Pool extends Component {
     const { pageName } = this.props;
 
     return (
-      <>
+      <Layout>
         <Notice />
         <section className={styles.container}>
           <section
@@ -151,7 +152,7 @@ export default class Pool extends Component {
             </div>
           </section>
         </section>
-      </>
+      </Layout>
     );
   }
 }
