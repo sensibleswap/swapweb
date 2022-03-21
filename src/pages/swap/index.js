@@ -46,6 +46,7 @@ export default class Swap extends Component {
       origin_amount: 0,
       aim_amount: 0,
       slip: 0,
+      slip1: 0,
       fee: 0,
       txFee: 0,
       lastMod: '',
@@ -72,7 +73,7 @@ export default class Swap extends Component {
         const { lastMod, dirForward } = this.state;
         const { token1, token2, pairData } = this.props;
         const decimal = dirForward ? token1.decimal : token2.decimal;
-        let newOriginAddAmount, newAimAddAmount, fee, slip;
+        let newOriginAddAmount, newAimAddAmount, fee, slip, slip1;
         if (lastMod === 'origin') {
           const obj = calcAmount({
             token1,
@@ -89,6 +90,7 @@ export default class Swap extends Component {
             decimal,
           );
           slip = obj.slip;
+          slip1 = obj.slip1;
         } else if (lastMod === 'aim') {
           fee = formatAmount(
             BigNumber(aim_amount).multipliedBy(feeRate),
@@ -105,6 +107,7 @@ export default class Swap extends Component {
           newOriginAddAmount = aim_amount;
           newAimAddAmount = obj.newAimAddAmount;
           slip = obj.slip;
+          slip1 = obj.slip1;
         }
         current.setFieldsValue({
           origin_amount: newOriginAddAmount,
@@ -116,6 +119,7 @@ export default class Swap extends Component {
           origin_amount: newOriginAddAmount,
           fee,
           slip,
+          slip1,
         });
       },
     );
@@ -136,7 +140,8 @@ export default class Swap extends Component {
     let newOriginAddAmount = value,
       newAimAddAmount,
       fee,
-      slip;
+      slip,
+      slip1;
     if (value > 0) {
       value = formatAmount(value, token1.decimal);
       fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
@@ -150,10 +155,12 @@ export default class Swap extends Component {
       });
       newAimAddAmount = obj.newAimAddAmount;
       slip = obj.slip;
+      slip1 = obj.slip1;
     } else {
       newAimAddAmount = 0;
       fee = 0;
       slip = 0;
+      slip1 = 0;
     }
 
     this.formRef.current.setFieldsValue({
@@ -165,6 +172,7 @@ export default class Swap extends Component {
       aim_amount: newAimAddAmount,
       fee,
       slip,
+      slip1,
       lastMod: 'origin',
     });
   };
@@ -191,10 +199,12 @@ export default class Swap extends Component {
       newOriginAddAmount = obj.newOriginAddAmount;
       fee = obj.fee;
       slip = obj.slip;
+      slip1 = obj.slip1;
     } else {
       newOriginAddAmount = 0;
       fee = 0;
       slip = 0;
+      slip1 = 0;
     }
 
     this.formRef.current.setFieldsValue({
@@ -206,6 +216,7 @@ export default class Swap extends Component {
       aim_amount: newAimAddAmount,
       fee,
       slip,
+      slip1,
       lastMod: 'aim',
     });
   };
@@ -266,6 +277,7 @@ export default class Swap extends Component {
       dirForward,
       tol,
       slip,
+      slip1,
       fee,
       lastMod,
       origin_amount,
@@ -273,15 +285,15 @@ export default class Swap extends Component {
     } = this.state;
     const origin_token = dirForward ? token1 : token2;
     const aim_token = dirForward ? token2 : token1;
-    const symbol1 = origin_token.symbol;
-    const symbol2 = aim_token.symbol;
+    const symbol1 = origin_token.symbol.toUpperCase();
+    const symbol2 = aim_token.symbol.toUpperCase();
     const _swapToken1Amount = formatSat(swapToken1Amount, token1.decimal);
     const _swapToken2Amount = formatSat(swapToken2Amount, token2.decimal);
     const price = dirForward
       ? formatAmount(_swapToken2Amount / _swapToken1Amount, token2.decimal)
       : formatAmount(_swapToken1Amount / _swapToken2Amount, token1.decimal);
 
-    const beyond = parseFloat(slip) > parseFloat(tol);
+    const beyond = Math.abs(parseFloat(slip)) > parseFloat(tol);
 
     return (
       <div className={styles.content}>
@@ -365,7 +377,7 @@ export default class Swap extends Component {
                   className={styles.value}
                   style={beyond ? { color: 'red' } : {}}
                 >
-                  {slip}
+                  {symbol1} {slip}, {symbol2} {slip1}
                 </div>
               </div>
               <div className={styles.key_value}>

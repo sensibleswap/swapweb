@@ -72,10 +72,15 @@ export const calcAmount = (props) => {
   const p1 = newAmount2.dividedBy(newAmount1);
   const slip = p1.minus(p).dividedBy(p);
 
+  const np = BN(amount1).dividedBy(amount2);
+  const np1 = BN(newAmount1).dividedBy(newAmount2);
+  const slip1 = np1.minus(np).dividedBy(np);
+
   return {
     newOriginAddAmount,
     newAimAddAmount,
-    slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
+    slip: slip.multipliedBy(100).toFixed(2).toString() + '%',
+    slip1: slip1.multipliedBy(100).toFixed(2).toString() + '%',
     fee,
   };
 };
