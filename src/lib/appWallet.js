@@ -77,7 +77,7 @@ export default {
       userAddress,
       // userAddressShort: paymail || strAbbreviation(userAddress, [7, 7]),
       userAddressShort: strAbbreviation(userAddress, [7, 7]),
-      network: parseInt(accountInfo.token_map_id) === 1 ? 'mainnet' : 'testnet',
+      network: parseInt(accountInfo.token_map_id) === 7 ? 'testnet' : 'mainnet',
     };
     // console.log('accountInfo:', accountInfo);
     return accountInfo;
