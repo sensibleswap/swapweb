@@ -237,7 +237,7 @@ export default class Swap extends Component {
         : userBalance[token1.tokenID]
       : userBalance[token2.tokenID] || 0;
     origin_amount = formatAmount(origin_amount, decimal);
-    const { newAimAddAmount, slip } = calcAmount({
+    const { newAimAddAmount, slip, slip1 } = calcAmount({
       token1,
       token2,
       dirForward,
@@ -253,6 +253,7 @@ export default class Swap extends Component {
       origin_amount,
       aim_amount: newAimAddAmount,
       slip,
+      slip1,
     });
     if (origin_amount > 0) {
       this.setState({
@@ -390,12 +391,13 @@ export default class Swap extends Component {
 
             <Btn
               {...this.props}
-              slip={slip}
+              // slip={slip}
+              beyond={beyond}
               lastMod={lastMod}
               origin_amount={origin_amount}
               aim_amount={aim_amount}
               dirForward={dirForward}
-              tol={tol}
+              // tol={tol}
               handleSubmit={this.handleSubmit}
             />
           </Form>

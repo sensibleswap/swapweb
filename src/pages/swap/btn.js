@@ -13,12 +13,13 @@ export default function btn(props) {
     token1,
     token2,
     accountInfo,
-    slip,
+    // slip,
+    beyond,
     lastMod,
     origin_amount,
     aim_amount,
     dirForward,
-    tol,
+    // tol,
     handleSubmit,
   } = props;
   const { userBalance } = accountInfo;
@@ -27,7 +28,7 @@ export default function btn(props) {
   const aim_token = dirForward ? token2 : token1;
   const balance = userBalance[origin_token.tokenID || 'BSV'];
 
-  const beyond = parseFloat(slip) > parseFloat(tol);
+  // const beyond = parseFloat(slip) > parseFloat(tol);
 
   const conditions = [
     { key: 'login', cond: !isLogin },
