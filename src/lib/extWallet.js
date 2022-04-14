@@ -51,9 +51,9 @@ export default {
     }
   },
 
-  connectAccount: () => {
+  connectAccount: (network) => {
     if (checkExtension()) {
-      return window.voltWallet.requestAccount({});
+      return window.voltWallet.requestAccount({ network });
     }
   },
 

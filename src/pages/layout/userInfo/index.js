@@ -48,6 +48,8 @@ export default class UserInfo extends Component {
     const { dispatch, isLogin } = this.props;
 
     const lastType = localStorage.getItem(TSWAP_LAST_WALLET_TYPE);
+    console.log(lastType);
+
     if (!isLogin && type === parseInt(lastType)) {
       await dispatch({
         type: 'user/loadingUserData',
