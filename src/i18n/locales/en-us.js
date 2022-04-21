@@ -229,6 +229,7 @@ const texts = {
   notice1117:
     'On 19th November UTC 08:00, TokenSwap will perform an upgrade to TSC/USDT liquidity mining contract, we urge users to withdraw your TSC/USDT LP from current mining contract and deposit to new TSC/USDT mining contract to earn mining yield. Other features are not affected.',
   cant_remove: 'You have no liquidity to remove',
+  insufficient_balance: 'Exceeded available balance',
   test_only: 'Recommended for test only',
   swap_success: 'Swap success',
   lp_balance: 'Available to withdraw',
@@ -246,7 +247,7 @@ const texts = {
   abandoned_deposited_lp:
     'Withdraw all your LP token and yield, deposit LP token to the new contract',
   apy_info:
-    'APY = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
+    'APR = rewardTokenAmountPerBlock * 144 * 365 *  Token price / TVL * 100%',
   deposit: 'Deposit',
   earn: 'Earn',
   deposit_success: 'Deposit successful',
@@ -258,7 +259,7 @@ const texts = {
   farm_withdraw_success: 'Withdraw successful',
   withdrew: 'Withdrew',
   tvl: 'TVL',
-  apy: 'APY',
+  apy: 'APR',
   yield_tips: 'your withdrawable yield: %s',
   harvest_success: 'Yield Withdrawal successful',
   amount: 'Amount',
@@ -323,5 +324,11 @@ const texts = {
   create_farm_success_desc: 'Your liquidity mining program (LMP) is now live',
   network_fee: 'Network fee',
   only_custom_token: 'Token B should be your project token',
+  download_voltwallet:
+    'Install Volt extention. Refresh the page if you have installed.',
+
+  tokenb_tips: 'Token B should be your project token',
+  tmp_tips:
+    'This is a test pair, remove your liquidity, the pair will be delisted after a week.',
 };
 module.exports = texts;

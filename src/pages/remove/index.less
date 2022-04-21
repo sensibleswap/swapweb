@@ -1,11 +1,11 @@
 @import '../layout.less';
 
 .container {
-  background-color: #fff;
+  background-color: var(--bg-color);
   width: 375px;
   border-radius: 12px;
-  -webkit-box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
-  box-shadow: 0 10px 25px rgba(213, 213, 223, 0.6);
+  -webkit-box-shadow: 0 10px 25px var(--bg-shadow);
+  box-shadow: 0 10px 25px var(--bg-shadow);
 }
 
 .head {
@@ -232,7 +232,7 @@
 
 .f_box {
   border-radius: 12px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color-2nd);
   padding: 10px;
 
   .f_title {

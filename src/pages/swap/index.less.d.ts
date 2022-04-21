@@ -18,6 +18,7 @@ interface CssExports {
   item_label: string;
   item_value: string;
   key_value: string;
+  line: string;
   menu: string;
   menu_item: string;
   menu_item_selected: string;

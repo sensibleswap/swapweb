@@ -270,9 +270,10 @@ export default class Liquidity extends Component {
     });
   };
 
-  showUI = (name) => {
+  showUI = (name, type) => {
     this.setState({
       page: name,
+      selectedTokenType: type,
     });
   };
 
@@ -381,9 +382,9 @@ export default class Liquidity extends Component {
             <div className={styles.box}>
               <div
                 className={styles.coin}
-                onClick={() => this.showUI('selectToken')}
+                onClick={() => this.showUI('selectToken', 'left')}
               >
-                <PairIcon keyword="token1" />
+                <PairIcon keyword="token1" size={40} />
                 <div className={styles.arrow}>
                   <CustomIcon type="iconDropdown" />
                 </div>
@@ -416,9 +417,9 @@ export default class Liquidity extends Component {
             <div className={styles.box}>
               <div
                 className={styles.coin}
-                onClick={() => this.showUI('selectToken')}
+                onClick={() => this.showUI('selectToken', 'right')}
               >
-                <PairIcon keyword="token2" />
+                <PairIcon keyword="token2" size={40} />
                 <div className={styles.arrow}>
                   <CustomIcon type="iconDropdown" />
                 </div>
@@ -878,14 +879,17 @@ export default class Liquidity extends Component {
   render() {
     const { loading } = this.props;
     if (loading) return <Loading />;
-    const { page } = this.state;
+    const { page, selectedTokenType } = this.state;
     return (
       <Pool>
         <div style={{ position: 'relative' }}>
           {this.renderSwap()}
           {page === 'selectToken' && (
             <div className={styles.selectToken_wrap}>
-              <SelectToken finish={(id) => this.selectedToken(id, page)} />
+              <SelectToken
+                finish={(id) => this.selectedToken(id, page)}
+                type={selectedTokenType}
+              />
             </div>
           )}
         </div>

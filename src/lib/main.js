@@ -2,6 +2,7 @@ import tsWallet from './tsWallet';
 import voltWallet from './voltWallet';
 // import appWallet from './appWallet';
 import sensiletWallet from './sensWallet';
+import extWallet from './extWallet';
 
 export default function wallet(props) {
   const { type } = props;
@@ -22,5 +23,9 @@ export default function wallet(props) {
 
   if (type === 4) {
     return sensiletWallet;
+  }
+
+  if (type === 5) {
+    return extWallet;
   }
 }

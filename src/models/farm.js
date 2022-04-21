@@ -18,7 +18,6 @@ export default {
     lptoken: {},
     rewardToken: {},
     pairYields: {},
-    // bsvPrice: 0,
     pairsData: {},
   },
 
@@ -43,7 +42,7 @@ export default {
       if (
         !currentFarmPair ||
         !data[currentFarmPair] ||
-        !pairsData[currentFarmPair]
+        !pairsData[data[currentFarmPair].token.tokenID]
       ) {
         Object.keys(data).forEach((item) => {
           if (item !== 'blockHeight' && pairsData[data[item].token.tokenID]) {
@@ -54,11 +53,11 @@ export default {
         });
       }
 
-      const { bsvPrice } = yield select((state) => state.pair);
+      const { tokenPrice } = yield select((state) => state.pair);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
         pairsData,
-        bsvPrice,
+        tokenPrice,
       );
       // console.log(allFarmData, allFarmArr)
 
@@ -87,13 +86,13 @@ export default {
         return res;
       }
 
-      const { bsvPrice } = yield select((state) => state.pair);
+      const { tokenPrice } = yield select((state) => state.pair);
       // const { pairsData } = yield select((state) => state.farm);
       const pairsData = yield fetchFarmData(data);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
         pairsData,
-        bsvPrice,
+        tokenPrice,
       );
       // console.log(allFarmData)
 

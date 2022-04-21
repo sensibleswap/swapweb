@@ -9,6 +9,7 @@ import { sleep } from 'common/utils';
 import Wallet from '@/lib/main';
 import Popup from './popup';
 import ChooseWallet from './chooseWallet';
+import { TSWAP_LAST_WALLET_TYPE } from 'common/const';
 import styles from './index.less';
 import _ from 'i18n';
 
@@ -43,39 +44,63 @@ export default class UserInfo extends Component {
     this.polling = false;
   }
 
-  initWallet = () => {
-    const _wallet = Wallet({ type: 2 });
+  accountChanged = async (type) => {
+    const { dispatch, isLogin } = this.props;
 
-    _wallet.bsv.on('accountChanged', async (depositAddress) => {
-      const { dispatch, isLogin } = this.props;
+    const lastType = localStorage.getItem(TSWAP_LAST_WALLET_TYPE);
+    console.log(lastType);
 
-      if (depositAddress && !isLogin) {
-        await dispatch({
-          type: 'user/loadingUserData',
-          payload: {
-            type: 2,
-          },
-        });
-        if (window.location.hash.indexOf('farm') > -1) {
-          history.push('/farm');
-          EventBus.emit('reloadPair');
-        }
-      }
-    });
-    _wallet.bsv.on('close', () => {
-      this.props.dispatch({
-        type: 'user/save',
+    if (!isLogin && type === parseInt(lastType)) {
+      await dispatch({
+        type: 'user/loadingUserData',
         payload: {
-          accountInfo: {
-            userBalance: {},
-          },
-          isLogin: false,
+          type,
         },
       });
       if (window.location.hash.indexOf('farm') > -1) {
+        history.push('/farm');
         EventBus.emit('reloadPair');
       }
+    }
+  };
+
+  closeWallet = () => {
+    this.props.dispatch({
+      type: 'user/save',
+      payload: {
+        accountInfo: {
+          userBalance: {},
+        },
+        isLogin: false,
+      },
     });
+    if (window.location.hash.indexOf('farm') > -1) {
+      EventBus.emit('reloadPair');
+    }
+  };
+
+  initWallet = () => {
+    const _extwallet = Wallet({ type: 5 });
+
+    _extwallet.bsv &&
+      _extwallet.bsv.on('accountChanged', async (depositAddress) => {
+        depositAddress && this.accountChanged(5);
+      });
+    _extwallet.bsv &&
+      _extwallet.bsv.on('close', () => {
+        this.closeWallet();
+      });
+
+    const _voltWallet = Wallet({ type: 2 });
+
+    _voltWallet.bsv &&
+      _voltWallet.bsv.on('accountChanged', async (depositAddress) => {
+        depositAddress && this.accountChanged(2);
+      });
+    _voltWallet.bsv &&
+      _voltWallet.bsv.on('close', () => {
+        this.closeWallet();
+      });
   };
 
   fetchPairData = async () => {
@@ -88,32 +113,32 @@ export default class UserInfo extends Component {
           dispatch({
             type: 'pair/getUSDPrice',
           });
-          await sleep(20 * 1e3);
+          await sleep(5 * 1e3);
           i++;
-          const { hash } = window.location;
-          if (busy) return;
-          if (hash.indexOf('farm') < 0) {
-            dispatch({
-              type: 'pair/updatePairData',
-            });
-          }
-
-          if (hash.indexOf('farm') > -1) {
-            dispatch({
-              type: 'farm/updatePairData',
-              payload: {
-                address: accountInfo.userAddress,
-              },
-            });
-          }
           if (isLogin) {
             await dispatch({
               type: 'user/updateUserData',
             });
           }
+          if (i % 4 === 0) {
+            const { hash } = window.location;
+            if (busy) return;
+            if (hash.indexOf('farm') < 0) {
+              dispatch({
+                type: 'pair/updatePairData',
+              });
+            }
 
-          if (i > 1) {
-            i = 0;
+            if (hash.indexOf('farm') > -1) {
+              dispatch({
+                type: 'farm/updatePairData',
+                payload: {
+                  address: accountInfo.userAddress,
+                },
+              });
+            }
+          }
+          if (i % 8 === 0) {
             const { hash } = location;
             if (hash.indexOf('swap') > -1) {
               EventBus.emit('reloadChart', 'swap');
@@ -184,9 +209,11 @@ export default class UserInfo extends Component {
     const { walletType } = this.props;
     if (walletType === 1) {
       return <span className={styles.dot}></span>;
-    } else if (walletType === 2) {
+    }
+    if (walletType === 2 || walletType === 5) {
       return <CustomIcon type="iconicon-volt-tokenswap-circle" />;
     }
+    return <span style={{ paddingLeft: 10 }} />;
   }
 
   renderAppConnectBtn() {
@@ -262,6 +289,7 @@ export default class UserInfo extends Component {
             onVisibleChange={this.handleVisibleChange}
             overlayClassName={styles.popover}
             placement="bottom"
+            getPopupContainer={() => document.getElementById('J_Page')}
           >
             {this.renderConnectedBtn()}
             {this.renderAppConnectBtn()}

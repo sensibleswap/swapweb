@@ -5,6 +5,7 @@ import _ from 'i18n';
 import Nav from '../nav';
 import UserInfo from '../userInfo';
 import Lang from '../lang';
+import DarkMode from '../darkmode';
 
 export default function Header() {
   return (
@@ -13,6 +14,7 @@ export default function Header() {
       <div className={styles.user_info}>
         <UserInfo />
         <div className={styles.hidden_mobile}>
+          <DarkMode />
           <Lang />
         </div>
       </div>

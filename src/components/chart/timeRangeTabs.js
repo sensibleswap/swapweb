@@ -41,6 +41,7 @@ export default class TimeRangeTabs extends Component {
         <Select
           defaultValue={timeRange}
           onChange={this.changeTimeRange}
+          getPopupContainer={() => document.getElementById('J_Page')}
           style={{ width: 85, borderWidth: 0, borderRadius: 100, height: 35 }}
         >
           {timeRangeOptions.map(({ label, value }) => (

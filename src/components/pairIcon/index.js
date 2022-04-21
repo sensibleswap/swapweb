@@ -17,36 +17,59 @@ export default class PairIcon extends React.Component {
 
   render() {
     if (this.props.loading) return null;
-    const { token1, token2, keyword, size = 30, txt, children } = this.props;
+    const {
+      keyword,
+      size = 30,
+      txt,
+      children,
+      currentToken1,
+      currentToken2,
+      token1Arr,
+      token2Arr,
+    } = this.props;
 
-    const token1Name = token1.symbol.toUpperCase();
-    const token2Name = token2.symbol.toUpperCase();
+    const token1 = token1Arr.find(
+      (item) =>
+        item.tokenID === currentToken1 ||
+        (currentToken1 &&
+          item.symbol.toUpperCase() === currentToken1.toUpperCase()),
+    );
+    const token2 = token2Arr.find(
+      (item) =>
+        item.tokenID === currentToken2 ||
+        (currentToken2 &&
+          item.symbol.toUpperCase() === currentToken2.toUpperCase()),
+    );
+
+    const token1Name = token1 ? token1.symbol.toUpperCase() : '';
+    const token2Name = token2 ? token2.symbol.toUpperCase() : '';
 
     // console.log(token1, token2)
-    const token1Logo = (
+    const token1Logo = token1 ? (
       <TokenLogo
         name={token1.symbol}
         genesisID={token1.tokenID || 'bsv'}
         size={size}
       />
-    );
-    const token2Logo = (
+    ) : null;
+    const token2Logo = token2 ? (
       <TokenLogo
         name={token2.symbol}
         genesisID={token2.tokenID || 'bsv'}
         size={size}
       />
-    );
+    ) : null;
 
-    const pairIcon = (
-      <TokenPair
-        symbol1={token1Name}
-        symbol2={token2Name}
-        genesisID1={token1.tokenID}
-        genesisID2={token2.tokenID}
-        size={size}
-      />
-    );
+    const pairIcon =
+      token1 && token2 ? (
+        <TokenPair
+          symbol1={token1Name}
+          symbol2={token2Name}
+          genesisID1={token1.tokenID}
+          genesisID2={token2.tokenID}
+          size={size}
+        />
+      ) : null;
 
     if (keyword === 'token1') {
       return (

@@ -2,9 +2,11 @@
 import React, { Component } from 'react';
 import { history } from 'umi';
 import { Button } from 'antd';
+import Layout from '../layout';
 import Lang from '../layout/lang';
 import Nav from '../layout/nav';
 import Footer from '../layout/footer';
+import DarkMode from '../layout/darkmode';
 import CustomIcon from 'components/icon';
 import Notice from 'components/notice';
 import Cookie from 'js-cookie';
@@ -152,7 +154,7 @@ export default class Home extends Component {
   render() {
     const isZh = _lang.toLowerCase() === 'zh-cn';
     return (
-      <>
+      <Layout>
         <Notice />
         <section className={styles.container}>
           <nav className={styles.head}>
@@ -170,6 +172,7 @@ export default class Home extends Component {
                   {_('launch_app')}
                 </Button>
                 <div className={styles.hidden_mobile}>
+                  <DarkMode />
                   <Lang />
                 </div>
               </div>
@@ -213,7 +216,7 @@ export default class Home extends Component {
           </section>
           <Footer />
         </section>
-      </>
+      </Layout>
     );
   }
 }

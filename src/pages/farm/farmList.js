@@ -44,7 +44,7 @@ export default class FarmList extends Component {
       _total = 0,
       _yield = 0,
     } = data;
-    let { tokenID } = token;
+    let { tokenID, symbol } = token;
     if (loading || !pairsData[tokenID]) {
       return null;
     }
@@ -64,9 +64,10 @@ export default class FarmList extends Component {
     const reword_amount = formatSat(rewardAmountPerBlock, decimal);
 
     let cls = styles.item;
-    if (abandoned) {
+    if (abandoned || symbol === 'TSC/FTT') {
       cls = jc(styles.item, styles.warn);
     }
+
     if (id === currentFarmPair) {
       cls = jc(cls, styles.current);
     }
@@ -88,7 +89,9 @@ export default class FarmList extends Component {
             </div>
           </div>
           <div className={styles.lp_amount}>
-            {_(abandoned ? 'abandoned_deposited_lp' : 'your_deposited_lp')}:{' '}
+            {symbol === 'TSC/FTT' && _('tmp_tips')}
+            {abandoned && _('abandoned_deposited_lp')}
+            {symbol !== 'TSC/FTT' && !abandoned && _('your_deposited_lp')}:{' '}
             <FormatNumber value={_lockedTokenAmount} />
           </div>
         </div>

@@ -2,75 +2,70 @@ import { formatSat, strAbbreviation } from 'common/utils';
 import _ from 'i18n';
 // import 'common/vconsole';
 
-const bsv = window.sensilet;
+const bsv = window.voltWallet;
 
 function checkExtension() {
-  if (!window.sensilet) {
-    if (confirm(_('download_sensilet'))) {
-      window.open('https://sensilet.com/');
+  if (!window.voltWallet) {
+    if (confirm(_('download_voltwallet'))) {
+      window.open('https://volt.id/#/download');
     }
     return false;
   }
   return true;
 }
 
-const getBsvBalance = async () => {
-  const res = await window.sensilet.getBsvBalance();
-  return formatSat(res.balance.total);
-};
+// const getBsvBalance = async () => {
+//   const res = await bsv.getBsvBalance();
+//   return formatSat(res.balance.total);
+// };
 
-const getSensibleFtBalance = async () => {
-  const res = await window.sensilet.getSensibleFtBalance();
-  // console.log('getSensibleFtBalance:',res);
-  const userBalance = {};
-  res.forEach((item) => {
-    userBalance[item.genesis] = formatSat(item.balance, item.decimal);
-  });
-  return userBalance;
-};
+// const getSensibleFtBalance = async () => {
+//   const res = await bsv.getSensibleFtBalance();
+//   // console.log('getSensibleFtBalance:',res);
+//   const userBalance = {};
+//   res.forEach((item) => {
+//     userBalance[item.genesis] = formatSat(item.balance, item.decimal);
+//   });
+//   return userBalance;
+// };
 
 export default {
+  bsv: window.voltWallet,
   info: async () => {
     if (checkExtension()) {
-      let accountInfo = {};
-      const bsvBalance = await getBsvBalance();
+      let accountInfo = await window.voltWallet.getAccount();
+      const paymail = await window.voltWallet.getPaymail();
+      let userBalance = {};
+      accountInfo.balance.forEach((item) => {
+        userBalance[item.is_bsv ? 'BSV' : item.genesis] = item.value;
+      });
 
-      const userAddress = await window.sensilet.getAccount();
-      const tokenBalance = await getSensibleFtBalance();
-      // const network = await bsv.getNetwork();
-      const network = 'mainnet';
-
-      const userBalance = {
-        BSV: bsvBalance,
-        ...tokenBalance,
-      };
       accountInfo = {
         ...accountInfo,
         userBalance,
-        userAddress,
-        userAddressShort: strAbbreviation(userAddress, [7, 7]),
-        network,
+        userAddressShort:
+          paymail || strAbbreviation(accountInfo.userAddress, [7, 7]),
       };
       //   console.log('accountInfo:', accountInfo);
       return accountInfo;
     }
   },
 
-  connectAccount: () => {
+  connectAccount: (network) => {
     if (checkExtension()) {
-      return window.sensilet.requestAccount({});
+      return window.voltWallet.requestAccount({ network });
     }
   },
 
   exitAccount: () => {
-    return window.sensilet.exitAccount();
+    return window.voltWallet.exitAccount();
   },
 
   transferBsv: async (params) => {
     if (checkExtension()) {
       const { address, amount, noBroadcast } = params;
 
-      const res = await window.sensilet.transferBsv({
+      const res = await window.voltWallet.transferBsv({
         broadcast: !noBroadcast,
         receivers: [{ address, amount }],
       });
@@ -101,14 +96,15 @@ export default {
         }
       });
 
-      const res = await window.sensilet.transferAll(data);
+      const res = await window.voltWallet.transferAll(data);
       return res;
     }
   },
 
   signTx: async (params) => {
-    const res = await window.sensilet.signTx({ list: [params] });
-    // console.log(res); debugger
+    const res = await window.voltWallet.signTx({ list: [params] });
+    if (res.sig) return res;
+    if (res[0].sig) return res[0];
     return res.sigList[0];
   },
 };

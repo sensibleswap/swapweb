@@ -21,6 +21,7 @@ interface CssExports {
   info_title_swap: string;
   info_value: string;
   input: string;
+  label: string;
   left: string;
   left_inner: string;
   link: string;
@@ -41,6 +42,8 @@ interface CssExports {
   strong: string;
   subtitle: string;
   title: string;
+  v_item: string;
+  values: string;
   view_detail: string;
 }
 export const cssExports: CssExports;

@@ -7,7 +7,7 @@ import { Button, Spin, message } from 'antd';
 import EventBus from 'common/eventBus';
 import { formatSat, formatAmount, LeastFee, formatTok } from 'common/utils';
 import Rate from 'components/rate';
-import CustomIcon from 'components/icon';
+// import CustomIcon from 'components/icon';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
@@ -124,7 +124,7 @@ export default class RemovePage extends Component {
       loading,
     } = this.props;
     let LP = accountInfo.userBalance[lptoken.tokenID];
-    if (loading || !LP) {
+    if (loading) {
       return {
         removeToken1: 0,
         removeToken2: 0,
@@ -144,9 +144,10 @@ export default class RemovePage extends Component {
     // const rate = BigNumber(removeLP)
     //   .multipliedBy(Math.pow(10, lptoken.decimal))
     //   .div(swapLpAmount);
-    const rate = BigNumber(formatTok(removeLP, lptoken.decimal)).div(
+    let rate = BigNumber(formatTok(removeLP, lptoken.decimal)).div(
       swapLpAmount,
     );
+    if (rate > 1) rate = 1;
     // console.log(rate.toString(), rate1.toString())
     const { token1, token2 } = allPairs[currentPair];
     const removeToken1 = formatSat(
@@ -348,6 +349,10 @@ export default class RemovePage extends Component {
       {
         key: 'enterAmount',
         cond: parseFloat(removeLP) <= 0,
+      },
+      {
+        cond: removeLP > LP,
+        txt: _('insufficient_balance'),
       },
     ];
 

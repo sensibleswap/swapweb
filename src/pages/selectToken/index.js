@@ -5,7 +5,7 @@ import styles from './index.less';
 import _ from 'i18n';
 
 export default function SelectToken(props) {
-  const { finish } = props;
+  const { finish, type = 'left' } = props;
   return (
     <div className={styles.container}>
       <div className={styles.head}>
@@ -18,7 +18,7 @@ export default function SelectToken(props) {
         <div className={styles.title}>{_('select_token')}</div>
         <div className={styles.done}></div>
       </div>
-      <TokenList finish={finish} />
+      <TokenList finish={finish} type={type} />
     </div>
   );
 }

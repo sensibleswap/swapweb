@@ -51,8 +51,8 @@ export const calcAmount = (props) => {
         _aimAddAmount * BigInt(FEE_FACTOR));
 
     addAmount = BN(addAmount);
-    addAmount = addAmount.div(Math.pow(10, decimal1));
     newAmount1 = addAmount.plus(amount1);
+    addAmount = addAmount.div(Math.pow(10, decimal1));
     let addAmountN = formatAmount(addAmount, decimal1);
     if (!addAmount.isGreaterThan(0)) {
       addAmountN = 0;
@@ -67,15 +67,57 @@ export const calcAmount = (props) => {
         ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
         : 0;
   }
-
+  // console.log('dirForward:', dirForward, 'amount1:', amount1, 'amount2:', amount2, 'newAmount1:', newAmount1.toString(), 'newAmount2:', newAmount2.toString());
   const p = BN(amount2).dividedBy(amount1);
   const p1 = newAmount2.dividedBy(newAmount1);
   const slip = p1.minus(p).dividedBy(p);
 
+  const np = BN(amount1).dividedBy(amount2);
+  const np1 = BN(newAmount1).dividedBy(newAmount2);
+  const slip1 = np1.minus(np).dividedBy(np);
+
   return {
     newOriginAddAmount,
     newAimAddAmount,
-    slip: slip.multipliedBy(100).abs().toFixed(2).toString() + '%',
+    slip: slip.multipliedBy(100).toFixed(2).toString() + '%',
+    slip1: slip1.multipliedBy(100).toFixed(2).toString() + '%',
     fee,
+  };
+};
+
+export const filterTokens = ({ allPairs, token1ID }) => {
+  // index: 1-token1 2-token2, filter
+  let token1Arr = [],
+    token2Arr = [];
+
+  let allPairsArr = [];
+  Object.keys(allPairs).forEach((key) => {
+    allPairsArr.push(allPairs[key]);
+  });
+  allPairsArr.sort((a, b) => {
+    return b.poolAmount - a.poolAmount;
+  });
+
+  allPairsArr.forEach((pair) => {
+    const { token1, token2 } = pair;
+
+    if (
+      !token1ID || //token1空的未选择
+      token1ID.toUpperCase() === token1.symbol.toUpperCase() || // token1选择了bsv和token1为bsv的对应
+      token1ID === token1.tokenID
+    ) {
+      if (!token2Arr.find((item) => item.tokenID === token2.tokenID)) {
+        token2Arr = [...token2Arr, token2];
+      }
+    }
+
+    if (!token1Arr.find((item) => item.tokenID === token1.tokenID)) {
+      token1Arr = [...token1Arr, token1];
+    }
+  });
+
+  return {
+    token1Arr,
+    token2Arr,
   };
 };
