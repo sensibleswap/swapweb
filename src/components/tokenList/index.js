@@ -57,7 +57,7 @@ export default class PairList extends Component {
   };
 
   changePair = async (tokenID) => {
-    const { type, dispatch } = this.props;
+    const { type, dispatch, finish } = this.props;
     let token1ID = type === 'left' && tokenID;
     let token2ID = type === 'right' && tokenID;
 
@@ -68,6 +68,8 @@ export default class PairList extends Component {
         token2ID,
       },
     });
+
+    finish && finish();
 
     const { hash } = location;
     if (hash.indexOf('swap') > -1) {
