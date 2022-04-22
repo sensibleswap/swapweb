@@ -122,7 +122,7 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       reward_token.token1.symbol.toLowerCase() === 'bsv'
     ) {
       //先换算成bsv价格
-      _total = _total.multipliedBy(token_price);
+      _total = BigNumber(_total).multipliedBy(token_price);
     }
     // if(token1.symbol === 'SHOW') console.log( _total.toString());
 
@@ -136,7 +136,7 @@ export function handleFarmData(data, pairsData, tokenPrice) {
     _yield = formatAmount(_yield, 2);
 
     if (reward_token.token1.symbol.toLowerCase() === 'bsv') {
-      _total = _total.multipliedBy(tokenPrice.bsvPrice);
+      _total = BigNumber(_total).multipliedBy(tokenPrice.bsvPrice);
     } else if (reward_token.token1.symbol.toLowerCase() === 'tsc') {
       _total = _total.div(tokenPrice.tscPrice);
     }
