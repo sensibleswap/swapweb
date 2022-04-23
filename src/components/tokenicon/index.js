@@ -31,7 +31,7 @@ export default class TokenIcon extends React.Component {
     // if (!iconList) {
     //   iconList = icons;
     // }
-    const icons_name = iconList[genesisID];
+    const icons_name = iconList ? iconList[genesisID] : '';
     if (icons_name) {
       if (icons_name.type) {
         return (

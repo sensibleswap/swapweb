@@ -134,8 +134,7 @@ function calcTVL1(pairsData, data, id, tokenPrice, reward_token) {
   return [_yield, _total];
 }
 
-function calcTVL(item, tokenPrice, reward_token, pairData) {
-  console.log(reward_token === pairData);
+function calcTVL(item, tokenPrice, reward_token, pairData, pairsData) {
   const { poolTokenAmount, rewardAmountPerBlock, rewardToken, token } = item;
 
   const {
@@ -146,8 +145,8 @@ function calcTVL(item, tokenPrice, reward_token, pairData) {
     swapLpAmount,
   } = pairData;
 
-  const token1_symbol_lowerCase = token1.symbol.toLowerCase();
-  const token2_symbol_lowerCase = token2.symbol.toLowerCase();
+  const token1_symbol_UpperCase = token1.symbol.toUpperCase();
+  const token2_symbol_UpperCase = token2.symbol.toUpperCase();
   const reward_token_symbol1_upperCase = reward_token.lptoken.symbol
     .toUpperCase()
     .split('/')[0];
@@ -159,13 +158,30 @@ function calcTVL(item, tokenPrice, reward_token, pairData) {
     poolTokenAmount,
   );
 
-  // console.log(token1_symbol_lowerCase, token2_symbol_lowerCase, rewardToken.symbol, reward_token);
-  // console.log('reward_token_symbol1_upperCase:', reward_token_symbol2_upperCase)
   let token_price = calcTokenPrice(pairData); //当前池子里token2相对token1的价格
   let reward_token1_price = calcTokenPrice(reward_token); //奖励token的token2相对token1的价格
   const token_prices_usd = TokenPriceSummary(tokenPrice); //价格索引
-  let token1_price = token_prices_usd[token1_symbol_lowerCase.toUpperCase()];
+  let token1_price = token_prices_usd[token1_symbol_UpperCase];
+  const reward_token_price_usd = reward_token1_price.multipliedBy(
+    token_prices_usd[reward_token_symbol1_upperCase],
+  );
   // let reward_token2_price = token_prices_usd[reward_token_symbol1_upperCase];
+
+  if (typeof token1_price === 'undefined') {
+    const ref_pair_data =
+      pairsData[`USDT-${token1_symbol_UpperCase}`] ||
+      pairsData[`BSV-${token1_symbol_UpperCase}`];
+    token1_price = calcTokenPrice(ref_pair_data).multipliedBy(
+      token_prices_usd[ref_pair_data.token1.symbol.toUpperCase()],
+    );
+
+    _lpToken = calcLPTotal(
+      ref_pair_data.swapToken1Amount,
+      ref_pair_data.token1,
+      ref_pair_data.swapLpAmount,
+      poolTokenAmount,
+    );
+  }
 
   let _total = BigNumber(_lpToken).multipliedBy(token1_price);
   // console.log('token1_price',token1_price, 'reward_token1_price', reward_token2_price)
@@ -189,12 +205,10 @@ function calcTVL(item, tokenPrice, reward_token, pairData) {
   //   _total = BigNumber(_total).multipliedBy(token_price);
   // }
 
-  // if()
-
   const _yield = calcYield(
     rewardAmountPerBlock,
     rewardToken.decimal,
-    reward_token1_price,
+    reward_token_price_usd,
     _total,
   );
 
@@ -248,7 +262,13 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       return;
     }
 
-    const [_yield, _total] = calcTVL(item, tokenPrice, reward_token, pairData);
+    const [_yield, _total] = calcTVL(
+      item,
+      tokenPrice,
+      reward_token,
+      pairData,
+      pairsData,
+    );
 
     item._yield = _yield;
     item._total = _total.toString();
