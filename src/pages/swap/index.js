@@ -185,7 +185,8 @@ export default class Swap extends Component {
     let newOriginAddAmount,
       newAimAddAmount = value,
       fee,
-      slip;
+      slip,
+      slip1;
     if (value > 0) {
       value = formatAmount(value, decimal);
       const obj = calcAmount({
@@ -680,6 +681,8 @@ export default class Swap extends Component {
     this.setState({
       origin_amount: 0,
       aim_amount: 0,
+      slip: 0,
+      slip1: 0,
     });
 
     this.showUI('form');
