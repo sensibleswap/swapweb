@@ -7,7 +7,7 @@ class Farm extends BaseAPI {
     if (isTestNet()) {
       this.baseUrl = 'https://api.tswap.io/farm/test/';
     } else {
-      this.baseUrl = 'https://api.tswap.io/farm/beta/';
+      this.baseUrl = 'https://api.tswap.io/farm/';
     }
 
     if (url) this.baseUrl = url;
@@ -49,14 +49,6 @@ class Farm extends BaseAPI {
 
   harvest2(params) {
     return this._request('harvest2', params, 'POST');
-  }
-
-  reqcreatefarm(params) {
-    return this._request('reqcreatefarm', params, 'POST');
-  }
-
-  createfarm(params) {
-    return this._request('createfarm', params, 'POST');
   }
 }
 
