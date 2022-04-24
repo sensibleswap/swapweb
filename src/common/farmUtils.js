@@ -37,6 +37,7 @@ export async function fetchFarmData(data) {
 function calcYield(rewardAmountPerBlock, decimal, token_price, _total) {
   const reword_amount = formatSat(rewardAmountPerBlock, decimal);
 
+  // console.log('token_price:', token_price)
   let _yield = BigNumber(reword_amount)
     .multipliedBy(144)
     .multipliedBy(365)
@@ -49,186 +50,14 @@ function calcYield(rewardAmountPerBlock, decimal, token_price, _total) {
 
 function calcLPTotal(swapToken1Amount, token1, swapLpAmount, poolTokenAmount) {
   const token1_amount = formatSat(swapToken1Amount, token1.decimal);
+  // console.log('token1_amount:', token1_amount);
   const lp_price = BigNumber(token1_amount * 2).div(swapLpAmount);
-  const LPTotal = BigNumber(poolTokenAmount).multipliedBy(lp_price);
-  return LPTotal;
+  // console.log('lp_price:', lp_price.toString())
+  const lp_total = BigNumber(poolTokenAmount).multipliedBy(lp_price);
+  return lp_total;
 }
 
-function calcTokenPrice1(reward_token) {
-  const reward_token1_amount = formatSat(
-    reward_token.swapToken1Amount,
-    reward_token.token1.decimal,
-  );
-  const reward_token2_amount = formatSat(
-    reward_token.swapToken2Amount,
-    reward_token.token2.decimal,
-  );
-
-  const token_price = BigNumber(reward_token1_amount).div(reward_token2_amount);
-  return token_price;
-}
-
-function calcTokenPrice(reward_token) {
-  const reward_token1_amount = formatSat(
-    reward_token.swapToken1Amount,
-    reward_token.token1.decimal,
-  );
-  const reward_token2_amount = formatSat(
-    reward_token.swapToken2Amount,
-    reward_token.token2.decimal,
-  );
-
-  const token_price = BigNumber(reward_token1_amount).div(reward_token2_amount);
-
-  return token_price;
-}
-
-function calcTVL1(pairsData, data, id, tokenPrice, reward_token) {
-  const { poolTokenAmount, rewardAmountPerBlock, rewardToken, token } = data[
-    id
-  ];
-
-  const {
-    token1,
-    token2,
-    swapToken1Amount,
-    swapToken2Amount,
-    swapLpAmount,
-  } = pairsData[token.tokenID];
-
-  const token1_symbol_lowerCase = token1.symbol.toLowerCase();
-  const token2_symbol_lowerCase = token2.symbol.toLowerCase();
-  const reward_token_symbol1_lowercase = reward_token.token1.symbol.toLowerCase();
-
-  const token_price = calcTokenPrice(reward_token);
-
-  let _total = calcLPTotal(
-    swapToken1Amount,
-    token1,
-    swapLpAmount,
-    poolTokenAmount,
-  );
-
-  if (token2_symbol_lowerCase === 'usdt') {
-    _total = formatSat(swapToken2Amount * 2, token2.decimal);
-  } else if (
-    token1_symbol_lowerCase !== 'bsv' &&
-    reward_token_symbol1_lowercase === 'bsv'
-  ) {
-    //先换算成bsv价格
-    _total = BigNumber(_total).multipliedBy(token_price);
-  }
-
-  const _yield = calcYield(
-    rewardAmountPerBlock,
-    rewardToken.decimal,
-    token_price,
-    _total,
-  );
-
-  if (reward_token_symbol1_lowercase === 'bsv') {
-    _total = BigNumber(_total).multipliedBy(tokenPrice.bsvPrice);
-  } else if (reward_token_symbol1_lowercase === 'tsc') {
-    _total = _total.div(tokenPrice.tscPrice);
-  }
-  return [_yield, _total];
-}
-
-function calcTVL(item, tokenPrice, reward_token, pairData, pairsData) {
-  const { poolTokenAmount, rewardAmountPerBlock, rewardToken, token } = item;
-
-  const {
-    token1,
-    token2,
-    swapToken1Amount,
-    swapToken2Amount,
-    swapLpAmount,
-  } = pairData;
-
-  const token1_symbol_UpperCase = token1.symbol.toUpperCase();
-  const token2_symbol_UpperCase = token2.symbol.toUpperCase();
-  const reward_token_symbol1_upperCase = reward_token.lptoken.symbol
-    .toUpperCase()
-    .split('/')[0];
-
-  let _lpToken = calcLPTotal(
-    swapToken1Amount,
-    token1,
-    swapLpAmount,
-    poolTokenAmount,
-  );
-
-  let token_price = calcTokenPrice(pairData); //当前池子里token2相对token1的价格
-  let reward_token1_price = calcTokenPrice(reward_token); //奖励token的token2相对token1的价格
-  const token_prices_usd = TokenPriceSummary(tokenPrice); //价格索引
-  let token1_price = token_prices_usd[token1_symbol_UpperCase];
-  const reward_token_price_usd = reward_token1_price.multipliedBy(
-    token_prices_usd[reward_token_symbol1_upperCase],
-  );
-  // let reward_token2_price = token_prices_usd[reward_token_symbol1_upperCase];
-
-  if (typeof token1_price === 'undefined') {
-    const ref_pair_data =
-      pairsData[`USDT-${token1_symbol_UpperCase}`] ||
-      pairsData[`BSV-${token1_symbol_UpperCase}`];
-    token1_price = calcTokenPrice(ref_pair_data).multipliedBy(
-      token_prices_usd[ref_pair_data.token1.symbol.toUpperCase()],
-    );
-
-    _lpToken = calcLPTotal(
-      ref_pair_data.swapToken1Amount,
-      ref_pair_data.token1,
-      ref_pair_data.swapLpAmount,
-      poolTokenAmount,
-    );
-  }
-
-  let _total = BigNumber(_lpToken).multipliedBy(token1_price);
-  // console.log('token1_price',token1_price, 'reward_token1_price', reward_token2_price)
-  // let _total;
-  // if(token1_price) {
-  //   _total = BigNumber(_lpToken).multipliedBy(token1_price);
-  // }
-  // else {
-  //   _total = BigNumber(_lpToken).div(reward_token2_price);
-  //   reward_token1_price = reward_token1_price.div(token1_prices[reward_token_symbol1_upperCase])
-  // }
-  // let _total = _lpToken;
-
-  // if (token2_symbol_lowerCase === 'usdt') {
-  //   _total = formatSat(swapToken2Amount * 2, token2.decimal);
-  // } else if (
-  //   token1_symbol_lowerCase !== 'bsv' &&
-  //   reward_token_symbol1_lowercase === 'bsv'
-  // ) {
-  //   //先换算成bsv价格
-  //   _total = BigNumber(_total).multipliedBy(token_price);
-  // }
-
-  const _yield = calcYield(
-    rewardAmountPerBlock,
-    rewardToken.decimal,
-    reward_token_price_usd,
-    _total,
-  );
-
-  // if (reward_token_symbol1_lowercase === 'bsv') {
-  //   _total = BigNumber(_total).multipliedBy(tokenPrice.bsvPrice);
-  // } else if (reward_token_symbol1_lowercase === 'tsc') {
-  //   _total = _total.div(tokenPrice.tscPrice);
-  // }
-  return [_yield, _total];
-}
-
-const TokenPriceSummary = (tokenPrice) => {
-  return {
-    USDT: 1,
-    BSV: tokenPrice.bsvPrice,
-    TSC: 1 / tokenPrice.tscPrice,
-  };
-};
-
-export function handleFarmData(data, pairsData, tokenPrice) {
+export function handleFarmData(data, pairsData, tokenPrices) {
   let allFarmData = {},
     allFarmArr = [];
   // console.log(data)
@@ -238,7 +67,9 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       ...data[id],
       id,
     };
-    const { rewardToken, token } = data[id];
+    const { poolTokenAmount, rewardAmountPerBlock, rewardToken, token } = data[
+      id
+    ];
 
     const pairData = pairsData[token.tokenID];
 
@@ -246,28 +77,29 @@ export function handleFarmData(data, pairsData, tokenPrice) {
       return null;
     }
 
-    let { symbol } = rewardToken;
-    symbol = symbol.toUpperCase();
-    let reward_token;
-    if (symbol === pairData.token2.symbol.toUpperCase()) {
-      //用自己交易对池子数据
-      reward_token = pairData;
-    } else {
-      reward_token = pairsData[`USDT-${symbol}`] || pairsData[`BSV-${symbol}`];
-    }
+    const { token1, swapToken1Amount, swapLpAmount } = pairData;
+    // console.log(pairData.lptoken.symbol)
 
-    if (!reward_token) {
-      allFarmData[id] = item;
-      allFarmArr.push(item);
-      return;
-    }
+    const token1_symbol_UpperCase = token1.symbol.toUpperCase();
+    // console.log(token1_symbol_UpperCase);
 
-    const [_yield, _total] = calcTVL(
-      item,
-      tokenPrice,
-      reward_token,
-      pairData,
-      pairsData,
+    let lpTotal = calcLPTotal(
+      swapToken1Amount,
+      token1,
+      swapLpAmount,
+      poolTokenAmount,
+    );
+
+    let _total = BigNumber(lpTotal).multipliedBy(
+      tokenPrices[token1_symbol_UpperCase],
+    );
+    // console.log('lpTotal:',lpTotal.toString(),`${token1_symbol_UpperCase}-Price:`,tokenPrices[token1_symbol_UpperCase] , 'lpTotalUsd:', _total.toString())
+
+    const _yield = calcYield(
+      rewardAmountPerBlock,
+      rewardToken.decimal,
+      tokenPrices[rewardToken.symbol],
+      _total,
     );
 
     item._yield = _yield;

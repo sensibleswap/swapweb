@@ -9,6 +9,7 @@ import { filterTokens } from 'common/pairUtils';
 
 const log = debug('pair');
 const iconUrl = 'https://volt.id/api.json?method=sensibleft.getSensibleFtList';
+const tokenPriceUrl = 'https://volt.id/api.json?method=wallet.tokenPrice';
 
 const { localStorage } = window;
 
@@ -25,11 +26,7 @@ export default {
     token2: {},
     LP: 100000,
     iconList: '',
-    // bsvPrice: 0,
-    tokenPrice: {
-      bsvPrice: 0,
-      tscPrice: 0,
-    },
+    tokenPrices: {},
     currentToken1: 'BSV',
     currentToken2: '',
   },
@@ -59,6 +56,26 @@ export default {
             type: 'save',
             payload: {
               iconList: icons,
+            },
+          });
+        });
+      fetch(tokenPriceUrl)
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          let tokenPrices = {};
+          // console.log(data);
+          if (data.success) {
+            data.data.forEach((item) => {
+              tokenPrices[item.token.toUpperCase()] = item.usd;
+            });
+          }
+          // console.log(baseTokenPrice, tokenPrices);
+          dispatch({
+            type: 'save',
+            payload: {
+              tokenPrices,
             },
           });
         });
@@ -102,10 +119,6 @@ export default {
         token1ID: currentToken1,
         token2ID: currentToken2,
       });
-      // if(!currentToken2) {
-      //   currentToken2 = token2Arr[0].tokenID;
-      // }
-
       // console.log('localStorage:',localStorage.getItem(TSWAP_CURRENT_PAIR))
 
       if (data[currentPair]) {
@@ -219,52 +232,32 @@ export default {
     },
 
     *getUSDPrice({ payload }, { call, put, select }) {
-      const pairs = [USDT_PAIR, USDT_TSC_PAIR];
-      let requests = [];
-      pairs.forEach((item) => {
-        requests.push(pairApi.querySwapInfo.call(pairApi, item));
-      });
-      const request_res = yield Promise.all(requests);
-
-      let bsvPrice = 0,
-        tscPrice = 0;
-      request_res.forEach((item, index) => {
-        // console.log(item);
-
-        if (item.code === 0) {
-          let price = BigNumber(item.data.swapToken2Amount).div(
-            item.data.swapToken1Amount,
-          );
-          if (index === 0) {
-            bsvPrice = price.multipliedBy(Math.pow(10, 8 - 6)).toString();
-          } else if (index === 1) {
-            tscPrice = price.div(Math.pow(10, 8 - 6)).toString();
-          }
+      const res = yield pairApi.queryAllPairs.call(pairApi);
+      if (res.code !== 0) return;
+      // console.log('allPairs:', res);
+      let tokenPrices = {};
+      const USDTDecimal = 6;
+      Object.keys(res.data).forEach((key) => {
+        const item = res.data[key];
+        const { poolAmount, token1Amount, token1 } = item;
+        const { symbol, decimal } = token1;
+        const symbolUpper = symbol.toUpperCase();
+        if (!tokenPrices[symbolUpper]) {
+          tokenPrices[symbolUpper] = BigNumber(poolAmount)
+            .div(token1Amount)
+            .multipliedBy(Math.pow(10, decimal - USDTDecimal))
+            .toString();
         }
       });
-      // console.log(bsvPrice, tscPrice);
-
-      // if (price_res.code === 0) {
-      //   const bsvPrice = BigNumber(price_res.data.swapToken2Amount)
-      //     .div(price_res.data.swapToken1Amount)
-      //     .multipliedBy(Math.pow(10, 8 - 6))
-      //     .toString();
-
-      //   yield put({
-      //     type: 'save',
-      //     payload: {
-      //       bsvPrice,
-      //     },
-      //   });
-      // }
+      const oldTokenPrices = yield select((state) => state.pair.tokenPrices);
+      // console.log(oldTokenPrices);
 
       yield put({
         type: 'save',
         payload: {
-          // bsvPrice,
-          tokenPrice: {
-            bsvPrice,
-            tscPrice,
+          tokenPrices: {
+            ...oldTokenPrices,
+            ...tokenPrices,
           },
         },
       });

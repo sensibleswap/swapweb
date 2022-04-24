@@ -53,11 +53,11 @@ export default {
         });
       }
 
-      const { tokenPrice } = yield select((state) => state.pair);
+      const { tokenPrices } = yield select((state) => state.pair);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
         pairsData,
-        tokenPrice,
+        tokenPrices,
       );
       // console.log(allFarmData, allFarmArr)
 
@@ -86,13 +86,13 @@ export default {
         return res;
       }
 
-      const { tokenPrice } = yield select((state) => state.pair);
+      const { tokenPrices } = yield select((state) => state.pair);
       // const { pairsData } = yield select((state) => state.farm);
       const pairsData = yield fetchFarmData(data);
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
         pairsData,
-        tokenPrice,
+        tokenPrices,
       );
       // console.log(allFarmData)
 

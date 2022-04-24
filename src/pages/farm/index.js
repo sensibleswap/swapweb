@@ -17,7 +17,6 @@ import styles from './index.less';
 import _ from 'i18n';
 import { AppStartBtn } from 'components/ui';
 import CreateFarm from '../createFarm';
-// const log = debug('farm');
 let busy = false;
 
 @connect(({ pair, user, farm, loading }) => {
