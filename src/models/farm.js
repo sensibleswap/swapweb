@@ -54,6 +54,7 @@ export default {
       }
 
       const { tokenPrices } = yield select((state) => state.pair);
+      // console.log(tokenPrices)
       let { allFarmData, allFarmArr } = handleFarmData(
         data,
         pairsData,

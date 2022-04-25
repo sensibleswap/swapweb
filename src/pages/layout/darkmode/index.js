@@ -13,7 +13,7 @@ import styles from './index.less';
 export default class DarkMode extends Component {
   changeMode() {
     const key = this.props.darkMode === 'moon' ? 'sun' : 'moon';
-    console.log(this.props.darkMode, key);
+    // console.log(this.props.darkMode, key);
     this.props.dispatch({
       type: 'user/save',
       payload: {

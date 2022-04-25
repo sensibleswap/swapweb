@@ -2,14 +2,13 @@ import 'whatwg-fetch';
 import BigNumber from 'bignumber.js';
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
-import { TSWAP_CURRENT_PAIR, USDT_PAIR, USDT_TSC_PAIR } from 'common/const';
+import { TSWAP_CURRENT_PAIR } from 'common/const';
 import debug from 'debug';
 import { getCurrentPair } from 'common/utils';
 import { filterTokens } from 'common/pairUtils';
 
 const log = debug('pair');
 const iconUrl = 'https://volt.id/api.json?method=sensibleft.getSensibleFtList';
-const tokenPriceUrl = 'https://volt.id/api.json?method=wallet.tokenPrice';
 
 const { localStorage } = window;
 
@@ -56,26 +55,6 @@ export default {
             type: 'save',
             payload: {
               iconList: icons,
-            },
-          });
-        });
-      fetch(tokenPriceUrl)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          let tokenPrices = {};
-          // console.log(data);
-          if (data.success) {
-            data.data.forEach((item) => {
-              tokenPrices[item.token.toUpperCase()] = item.usd;
-            });
-          }
-          // console.log(baseTokenPrice, tokenPrices);
-          dispatch({
-            type: 'save',
-            payload: {
-              tokenPrices,
             },
           });
         });
@@ -239,26 +218,35 @@ export default {
       const USDTDecimal = 6;
       Object.keys(res.data).forEach((key) => {
         const item = res.data[key];
-        const { poolAmount, token1Amount, token1 } = item;
-        const { symbol, decimal } = token1;
-        const symbolUpper = symbol.toUpperCase();
-        if (!tokenPrices[symbolUpper]) {
-          tokenPrices[symbolUpper] = BigNumber(poolAmount)
-            .div(token1Amount)
-            .multipliedBy(Math.pow(10, decimal - USDTDecimal))
-            .toString();
+        const { poolAmount, token1Amount, token2Amount, token1, token2 } = item;
+        const token1SymbolUpper = token1.symbol.toUpperCase();
+        const token2SymbolUpper = token2.symbol.toUpperCase();
+        if (!tokenPrices[token1SymbolUpper]) {
+          tokenPrices[token1SymbolUpper] =
+            parseFloat(poolAmount) > 0
+              ? BigNumber(poolAmount)
+                  .div(token1Amount)
+                  .multipliedBy(Math.pow(10, token1.decimal - USDTDecimal))
+                  .toString()
+              : '0';
+        }
+        if (!tokenPrices[token2SymbolUpper]) {
+          tokenPrices[token2SymbolUpper] =
+            parseFloat(poolAmount) > 0
+              ? BigNumber(poolAmount)
+                  .div(token2Amount)
+                  .multipliedBy(Math.pow(10, token2.decimal - USDTDecimal))
+                  .toString()
+              : '0';
         }
       });
-      const oldTokenPrices = yield select((state) => state.pair.tokenPrices);
-      // console.log(oldTokenPrices);
+      // const oldTokenPrices = yield select((state) => state.pair.tokenPrices);
+      // console.log(tokenPrices);
 
       yield put({
         type: 'save',
         payload: {
-          tokenPrices: {
-            ...oldTokenPrices,
-            ...tokenPrices,
-          },
+          tokenPrices,
         },
       });
     },

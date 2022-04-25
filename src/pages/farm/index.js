@@ -89,6 +89,9 @@ export default class FarmC extends Component {
     const { dispatch, accountInfo } = this.props;
     const { userAddress } = accountInfo;
     await dispatch({
+      type: 'pair/getUSDPrice',
+    });
+    await dispatch({
       type: 'farm/getAllPairs',
       payload: {
         address: userAddress,
@@ -166,7 +169,7 @@ export default class FarmC extends Component {
                 }
               >
                 <AppTitle title={_('farm')} onClick={this.hidePannel} />
-                {showCreatePannel ? (
+                {/*showCreatePannel ? (
                   <div className={styles.right_box}>
                     <CreateFarm
                       close={() => {
@@ -176,37 +179,37 @@ export default class FarmC extends Component {
                       }}
                     />
                   </div>
-                ) : (
-                  <>
-                    <div className={styles.right_box}>
-                      <div className={styles.head}>
-                        <div className={styles.menu}>
-                          {['deposit', 'withdraw'].map((item, index) => (
-                            <span
-                              className={
-                                index === currentMenuIndex
-                                  ? jc(
-                                      styles.menu_item,
-                                      styles.menu_item_selected,
-                                    )
-                                  : styles.menu_item
-                              }
-                              key={item}
-                              onClick={() => {
-                                this.setState({
-                                  currentMenuIndex: index,
-                                });
-                              }}
-                            >
-                              {_(item)}
-                            </span>
-                          ))}
-                        </div>
+                    ) : (*/}
+                <>
+                  <div className={styles.right_box}>
+                    <div className={styles.head}>
+                      <div className={styles.menu}>
+                        {['deposit', 'withdraw'].map((item, index) => (
+                          <span
+                            className={
+                              index === currentMenuIndex
+                                ? jc(
+                                    styles.menu_item,
+                                    styles.menu_item_selected,
+                                  )
+                                : styles.menu_item
+                            }
+                            key={item}
+                            onClick={() => {
+                              this.setState({
+                                currentMenuIndex: index,
+                              });
+                            }}
+                          >
+                            {_(item)}
+                          </span>
+                        ))}
                       </div>
-                      {currentMenuIndex === 0 && <Deposit />}
-                      {currentMenuIndex === 1 && <Withdraw />}
                     </div>
-                    <div
+                    {currentMenuIndex === 0 && <Deposit />}
+                    {currentMenuIndex === 1 && <Withdraw />}
+                  </div>
+                  {/*<div
                       className={styles.createPair_link}
                       onClick={() => {
                         this.setState({
@@ -215,9 +218,9 @@ export default class FarmC extends Component {
                       }}
                     >
                       {_('create_farm_pair')}
-                    </div>
-                  </>
-                )}
+                    </div>*/}
+                </>
+                {/*})}*/}
               </div>
             </section>
           </section>
