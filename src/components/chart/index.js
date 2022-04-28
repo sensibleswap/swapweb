@@ -7,7 +7,7 @@ import { connect } from 'umi';
 import { Spin } from 'antd';
 import { formatNumberForDisplay, formatAmount } from 'common/utils';
 import EventBus from 'common/eventBus';
-import { USDT_PAIR, COLOR1, COLOR2 } from 'common/const';
+import { StableToken, COLOR1, COLOR2 } from 'common/const';
 import TimeRangeTabs from './timeRangeTabs';
 import styles from './index.less';
 import _ from 'i18n';
@@ -95,6 +95,8 @@ export default class Chart extends Component {
           const lines = [{ label: _('date'), value: params[0].value[0] }];
 
           const token1 = allPairs[currentPair].token1.symbol.toUpperCase();
+          const token2 = allPairs[currentPair].token2.symbol.toUpperCase();
+          const currentPairSymbol = `${token1}-${token2}`;
           if (props.type === 'pool') {
             lines.push({
               label: 'TVL',
@@ -116,8 +118,8 @@ export default class Chart extends Component {
               value: formatNumberForDisplay({
                 value: params[0].value[1],
                 suffix:
-                  currentPair === USDT_PAIR
-                    ? 'USDT'
+                  StableToken.indexOf(currentPairSymbol) > -1
+                    ? token2
                     : `${token1} ${
                         token1 === 'BSV'
                           ? `($${formatAmount(

@@ -379,7 +379,7 @@ export default class Swap extends Component {
                   className={styles.value}
                   style={beyond ? { color: 'red' } : {}}
                 >
-                  {symbol1} {slip}, {symbol2} {slip1}
+                  {symbol1} {slip || '0%'}, {symbol2} {slip1 || '0%'}
                 </div>
               </div>
               <div className={styles.key_value}>

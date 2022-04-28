@@ -1,5 +1,5 @@
 import recordsApi from '../api/sensiblequery';
-import { USDT_PAIR } from 'common/const';
+import { StableToken } from 'common/const';
 import {
   formatTime,
   formatAmount,
@@ -32,6 +32,8 @@ export default {
       const timeRange = yield select((state) => state.records.timeRange);
       const { swapCodeHash, swapID, token2, token1 } =
         allPairs[currentPair] || {};
+
+      const currentPairSymbol = `${token1.symbol.toUpperCase()}-${token2.symbol.toUpperCase()}`;
 
       const { type } = payload;
       if (!swapCodeHash || !swapID) return [];
@@ -91,7 +93,7 @@ export default {
               (minPrice + maxPrice) /
               2 /
               Math.pow(10, token1.decimal - token2.decimal);
-            if (currentPair === USDT_PAIR) {
+            if (StableToken.indexOf(currentPairSymbol) > -1) {
               _price = 1 / _price;
               stepData.price = formatAmount(_price, 6);
             } else {

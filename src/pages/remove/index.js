@@ -351,7 +351,7 @@ export default class RemovePage extends Component {
         cond: parseFloat(removeLP) <= 0,
       },
       {
-        cond: removeLP > LP,
+        cond: parseFloat(removeLP) > parseFloat(LP),
         txt: _('insufficient_balance'),
       },
     ];

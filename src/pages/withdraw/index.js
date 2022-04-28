@@ -58,6 +58,7 @@ export default class Withdraw extends Component {
   }
 
   changeData = (value) => {
+    console.log(value);
     this.setState({
       removeLP: value,
     });
@@ -120,7 +121,7 @@ export default class Withdraw extends Component {
       <div className={styles.content}>
         <Rate
           type="farm"
-          changeAmount={this.changeData}
+          changeAmount={(value) => this.changeData(value)}
           balance={lockedTokenAmount}
           tokenPair={<FarmPairIcon keyword="pair" />}
         />
@@ -295,7 +296,6 @@ export default class Withdraw extends Component {
   renderButton() {
     const { isLogin, lockedTokenAmount } = this.props;
     const { removeLP } = this.state;
-    // console.log(removeLP, lockedTokenAmount)
 
     const conditions = [
       { key: 'login', cond: !isLogin },
