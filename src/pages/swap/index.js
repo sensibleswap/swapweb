@@ -9,6 +9,7 @@ import EventBus from 'common/eventBus';
 import { slippage_data, feeRate, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc, formatTok } from 'common/utils';
 import { calcAmount } from 'common/pairUtils';
+import { StableToken } from 'common/const';
 import FormatNumber from 'components/formatNumber';
 import Loading from 'components/loading';
 import { Arrow2 } from 'components/ui';
@@ -295,6 +296,21 @@ export default class Swap extends Component {
       ? formatAmount(_swapToken2Amount / _swapToken1Amount, token2.decimal)
       : formatAmount(_swapToken1Amount / _swapToken2Amount, token1.decimal);
 
+    const price1 = formatAmount(
+      _swapToken2Amount / _swapToken1Amount,
+      token2.decimal,
+    );
+    const price2 = formatAmount(
+      _swapToken1Amount / _swapToken2Amount,
+      token1.decimal,
+    );
+    const price1_ui = `1 ${token1.symbol.toUpperCase()} = ${price1} ${token2.symbol.toUpperCase()}`;
+    const price2_ui = `1 ${token2.symbol.toUpperCase()} = ${price2} ${token1.symbol.toUpperCase()}`;
+    let price_ui = dirForward ? price1_ui : price2_ui;
+    if (StableToken.indexOf(token1.symbol) > -1) {
+      price_ui = price2_ui;
+    }
+
     const beyond = Math.abs(parseFloat(slip)) > parseFloat(tol);
 
     return (
@@ -359,7 +375,8 @@ export default class Swap extends Component {
               <div className={styles.key_value}>
                 <div className={styles.key}>{_('price')}</div>
                 <div className={styles.value}>
-                  1 {symbol1} = {price} {symbol2}
+                  {/* 1 {symbol1} = {price} {symbol2}*/}
+                  {price_ui}
                 </div>
               </div>
               <div className={styles.key_value}>

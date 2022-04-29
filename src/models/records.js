@@ -93,7 +93,7 @@ export default {
               (minPrice + maxPrice) /
               2 /
               Math.pow(10, token1.decimal - token2.decimal);
-            if (StableToken.indexOf(currentPairSymbol) > -1) {
+            if (StableToken.indexOf(token2.symbol.toUpperCase()) > -1) {
               _price = 1 / _price;
               stepData.price = formatAmount(_price, 6);
             } else {

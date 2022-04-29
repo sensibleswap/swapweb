@@ -118,7 +118,7 @@ export default class Chart extends Component {
               value: formatNumberForDisplay({
                 value: params[0].value[1],
                 suffix:
-                  StableToken.indexOf(currentPairSymbol) > -1
+                  StableToken.indexOf(token2) > -1
                     ? token2
                     : `${token1} ${
                         token1 === 'BSV'

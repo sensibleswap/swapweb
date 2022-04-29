@@ -18,4 +18,5 @@ export const REFRESH_CHARTDAT = 60;
 export const COLOR1 = '#2BB696';
 export const COLOR2 = '#EB5757';
 
-export const StableToken = ['BSV-USDT', 'BSV-ACD'];
+// export const StableTokenPair = ['BSV-USDT', 'BSV-ACD'];
+export const StableToken = ['USDT', 'ACD'];
