@@ -135,10 +135,14 @@ function Content(props) {
           <div className={styles.item}>
             <div className={styles.label}>{_('staking_yield')}</div>
             <div className={styles.value}>
-              <FormatNumber
-                value={formatSat(rewardTokenAmount, rewardTokenDecimal)}
-                suffix={rewardTokenSymbol}
-              />
+              {rewardTokenAmount > 0 ? (
+                <FormatNumber
+                  value={formatSat(rewardTokenAmount, rewardTokenDecimal)}
+                  suffix={rewardTokenSymbol}
+                />
+              ) : (
+                0
+              )}
             </div>
           </div>
           <div className={styles.action}>

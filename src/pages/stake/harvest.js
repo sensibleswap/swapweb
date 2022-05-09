@@ -165,7 +165,7 @@ function Harvest(props) {
         type="primary"
         shape="round"
         className={styles.btn}
-        disabled={!parseInt(rewardTokenAmount)}
+        disabled={parseInt(rewardTokenAmount) <= 0}
         onClick={handleHarvest}
       >
         {_('harvest')}
