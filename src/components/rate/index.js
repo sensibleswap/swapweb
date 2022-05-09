@@ -59,23 +59,41 @@ export default class Rate extends Component {
 
   render() {
     const { percent, amount } = this.state;
-    const { balance, tokenPair } = this.props;
+    const {
+      balance,
+      tokenPair,
+      balanceTxt,
+      balanceTitle,
+      balancePosTop = false,
+    } = this.props;
     return (
       <div>
-        <Slider
-          percent={percent}
-          changeRate={(value) => this.change({ percent: value })}
-        />
+        {!balancePosTop && (
+          <Slider
+            percent={percent}
+            changeRate={(value) => this.change({ percent: value })}
+          />
+        )}
 
-        <div
-          className={styles.balance}
-          onClick={() => this.change({ percent: 100 })}
-        >
-          {_('balance')}:{' '}
-          <span>
-            <FormatNumber value={balance} round={4} />
-          </span>
+        <div className={styles.balance_wrap}>
+          <div className={styles.balance_title}>{balanceTitle}</div>
+          <div
+            className={styles.balance}
+            onClick={() => this.change({ percent: 100 })}
+          >
+            {balanceTxt || _('balance')}:{' '}
+            <span>
+              <FormatNumber value={balance} round={4} />
+            </span>
+          </div>
         </div>
+
+        {balancePosTop && (
+          <Slider
+            percent={percent}
+            changeRate={(value) => this.change({ percent: value })}
+          />
+        )}
 
         <div className={styles.pair_box}>
           <div className={styles.pair_left}>{tokenPair}</div>

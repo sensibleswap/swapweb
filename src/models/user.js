@@ -139,6 +139,57 @@ export default {
         // const res = yield bsv.transferAll(type, datas);
         // console.log(res);
         log(res);
+        if (res.list) return res.list;
+        return res;
+      } catch (error) {
+        return { msg: error.message || error.toString() };
+      }
+    },
+    *transferAll2({ payload }, { call, put, select }) {
+      const { reqData, tokenData, tokenAmount, note } = payload;
+      const { tokenToAddress, bsvToAddress, txFee } = reqData;
+      const type = yield select((state) => state.user.walletType);
+      const { accountInfo } = yield select((state) => state.user);
+      const { changeAddress } = accountInfo;
+      // console.log(payload);
+      try {
+        const _wallet = Wallet({ type });
+        let params = {
+          datas: [
+            {
+              type: 'bsv',
+              address: bsvToAddress,
+              amount: txFee,
+              changeAddress,
+              note,
+            },
+          ],
+          noBroadcast: true,
+        };
+        if (tokenData) {
+          const { tokenID, codeHash } = tokenData;
+          params.datas.push({
+            type: 'sensibleFt',
+            address: tokenToAddress,
+            amount: tokenAmount,
+            changeAddress,
+            codehash: codeHash,
+            genesis: tokenID,
+            // rabinApis,
+            note,
+          });
+        }
+        // console.log(params);
+        const res = yield _wallet.transferAll(params);
+        // const res = yield bsv.transferAll(type, datas);
+        // console.log(res);
+        log(res);
+        if (res.code) {
+          return {
+            msg: res.msg,
+          };
+        }
+        if (res.list) return res.list;
         return res;
       } catch (error) {
         return { msg: error.message || error.toString() };
@@ -152,6 +203,7 @@ export default {
         const res = yield _wallet.signTx(payload.datas);
         // const res = yield bsv.signTx(type, payload.datas);
         log(res);
+        if (res[0]) return res[0];
         return res;
       } catch (error) {
         return { msg: error.message || error.toString() };

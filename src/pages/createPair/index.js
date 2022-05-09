@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { gzip } from 'node-gzip';
 import { history, connect } from 'umi';
-import { Steps, Button, message, Form, Spin } from 'antd';
+import { Steps, Button, message, Form, Spin, Input } from 'antd';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';

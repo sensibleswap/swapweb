@@ -7,6 +7,7 @@ import _ from 'i18n';
 
 const query = querystring.parse(window.location.search);
 const isApp = query.env === 'webview' && window._volt_javascript_bridge;
+const network = query.network == 'testnet' ? 'testnet' : 'mainnet';
 
 export default function ChooseWallet(props) {
   const { closeChooseDialog, connectWebWallet } = props;
@@ -25,7 +26,7 @@ export default function ChooseWallet(props) {
       <ul>
         {!isApp && (
           <>
-            <li onClick={() => connectWebWallet(5, 'mainnet')}>
+            <li onClick={() => connectWebWallet(5, network)}>
               <CustomIcon
                 type="iconicon-volt-tokenswap-circle"
                 style={{ fontSize: 30 }}
@@ -35,7 +36,7 @@ export default function ChooseWallet(props) {
           </>
         )}
 
-        <li onClick={() => connectWebWallet(2, 'mainnet')}>
+        <li onClick={() => connectWebWallet(2, network)}>
           <CustomIcon type="iconicon-volt-tokenswap-circle" />
           <div className={styles.label}>Volt Web {_('wallet')}</div>
         </li>

@@ -320,5 +320,28 @@ const texts = {
     '请先安装Volt插件。如果已经安装，请刷新页面。点击确定下载插件。',
   tokenb_tips: 'Token B 只能是项目方token',
   tmp_tips: '测试交易对，请移除和此交易对相关的资产，一周后下架该交易对',
+
+  //stake
+  stake: 'Stake',
+  stake_desc: 'Stake %s to earn %1 and voting power',
+  your_staked: 'Your staked',
+  total_staked: 'Total Staked',
+  unstaked: 'Unstaked',
+  vesting_term: 'Vesting term',
+  staking_yield: 'Staking Yield',
+  unstake: 'Unstake',
+  stake_amount: 'Stake amount',
+  unstake_amount: 'Unstake amount',
+  stake_to_borrow: 'Stake to Borrow',
+  stake_successful: 'Stake successful',
+  staked: 'Staked',
+  done: 'Done',
+  unstake_by_repaying: 'Unstake by Repaying',
+  start_stake: 'Start stake',
+  unstake_successful: 'Unstake successful',
+  cant_unlock: 'cant unlock',
+
+  block_later: 'block later',
+  blocks_later: 'blocks later',
 };
 module.exports = texts;

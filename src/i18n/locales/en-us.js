@@ -330,5 +330,28 @@ const texts = {
   tokenb_tips: 'Token B should be your project token',
   tmp_tips:
     'This is a test pair, remove your liquidity, the pair will be delisted after a week.',
+
+  //stake
+  stake: 'Stake',
+  stake_desc: 'Stake %s to earn %1 and voting power',
+  your_staked: 'Your staked',
+  total_staked: 'Total Staked',
+  unstaked: 'Unstaked',
+  vesting_term: 'Vesting term',
+  staking_yield: 'Staking Yield',
+  unstake: 'Unstake',
+  stake_amount: 'Stake amount',
+  unstake_amount: 'Unstake amount',
+  stake_to_borrow: 'Stake to Borrow',
+  stake_successful: 'Stake successful',
+  staked: 'Staked',
+  done: 'Done',
+  unstake_by_repaying: 'Unstake by Repaying',
+  start_stake: 'Start stake',
+  unstake_successful: 'Unstake successful',
+  cant_unlock: 'cant unlock',
+
+  block_later: 'block later',
+  blocks_later: 'blocks later',
 };
 module.exports = texts;

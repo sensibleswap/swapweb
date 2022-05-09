@@ -24,8 +24,8 @@ export default class PairIcon extends React.Component {
       children,
       currentToken1,
       currentToken2,
-      token1Arr,
-      token2Arr,
+      token1Arr = [],
+      token2Arr = [],
     } = this.props;
 
     const token1 = token1Arr.find(

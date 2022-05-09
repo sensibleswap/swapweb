@@ -398,3 +398,41 @@ function isLocalEnvFun() {
   return query.env === 'local';
 }
 export const isLocalEnv = isLocalEnvFun();
+
+//展示剩余时间
+export function leftTime(time) {
+  // 现在时间
+  // var now= new Date();
+  //截止时间
+  // var until= new Date(endTime);
+  // 计算时会发生隐式转换，调用valueOf()方法，转化成时间戳的形式
+  // var days = (until- now)/1000/3600/24;
+  const days = time / 1000 / 3600 / 24;
+  // 下面都是简单的数学计算
+  const day = Math.floor(days);
+  const hours = (days - day) * 24;
+  const hour = Math.floor(hours);
+  const minutes = (hours - hour) * 60;
+  const minute = Math.floor(minutes);
+  const seconds = (minutes - minute) * 60;
+  const second = Math.floor(seconds);
+  // var back = '剩余时间：'+day+'天'+hour+'小时'+minute+'分钟'+second+'秒';
+  let leftTimeArr = [];
+  if (day > 0) {
+    leftTimeArr.push(`${day} ${day > 1 ? _('days') : _('day')}`);
+  }
+  if (hour > 0) {
+    leftTimeArr.push(`${hour} ${hour > 1 ? _('hours') : _('hour')}`);
+  }
+  if (minute > 0) {
+    leftTimeArr.push(`${minute} ${minute > 1 ? _('minutes') : _('minute')}`);
+  }
+  if (second > 0) {
+    leftTimeArr.push(`${second} ${second > 1 ? _('seconds') : _('second')}`);
+  }
+  if (leftTimeArr.length > 2) {
+    leftTimeArr.length = 2;
+  }
+  console.log(leftTimeArr);
+  return leftTimeArr.join(' ');
+}

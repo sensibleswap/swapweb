@@ -18,6 +18,11 @@ const menu = [
     path: 'pool/add',
   },
   {
+    key: 'stake',
+    label: _('stake'),
+    path: 'stake',
+  },
+  {
     key: 'farm',
     label: _('farm'),
     path: 'farm',

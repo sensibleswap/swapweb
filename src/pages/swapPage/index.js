@@ -5,7 +5,6 @@ import EventBus from 'common/eventBus';
 import { jc } from 'common/utils';
 import Loading from 'components/loading';
 import Notice from 'components/notice';
-import { AppTitle } from 'components/ui';
 import Chart from 'components/chart/swapChart';
 import Layout from '../layout';
 import Header from '../layout/header';
@@ -13,7 +12,7 @@ import Swap from '../swap';
 import PairStat from '../pairStat';
 import styles from './index.less';
 import _ from 'i18n';
-import { AppStartBtn } from 'components/ui';
+import { AppStartBtn, AppTitle } from 'components/ui';
 
 let busy = false;
 @connect(({ pair, loading }) => {
