@@ -7,7 +7,7 @@ class Stake extends BaseAPI {
     if (isTestNet()) {
       this.baseUrl = 'https://api.tswap.io/stake/test/';
     } else {
-      this.baseUrl = 'https://api.tswap.io/stake/test/';
+      this.baseUrl = 'https://api.tswap.io/stake/';
     }
 
     if (url) this.baseUrl = url;

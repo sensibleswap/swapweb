@@ -165,7 +165,7 @@ function Unstake(props) {
           shape="round"
           onClick={handleSubmit}
         >
-          {_('unstake_by_repaying')}
+          {_('unstake')}
         </Button>
       )
     );

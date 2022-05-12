@@ -20,6 +20,9 @@ function Stake(props) {
     );
   }
   const { token } = stakePairInfo;
+  if (!token) {
+    return <div className={styles.right_content}>Server Error</div>;
+  }
   const { symbol, tokenID, decimal } = token;
   const { userBalance } = accountInfo;
   const balance = userBalance[tokenID] || 0;
@@ -111,7 +114,7 @@ function Stake(props) {
           shape="round"
           onClick={handleSubmit}
         >
-          {_('stake_to_borrow')}
+          {_('stake')}
         </Button>
       )
     );

@@ -1,7 +1,9 @@
-import { useEffect, useState, messsage } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'umi';
+import { message } from 'antd';
 import { formatSat } from 'common/utils';
 import Loading from 'components/loading';
+import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
 import FormatNumber from 'components/formatNumber';
 import styles from './index.less';
@@ -16,6 +18,15 @@ function Content(props) {
   const { pairData, stakePairInfo, accountInfo, userPairData } = props;
   const [varA, setVarA] = useState(0);
   const [varB, setVarB] = useState(0);
+
+  useEffect(() => {
+    EventBus.on('reloadPair', () => {
+      dispatch({
+        type: 'stake/getAllPairs',
+        payload: {},
+      });
+    });
+  }, []);
 
   useEffect(() => {
     dispatch({
@@ -54,7 +65,10 @@ function Content(props) {
     };
   }, [varB, accountInfo.userAddress]);
 
-  if (
+  if (stakePairInfo.msg) {
+    message.error(stakePairInfo.msg);
+    return <div className={styles.left_content}>Server Error</div>;
+  } else if (
     JSON.stringify(stakePairInfo) === '{}' ||
     JSON.stringify(pairData) === '{}'
   ) {
@@ -63,8 +77,7 @@ function Content(props) {
         <Loading />
       </div>
     );
-  } else if (stakePairInfo.message) {
-    message.error(stakePairInfo.message);
+  } else if (!stakePairInfo.token) {
     return <div className={styles.left_content}>Server Error</div>;
   }
 

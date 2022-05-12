@@ -123,7 +123,7 @@ export default class UserInfo extends Component {
           if (i % 4 === 0) {
             const { hash } = window.location;
             if (busy) return;
-            if (hash.indexOf('farm') < 0) {
+            if (hash.indexOf('farm') < 0 && hash.indexOf('stake') < 0) {
               dispatch({
                 type: 'pair/updatePairData',
               });
