@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { gzip } from 'node-gzip';
 import { history, connect } from 'umi';
-import { Steps, Button, message, Form, Spin, Input } from 'antd';
+import { Steps, Button, message, Form, Spin } from 'antd';
 import TokenLogo from 'components/tokenicon';
 import Loading from 'components/loading';
 import PoolMenu from 'components/poolMenu';
@@ -106,39 +106,15 @@ export default class CreatePair extends Component {
         />
 
         <Plus />
-        <div className={styles.title}>
-          {_('input')} B: {_('enter_tokenid')}
-        </div>
-        <div className={styles.tips}>{_('tokenb_tips')}</div>
-        <div
-          className={
-            token2
-              ? jc(styles.input_wrap, styles.input_result)
-              : styles.input_wrap
-          }
-        >
-          <FormItem name="genesis2">
-            <Input.TextArea
-              className={styles.input}
-              onChange={(e) => this.change(e, 2)}
-            />
-          </FormItem>
-          {token2 && (
-            <div className={styles.token_info}>
-              <TokenLogo name={token2.symbol} genesisID={token2.genesis} />
-              <div className={styles.token_name}>
-                <div className={styles.symbol}>{token2.symbol}</div>
-                <div className={styles.full_name}>{token2.name}</div>
-              </div>
-            </div>
-          )}
-        </div>
-        <div className={styles.desc}>
-          {_('find_tokenid')}{' '}
-          <a href="https://blockcheck.info/" target="_blank">
-            BlockCheck
-          </a>
-        </div>
+        <GenesisTokenInput
+          title={`${_('input')} B: ${_('enter_tokenid')}`}
+          tips={_('only_custom_token')}
+          dispatch={dispatch}
+          name="genesis2"
+          token={token2}
+          change={(value) => this.change('token2', value)}
+        />
+        <FoundGenesisIDs />
 
         {this.renderButton()}
       </div>
