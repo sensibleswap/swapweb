@@ -353,5 +353,14 @@ const texts = {
 
   block_later: 'block later',
   blocks_later: 'blocks later',
+
+  vote: 'Vote',
+  pending: 'Pending',
+  cancelled: 'Cancelled',
+  ongoing: 'Ongoing',
+  passed: 'Passed',
+  rejected: 'Rejected',
+  agreed: 'Agreed',
+  reject: 'Reject',
 };
 module.exports = texts;

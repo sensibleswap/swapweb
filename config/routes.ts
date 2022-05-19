@@ -12,4 +12,5 @@ export default [
   { path: '/farm', component: '@/pages/farm' },
   { path: '/farm/:id', component: '@/pages/farm' },
   { path: '/stake', component: '@/pages/stake' },
+  { path: '/vote', component: '@/pages/vote' },
 ];

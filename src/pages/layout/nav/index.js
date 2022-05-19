@@ -5,6 +5,7 @@ import CustomIcon from 'components/icon';
 import styles from './index.less';
 import _ from 'i18n';
 import { Link, history } from 'umi';
+import StakeSubmenu from './stakeSubmenu';
 
 const menu = [
   {
@@ -19,8 +20,7 @@ const menu = [
   },
   {
     key: 'stake',
-    label: _('stake'),
-    path: 'stake',
+    children: <StakeSubmenu />,
   },
   {
     key: 'farm',
@@ -67,6 +67,13 @@ export default class Head extends Component {
                 styles.menu_item,
                 styles.menu_item_selected,
                 styles[`menu_item_${item.key}`],
+              );
+            }
+            if (item.children) {
+              return (
+                <span className={cls} key={item.key}>
+                  {item.children}
+                </span>
               );
             }
             return (
