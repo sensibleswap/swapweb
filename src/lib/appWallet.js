@@ -46,11 +46,6 @@ const getSensibleFtBalance = async () => {
   return userBalance;
 };
 
-// const getPaymail = async () => {
-//   const res = await callJavaScriptBridge('volt.bsv.getPaymail');
-//   return res.paymail;
-// };
-
 export default {
   info: async () => {
     let accountInfo = await getAccountInfo();
@@ -58,12 +53,6 @@ export default {
     const userAddress = await getAddress();
     const changeAddress = await getChangeAddress();
     const tokenBalance = await getSensibleFtBalance();
-    // let paymail = '';
-    // try {
-    //     paymail = await getPaymail();
-    // } catch (error) {
-    //     console.log(error)
-    // }
 
     const userBalance = {
       BSV: bsvBalance,
