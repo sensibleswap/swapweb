@@ -340,8 +340,8 @@ export function tokenPre() {
 export function parseUrl(hash) {
   if (!hash) hash = location.hash;
   let [, hash1, hash2, hash3] = hash.split('/');
-  if (hash2) hash2 = hash2.toLocaleLowerCase();
-  if (hash3) hash3 = hash3.toLocaleLowerCase();
+  // if (hash2) hash2 = hash2.toLocaleLowerCase();
+  // if (hash3) hash3 = hash3.toLocaleLowerCase();
   let currentPair;
   if (
     ['swap', 'pool', 'farm'].indexOf(hash1) > -1 &&
