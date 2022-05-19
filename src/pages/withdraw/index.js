@@ -58,7 +58,7 @@ export default class Withdraw extends Component {
   }
 
   changeData = (value) => {
-    console.log(value);
+    // console.log(value);
     this.setState({
       removeLP: value,
     });
