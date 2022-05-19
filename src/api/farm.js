@@ -8,6 +8,10 @@ class Farm extends BaseAPI {
       this.baseUrl = 'https://api.tswap.io/farm/test/';
     } else {
       this.baseUrl = 'https://api.tswap.io/farm/';
+      // console.log(TS_ENV)
+      if (TS_ENV === 'beta') {
+        this.baseUrl = this.baseUrl + 'beta/';
+      }
     }
 
     if (url) this.baseUrl = url;

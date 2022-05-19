@@ -9,6 +9,7 @@ export default {
   nodeModulesTransform: {
     type: 'none',
   },
+  define: { TS_ENV: process.env.TS_ENV },
   dva: {},
   favicon:
     'https://volt.oss-cn-hongkong.aliyuncs.com/coinlogo/777e4dd291059c9f7a0fd563f7204576dcceb7915d15eedd93c90d91e0d76de5cc932c833baf8336.png',
