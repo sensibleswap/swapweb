@@ -4,8 +4,7 @@ import styles from './index.less';
 import _ from 'i18n';
 
 function List(props) {
-  const { voteInfo, dispatch, pairData } = props;
-  const { lastRewardBlock } = pairData;
+  const { voteInfo, dispatch, currentVoteId } = props;
 
   const detail = (key) => {
     dispatch({
@@ -47,7 +46,11 @@ function List(props) {
           const { title, beginBlockNum, endBlockNum } = currentVoteInfo;
           return (
             <div
-              className={styles.item}
+              className={
+                item === currentVoteId
+                  ? `${styles.item} ${styles.item_selected}`
+                  : styles.item
+              }
               key={item}
               onClick={() => detail(item)}
             >
