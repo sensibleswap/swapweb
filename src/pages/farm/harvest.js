@@ -7,9 +7,10 @@ import CustomIcon from 'components/icon';
 import { formatSat } from 'common/utils';
 import styles from './index.less';
 import _ from 'i18n';
+import { userSignTx } from 'common/signTx';
 
 export default class Harvest extends Component {
-  showModal = (amount, txid, symbol, tokenID, blockHeight) => {
+  showModal = (amount, txid, symbol, tokenID, blockHeight, onOk) => {
     const { iconList } = this.props;
     Modal.info({
       title: '',
@@ -39,51 +40,52 @@ export default class Harvest extends Component {
       icon: '',
       width: 375,
       getContainer: '#J_Page',
+      onOk,
     });
   };
 
-  harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
-    const { dispatch, accountInfo } = this.props;
-    const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
+  // harvest2 = async (havest_data, currentFarmPair, requestIndex) => {
+  //   const { dispatch, accountInfo } = this.props;
+  //   const { txHex, scriptHex, satoshis, inputIndex } = havest_data;
 
-    let sign_res = await dispatch({
-      type: 'user/signTx',
-      payload: {
-        datas: {
-          txHex,
-          scriptHex,
-          satoshis,
-          inputIndex,
-          address: accountInfo.userAddress,
-        },
-      },
-    });
+  //   let sign_res = await dispatch({
+  //     type: 'user/signTx',
+  //     payload: {
+  //       datas: {
+  //         txHex,
+  //         scriptHex,
+  //         satoshis,
+  //         inputIndex,
+  //         address: accountInfo.userAddress,
+  //       },
+  //     },
+  //   });
 
-    if (sign_res.msg && !sign_res.sig) {
-      return message.error(sign_res);
-    }
-    if (sign_res[0]) {
-      sign_res = sign_res[0];
-    }
-    const { publicKey, sig } = sign_res;
+  //   if (sign_res.msg && !sign_res.sig) {
+  //     return message.error(sign_res);
+  //   }
+  //   if (sign_res[0]) {
+  //     sign_res = sign_res[0];
+  //   }
+  //   const { publicKey, sig } = sign_res;
 
-    const harvest2_res = await dispatch({
-      type: 'farm/harvest2',
-      payload: {
-        symbol: currentFarmPair,
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      },
-    });
-    const { code, data, msg } = harvest2_res;
-    if (code === 99999) {
-      const raw = await ungzip(Buffer.from(data.other));
-      const newData = JSON.parse(raw.toString());
-      return this.harvest2(newData, currentFarmPair, requestIndex);
-    }
-    return harvest2_res;
-  };
+  //   const harvest2_res = await dispatch({
+  //     type: 'farm/harvest2',
+  //     payload: {
+  //       symbol: currentFarmPair,
+  //       requestIndex,
+  //       pubKey: publicKey,
+  //       sig,
+  //     },
+  //   });
+  //   const { code, data, msg } = harvest2_res;
+  //   if (code === 99999) {
+  //     const raw = await ungzip(Buffer.from(data.other));
+  //     const newData = JSON.parse(raw.toString());
+  //     return this.harvest2(newData, currentFarmPair, requestIndex);
+  //   }
+  //   return harvest2_res;
+  // };
 
   harvest = async (currentFarmPair, params) => {
     const { dispatch, accountInfo, update } = this.props;
@@ -140,10 +142,18 @@ export default class Harvest extends Component {
     if (harvest_res.code) {
       return message.error(harvest_res.msg);
     }
-    const harvest2_res = await this.harvest2(
+    // const harvest2_res = await this.harvest2(
+    //   harvest_res.data,
+    //   currentFarmPair,
+    //   requestIndex,
+    // );
+
+    const harvest2_res = await userSignTx(
+      'farm/harvest2',
+      dispatch,
       harvest_res.data,
-      currentFarmPair,
       requestIndex,
+      { symbol: currentFarmPair },
     );
     if (harvest2_res.code && harvest2_res.msg) {
       return message.error(harvest2_res.msg);
@@ -161,8 +171,8 @@ export default class Harvest extends Component {
         params.rewardToken.symbol,
         params.rewardToken.tokenID,
         harvest2_res.data.blockHeight,
+        update,
       );
-      update();
     } else {
       return message.error(msg);
     }

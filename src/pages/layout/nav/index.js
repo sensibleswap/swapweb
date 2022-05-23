@@ -19,7 +19,7 @@ const menu = [
     path: 'pool/add',
   },
   {
-    key: 'stake',
+    key: ['stake', 'vote'],
     children: <StakeSubmenu />,
   },
   {
@@ -35,11 +35,15 @@ const menu = [
 export default class Head extends Component {
   constructor(props) {
     super(props);
-    const hash = window.location.hash.substr(2);
+    let hash = window.location.hash.substr(2);
+    if (hash.indexOf('/') > -1) {
+      hash = hash.split('/')[0];
+    }
+
     let currentMenu = '';
     menu.forEach((item) => {
-      if (hash.indexOf(item.key) > -1) {
-        currentMenu = item.key;
+      if (item.key.indexOf(hash) > -1) {
+        currentMenu = hash;
       }
     });
     this.state = {
@@ -62,7 +66,7 @@ export default class Head extends Component {
         <div className={styles.menu}>
           {menu.map((item) => {
             let cls = jc(styles.menu_item, styles[`menu_item_${item.key}`]);
-            if (item.key === currentMenu) {
+            if (currentMenu && item.key.indexOf(currentMenu) > -1) {
               cls = jc(
                 styles.menu_item,
                 styles.menu_item_selected,

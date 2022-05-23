@@ -84,7 +84,7 @@ function Stake(props) {
     setSubmiting(false);
     message.success('success');
     dispatch({
-      type: 'stake/getUserStakeInfo',
+      type: 'stake/getStakeInfo',
     });
     setShowResult(true);
   };

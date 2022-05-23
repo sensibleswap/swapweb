@@ -6,6 +6,9 @@ interface CssExports {
   menu_item: string;
   menu_item_selected: string;
   nav_container: string;
+  submenu: string;
+  submenu_item: string;
+  submenu_item_selected: string;
 }
 export const cssExports: CssExports;
 export default cssExports;

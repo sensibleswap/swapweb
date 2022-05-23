@@ -110,9 +110,13 @@ export default class UserInfo extends Component {
       setTimeout(async () => {
         while (this.polling) {
           const { dispatch, busy, isLogin, accountInfo } = _self.props;
-          dispatch({
-            type: 'pair/getUSDPrice',
-          });
+          const { hash } = window.location;
+
+          if (hash.indexOf('stake') < 0 && hash.indexOf('vote') < 0) {
+            dispatch({
+              type: 'pair/getUSDPrice',
+            });
+          }
           await sleep(5 * 1e3);
           i++;
           if (isLogin) {
@@ -121,9 +125,12 @@ export default class UserInfo extends Component {
             });
           }
           if (i % 4 === 0) {
-            const { hash } = window.location;
             if (busy) return;
-            if (hash.indexOf('farm') < 0 && hash.indexOf('stake') < 0) {
+            if (
+              hash.indexOf('farm') < 0 &&
+              hash.indexOf('stake') < 0 &&
+              hash.indexOf('vote') < 0
+            ) {
               dispatch({
                 type: 'pair/updatePairData',
               });

@@ -1,4 +1,4 @@
-import Layout from '../layout/main';
+import Layout from '../layout/main/stake';
 import _ from 'i18n';
 import Stake from './stake';
 import Unstake from './unstake';

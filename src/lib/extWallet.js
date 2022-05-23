@@ -7,7 +7,7 @@ const bsv = window.voltWallet;
 function checkExtension() {
   if (!window.voltWallet) {
     if (confirm(_('download_voltwallet'))) {
-      window.open('https://volt.id/#/download');
+      window.open('https://app.volt.id/#/download');
     }
     return false;
   }

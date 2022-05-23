@@ -16,6 +16,7 @@ import FarmPairIcon from 'components/pairIcon/farmIcon';
 import { BtnWait } from 'components/btns';
 import { SuccessResult } from 'components/result';
 import { Arrow } from 'components/ui';
+import { userSignTx } from 'common/signTx';
 
 @connect(({ user, farm, loading }) => {
   const { effects } = loading;
@@ -159,50 +160,50 @@ export default class Withdraw extends Component {
     );
   }
 
-  withdraw2 = async (withdraw_data, requestIndex) => {
-    const { txHex, scriptHex, satoshis, inputIndex } = withdraw_data;
-    const { dispatch, currentFarmPair, accountInfo } = this.props;
+  // withdraw2 = async (withdraw_data, requestIndex) => {
+  //   const { txHex, scriptHex, satoshis, inputIndex } = withdraw_data;
+  //   const { dispatch, currentFarmPair, accountInfo } = this.props;
 
-    let sign_res = await dispatch({
-      type: 'user/signTx',
-      payload: {
-        datas: {
-          txHex,
-          scriptHex,
-          satoshis,
-          inputIndex,
-          address: accountInfo.userAddress,
-        },
-      },
-    });
+  //   let sign_res = await dispatch({
+  //     type: 'user/signTx',
+  //     payload: {
+  //       datas: {
+  //         txHex,
+  //         scriptHex,
+  //         satoshis,
+  //         inputIndex,
+  //         address: accountInfo.userAddress,
+  //       },
+  //     },
+  //   });
 
-    if (sign_res.msg && !sign_res.sig) {
-      return message.error(sign_res);
-    }
-    if (sign_res[0]) {
-      sign_res = sign_res[0];
-    }
+  //   if (sign_res.msg && !sign_res.sig) {
+  //     return message.error(sign_res);
+  //   }
+  //   if (sign_res[0]) {
+  //     sign_res = sign_res[0];
+  //   }
 
-    const { publicKey, sig } = sign_res;
+  //   const { publicKey, sig } = sign_res;
 
-    const withdraw2_res = await dispatch({
-      type: 'farm/withdraw2',
-      payload: {
-        symbol: currentFarmPair,
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      },
-    });
-    const { code, data, msg } = withdraw2_res;
-    if (code === 99999) {
-      const raw = await ungzip(Buffer.from(data.other));
-      const newData = JSON.parse(raw.toString());
-      return this.withdraw2(newData, requestIndex);
-    }
+  //   const withdraw2_res = await dispatch({
+  //     type: 'farm/withdraw2',
+  //     payload: {
+  //       symbol: currentFarmPair,
+  //       requestIndex,
+  //       pubKey: publicKey,
+  //       sig,
+  //     },
+  //   });
+  //   const { code, data, msg } = withdraw2_res;
+  //   if (code === 99999) {
+  //     const raw = await ungzip(Buffer.from(data.other));
+  //     const newData = JSON.parse(raw.toString());
+  //     return this.withdraw2(newData, requestIndex);
+  //   }
 
-    return withdraw2_res;
-  };
+  //   return withdraw2_res;
+  // };
 
   handleSubmit = async () => {
     const { removeLP } = this.state;
@@ -276,7 +277,15 @@ export default class Withdraw extends Component {
     if (withdraw_res.code) {
       return message.error(withdraw_res.msg);
     }
-    const withdraw2_res = await this.withdraw2(withdraw_res.data, requestIndex);
+    // const withdraw2_res = await this.withdraw2(withdraw_res.data, requestIndex);
+    const withdraw2_res = await userSignTx(
+      'farm/withdraw2',
+      dispatch,
+      withdraw_res.data,
+      requestIndex,
+      { symbol: currentFarmPair },
+    );
+
     if (withdraw2_res.code && withdraw2_res.msg) {
       return message.error(withdraw2_res.msg);
     }

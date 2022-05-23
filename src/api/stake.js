@@ -62,6 +62,18 @@ class Stake extends BaseAPI {
   harvest2(params) {
     return this._request('harvest2', params, 'POST');
   }
+
+  voteinfo(params) {
+    return this._request('voteinfo', params);
+  }
+
+  vote(params) {
+    return this._request('vote', params, 'POST');
+  }
+
+  vote2(params) {
+    return this._request('vote2', params, 'POST');
+  }
 }
 
 export default new Stake();

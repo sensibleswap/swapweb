@@ -1,5 +1,5 @@
 import stakeApi from '../api/stake';
-import { LeastFee, formatSat } from 'common/utils';
+import { LeastFee, formatSat, formatRate } from 'common/utils';
 import { gzip } from 'node-gzip';
 // import { leftTime } from '../common/utils';
 
@@ -11,7 +11,8 @@ export default {
     stakePairInfo: {},
     currentStakePair: '',
     pairData: {},
-    userPairData: {},
+    voteInfo: {},
+    currentVoteId: '',
   },
 
   subscriptions: {
@@ -36,22 +37,13 @@ export default {
         let _stakePairInfo = allPairs[0];
         let currrentPair = _stakePairInfo.name;
         // console.log(allPairs, currrentPair);
-        const pairinfo_res = yield stakeApi.queryStakeInfo.call(
-          stakeApi,
-          currrentPair,
-        );
-        // console.log(pairinfo_res);
-        let _pairData = {};
-        if (pairinfo_res.code === 0) {
-          _pairData = pairinfo_res.data;
-        }
+
         yield put({
           type: 'save',
           payload: {
             allStakePairs: allPairs,
             currentStakePair: currrentPair,
             stakePairInfo: _stakePairInfo,
-            pairData: _pairData,
           },
         });
       } else {
@@ -63,19 +55,21 @@ export default {
         });
       }
     },
-    *getUserStakeInfo({ payload }, { call, put, select }) {
+    *getStakeInfo({ payload }, { call, put, select }) {
       const { currentStakePair, stakePairInfo } = yield select(
         (state) => state.stake,
       );
       const { accountInfo } = yield select((state) => state.user);
       // console.log(currentStakePair, accountInfo);
-      if (!accountInfo.userAddress || !currentStakePair) return;
-      const res = yield stakeApi.queryUserInfo.call(
-        stakeApi,
-        currentStakePair,
-        accountInfo.userAddress,
-      );
-      // console.log(res);
+      if (!currentStakePair) return;
+      let res = accountInfo.userAddress
+        ? yield stakeApi.queryUserInfo.call(
+            stakeApi,
+            currentStakePair,
+            accountInfo.userAddress,
+          )
+        : yield stakeApi.queryStakeInfo.call(stakeApi, currentStakePair);
+      console.log('queryUserInfo:', res);
       let _userPairData = {};
       if (res.code === 0) {
         //"unlockingTokens": [{"expired":737212,"amount":"100000"}]
@@ -109,27 +103,58 @@ export default {
       yield put({
         type: 'save',
         payload: {
-          userPairData: _userPairData,
+          // userPairData: _userPairData,
+          pairData: _userPairData,
         },
       });
     },
-    *updateStakeInfo({ payload }, { call, put, select }) {
-      const { currentStakePair } = yield select((state) => state.stake);
-      const pairinfo_res = yield stakeApi.queryStakeInfo.call(
-        stakeApi,
-        currentStakePair,
+    *getVoteInfo({ payload }, { call, put, select }) {
+      const { currentStakePair, pairData } = yield select(
+        (state) => state.stake,
       );
-      // console.log(pairinfo_res);
-      let _pairData = {};
-      if (pairinfo_res.code === 0) {
-        _pairData = pairinfo_res.data;
-      }
-      yield put({
-        type: 'save',
-        payload: {
-          pairData: _pairData,
-        },
+      if (!currentStakePair) return;
+      const res = yield stakeApi.voteinfo.call(stakeApi, {
+        symbol: currentStakePair,
       });
+      // console.log('voteinfo:', res);
+
+      if (res.code === 0) {
+        const { data } = res;
+        const { lastRewardBlock } = pairData;
+        const _currentVoteId = Object.keys(data)[0];
+        Object.keys(data).forEach((item) => {
+          let total = 0,
+            rate = [];
+          // , passItemIndex = -1;
+          const {
+            voteSumData,
+            beginBlockNum,
+            endBlockNum,
+            minVoteAmount,
+          } = data[item];
+          voteSumData.forEach((v) => {
+            total += parseInt(v);
+          });
+          data[item].voteSumRate = voteSumData.forEach((v, i) => {
+            rate.push(formatRate(v / total, 0));
+            // if (v > minVoteAmount) {
+            //   passItemIndex = i;
+            // }
+          });
+          // console.log(rate)
+          data[item].voteSumRate = rate;
+          data[item].unStated = beginBlockNum > parseInt(lastRewardBlock);
+          data[item].finished = endBlockNum < parseInt(lastRewardBlock);
+        });
+
+        yield put({
+          type: 'save',
+          payload: {
+            voteInfo: data,
+            currentVoteId: _currentVoteId,
+          },
+        });
+      }
     },
     *reqStake({ payload }, { call, put, select }) {
       const { op } = payload;
@@ -291,6 +316,49 @@ export default {
         sig,
       };
       const res = yield stakeApi.harvest2.call(stakeApi, params);
+      // console.log(res);
+      // if (res.code) {
+      //     return {
+      //         msg: res.msg
+      //     };
+      // }
+      return res.data;
+    },
+    *vote({ payload }, { call, put, select }) {
+      const { requestIndex, data, voteOption } = payload;
+      const { currentVoteId, currentStakePair } = yield select(
+        (state) => state.stake,
+      );
+      let liq_data = {
+        symbol: currentStakePair,
+        requestIndex: requestIndex,
+        bsvRawTx: data[0].txHex,
+        bsvOutputIndex: 0,
+        voteID: currentVoteId,
+        voteOption,
+        confirmVote: true,
+      };
+      liq_data = JSON.stringify(liq_data);
+      liq_data = yield gzip(liq_data);
+      const res = yield stakeApi.vote.call(stakeApi, { data: liq_data });
+      // console.log(res);
+      if (res.code) {
+        return {
+          msg: res.msg,
+        };
+      }
+      return res.data;
+    },
+    *vote2({ payload }, { call, put, select }) {
+      const { requestIndex, pubKey, sig } = payload;
+      const { currentStakePair } = yield select((state) => state.stake);
+      let params = {
+        symbol: currentStakePair,
+        requestIndex: requestIndex,
+        pubKey,
+        sig,
+      };
+      const res = yield stakeApi.vote2.call(stakeApi, params);
       // console.log(res);
       // if (res.code) {
       //     return {

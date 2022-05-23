@@ -352,5 +352,7 @@ const texts = {
   rejected: 'Rejected',
   agreed: 'Agreed',
   reject: 'Reject',
+  change_vote: 'you can change your vote during the voting period',
+  no_stake: 'do not have stake tokens',
 };
 module.exports = texts;

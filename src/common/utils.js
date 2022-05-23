@@ -436,3 +436,8 @@ export function leftTime(time) {
   console.log(leftTimeArr);
   return leftTimeArr.join(' ');
 }
+
+export const formatRate = (data, dec = 2) => {
+  if (!data) return 0;
+  return (data * 100).toFixed(dec) + '%';
+};

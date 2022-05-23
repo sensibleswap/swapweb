@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'umi';
+import { connect } from 'umi';
 import { message } from 'antd';
 import { formatSat } from 'common/utils';
 import Loading from 'components/loading';
-import EventBus from 'common/eventBus';
 import TokenLogo from 'components/tokenicon';
 import FormatNumber from 'components/formatNumber';
 import styles from './index.less';
@@ -12,58 +10,7 @@ import HarvestBtn from './harvest';
 import WithdrawBtn from './withdraw';
 
 function Content(props) {
-  // console.log(props)
-  // const { dispatch } = props;
-  const dispatch = useDispatch();
-  const { pairData, stakePairInfo, accountInfo, userPairData } = props;
-  const [varA, setVarA] = useState(0);
-  const [varB, setVarB] = useState(0);
-
-  useEffect(() => {
-    EventBus.on('reloadPair', () => {
-      dispatch({
-        type: 'stake/getAllPairs',
-        payload: {},
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    dispatch({
-      type: 'stake/getAllPairs',
-      payload: {},
-    });
-    const timeoutA = setTimeout(async () => {
-      setVarA(varA + 1);
-      dispatch({
-        type: 'stake/getAllPairs',
-        payload: {},
-      });
-    }, 30 * 1e3);
-
-    return () => {
-      clearTimeout(timeoutA);
-    };
-  }, [varA]);
-
-  useEffect(() => {
-    if (!accountInfo.userAddress) return;
-    dispatch({
-      type: 'stake/getUserStakeInfo',
-      payload: {},
-    });
-    const timeoutB = setTimeout(async () => {
-      setVarB(varB + 1);
-      dispatch({
-        type: 'stake/getUserStakeInfo',
-        payload: {},
-      });
-    }, 30 * 1e3);
-
-    return () => {
-      clearTimeout(timeoutB);
-    };
-  }, [varB, accountInfo.userAddress]);
+  const { pairData, stakePairInfo } = props;
 
   if (stakePairInfo.msg) {
     message.error(stakePairInfo.msg);
@@ -92,7 +39,7 @@ function Content(props) {
     lockedTokenAmount = 0,
     rewardTokenAmount = 0,
     unlockingTokens_user,
-  } = { ...pairData, ...userPairData };
+  } = pairData;
   return (
     <div className={styles.left_content}>
       <div className={styles.title}>
@@ -170,7 +117,6 @@ function Content(props) {
 const mapStateToProps = ({ stake, user }) => {
   return {
     ...stake,
-    ...user,
   };
 };
 

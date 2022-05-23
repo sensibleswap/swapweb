@@ -7,7 +7,7 @@ import { useState } from 'react';
 import _ from 'i18n';
 
 function StakePage(props) {
-  const { leftContent, rightContent, btns, appTitle } = props;
+  const { leftContent, rightContent, btns, appTitle, children } = props;
   const [appPannel, setAppPannel] = useState(-1);
 
   return (
@@ -21,6 +21,7 @@ function StakePage(props) {
         >
           <div className={styles.left_inner}>
             <Header />
+            {children}
             {leftContent}
             <AppStartBtn
               btns={btns}

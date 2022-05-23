@@ -16,7 +16,7 @@ import Withdraw from '../withdraw';
 import styles from './index.less';
 import _ from 'i18n';
 import { AppStartBtn } from 'components/ui';
-import CreateFarm from '../createFarm';
+// import CreateFarm from '../createFarm';
 import Menu from '../../components/menu';
 let busy = false;
 

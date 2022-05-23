@@ -1,18 +1,18 @@
 import { connect } from 'umi';
-import { ungzip } from 'node-gzip';
+// import { ungzip } from 'node-gzip';
 import { Button, Spin, message, Modal } from 'antd';
 import _ from 'i18n';
 import { useState } from 'react';
 import styles from './index.less';
 import { formatSat } from 'common/utils';
 import FormatNumber from 'components/formatNumber';
-import TokenLogo from 'components/tokenicon';
+import { userSignTx } from 'common/signTx';
 import CustomIcon from 'components/icon';
 
 function Withdraw(props) {
   const { accountInfo, dispatch, stakePairInfo, left, amount } = props;
   const [submiting, setSubmiting] = useState(false);
-  const { userAddress } = accountInfo;
+  // const { userAddress } = accountInfo;
   const { rewardToken } = stakePairInfo;
   const { symbol, decimal } = rewardToken;
 
@@ -46,51 +46,51 @@ function Withdraw(props) {
     });
   };
 
-  const withdraw2 = async (data, requestIndex) => {
-    const { txHex, scriptHex, satoshis, inputIndex } = data;
+  // const withdraw2 = async (data, requestIndex) => {
+  //   const { txHex, scriptHex, satoshis, inputIndex } = data;
 
-    let sign_res = await dispatch({
-      type: 'user/signTx',
-      payload: {
-        datas: {
-          txHex,
-          scriptHex,
-          satoshis,
-          inputIndex,
-          address: userAddress,
-        },
-      },
-    });
+  //   let sign_res = await dispatch({
+  //     type: 'user/signTx',
+  //     payload: {
+  //       datas: {
+  //         txHex,
+  //         scriptHex,
+  //         satoshis,
+  //         inputIndex,
+  //         address: userAddress,
+  //       },
+  //     },
+  //   });
 
-    if (sign_res.msg && !sign_res.sig) {
-      return {
-        msg: sign_res,
-      };
-    }
+  //   if (sign_res.msg && !sign_res.sig) {
+  //     return {
+  //       msg: sign_res,
+  //     };
+  //   }
 
-    const { publicKey, sig } = sign_res;
+  //   const { publicKey, sig } = sign_res;
 
-    const res = await dispatch({
-      type: 'stake/withdraw2',
-      payload: {
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      },
-    });
-    if (res.code === 99999) {
-      const raw = await ungzip(Buffer.from(res.data.other));
-      const newData = JSON.parse(raw.toString());
-      return withdraw2(newData, requestIndex);
-    }
+  //   const res = await dispatch({
+  //     type: 'stake/withdraw2',
+  //     payload: {
+  //       requestIndex,
+  //       pubKey: publicKey,
+  //       sig,
+  //     },
+  //   });
+  //   if (res.code === 99999) {
+  //     const raw = await ungzip(Buffer.from(res.data.other));
+  //     const newData = JSON.parse(raw.toString());
+  //     return withdraw2(newData, requestIndex);
+  //   }
 
-    if (res.code) {
-      return {
-        msg: res.msg,
-      };
-    }
-    return res;
-  };
+  //   if (res.code) {
+  //     return {
+  //       msg: res.msg,
+  //     };
+  //   }
+  //   return res;
+  // };
 
   const handleWithdraw = async () => {
     setSubmiting(true);
@@ -132,7 +132,13 @@ function Withdraw(props) {
       setSubmiting(false);
       return message.error(withdraw_res.msg);
     }
-    const withdraw2_res = await withdraw2(withdraw_res, requestIndex);
+    // const withdraw2_res = await withdraw2(withdraw_res, requestIndex);
+    const withdraw2_res = await userSignTx(
+      'stake/withdraw2',
+      dispatch,
+      withdraw_res,
+      requestIndex,
+    );
 
     setSubmiting(false);
     if (withdraw2_res.msg) {
@@ -144,7 +150,7 @@ function Withdraw(props) {
       message.success('success');
       showModal(withdraw2_res.txid, withdraw2_res.blockHeight);
       dispatch({
-        type: 'stake/getUserStakeInfo',
+        type: 'stake/getStakeInfo',
       });
     }
   };

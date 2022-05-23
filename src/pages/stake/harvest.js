@@ -1,25 +1,19 @@
 import { connect } from 'umi';
-import { ungzip } from 'node-gzip';
+// import { ungzip } from 'node-gzip';
 import { Button, Spin, message, Modal } from 'antd';
 import _ from 'i18n';
 import { useState } from 'react';
 import styles from './index.less';
 import { formatSat } from 'common/utils';
 import FormatNumber from 'components/formatNumber';
-import TokenLogo from 'components/tokenicon';
+import { userSignTx } from 'common/signTx';
 import CustomIcon from 'components/icon';
 
 function Harvest(props) {
-  const {
-    pairData,
-    accountInfo,
-    userPairData,
-    dispatch,
-    stakePairInfo,
-  } = props;
-  const { rewardTokenAmount = 0 } = { ...pairData, ...userPairData };
+  const { pairData, accountInfo, dispatch, stakePairInfo } = props;
+  const { rewardTokenAmount = 0 } = pairData;
   const [submiting, setSubmiting] = useState(false);
-  const { userAddress } = accountInfo;
+  // const { userAddress } = accountInfo;
   const { rewardToken } = stakePairInfo;
   const { symbol, decimal } = rewardToken;
 
@@ -53,51 +47,51 @@ function Harvest(props) {
     });
   };
 
-  const harvest2 = async (data, requestIndex) => {
-    const { txHex, scriptHex, satoshis, inputIndex } = data;
+  // const harvest2 = async (data, requestIndex) => {
+  //   const { txHex, scriptHex, satoshis, inputIndex } = data;
 
-    let sign_res = await dispatch({
-      type: 'user/signTx',
-      payload: {
-        datas: {
-          txHex,
-          scriptHex,
-          satoshis,
-          inputIndex,
-          address: userAddress,
-        },
-      },
-    });
+  //   let sign_res = await dispatch({
+  //     type: 'user/signTx',
+  //     payload: {
+  //       datas: {
+  //         txHex,
+  //         scriptHex,
+  //         satoshis,
+  //         inputIndex,
+  //         address: userAddress,
+  //       },
+  //     },
+  //   });
 
-    if (sign_res.msg && !sign_res.sig) {
-      return {
-        msg: sign_res,
-      };
-    }
+  //   if (sign_res.msg && !sign_res.sig) {
+  //     return {
+  //       msg: sign_res,
+  //     };
+  //   }
 
-    const { publicKey, sig } = sign_res;
+  //   const { publicKey, sig } = sign_res;
 
-    const res = await dispatch({
-      type: 'stake/harvest2',
-      payload: {
-        requestIndex,
-        pubKey: publicKey,
-        sig,
-      },
-    });
-    if (res.code === 99999) {
-      const raw = await ungzip(Buffer.from(res.data.other));
-      const newData = JSON.parse(raw.toString());
-      return harvest2(newData, requestIndex);
-    }
+  //   const res = await dispatch({
+  //     type: 'stake/harvest2',
+  //     payload: {
+  //       requestIndex,
+  //       pubKey: publicKey,
+  //       sig,
+  //     },
+  //   });
+  //   if (res.code === 99999) {
+  //     const raw = await ungzip(Buffer.from(res.data.other));
+  //     const newData = JSON.parse(raw.toString());
+  //     return harvest2(newData, requestIndex);
+  //   }
 
-    if (res.code) {
-      return {
-        msg: res.msg,
-      };
-    }
-    return res;
-  };
+  //   if (res.code) {
+  //     return {
+  //       msg: res.msg,
+  //     };
+  //   }
+  //   return res;
+  // };
 
   const handleHarvest = async () => {
     setSubmiting(true);
@@ -139,7 +133,13 @@ function Harvest(props) {
       setSubmiting(false);
       return message.error(harvest_res.msg);
     }
-    const harvest2_res = await harvest2(harvest_res, requestIndex);
+    // const harvest2_res = await harvest2(harvest_res, requestIndex);
+    const harvest2_res = await userSignTx(
+      'stake/harvest2',
+      dispatch,
+      harvest_res,
+      requestIndex,
+    );
 
     setSubmiting(false);
     if (harvest2_res.msg) {
@@ -155,7 +155,7 @@ function Harvest(props) {
         harvest2_res.blockHeight,
       );
       dispatch({
-        type: 'stake/getUserStakeInfo',
+        type: 'stake/getStakeInfo',
       });
     }
   };

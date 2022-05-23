@@ -8,7 +8,8 @@ import { getCurrentPair } from 'common/utils';
 import { filterTokens } from 'common/pairUtils';
 
 const log = debug('pair');
-const iconUrl = 'https://volt.id/api.json?method=sensibleft.getSensibleFtList';
+const iconUrl =
+  'https://app.volt.id/api.json?method=sensibleft.getSensibleFtList';
 
 const { localStorage } = window;
 
@@ -44,9 +45,15 @@ export default {
               bsv: {
                 type: 'iconlogo-bitcoin',
               },
+              BSV: {
+                type: 'iconlogo-bitcoin',
+              },
             };
             data.data.list.forEach((item) => {
               icons[item.genesis.toString()] = {
+                url: item.logo,
+              };
+              icons[item.symbol] = {
                 url: item.logo,
               };
             });
