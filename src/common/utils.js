@@ -328,8 +328,14 @@ export function strAbbreviation(str, arr = [7, 5]) {
 }
 
 export function isTestNet() {
-  const net = window.localStorage.getItem(TSWAP_NETWORK) || DEFAULT_NET;
-  return net === 'testnet';
+  const query = querystring.parse(window.location.search);
+
+  if (typeof query.network === 'undefined') {
+    const net = window.localStorage.getItem(TSWAP_NETWORK) || DEFAULT_NET;
+    return net === 'testnet';
+  } else {
+    return query.network === 'testnet';
+  }
 }
 
 export function tokenPre() {
