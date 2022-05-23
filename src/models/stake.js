@@ -69,7 +69,7 @@ export default {
             accountInfo.userAddress,
           )
         : yield stakeApi.queryStakeInfo.call(stakeApi, currentStakePair);
-      console.log('queryUserInfo:', res);
+      // console.log('queryUserInfo:', res);
       let _userPairData = {};
       if (res.code === 0) {
         //"unlockingTokens": [{"expired":737212,"amount":"100000"}]
@@ -130,7 +130,7 @@ export default {
             voteSumData,
             beginBlockNum,
             endBlockNum,
-            minVoteAmount,
+            // minVoteAmount,
           } = data[item];
           voteSumData.forEach((v) => {
             total += parseInt(v);
