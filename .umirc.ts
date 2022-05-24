@@ -1,15 +1,21 @@
 import { defineConfig } from 'umi';
 import routes from './config/routes';
+const { TS_ENV } = process.env;
 
 export default {
   publicPath: './',
+  outputPath:
+    TS_ENV === 'beta'
+      ? '../beta.tswap.io/dist'
+      : '../sensibleswap.github.io/dist',
   history: {
     type: 'hash',
   },
+  hash: true,
   nodeModulesTransform: {
     type: 'none',
   },
-  define: { TS_ENV: process.env.TS_ENV },
+  define: { TS_ENV },
   dva: {},
   favicon:
     'https://volt.oss-cn-hongkong.aliyuncs.com/coinlogo/777e4dd291059c9f7a0fd563f7204576dcceb7915d15eedd93c90d91e0d76de5cc932c833baf8336.png',

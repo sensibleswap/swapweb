@@ -39,6 +39,7 @@ function Content(props) {
     lockedTokenAmount = 0,
     rewardTokenAmount = 0,
     unlockingTokens_user,
+    rewardAmountPerBlock,
   } = pairData;
   return (
     <div className={styles.left_content}>
@@ -67,12 +68,49 @@ function Content(props) {
           </div>
         </div>
       </div>
+
+      <div className={styles.box}>
+        <div className={styles.line1}>
+          <div className={styles.left}>
+            <div className={styles.item}>
+              <div className={styles.label}>{_('payout_per_block')}</div>
+              <div className={styles.value}>
+                {rewardAmountPerBlock > 0 ? (
+                  <FormatNumber
+                    value={formatSat(rewardAmountPerBlock, rewardTokenDecimal)}
+                    suffix={rewardTokenSymbol}
+                  />
+                ) : (
+                  0
+                )}
+              </div>
+            </div>
+            <div className={styles.item}>
+              <div className={styles.label}>{_('staking_yield')}</div>
+              <div className={styles.value}>
+                {rewardTokenAmount > 0 ? (
+                  <FormatNumber
+                    value={formatSat(rewardTokenAmount, rewardTokenDecimal)}
+                    suffix={rewardTokenSymbol}
+                  />
+                ) : (
+                  0
+                )}
+              </div>
+            </div>
+          </div>
+          <div className={styles.action}>
+            <HarvestBtn />
+          </div>
+        </div>
+      </div>
+
       {unlockingTokens_user && unlockingTokens_user.length > 0 && (
         <div className={styles.box}>
           {unlockingTokens_user.map(({ left, amount, _amount }, index) => (
             <div className={styles.line1} key={index}>
               <div className={styles.item}>
-                <div className={styles.label}>{_('unstaked')}</div>
+                <div className={styles.label}>{_('withdraw_stake')}</div>
                 <div className={styles.value}>
                   <FormatNumber value={_amount} suffix={symbol} />
                 </div>
@@ -90,26 +128,6 @@ function Content(props) {
           ))}
         </div>
       )}
-      <div className={styles.box}>
-        <div className={styles.line1}>
-          <div className={styles.item}>
-            <div className={styles.label}>{_('staking_yield')}</div>
-            <div className={styles.value}>
-              {rewardTokenAmount > 0 ? (
-                <FormatNumber
-                  value={formatSat(rewardTokenAmount, rewardTokenDecimal)}
-                  suffix={rewardTokenSymbol}
-                />
-              ) : (
-                0
-              )}
-            </div>
-          </div>
-          <div className={styles.action}>
-            <HarvestBtn />
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

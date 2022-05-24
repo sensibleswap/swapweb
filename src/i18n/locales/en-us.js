@@ -337,12 +337,12 @@ const texts = {
   your_staked: 'Your staked',
   total_staked: 'Total Staked',
   unstaked: 'Unstaked',
+  withdraw_stake: 'Unstaked',
   vesting_term: 'Vesting term',
   staking_yield: 'Staking Yield',
   unstake: 'Unstake',
   stake_amount: 'Stake amount',
   unstake_amount: 'Unstake amount',
-  stake_to_borrow: 'Stake to Borrow',
   stake_successful: 'Stake successful',
   staked: 'Staked',
   done: 'Done',
@@ -364,5 +364,6 @@ const texts = {
   reject: 'Reject',
   change_vote: 'you can change your vote during the voting period',
   no_stake: 'do not have stake tokens',
+  payout_per_block: 'Payout per block',
 };
 module.exports = texts;
