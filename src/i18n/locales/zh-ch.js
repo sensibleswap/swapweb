@@ -333,7 +333,7 @@ const texts = {
   stake_amount: '质押数量',
   unstake_amount: '取消质押数量',
   stake_successful: '质押成功',
-  staked: '质押的',
+  staked: '质押数量',
   done: '完成',
   start_stake: '质押',
   unstake_successful: '成功取消质押',

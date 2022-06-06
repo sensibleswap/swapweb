@@ -21,6 +21,7 @@ export const userSignTx = async (
       },
     },
   });
+  console.log(sign_res);
 
   if (sign_res.msg && !sign_res.sig) {
     return {

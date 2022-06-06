@@ -128,7 +128,7 @@ function Harvest(props) {
         requestIndex,
       },
     });
-    // console.log(unlock_res);
+    // console.log(harvest_res);
     if (harvest_res.msg) {
       setSubmiting(false);
       return message.error(harvest_res.msg);

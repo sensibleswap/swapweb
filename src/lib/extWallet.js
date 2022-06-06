@@ -102,9 +102,14 @@ export default {
   },
 
   signTx: async (params) => {
-    const res = await window.voltWallet.signTx({ list: [params] });
-    if (res.sig) return res;
-    if (res[0].sig) return res[0];
-    return res.sigList[0];
+    try {
+      const res = await window.voltWallet.signTx({ list: [params] });
+      if (res.sig) return res;
+      if (res[0].sig) return res[0];
+      return res.sigList[0];
+    } catch (error) {
+      console.log(error);
+      debugger;
+    }
   },
 };

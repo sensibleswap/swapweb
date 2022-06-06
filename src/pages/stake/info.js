@@ -110,7 +110,7 @@ function Content(props) {
           {unlockingTokens_user.map(({ left, amount, _amount }, index) => (
             <div className={styles.line1} key={index}>
               <div className={styles.item}>
-                <div className={styles.label}>{_('withdraw_stake')}</div>
+                <div className={styles.label}>{_('unstaked')}</div>
                 <div className={styles.value}>
                   <FormatNumber value={_amount} suffix={symbol} />
                 </div>

@@ -13,6 +13,7 @@ export default {
     pairData: {},
     voteInfo: {},
     currentVoteId: '',
+    blockHeight: 0,
   },
 
   subscriptions: {
@@ -29,6 +30,8 @@ export default {
       let allPairs = [];
       if (allpairs_res.code === 0) {
         const { data } = allpairs_res;
+        const { blockHeight } = data;
+        // console.log('blockHeight', blockHeight)
         Object.keys(data).forEach((item) => {
           if (item !== 'blockHeight') {
             allPairs.push({ ...data[item], name: item });
@@ -44,6 +47,7 @@ export default {
             allStakePairs: allPairs,
             currentStakePair: currrentPair,
             stakePairInfo: _stakePairInfo,
+            blockHeight: parseInt(blockHeight),
           },
         });
       } else {
@@ -56,7 +60,7 @@ export default {
       }
     },
     *getStakeInfo({ payload }, { call, put, select }) {
-      const { currentStakePair, stakePairInfo } = yield select(
+      const { currentStakePair, stakePairInfo, blockHeight } = yield select(
         (state) => state.stake,
       );
       const { accountInfo } = yield select((state) => state.user);
@@ -73,14 +77,14 @@ export default {
       let _userPairData = {};
       if (res.code === 0) {
         //"unlockingTokens": [{"expired":737212,"amount":"100000"}]
-        const { unlockingTokens, lastRewardBlock } = res.data;
+        const { unlockingTokens } = res.data;
         const { decimal } = stakePairInfo.token;
         let arr = [];
         if (unlockingTokens && unlockingTokens.length > 0) {
           unlockingTokens.forEach((item) => {
             const { expired, amount } = item;
             const _amount = formatSat(amount, decimal);
-            let left = parseInt(expired) - parseInt(lastRewardBlock);
+            let left = parseInt(expired) - parseInt(blockHeight);
             if (left <= 0) left = 0;
             const freeIndex = arr.findIndex((v) => v.left === left);
             if (freeIndex > -1) {
@@ -109,7 +113,7 @@ export default {
       });
     },
     *getVoteInfo({ payload }, { call, put, select }) {
-      const { currentStakePair, pairData } = yield select(
+      const { currentStakePair, pairData, blockHeight } = yield select(
         (state) => state.stake,
       );
       if (!currentStakePair) return;
@@ -120,7 +124,6 @@ export default {
 
       if (res.code === 0) {
         const { data } = res;
-        const { lastRewardBlock } = pairData;
         const _currentVoteId = Object.keys(data)[0];
         Object.keys(data).forEach((item) => {
           let total = 0,
@@ -143,8 +146,8 @@ export default {
           });
           // console.log(rate)
           data[item].voteSumRate = rate;
-          data[item].unStated = beginBlockNum > parseInt(lastRewardBlock);
-          data[item].finished = endBlockNum < parseInt(lastRewardBlock);
+          data[item].unStated = beginBlockNum > parseInt(blockHeight);
+          data[item].finished = endBlockNum < parseInt(blockHeight);
         });
 
         yield put({
