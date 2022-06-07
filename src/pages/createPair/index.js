@@ -257,6 +257,7 @@ export default class CreatePair extends Component {
       },
     });
 
+    console.log(tx_res);
     if (!tx_res) {
       return message.error(_('txs_fail'));
     }
@@ -266,9 +267,9 @@ export default class CreatePair extends Component {
     if (tx_res.list) {
       tx_res = tx_res.list;
     }
-    if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
-      return message.error(_('txs_fail'));
-    }
+    // if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+    //   return message.error(_('txs_fail'));
+    // }
 
     const { token1, token2 } = this.state;
 

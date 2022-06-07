@@ -68,9 +68,9 @@ async function payFee(props) {
   if (tx_res.list) {
     tx_res = tx_res.list;
   }
-  if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
-    return message.error(_('txs_fail'));
-  }
+  // if (!tx_res[0] || !tx_res[0].txid || !tx_res[1] || !tx_res[1].txid) {
+  //   return message.error(_('txs_fail'));
+  // }
   let fee = BN(txFee).plus(tx_res[0].fee).plus(tx_res[1].fee).toString();
   const { rewardAmountPerBlock, rewardDays } = values;
   const payload = {
