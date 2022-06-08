@@ -1,7 +1,7 @@
 import pairApi from '../api/pair';
 import customApi from '../api/custom';
 import BigNumber from 'bignumber.js';
-import { formatSat, formatAmount } from './utils';
+import { formatSat, calcYield } from './utils';
 
 export async function fetchFarmData(data) {
   let p = [];
@@ -32,20 +32,6 @@ export async function fetchFarmData(data) {
     }
   });
   return pairsData;
-}
-
-function calcYield(rewardAmountPerBlock, decimal, token_price, _total) {
-  const reword_amount = formatSat(rewardAmountPerBlock, decimal);
-
-  // console.log('token_price:', token_price)
-  let _yield = BigNumber(reword_amount)
-    .multipliedBy(144)
-    .multipliedBy(365)
-    .multipliedBy(token_price)
-    .div(_total)
-    .multipliedBy(100);
-
-  return formatAmount(_yield, 2);
 }
 
 function calcLPTotal(swapToken1Amount, token1, swapLpAmount, poolTokenAmount) {

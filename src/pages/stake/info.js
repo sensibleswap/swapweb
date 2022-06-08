@@ -8,9 +8,15 @@ import styles from './index.less';
 import _ from 'i18n';
 import HarvestBtn from './harvest';
 import WithdrawBtn from './withdraw';
+import { useEffect } from 'react';
 
 function Content(props) {
-  const { pairData, stakePairInfo } = props;
+  const { pairData, stakePairInfo, dispatch } = props;
+  useEffect(() => {
+    dispatch({
+      type: 'pair/getUSDPrice',
+    });
+  }, []);
 
   if (stakePairInfo.msg) {
     message.error(stakePairInfo.msg);
@@ -40,6 +46,7 @@ function Content(props) {
     rewardTokenAmount = 0,
     unlockingTokens_user,
     rewardAmountPerBlock,
+    _yield,
   } = pairData;
   return (
     <div className={styles.left_content}>
@@ -98,6 +105,10 @@ function Content(props) {
                 )}
               </div>
             </div>
+            <div className={styles.item}>
+              <div className={styles.label}>{_('apy')}</div>
+              <div className={styles.value}>{_yield}%</div>
+            </div>
           </div>
           <div className={styles.action}>
             <HarvestBtn />
@@ -132,7 +143,7 @@ function Content(props) {
   );
 }
 
-const mapStateToProps = ({ stake, user }) => {
+const mapStateToProps = ({ stake, user, pair }) => {
   return {
     ...stake,
   };

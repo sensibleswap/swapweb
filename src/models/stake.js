@@ -1,7 +1,8 @@
 import stakeApi from '../api/stake';
 import { LeastFee, formatSat, formatRate } from 'common/utils';
 import { gzip } from 'node-gzip';
-// import { leftTime } from '../common/utils';
+import { calcYield } from 'common/utils';
+import BN from 'bignumber.js';
 
 export default {
   namespace: 'stake',
@@ -101,6 +102,27 @@ export default {
         }
 
         res.data.unlockingTokens_user = arr;
+
+        const { poolTokenAmount = 0, rewardAmountPerBlock } = res.data;
+        if (!poolTokenAmount) {
+          res.data._yield = 0;
+        } else {
+          const { tokenPrices } = yield select((state) => state.pair);
+
+          const { rewardToken, token } = stakePairInfo;
+
+          const _total = BN(poolTokenAmount)
+            .div(Math.pow(10, token.decimal))
+            .multipliedBy(tokenPrices[token.symbol]);
+
+          res.data._yield = calcYield(
+            rewardAmountPerBlock,
+            rewardToken.decimal,
+            tokenPrices[rewardToken.symbol],
+            _total,
+          );
+        }
+
         // console.log(arr)
         _userPairData = res.data;
       }
@@ -113,7 +135,7 @@ export default {
       });
     },
     *getVoteInfo({ payload }, { call, put, select }) {
-      const { currentStakePair, pairData, blockHeight } = yield select(
+      const { currentStakePair, blockHeight } = yield select(
         (state) => state.stake,
       );
       if (!currentStakePair) return;

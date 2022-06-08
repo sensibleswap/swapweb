@@ -112,11 +112,9 @@ export default class UserInfo extends Component {
           const { dispatch, busy, isLogin, accountInfo } = _self.props;
           const { hash } = window.location;
 
-          if (hash.indexOf('stake') < 0 && hash.indexOf('vote') < 0) {
-            dispatch({
-              type: 'pair/getUSDPrice',
-            });
-          }
+          dispatch({
+            type: 'pair/getUSDPrice',
+          });
           await sleep(5 * 1e3);
           i++;
           if (isLogin) {

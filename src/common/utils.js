@@ -447,3 +447,17 @@ export const formatRate = (data, dec = 2) => {
   if (!data) return 0;
   return (data * 100).toFixed(dec) + '%';
 };
+
+export function calcYield(rewardAmountPerBlock, decimal, token_price, _total) {
+  const reword_amount = formatSat(rewardAmountPerBlock, decimal);
+
+  // console.log('token_price:', token_price)
+  let _yield = BigNumber(reword_amount)
+    .multipliedBy(144)
+    .multipliedBy(365)
+    .multipliedBy(token_price)
+    .div(_total)
+    .multipliedBy(100);
+
+  return formatAmount(_yield, 2);
+}

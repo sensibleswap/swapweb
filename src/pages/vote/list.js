@@ -4,7 +4,7 @@ import styles from './index.less';
 import _ from 'i18n';
 
 function List(props) {
-  const { voteInfo, dispatch, currentVoteId } = props;
+  const { voteInfo, dispatch, currentVoteId, loading } = props;
 
   const detail = (key) => {
     dispatch({
@@ -30,12 +30,15 @@ function List(props) {
     return '';
   };
 
-  if (JSON.stringify(voteInfo) === '{}') {
+  if (JSON.stringify(voteInfo) === '{}' && loading) {
     return (
       <div className={styles.left_content}>
         <Loading />
       </div>
     );
+  }
+  if (JSON.stringify(voteInfo) === '{}') {
+    return <div className={styles.left_content}>No Data</div>;
   }
 
   return (
@@ -70,10 +73,12 @@ function List(props) {
   );
 }
 
-const mapStateToProps = ({ stake, user }) => {
+const mapStateToProps = ({ stake, user, loading }) => {
+  const { effects } = loading;
   return {
     ...stake,
     ...user,
+    loading: effects['stake/getVoteInfo'],
   };
 };
 

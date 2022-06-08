@@ -12,9 +12,20 @@ import { userSignTx } from 'common/signTx';
 function Detail(props) {
   const dispatch = useDispatch();
   const [submiting, setSubmiting] = useState(false);
-  const { voteInfo, currentVoteId, pairData, isLogin } = props;
+  const { voteInfo, currentVoteId, pairData, isLogin, loading } = props;
+  if (JSON.stringify(voteInfo) === '{}' && loading) {
+    return (
+      <div className={styles.right_content}>
+        <Loading />
+      </div>
+    );
+  }
   if (JSON.stringify(voteInfo) === '{}') {
-    return <Loading />;
+    return (
+      <div className={styles.right_content}>
+        <div>No Data</div>
+      </div>
+    );
   }
   const { desc, options, voteSumRate, finished, unstated } = voteInfo[
     currentVoteId
@@ -147,10 +158,12 @@ function Detail(props) {
   );
 }
 
-const mapStateToProps = ({ stake, user }) => {
+const mapStateToProps = ({ stake, user, loading }) => {
+  const effects = loading.effects;
   return {
     ...stake,
     ...user,
+    loading: effects['stake/getVoteInfo'],
   };
 };
 
