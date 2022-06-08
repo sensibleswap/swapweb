@@ -353,5 +353,6 @@ const texts = {
   change_vote: '在投票期间你可以改变你的投票',
   no_stake: '没有质押token',
   payout_per_block: '每区块的奖励',
+  total_votes: '总投票数：',
 };
 module.exports = texts;

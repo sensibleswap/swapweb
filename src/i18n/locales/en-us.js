@@ -365,5 +365,6 @@ const texts = {
   change_vote: 'you can change your vote during the voting period',
   no_stake: 'do not have stake tokens',
   payout_per_block: 'Payout per block',
+  total_votes: 'Total Votes:',
 };
 module.exports = texts;

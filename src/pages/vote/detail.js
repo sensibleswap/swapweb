@@ -8,11 +8,20 @@ import EventBus from 'common/eventBus';
 import Token from './token';
 import _ from 'i18n';
 import { userSignTx } from 'common/signTx';
+import FormatNumber from 'components/formatNumber';
+import { formatSat } from 'common/utils';
 
 function Detail(props) {
   const dispatch = useDispatch();
   const [submiting, setSubmiting] = useState(false);
-  const { voteInfo, currentVoteId, pairData, isLogin, loading } = props;
+  const {
+    voteInfo,
+    currentVoteId,
+    pairData,
+    isLogin,
+    loading,
+    stakePairInfo,
+  } = props;
   if (JSON.stringify(voteInfo) === '{}' && loading) {
     return (
       <div className={styles.right_content}>
@@ -27,9 +36,10 @@ function Detail(props) {
       </div>
     );
   }
-  const { desc, options, voteSumRate, finished, unstated } = voteInfo[
+  const { desc, options, voteSumRate, finished, unstated, total } = voteInfo[
     currentVoteId
   ];
+  const { symbol, decimal } = stakePairInfo.token;
   const { voteOption } = pairData.voteInfo
     ? pairData.voteInfo[currentVoteId]
     : {};
@@ -121,6 +131,10 @@ function Detail(props) {
         <div>
           <div className={styles.desc}>
             {desc} <span className={styles.red}>{_('change_vote')}</span>
+          </div>
+          <div className={`${styles.total_votes} ${styles.purple}`}>
+            {_('total_votes')}
+            <FormatNumber value={formatSat(total, decimal)} /> {symbol}
           </div>
           <div className={styles.options}>
             {options.map((item, index) => {

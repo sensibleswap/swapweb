@@ -167,6 +167,7 @@ export default {
             // }
           });
           // console.log(rate)
+          data[item].total = total;
           data[item].voteSumRate = rate;
           data[item].unStated = beginBlockNum > parseInt(blockHeight);
           data[item].finished = endBlockNum < parseInt(blockHeight);
