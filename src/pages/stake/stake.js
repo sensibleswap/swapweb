@@ -94,7 +94,7 @@ function Stake(props) {
       { key: 'login', cond: !isLogin },
       {
         cond: !balance || balance === '0',
-        txt: _('cant_unlock'),
+        txt: _('lac_token_balance', symbol),
       },
       {
         key: 'enterAmount',

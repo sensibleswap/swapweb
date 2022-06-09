@@ -36,9 +36,15 @@ function Detail(props) {
       </div>
     );
   }
-  const { desc, options, voteSumRate, finished, unstated, total } = voteInfo[
-    currentVoteId
-  ];
+  const {
+    desc,
+    options,
+    voteSumRate,
+    finished,
+    unstated,
+    total,
+    minVoteAmount,
+  } = voteInfo[currentVoteId];
   const { symbol, decimal } = stakePairInfo.token;
   const { voteOption } = pairData.voteInfo
     ? pairData.voteInfo[currentVoteId]
@@ -132,9 +138,13 @@ function Detail(props) {
           <div className={styles.desc}>
             {desc} <span className={styles.red}>{_('change_vote')}</span>
           </div>
-          <div className={`${styles.total_votes} ${styles.purple}`}>
+          <div className={`${styles.info} ${styles.purple}`}>
             {_('total_votes')}
             <FormatNumber value={formatSat(total, decimal)} /> {symbol}
+          </div>
+          <div className={`${styles.info} ${styles.purple}`}>
+            {_('min_vote_amount')}
+            <FormatNumber value={formatSat(minVoteAmount, decimal)} /> {symbol}
           </div>
           <div className={styles.options}>
             {options.map((item, index) => {

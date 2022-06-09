@@ -152,7 +152,7 @@ function Unstake(props) {
       { key: 'login', cond: !isLogin },
       {
         cond: !balance || balance === '0',
-        txt: _('cant_remove'),
+        txt: _('cant_unlock'),
       },
       {
         key: 'enterAmount',

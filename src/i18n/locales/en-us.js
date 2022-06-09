@@ -366,5 +366,6 @@ const texts = {
   no_stake: 'do not have stake tokens',
   payout_per_block: 'Payout per block',
   total_votes: 'Total Votes:',
+  min_vote_amount: 'Min Vote Amount:',
 };
 module.exports = texts;

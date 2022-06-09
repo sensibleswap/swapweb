@@ -354,5 +354,6 @@ const texts = {
   no_stake: '没有质押token',
   payout_per_block: '每区块的奖励',
   total_votes: '总投票数：',
+  min_vote_amount: '最低投票数：',
 };
 module.exports = texts;
