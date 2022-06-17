@@ -32,7 +32,7 @@ function Detail(props) {
   if (voteInfoArr.length < 1) {
     return (
       <div className={styles.right_content}>
-        <div>No Data</div>
+        <div></div>
       </div>
     );
   }
@@ -187,7 +187,7 @@ const mapStateToProps = ({ stake, user, loading }) => {
   return {
     ...stake,
     ...user,
-    loading: effects['stake/getVoteInfo'],
+    loading: effects['stake/getVoteInfo'] || effects['stake/getStakeInfo'],
   };
 };
 

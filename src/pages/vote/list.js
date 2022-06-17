@@ -38,7 +38,7 @@ function List(props) {
     );
   }
   if (voteInfoArr.length < 1) {
-    return <div className={styles.left_content}>No Data</div>;
+    return <div className={styles.left_content}></div>;
   }
 
   return (
@@ -78,7 +78,7 @@ const mapStateToProps = ({ stake, user, loading }) => {
   return {
     ...stake,
     ...user,
-    loading: effects['stake/getVoteInfo'],
+    loading: effects['stake/getVoteInfo'] || effects['stake/getStakeInfo'],
   };
 };
 
