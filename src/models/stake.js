@@ -12,8 +12,8 @@ export default {
     stakePairInfo: {},
     currentStakePair: '',
     pairData: {},
-    voteInfo: {},
-    currentVoteId: '',
+    voteInfoArr: [],
+    currentVoteIndex: 0,
     blockHeight: 0,
   },
 
@@ -135,7 +135,7 @@ export default {
       });
     },
     *getVoteInfo({ payload }, { call, put, select }) {
-      const { currentStakePair, blockHeight } = yield select(
+      const { currentStakePair, blockHeight, currentVoteIndex } = yield select(
         (state) => state.stake,
       );
       if (!currentStakePair) return;
@@ -146,7 +146,7 @@ export default {
 
       if (res.code === 0) {
         const { data } = res;
-        const _currentVoteId = Object.keys(data)[0];
+        const dataArr = [];
         Object.keys(data).forEach((item) => {
           let total = 0,
             rate = [];
@@ -171,13 +171,23 @@ export default {
           data[item].voteSumRate = rate;
           data[item].unStated = beginBlockNum > parseInt(blockHeight);
           data[item].finished = endBlockNum < parseInt(blockHeight);
+          dataArr.push({
+            ...data[item],
+            id: item,
+            total,
+            voteSumRate: rate,
+            unStated: beginBlockNum > parseInt(blockHeight),
+            finished: endBlockNum < parseInt(blockHeight),
+          });
         });
+
+        dataArr.sort((a, b) => b.beginBlockNum - a.beginBlockNum);
 
         yield put({
           type: 'save',
           payload: {
-            voteInfo: data,
-            currentVoteId: _currentVoteId,
+            voteInfoArr: dataArr,
+            currentVoteIndex,
           },
         });
       }
@@ -352,7 +362,7 @@ export default {
     },
     *vote({ payload }, { call, put, select }) {
       const { requestIndex, data, voteOption } = payload;
-      const { currentVoteId, currentStakePair } = yield select(
+      const { currentVoteIndex, voteInfoArr, currentStakePair } = yield select(
         (state) => state.stake,
       );
       let liq_data = {
@@ -360,7 +370,7 @@ export default {
         requestIndex: requestIndex,
         bsvRawTx: data[0].txHex,
         bsvOutputIndex: 0,
-        voteID: currentVoteId,
+        voteID: voteInfoArr[currentVoteIndex].id,
         voteOption,
         confirmVote: true,
       };

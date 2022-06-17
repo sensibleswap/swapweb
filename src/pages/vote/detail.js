@@ -15,21 +15,21 @@ function Detail(props) {
   const dispatch = useDispatch();
   const [submiting, setSubmiting] = useState(false);
   const {
-    voteInfo,
-    currentVoteId,
+    voteInfoArr,
+    currentVoteIndex,
     pairData,
     isLogin,
     loading,
     stakePairInfo,
   } = props;
-  if (JSON.stringify(voteInfo) === '{}' && loading) {
+  if (voteInfoArr.length < 1 && loading) {
     return (
       <div className={styles.right_content}>
         <Loading />
       </div>
     );
   }
-  if (JSON.stringify(voteInfo) === '{}') {
+  if (voteInfoArr.length < 1) {
     return (
       <div className={styles.right_content}>
         <div>No Data</div>
@@ -44,11 +44,10 @@ function Detail(props) {
     unstated,
     total,
     minVoteAmount,
-  } = voteInfo[currentVoteId];
+    id,
+  } = voteInfoArr[currentVoteIndex];
   const { symbol, decimal } = stakePairInfo.token;
-  const { voteOption } = pairData.voteInfo
-    ? pairData.voteInfo[currentVoteId]
-    : {};
+  const { voteOption } = pairData.voteInfo ? pairData.voteInfo[id] : {};
   const { lockedTokenAmount } = pairData;
 
   const vote = async (index) => {
@@ -136,7 +135,8 @@ function Detail(props) {
       <Spin spinning={submiting}>
         <div>
           <div className={styles.desc}>
-            {desc} <span className={styles.red}>{_('change_vote')}</span>
+            {desc} <br />
+            <span className={styles.red}>{_('change_vote')}</span>
           </div>
           <div className={`${styles.info} ${styles.purple}`}>
             {_('total_votes')}

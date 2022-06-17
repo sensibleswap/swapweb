@@ -4,13 +4,13 @@ import styles from './index.less';
 import _ from 'i18n';
 
 function List(props) {
-  const { voteInfo, dispatch, currentVoteId, loading } = props;
+  const { voteInfoArr, dispatch, currentVoteIndex, loading } = props;
 
-  const detail = (key) => {
+  const detail = (index) => {
     dispatch({
       type: 'stake/save',
       payload: {
-        currentVoteId: key,
+        currentVoteIndex: index,
       },
     });
   };
@@ -30,32 +30,32 @@ function List(props) {
     return '';
   };
 
-  if (JSON.stringify(voteInfo) === '{}' && loading) {
+  if (voteInfoArr.length < 1 && loading) {
     return (
       <div className={styles.left_content}>
         <Loading />
       </div>
     );
   }
-  if (JSON.stringify(voteInfo) === '{}') {
+  if (voteInfoArr.length < 1) {
     return <div className={styles.left_content}>No Data</div>;
   }
 
   return (
     <div className={styles.left_content}>
       <div className={styles.list}>
-        {Object.keys(voteInfo).map((item, index, arr) => {
-          const currentVoteInfo = voteInfo[item];
-          const { title, beginBlockNum, endBlockNum } = currentVoteInfo;
+        {voteInfoArr.map((item, index, arr) => {
+          const currentVoteInfo = item;
+          const { title, beginBlockNum, endBlockNum, id } = currentVoteInfo;
           return (
             <div
               className={
-                item === currentVoteId
+                index === currentVoteIndex
                   ? `${styles.item} ${styles.item_selected}`
                   : styles.item
               }
-              key={item}
-              onClick={() => detail(item)}
+              key={id}
+              onClick={() => detail(index)}
             >
               <div className={styles.line}>
                 <div className={styles.title}>{title}</div>
