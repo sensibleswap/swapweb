@@ -272,7 +272,7 @@ const texts = {
   create_newpair: 'Create new token pair',
   newpair_title: 'TokenSwap requirements to create a new token pair',
   newpair_desc1: 'Agree you’re not a scammer or rug puller',
-  newpair_desc2: '1,000 TSC to pay for the creating/list one pair',
+  newpair_desc2: '10,000 TSC to pay for the creating/list one pair',
   newpair_desc3: 'Token Genesis ID of the new token',
   newpair_desc4: 'Tokens to add to the genesis liquidity',
   newpair_note1:
@@ -289,7 +289,7 @@ const texts = {
   pay_listing_fee: 'Pay listing fee',
   confirm_and_pay: 'Confirm details and pay fee',
   confirm_pair_desc:
-    'A single payment of 1000 TSC is required to create and list this token pair on TokenSwap',
+    'A single payment of 10,000 TSC is required to create and list this token pair on TokenSwap',
   edit: 'Edit',
   create_success: 'Pair successfully created',
   curated_tokens: 'Curated Tokens',

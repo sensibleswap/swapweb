@@ -267,7 +267,7 @@ const texts = {
   newpair_title: '上架新交易对的要求',
   newpair_desc1: '项目代币不能用于欺诈和圈钱',
   newpair_desc2:
-    '支付1000TSC作为创建swap合约的技术服务费，一旦合约创建成功，不予退还',
+    '支付10,000TSC作为创建swap合约的技术服务费，一旦合约创建成功，不予退还',
   newpair_desc3: '上架token的 Genesis ID',
   newpair_desc4: '要添加到流动池的资产',
   newpair_note1: '注意: TokenSwap 有权在任何时候下架任何交易对',
@@ -282,7 +282,7 @@ const texts = {
   next_step: '下一步',
   pay_listing_fee: '支付上架费用',
   confirm_and_pay: '确认细节支付费用',
-  confirm_pair_desc: '上架此交易对需要支付1000TSC',
+  confirm_pair_desc: '上架此交易对需要支付10,000TSC',
   edit: '编辑',
   create_success: '交易对添加成功',
   curated_tokens: '精选资产',
