@@ -355,5 +355,8 @@ const texts = {
   payout_per_block: '每区块的奖励',
   total_votes: '总投票数：',
   min_vote_amount: '最低投票数：',
+  vesting_term: '投票结束时间： %s个区块之后',
+  from_block: '起始高度',
+  to_block: '终止高度',
 };
 module.exports = texts;

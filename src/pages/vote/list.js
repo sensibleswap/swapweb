@@ -62,8 +62,9 @@ function List(props) {
                 <div className={styles.status}>{status(currentVoteInfo)}</div>
               </div>
               <div className={styles.desc}>
-                {arr.length - index} from block #{beginBlockNum} to block #
-                {endBlockNum}
+                {arr.length - index} {_('from_block')} #{beginBlockNum}{' '}
+                {_('to_block')} #{endBlockNum}.{' '}
+                {_('vesting_term', endBlockNum - beginBlockNum)}
               </div>
             </div>
           );

@@ -367,5 +367,8 @@ const texts = {
   payout_per_block: 'Payout per block',
   total_votes: 'Total Votes:',
   min_vote_amount: 'Min Vote Amount:',
+  vesting_term: 'Voting ends: %s blocks later',
+  from_block: 'from block',
+  to_block: 'to block',
 };
 module.exports = texts;
