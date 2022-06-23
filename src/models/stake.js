@@ -161,7 +161,7 @@ export default {
             total += parseInt(v);
           });
           data[item].voteSumRate = voteSumData.forEach((v, i) => {
-            rate.push(formatRate(v / total, 0));
+            rate.push(formatRate(v / total, 2));
             // if (v > minVoteAmount) {
             //   passItemIndex = i;
             // }

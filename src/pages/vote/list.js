@@ -4,7 +4,13 @@ import styles from './index.less';
 import _ from 'i18n';
 
 function List(props) {
-  const { voteInfoArr, dispatch, currentVoteIndex, loading } = props;
+  const {
+    voteInfoArr,
+    dispatch,
+    currentVoteIndex,
+    loading,
+    blockHeight,
+  } = props;
 
   const detail = (index) => {
     dispatch({
@@ -64,7 +70,8 @@ function List(props) {
               <div className={styles.desc}>
                 {arr.length - index} {_('from_block')} #{beginBlockNum}{' '}
                 {_('to_block')} #{endBlockNum}.{' '}
-                {_('vesting_term', endBlockNum - beginBlockNum)}
+                {endBlockNum > blockHeight &&
+                  _('vesting_term', endBlockNum - blockHeight)}
               </div>
             </div>
           );
