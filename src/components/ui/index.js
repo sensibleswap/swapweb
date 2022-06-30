@@ -58,7 +58,7 @@ export function AppTitle(props) {
   cls = bottomLine ? jc(cls, styles.bottom_line) : cls;
   return (
     <div className={cls}>
-      {left || <span></span>}
+      {left || <span className={styles.blank}></span>}
       {title}
       <div className={styles.close} onClick={onClick}>
         <CloseOutlined />
