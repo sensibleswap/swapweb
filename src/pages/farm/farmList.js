@@ -85,7 +85,7 @@ export default class FarmList extends Component {
               />
             </div>
             <div className={styles.name}>
-              {symbol2}/{symbol1}
+              {symbol2}/{symbol1} {abandoned && '(old)'}
             </div>
           </div>
           <div className={styles.lp_amount}>
