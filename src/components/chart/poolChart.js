@@ -7,10 +7,15 @@ import _ from 'i18n';
 
 const type = 'pool';
 export default function PoolChart(props) {
-  const { symbol1, symbol2 } = props;
+  const { symbol1, symbol2, abandoned } = props;
   return (
     <div className={styles.chart_container}>
-      <ChartTitle type={type} symbol1={symbol1} symbol2={symbol2} />
+      <ChartTitle
+        type={type}
+        symbol1={symbol1}
+        symbol2={symbol2}
+        abandoned={abandoned}
+      />
 
       <div className={styles.data_info}>
         <div>

@@ -75,8 +75,9 @@ export default {
         currentPair = payload.currentPair;
       }
 
-      const res = yield pairApi.queryAllPairs.call(pairApi);
+      let res = yield pairApi.queryAllPairs.call(pairApi);
       log('allPairs:', res);
+
       const { data } = res;
 
       if (res.code !== 0) {

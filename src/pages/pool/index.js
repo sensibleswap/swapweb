@@ -61,7 +61,11 @@ export default class Pool extends Component {
     if (loading || !currentPair) return <Loading />;
     return (
       <div className={styles.content}>
-        <Chart symbol1={token1.symbol} symbol2={token2.symbol} />
+        <Chart
+          symbol1={token1.symbol}
+          symbol2={token2.symbol}
+          abandoned={allPairs[currentPair].abandoned}
+        />
         <div className={styles.main_title}>
           <h2>
             <PairIcon keyword="pair" txt="LP(name2/name1)" />

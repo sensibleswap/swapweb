@@ -25,7 +25,7 @@ export default class TokenPairList extends React.Component {
 
   renderItem = (item, props) => {
     const { currentPair, type } = props;
-    const { token1, token2, id, name, tokenIDs } = item;
+    const { token1, token2, id, name, tokenIDs, abandoned } = item;
     return (
       <div
         className={styles.item}
@@ -42,7 +42,10 @@ export default class TokenPairList extends React.Component {
               size={25}
             />
           </div>
-          <div className={styles.name}>{name.toUpperCase()}</div>
+          <div className={styles.name}>
+            {name.toUpperCase()}
+            {abandoned && '(old)'}
+          </div>
         </div>
 
         <div className={styles.genesis_id}>{strAbbreviation(tokenIDs)}</div>

@@ -7,7 +7,7 @@ import styles from './index.less';
 import _ from 'i18n';
 
 export default function chartTitle(props) {
-  let { symbol1, symbol2, type } = props;
+  let { symbol1, symbol2, type, abandoned } = props;
   symbol1 = symbol1.toUpperCase();
   symbol2 = symbol2.toUpperCase();
   return (
@@ -23,10 +23,12 @@ export default function chartTitle(props) {
           {symbol2 === 'USDT' ? (
             <>
               <span>{symbol1}</span>/{symbol2}
+              {abandoned && '(old)'}
             </>
           ) : (
             <>
               <span>{symbol2}</span>/{symbol1}
+              {abandoned && '(old)'}
             </>
           )}
           <CustomIcon type="iconDropdown" />
