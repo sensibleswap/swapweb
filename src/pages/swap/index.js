@@ -6,7 +6,7 @@ import { gzip } from 'node-gzip';
 import BigNumber from 'bignumber.js';
 import { Form, Input, message, Spin } from 'antd';
 import EventBus from 'common/eventBus';
-import { slippage_data, feeRate, MINAMOUNT } from 'common/config';
+import { slippage_data, MINAMOUNT } from 'common/config';
 import { formatAmount, formatSat, jc, formatTok } from 'common/utils';
 import { calcAmount } from 'common/pairUtils';
 import { StableToken } from 'common/const';
@@ -87,14 +87,16 @@ export default class Swap extends Component {
           newAimAddAmount = origin_amount;
           newOriginAddAmount = obj.newOriginAddAmount;
           fee = formatAmount(
-            BigNumber(newOriginAddAmount).multipliedBy(feeRate),
+            BigNumber(newOriginAddAmount)
+              .multipliedBy(pairData.swapFeeRate)
+              .div(10000),
             decimal,
           );
           slip = obj.slip;
           slip1 = obj.slip1;
         } else if (lastMod === 'aim') {
           fee = formatAmount(
-            BigNumber(aim_amount).multipliedBy(feeRate),
+            BigNumber(aim_amount).multipliedBy(pairData.swapFeeRate).div(10000),
             decimal,
           );
           const obj = calcAmount({
@@ -145,7 +147,10 @@ export default class Swap extends Component {
       slip1;
     if (value > 0) {
       value = formatAmount(value, token1.decimal);
-      fee = formatAmount(BigNumber(value).multipliedBy(feeRate), decimal);
+      fee = formatAmount(
+        BigNumber(value).multipliedBy(pairData.swapFeeRate).div(10000),
+        decimal,
+      );
       const obj = calcAmount({
         token1,
         token2,
@@ -261,7 +266,9 @@ export default class Swap extends Component {
       this.setState({
         lastMod: 'origin',
         fee: formatAmount(
-          BigNumber(origin_amount).multipliedBy(feeRate),
+          BigNumber(origin_amount)
+            .multipliedBy(pairData.swapFeeRate)
+            .div(10000),
           decimal,
         ),
       });

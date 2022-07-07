@@ -1,5 +1,5 @@
 import BN from 'bignumber.js';
-import { feeRate, FEE_FACTOR } from 'common/config';
+import { FEE_FACTOR } from 'common/config';
 import { formatAmount, formatTok } from 'common/utils';
 
 export const calcAmount = (props) => {
@@ -64,7 +64,10 @@ export const calcAmount = (props) => {
     newAimAddAmount = aimAddAmount;
     fee =
       addAmount > 0
-        ? formatAmount(addAmount.multipliedBy(feeRate), decimal1)
+        ? formatAmount(
+            addAmount.multipliedBy(pairData.swapFeeRate).div(10000),
+            decimal1,
+          )
         : 0;
   }
   // console.log('dirForward:', dirForward, 'amount1:', amount1, 'amount2:', amount2, 'newAmount1:', newAmount1.toString(), 'newAmount2:', newAmount2.toString());
