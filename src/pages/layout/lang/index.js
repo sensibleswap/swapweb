@@ -15,7 +15,7 @@ const cookieDomain =
 
 // 语言选择保存在cookie中
 let currentLang = Cookie.get('lang') || navigator.language;
-currentLang = currentLang.toLowerCase();
+if (currentLang) currentLang = currentLang.toLowerCase();
 // let currentLang = window.localStorage.getItem(LOCAL_NAME.LANG);
 let langMatch = false;
 for (let item of langs) {
