@@ -1,11 +1,20 @@
 'use strict';
 import Cookie from 'js-cookie';
+import querystring from 'querystringify';
 const zh_cn = require('./locales/zh-ch');
 const en_us = require('./locales/en-us');
 
+const query = querystring.parse(window.location.search);
+let url_lang = '';
+if (query.lang.toLowerCase() === 'en-us') {
+  url_lang = 'en-us';
+}
+if (query.lang.toLowerCase() === 'zh-cn') {
+  url_lang = 'zh-cn';
+}
+
 // let locale = zh_cn;
-// console.log('Cookie.get(lang):', Cookie.get('lang'))
-export const lang = Cookie.get('lang') || navigator.language;
+export const lang = url_lang || Cookie.get('lang') || navigator.language;
 
 const langData = {
   'en-us': en_us,
