@@ -12,7 +12,7 @@ function StakePage(props) {
 
   return (
     <Layout>
-      <Notice />
+      {appPannel < 0 && <Notice />}
       <section className={styles.container}>
         <section
           className={

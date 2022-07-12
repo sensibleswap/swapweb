@@ -103,7 +103,7 @@ export default class SwapPage extends Component {
     const { app_pannel } = this.state;
     return (
       <Layout>
-        <Notice />
+        {!app_pannel && <Notice />}
         <section className={styles.container}>
           <section
             className={

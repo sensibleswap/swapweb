@@ -135,7 +135,7 @@ export default class FarmC extends Component {
     const { app_pannel, currentMenuIndex, showCreatePannel } = this.state;
     return (
       <Layout>
-        <Notice />
+        {!app_pannel && <Notice />}
         <Spin spinning={this.props.submiting}>
           <section className={styles.container}>
             <section

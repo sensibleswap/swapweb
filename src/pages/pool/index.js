@@ -114,7 +114,7 @@ export default class Pool extends Component {
 
     return (
       <Layout>
-        <Notice />
+        {!app_pannel && <Notice />}
         <section className={styles.container}>
           <section
             className={
