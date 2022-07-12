@@ -224,10 +224,13 @@ const texts = {
   total_lp: 'Total LP(%s) supply',
   txs_fail: 'Transaction failed',
   notice: 'Notice',
-  notice720:
-    'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
-  notice1117:
-    'On 19th November UTC 08:00, TokenSwap will perform an upgrade to TSC/USDT liquidity mining contract, we urge users to withdraw your TSC/USDT LP from current mining contract and deposit to new TSC/USDT mining contract to earn mining yield. Other features are not affected.',
+  // notice720:
+  //   'Upgrade is complete, visit https://v1.tswap.io to withdraw your old pair liquidity deposited before July 22. You have been airdrop new MC token. Old MC token is outdated and replaced with new one.',
+  // notice1117:
+  //   'On 19th November UTC 08:00, TokenSwap will perform an upgrade to TSC/USDT liquidity mining contract, we urge users to withdraw your TSC/USDT LP from current mining contract and deposit to new TSC/USDT mining contract to earn mining yield. Other features are not affected.',
+  notice0712:
+    'Please withdraw liquidity from BSV/USDT(old) and add liquidity to new BSV/USDT pair, deposit new BSV/USDT pair LP token to farm contract in order to earn liquidity mining reward',
+
   cant_remove: 'You have no liquidity to remove',
   insufficient_balance: 'Exceeded available balance',
   test_only: 'Recommended for test only',
