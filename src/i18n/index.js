@@ -10,9 +10,6 @@ if (_lang) _lang = _lang.toLowerCase();
 
 if (_lang !== 'en-us' && _lang !== 'zh-cn') {
   _lang = Cookie.get('lang') || navigator.language;
-} else {
-  console.log(_lang);
-  Cookie.set('lang', _lang);
 }
 
 // let locale = zh_cn;
