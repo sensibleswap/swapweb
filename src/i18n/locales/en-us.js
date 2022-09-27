@@ -158,8 +158,7 @@ const texts = {
   lb_5: '0 withdrawal fee',
   lb_6: 'Unlimited TPS (compared with ETH)',
   lb_7: 'Free from exchange hacks because of account information leakage',
-  lb_8:
-    'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
+  lb_8: 'Free of unplug, manipulation from exchanges that fake or delete user data for their own favor',
   lb_9: 'No front-running, which happens on ETH DEXs that causes loss to users',
   lb_10:
     'Instant matching between users or user-pool with low fees, instant settlement',
@@ -230,6 +229,8 @@ const texts = {
   //   'On 19th November UTC 08:00, TokenSwap will perform an upgrade to TSC/USDT liquidity mining contract, we urge users to withdraw your TSC/USDT LP from current mining contract and deposit to new TSC/USDT mining contract to earn mining yield. Other features are not affected.',
   notice0712:
     'Please withdraw liquidity from BSV/USDT(old) and add liquidity to new BSV/USDT pair, deposit new BSV/USDT pair LP token to farm contract in order to earn liquidity mining reward',
+  notice2709:
+    '⚠️ TokenSwap is affected by the shutdown of the Volt Asset Bridge. We urge users to remove their liquidity from USDT & NOVO pairs and redeem them via the Volt Asset Bridge',
 
   cant_remove: 'You have no liquidity to remove',
   insufficient_balance: 'Exceeded available balance',

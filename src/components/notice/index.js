@@ -1,5 +1,6 @@
 import { Alert } from 'antd';
 import _ from 'i18n';
+import styles from './index.less';
 
 const VOLT_NOTICE_CLOSED = 'VoltNoticeClosed';
 const { sessionStorage } = window;
@@ -15,11 +16,14 @@ export default function Notice(props) {
   }
   return (
     <Alert
-      type="success"
+      className={styles.notice_warning}
+      type="warning"
       banner={true}
       closable
       onClose={onClose}
-      message={_('notice0712')}
+      icon=" "
+      closeIcon="✖"
+      message={_('notice2709')}
     />
   );
 }
