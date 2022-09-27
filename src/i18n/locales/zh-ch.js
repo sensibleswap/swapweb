@@ -225,6 +225,8 @@ const texts = {
   //   'tswap预计在北京时间11月19日16点左右对usdt-tsc挖矿合约进行升级，升级后将上线新的usdt-tsc挖矿合约。旧的合约区块奖励将转移到新的挖矿合约上。用户可以在新的挖矿合约上线后从旧挖矿合约提取lp，锁仓到新的挖矿合约，以获得挖矿奖励。此次升级，swap合约不受影响。',
   notice0712:
     'tswap已上线新的usdt/bsv交易对，请旧的usdt/bsv的lp用户从挖矿中提币，并在流动池中移除流动性，然后在新的BSV/USDT交易对中提供流动性，将新交易对的LP tokrn锁定在farm合约中以获取流动性挖矿奖励',
+  notice2709:
+    '⚠️ TokenSwap 受到 Volt Asset Bridge 关闭的影响。我们敦促用户从 USDT 和 NOVO 对中移除他们的流动性，并通过 Volt Asset Bridge 赎回它们',
 
   cant_remove: '您没有可移除的流动性资产',
   insufficient_balance: '您的流动性资产不足',
