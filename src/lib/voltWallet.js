@@ -1,4 +1,4 @@
-import { Bsv } from '@volt-wallet/sdk';
+import { Bsv } from '@volt.id/sdk';
 import { formatSat, strAbbreviation } from 'common/utils';
 // import 'common/vconsole';
 
