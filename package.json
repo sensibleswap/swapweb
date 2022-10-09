@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "NODE_OPTIONS=\"--openssl-legacy-provider\" umi dev",
+    "start": "umi dev",
     "start:beta": "TS_ENV=beta umi dev",
     "build": "umi build",
     "build:beta": "TS_ENV=beta umi build",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "^1.8.2",
-    "@volt.id/sdk": "^1.6.4",
+    "@volt-wallet/sdk": "^1.6.3",
     "bignumber.js": "^9.0.1",
     "bsv-web-wallet": "github:sensibleswap/bsv-web-wallet",
     "echarts": "^5.2.0",
