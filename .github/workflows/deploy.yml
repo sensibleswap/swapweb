@@ -27,8 +27,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Pre Install
+      run: npm i -S @volt.id/sdk
+      
     - name: Install
-      run: yarn
+      run: yarn install
       
     - name: Build
       run: yarn build
