@@ -227,6 +227,8 @@ const texts = {
     'tswap已上线新的usdt/bsv交易对，请旧的usdt/bsv的lp用户从挖矿中提币，并在流动池中移除流动性，然后在新的BSV/USDT交易对中提供流动性，将新交易对的LP tokrn锁定在farm合约中以获取流动性挖矿奖励',
   notice2709:
     '⚠️ TokenSwap 受到 Volt Asset Bridge 关闭的影响。我们敦促用户从 USDT 和 NOVO 对中移除他们的流动性，并通过 Volt Asset Bridge 赎回它们',
+  notice230203:
+    '⚠ 鉴于Volt即将关闭钱包服务，我们敦促用户将volt钱包中的BSV资产转移到sensilet钱包中，包括token，流动性质押等。',
 
   cant_remove: '您没有可移除的流动性资产',
   insufficient_balance: '您的流动性资产不足',

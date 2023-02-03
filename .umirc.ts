@@ -4,10 +4,7 @@ const { TS_ENV } = process.env;
 
 export default {
   publicPath: './',
-  outputPath:
-    TS_ENV === 'beta'
-      ? '../beta.tswap.io/dist'
-      : '../sensibleswap.github.io/dist',
+  outputPath: TS_ENV === 'beta' ? '../beta.tswap.io/dist' : './dist',
   history: {
     type: 'hash',
   },
@@ -69,8 +66,7 @@ export default {
       rel: 'stylesheet',
     },
     {
-      href:
-        'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
+      href: 'https://fonts.font.im/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap',
       rel: 'stylesheet',
     },
   ],

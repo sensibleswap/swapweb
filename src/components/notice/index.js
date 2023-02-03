@@ -23,7 +23,7 @@ export default function Notice(props) {
       onClose={onClose}
       icon=" "
       closeIcon="✖"
-      message={_('notice2709')}
+      message={_('notice230203')}
     />
   );
 }

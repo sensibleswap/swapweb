@@ -231,6 +231,8 @@ const texts = {
     'Please withdraw liquidity from BSV/USDT(old) and add liquidity to new BSV/USDT pair, deposit new BSV/USDT pair LP token to farm contract in order to earn liquidity mining reward',
   notice2709:
     '⚠️ TokenSwap is affected by the shutdown of the Volt Asset Bridge. We urge users to remove their liquidity from USDT & NOVO pairs and redeem them via the Volt Asset Bridge',
+  notice230203:
+    '⚠ Given that Volt is about to shut down the wallet service. We urge users to transfer all BSV assets in the volt wallet to the sensilet wallet, including tokens, LPs, stake etc.',
 
   cant_remove: 'You have no liquidity to remove',
   insufficient_balance: 'Exceeded available balance',
